@@ -1,1 +1,1 @@
-// Control de submenús
+// Controlador de submenús

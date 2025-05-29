@@ -1,1 +1,1 @@
-// Archivo de tema para cambiar colores
+const theme = { fondo: '#000000', texto: '#ffffff', primario: '#ffffff', botones: '#111111', acento: '#4d4d4d', azulIA: '#00c6ff' };

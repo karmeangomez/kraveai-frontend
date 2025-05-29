@@ -1,1 +1,1 @@
-// Estado visual de proxies
+// Panel de estado de proxies

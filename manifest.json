@@ -1,9 +1,1 @@
-{
-  "name": "KraveAI",
-  "short_name": "KraveAI",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#ffffff",
-  "icons": []
-}
+{ "name": "KraveAI", "short_name": "KraveAI", "start_url": ".", "display": "standalone", "background_color": "#000000", "theme_color": "#ffffff", "icons": [] }
