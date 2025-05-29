@@ -1,33 +1,26 @@
-<!-- modules/clientes/ficha-jimenagallegotv.html -->
+<!-- modules/clientes/ficha-cliente.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ficha de @jimenagallegotv</title>
+  <title>Ficha Cliente</title>
   <link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
   <div class="container">
     <button onclick="window.history.back()">⬅ Volver</button>
-
-    <div class="perfil">
-      <img src="https://instagram.fmex10-2.fna.fbcdn.net/v/t51.2885-19/285736479_719278562664443_3491609445869714763_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fmex10-2.fna.fbcdn.net&_nc_cat=108&_nc_ohc=XXXXXXXXXXXXXX&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfYkRgXXXXXXX&oe=6655A123&_nc_sid=8b3546" class="avatar" />
-      <div>
-        <h2>@jimenagallegotv <span class="verificado">✔️</span></h2>
-        <p>Seguidores actuales: 385,000</p>
-      </div>
-    </div>
+    <div id="info"></div>
 
     <h3>URL del contenido</h3>
-    <input type="url" placeholder="https://www.instagram.com/reel/xyz123" style="width: 100%; margin-bottom: 10px;" />
+    <input id="url-general" type="url" placeholder="URL del Reel o Foto" style="width: 100%; margin-bottom: 10px;" />
 
     <h3>Servicios</h3>
     <div class="acciones">
       <label>❤️ Likes</label> <input type="number" placeholder="Cantidad" />
       <label>💬 Comentarios</label> <input type="number" placeholder="Cantidad" />
       <label>👁 Views</label> <input type="number" placeholder="Cantidad" />
-      <label>📺 Story Views</label> <input type="url" placeholder="URL de la historia" />
+      <label>📺 Story Views (URL aparte)</label> <input type="url" placeholder="URL historia" />
       <label>🔁 Compartidos</label> <input type="number" placeholder="Cantidad" />
       <label>➕ Seguidores</label> <input type="number" placeholder="Cantidad" disabled />
     </div>
@@ -45,7 +38,44 @@
     <button onclick="confirmarAcciones()">✅ Confirmar campaña</button>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const user = params.get("user");
+    document.title = `Ficha de @${user}`;
+
+    async function cargarFicha() {
+      const snapshot = await getDocs(collection(db, "clientes"));
+      snapshot.forEach((doc) => {
+        const c = doc.data();
+        if (c.username === user) {
+          document.getElementById("info").innerHTML = `
+            <div class="perfil">
+              <img src="${c.profile_pic}" class="avatar" />
+              <div>
+                <h2>@${c.username} ${c.verified ? '<span class="verificado">✔️</span>' : ''}</h2>
+                <p>Seguidores actuales: ${c.followers.toLocaleString()}</p>
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+
     function seleccionarLATAM() {
       document.getElementById("banderas").innerHTML = "🇲🇽 🇨🇴 🇦🇷 🇵🇪 🇨🇱 🇻🇪 🇺🇾 🇩🇴";
     }
@@ -53,8 +83,10 @@
       document.getElementById("banderas").innerHTML = "🇺🇸 🇫🇷 🇪🇸";
     }
     function confirmarAcciones() {
-      alert("Todo listo. Campaña de @jimenagallegotv programada.");
+      alert("Campaña configurada para @" + user);
     }
+
+    document.addEventListener("DOMContentLoaded", cargarFicha);
   </script>
 
   <style>
