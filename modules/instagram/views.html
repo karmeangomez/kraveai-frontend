@@ -1,1 +1,25 @@
-<!-- Submódulo: views -->
+<!-- modules/instagram/views.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vistas - KraveAI</title>
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Vistas</h1>
+    <p>Indica cuántas vistas deseas generar en el contenido del cliente.</p>
+    <input type="number" id="cantidadVistas" placeholder="Ej: 15000 vistas" />
+    <button onclick="confirmarVistas()">Confirmar</button>
+  </div>
+
+  <script>
+    function confirmarVistas() {
+      const cantidad = document.getElementById("cantidadVistas").value;
+      alert(`Se han programado ${cantidad} vistas en este contenido.`);
+    }
+  </script>
+</body>
+</html>
