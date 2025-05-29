@@ -1,46 +1,25 @@
-<!-- modules/clientes/ficha-cliente.html -->
+<!-- modules/clientes/clientes.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ficha Cliente</title>
+  <title>Clientes - KraveAI</title>
   <link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
   <div class="container">
-    <button onclick="window.history.back()">⬅ Volver</button>
-    <div id="info"></div>
+    <h1>👥 Clientes</h1>
+    <button id="agregar-btn">➕ Añadir cliente por URL</button>
 
-    <h3>URL del contenido</h3>
-    <input id="url-general" type="url" placeholder="URL del Reel o Foto" style="width: 100%; margin-bottom: 10px;" />
-
-    <h3>Servicios</h3>
-    <div class="acciones">
-      <label>❤️ Likes</label> <input type="number" placeholder="Cantidad" />
-      <label>💬 Comentarios</label> <input type="number" placeholder="Cantidad" />
-      <label>👁 Views</label> <input type="number" placeholder="Cantidad" />
-      <label>📺 Story Views (URL aparte)</label> <input type="url" placeholder="URL historia" />
-      <label>🔁 Compartidos</label> <input type="number" placeholder="Cantidad" />
-      <label>➕ Seguidores</label> <input type="number" placeholder="Cantidad" disabled />
+    <div id="lista-clientes">
+      <!-- Aquí se insertan los clientes desde Firebase -->
     </div>
-
-    <h3>Target</h3>
-    <button onclick="seleccionarLATAM()">🌎 LATAM</button>
-    <button onclick="seleccionarGlobal()">🌍 GLOBAL</button>
-    <div id="banderas"></div>
-
-    <h3>Opciones</h3>
-    <button>🤖 Activar Modo Inteligente</button>
-    <button>🐺 Activar Modo Bestia</button>
-
-    <br />
-    <button onclick="confirmarAcciones()">✅ Confirmar campaña</button>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -54,64 +33,49 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const params = new URLSearchParams(window.location.search);
-    const user = params.get("user");
-    document.title = `Ficha de @${user}`;
+    async function agregarCliente() {
+      const url = prompt("Pega el URL del perfil de Instagram");
+      if (!url) return;
 
-    async function cargarFicha() {
+      try {
+        const res = await fetch("https://kraveai-backend.onrender.com/api/scrape", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+        if (!data.success) throw new Error("No se pudo obtener el perfil.");
+
+        await addDoc(collection(db, "clientes"), data.perfil);
+        mostrarClientes();
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    async function mostrarClientes() {
+      const contenedor = document.getElementById("lista-clientes");
+      contenedor.innerHTML = "";
       const snapshot = await getDocs(collection(db, "clientes"));
-      snapshot.forEach((doc) => {
-        const c = doc.data();
-        if (c.username === user) {
-          document.getElementById("info").innerHTML = `
-            <div class="perfil">
-              <img src="${c.profile_pic}" class="avatar" />
-              <div>
-                <h2>@${c.username} ${c.verified ? '<span class="verificado">✔️</span>' : ''}</h2>
-                <p>Seguidores actuales: ${c.followers.toLocaleString()}</p>
-              </div>
-            </div>
-          `;
-        }
+      snapshot.forEach((docSnap) => {
+        const c = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "cliente-ficha";
+        div.innerHTML = `
+          <img src="${c.profile_pic}" class="avatar" />
+          <div>
+            <strong>@${c.username}</strong> ${c.verified ? '<span class="verificado">✔️</span>' : ''}<br />
+            Seguidores: ${c.followers.toLocaleString()}
+          </div>
+          <button onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
+        `;
+        contenedor.appendChild(div);
       });
     }
 
-    function seleccionarLATAM() {
-      document.getElementById("banderas").innerHTML = "🇲🇽 🇨🇴 🇦🇷 🇵🇪 🇨🇱 🇻🇪 🇺🇾 🇩🇴";
-    }
-    function seleccionarGlobal() {
-      document.getElementById("banderas").innerHTML = "🇺🇸 🇫🇷 🇪🇸";
-    }
-    function confirmarAcciones() {
-      alert("Campaña configurada para @" + user);
-    }
-
-    document.addEventListener("DOMContentLoaded", cargarFicha);
+    document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
+    document.addEventListener("DOMContentLoaded", mostrarClientes);
   </script>
-
-  <style>
-    .perfil {
-      display: flex;
-      gap: 15px;
-      background: #111;
-      padding: 10px;
-      border-radius: 10px;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-    }
-    .acciones input {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 8px;
-    }
-    .verificado {
-      color: #00c6ff;
-    }
-  </style>
 </body>
 </html>
