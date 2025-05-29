@@ -3,14 +3,14 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ✅ CONFIGURACIÓN DE TU FIREBASE
+// 🔐 CONFIGURACIÓN SEGURA (usa variables de entorno en Netlify)
 const firebaseConfig = {
-  apiKey: "AIzaSyDnmfCkekv7epdyhTck12C6ScZV08NChBg",
-  authDomain: "kraveai.firebaseapp.com",
-  projectId: "kraveai",
-  storageBucket: "kraveai.firebasestorage.app",
-  messagingSenderId: "182277268373",
-  appId: "1:182277268373:web:58b6c37ab4178b69160c9c"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
