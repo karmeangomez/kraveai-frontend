@@ -1,10 +1,10 @@
-<!-- modules/clientes/ficha-cliente.html -->
+<!-- modules/clientes/ficha-jimenagallegotv.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ficha del Cliente</title>
+  <title>Ficha de @jimenagallegotv</title>
   <link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
@@ -12,34 +12,37 @@
     <button onclick="window.history.back()">⬅ Volver</button>
 
     <div class="perfil">
-      <img src="https://via.placeholder.com/80" class="avatar" />
+      <img src="https://instagram.fmex10-2.fna.fbcdn.net/v/t51.2885-19/285736479_719278562664443_3491609445869714763_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fmex10-2.fna.fbcdn.net&_nc_cat=108&_nc_ohc=XXXXXXXXXXXXXX&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfYkRgXXXXXXX&oe=6655A123&_nc_sid=8b3546" class="avatar" />
       <div>
-        <h2>@usuarioejemplo <span class="verificado">✔️</span></h2>
-        <p>Seguidores iniciales: 25,000</p>
-        <p>Seguidores actuales: 30,000</p>
-        <p>País: 🇲🇽</p>
-        <p>Categoría: Plata</p>
+        <h2>@jimenagallegotv <span class="verificado">✔️</span></h2>
+        <p>Seguidores actuales: 385,000</p>
       </div>
     </div>
 
-    <hr />
-    <h3>Acciones programadas</h3>
-    <input type="url" placeholder="URL del contenido" style="width: 100%; margin-bottom: 10px;" />
+    <h3>URL del contenido</h3>
+    <input type="url" placeholder="https://www.instagram.com/reel/xyz123" style="width: 100%; margin-bottom: 10px;" />
+
+    <h3>Servicios</h3>
     <div class="acciones">
       <label>❤️ Likes</label> <input type="number" placeholder="Cantidad" />
       <label>💬 Comentarios</label> <input type="number" placeholder="Cantidad" />
-      <label>👁 Vistas</label> <input type="number" placeholder="Cantidad" />
-      <label>➕ Seguidores</label> <input type="number" placeholder="Cantidad" />
+      <label>👁 Views</label> <input type="number" placeholder="Cantidad" />
+      <label>📺 Story Views</label> <input type="url" placeholder="URL de la historia" />
       <label>🔁 Compartidos</label> <input type="number" placeholder="Cantidad" />
+      <label>➕ Seguidores</label> <input type="number" placeholder="Cantidad" disabled />
     </div>
 
     <h3>Target</h3>
-    <button onclick="seleccionarLATAM()">🌎 Solo LATAM</button>
-    <button onclick="seleccionarGlobal()">🌍 Global</button>
+    <button onclick="seleccionarLATAM()">🌎 LATAM</button>
+    <button onclick="seleccionarGlobal()">🌍 GLOBAL</button>
     <div id="banderas"></div>
 
+    <h3>Opciones</h3>
+    <button>🤖 Activar Modo Inteligente</button>
+    <button>🐺 Activar Modo Bestia</button>
+
     <br />
-    <button onclick="confirmarAcciones()">✅ Confirmar</button>
+    <button onclick="confirmarAcciones()">✅ Confirmar campaña</button>
   </div>
 
   <script>
@@ -47,10 +50,10 @@
       document.getElementById("banderas").innerHTML = "🇲🇽 🇨🇴 🇦🇷 🇵🇪 🇨🇱 🇻🇪 🇺🇾 🇩🇴";
     }
     function seleccionarGlobal() {
-      document.getElementById("banderas").innerHTML = "🇺🇸 🇪🇸 🇫🇷 🇯🇵";
+      document.getElementById("banderas").innerHTML = "🇺🇸 🇫🇷 🇪🇸";
     }
     function confirmarAcciones() {
-      alert("Campaña del cliente programada correctamente.");
+      alert("Todo listo. Campaña de @jimenagallegotv programada.");
     }
   </script>
 
