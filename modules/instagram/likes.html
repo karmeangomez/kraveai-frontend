@@ -1,1 +1,25 @@
-<!-- Submódulo: likes -->
+<!-- modules/instagram/likes.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Likes - KraveAI</title>
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Likes</h1>
+    <p>Define cuántos likes deseas aplicar al post del cliente.</p>
+    <input type="number" id="cantidadLikes" placeholder="Ej: 2000 likes" />
+    <button onclick="confirmarLikes()">Confirmar</button>
+  </div>
+
+  <script>
+    function confirmarLikes() {
+      const cantidad = document.getElementById("cantidadLikes").value;
+      alert(`Se han programado ${cantidad} likes para este contenido.`);
+    }
+  </script>
+</body>
+</html>
