@@ -10,13 +10,72 @@
 <body>
   <div class="container">
     <h1>👥 Clientes</h1>
-    <button onclick="agregarCliente()">➕ Añadir cliente por URL</button>
+    <button id="agregar-btn">➕ Añadir cliente por URL</button>
 
-    <div id="lista-clientes">
+    <div id="lista-clientes" class="clientes-lista">
       <!-- Aquí se insertan los clientes desde Firebase -->
     </div>
   </div>
 
-  <script type="module" src="clientes.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function agregarCliente() {
+      const url = prompt("Pega el URL del perfil de Instagram");
+      if (!url) return;
+
+      try {
+        const res = await fetch("https://kraveai-backend.onrender.com/api/scrape", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+        if (!data.success) throw new Error("No se pudo obtener el perfil.");
+
+        await addDoc(collection(db, "clientes"), data.perfil);
+        mostrarClientes();
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    async function mostrarClientes() {
+      const contenedor = document.getElementById("lista-clientes");
+      contenedor.innerHTML = "";
+      const snapshot = await getDocs(collection(db, "clientes"));
+      snapshot.forEach((docSnap) => {
+        const c = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "cliente-ficha";
+        div.innerHTML = `
+          <img src="${c.profile_pic}" class="avatar" />
+          <div>
+            <strong>@${c.username}</strong> ${c.verified ? '<span class="verificado">✔️</span>' : ''}<br />
+            Seguidores: ${c.followers.toLocaleString()}
+          </div>
+          <button onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
+    document.addEventListener("DOMContentLoaded", mostrarClientes);
+  </script>
 </body>
 </html>
