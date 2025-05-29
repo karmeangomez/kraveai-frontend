@@ -5,43 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KraveAI</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="manifest" href="manifest.json" />
 </head>
 <body>
   <div class="container">
+    <div class="refresh-btn" onclick="location.reload()">⟳</div>
     <div class="core"></div>
 
     <div class="main-buttons">
-      <button><img src="assets/icons/instagram.svg" />Instagram</button>
-      <button><img src="assets/icons/tiktok.svg" />TikTok</button>
-      <button><img src="assets/icons/youtube.svg" />YouTube</button>
-      <button><img src="assets/icons/spotify.svg" />Spotify</button>
-      <button><img src="assets/icons/threads.svg" />Threads</button>
-      <button><img src="assets/icons/lobo.svg" />Modo Bestia</button>
-    </div>
+      <button class="menu-toggle" data-target="instagram-menu">
+        <img src="assets/icons/instagram.svg" />Instagram
+      </button>
+      <div id="instagram-menu" class="submenu">
+        <a href="modules/clientes/clientes.html">👥 Clientes</a>
+        <a href="modules/instagram/likes.html">❤️ Likes</a>
+        <a href="modules/instagram/comments.html">💬 Comentarios</a>
+        <a href="modules/instagram/views.html">👁 Vistas</a>
+        <a href="modules/instagram/story.html">📺 Story Views</a>
+        <a href="modules/instagram/compartidos.html">🔁 Compartidos</a>
+        <a href="modules/instagram/seguidores.html">➕ Seguidores</a>
+        <a href="modules/instagram/target.html">🎯 Target</a>
+        <a href="modules/instagram/modo-inteligente.html">🤖 Modo Inteligente</a>
+        <a href="modules/instagram/modo-bestia.html">🐺 Modo Bestia</a>
+      </div>
 
-    <div class="chat-input">
-      <input
-        type="text"
-        id="userInput"
-        placeholder="¿Qué quieres automatizar hoy?"
-        onkeydown="if(event.key==='Enter') enviarMensaje()"
-      />
-      <button onclick="enviarMensaje()">Enviar</button>
+      <button class="menu-toggle" data-target="tiktok-menu">
+        <img src="assets/icons/tiktok.svg" />TikTok
+      </button>
+      <div id="tiktok-menu" class="submenu">
+        <a href="#">Próximamente...</a>
+      </div>
+
+      <button class="menu-toggle" data-target="youtube-menu">
+        <img src="assets/icons/youtube.svg" />YouTube
+      </button>
+      <div id="youtube-menu" class="submenu">
+        <a href="#">Próximamente...</a>
+      </div>
+
+      <button class="menu-toggle" data-target="spotify-menu">
+        <img src="assets/icons/spotify.svg" />Spotify
+      </button>
+      <div id="spotify-menu" class="submenu">
+        <a href="#">Próximamente...</a>
+      </div>
+
+      <button class="menu-toggle" data-target="threads-menu">
+        <img src="assets/icons/threads.svg" />Threads
+      </button>
+      <div id="threads-menu" class="submenu">
+        <a href="#">Próximamente...</a>
+      </div>
+
+      <button class="menu-toggle" data-target="bestia-menu">
+        <img src="assets/icons/lobo.svg" />Modo Bestia
+      </button>
+      <div id="bestia-menu" class="submenu">
+        <a href="#">🔥 Activar cruzado</a>
+      </div>
     </div>
   </div>
 
   <script src="modules/menu.js"></script>
-  <script src="theme.js"></script>
-  <script>
-    function enviarMensaje() {
-      const input = document.getElementById("userInput");
-      if (!input.value.trim()) return;
-      document.querySelector(".core").classList.add("glow");
-      setTimeout(() => document.querySelector(".core").classList.remove("glow"), 1000);
-      alert("IA recibió: " + input.value);
-      input.value = "";
-    }
-  </script>
 </body>
 </html>
