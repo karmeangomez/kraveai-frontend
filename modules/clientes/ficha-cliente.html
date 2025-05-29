@@ -1,1 +1,82 @@
-<!-- Ficha visual completa -->
+<!-- modules/clientes/ficha-cliente.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha del Cliente</title>
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <div class="container">
+    <button onclick="window.history.back()">⬅ Volver</button>
+
+    <div class="perfil">
+      <img src="https://via.placeholder.com/80" class="avatar" />
+      <div>
+        <h2>@usuarioejemplo <span class="verificado">✔️</span></h2>
+        <p>Seguidores iniciales: 25,000</p>
+        <p>Seguidores actuales: 30,000</p>
+        <p>País: 🇲🇽</p>
+        <p>Categoría: Plata</p>
+      </div>
+    </div>
+
+    <hr />
+    <h3>Acciones programadas</h3>
+    <input type="url" placeholder="URL del contenido" style="width: 100%; margin-bottom: 10px;" />
+    <div class="acciones">
+      <label>❤️ Likes</label> <input type="number" placeholder="Cantidad" />
+      <label>💬 Comentarios</label> <input type="number" placeholder="Cantidad" />
+      <label>👁 Vistas</label> <input type="number" placeholder="Cantidad" />
+      <label>➕ Seguidores</label> <input type="number" placeholder="Cantidad" />
+      <label>🔁 Compartidos</label> <input type="number" placeholder="Cantidad" />
+    </div>
+
+    <h3>Target</h3>
+    <button onclick="seleccionarLATAM()">🌎 Solo LATAM</button>
+    <button onclick="seleccionarGlobal()">🌍 Global</button>
+    <div id="banderas"></div>
+
+    <br />
+    <button onclick="confirmarAcciones()">✅ Confirmar</button>
+  </div>
+
+  <script>
+    function seleccionarLATAM() {
+      document.getElementById("banderas").innerHTML = "🇲🇽 🇨🇴 🇦🇷 🇵🇪 🇨🇱 🇻🇪 🇺🇾 🇩🇴";
+    }
+    function seleccionarGlobal() {
+      document.getElementById("banderas").innerHTML = "🇺🇸 🇪🇸 🇫🇷 🇯🇵";
+    }
+    function confirmarAcciones() {
+      alert("Campaña del cliente programada correctamente.");
+    }
+  </script>
+
+  <style>
+    .perfil {
+      display: flex;
+      gap: 15px;
+      background: #111;
+      padding: 10px;
+      border-radius: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+    .acciones input {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+    }
+    .verificado {
+      color: #00c6ff;
+    }
+  </style>
+</body>
+</html>
