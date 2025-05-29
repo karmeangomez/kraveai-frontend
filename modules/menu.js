@@ -1,12 +1,19 @@
 // modules/menu.js
 
 document.addEventListener("DOMContentLoaded", () => {
-  const buttons = document.querySelectorAll(".main-buttons button");
+  const toggles = document.querySelectorAll(".menu-toggle");
 
-  buttons.forEach((btn) => {
+  toggles.forEach((btn) => {
     btn.addEventListener("click", () => {
-      const name = btn.innerText.toLowerCase().replace(" ", "");
-      window.location.href = `modules/${name}/index.html`;
+      const targetId = btn.getAttribute("data-target");
+      const submenu = document.getElementById(targetId);
+
+      document.querySelectorAll(".submenu").forEach((el) => {
+        if (el !== submenu) el.style.display = "none";
+      });
+
+      submenu.style.display =
+        submenu.style.display === "block" ? "none" : "block";
     });
   });
 });
