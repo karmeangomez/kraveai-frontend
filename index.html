@@ -1,1 +1,47 @@
-<!-- Pantalla principal funcional con núcleo IA y botones -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KraveAI</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <div class="container">
+    <div class="core"></div>
+
+    <div class="main-buttons">
+      <button><img src="assets/icons/instagram.svg" />Instagram</button>
+      <button><img src="assets/icons/tiktok.svg" />TikTok</button>
+      <button><img src="assets/icons/youtube.svg" />YouTube</button>
+      <button><img src="assets/icons/spotify.svg" />Spotify</button>
+      <button><img src="assets/icons/threads.svg" />Threads</button>
+      <button><img src="assets/icons/lobo.svg" />Modo Bestia</button>
+    </div>
+
+    <div class="chat-input">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="¿Qué quieres automatizar hoy?"
+        onkeydown="if(event.key==='Enter') enviarMensaje()"
+      />
+      <button onclick="enviarMensaje()">Enviar</button>
+    </div>
+  </div>
+
+  <script src="modules/menu.js"></script>
+  <script src="theme.js"></script>
+  <script>
+    function enviarMensaje() {
+      const input = document.getElementById("userInput");
+      if (!input.value.trim()) return;
+      document.querySelector(".core").classList.add("glow");
+      setTimeout(() => document.querySelector(".core").classList.remove("glow"), 1000);
+      alert("IA recibió: " + input.value);
+      input.value = "";
+    }
+  </script>
+</body>
+</html>
