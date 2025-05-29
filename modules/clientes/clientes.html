@@ -1,1 +1,61 @@
-<!-- Lista de clientes -->
+<!-- modules/clientes/clientes.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clientes - KraveAI</title>
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Clientes</h1>
+
+    <button onclick="agregarCliente()">➕ Añadir cliente por URL</button>
+
+    <div id="lista-clientes">
+      <div class="cliente-ficha">
+        <img src="https://via.placeholder.com/60" class="avatar" alt="foto perfil" />
+        <div>
+          <strong>@ejemplo</strong> <span class="verificado">✔️</span><br />
+          Seguidores: 25,000<br />
+          País: 🇲🇽<br />
+          Categoría: Plata
+        </div>
+        <button onclick="verFichaCliente('@ejemplo')">Ver</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function agregarCliente() {
+      const url = prompt("Pega el URL del perfil de Instagram");
+      if (url) alert(`Cliente creado desde: ${url}`);
+    }
+
+    function verFichaCliente(user) {
+      window.location.href = `ficha-cliente.html?user=${user}`;
+    }
+  </script>
+
+  <style>
+    .cliente-ficha {
+      display: flex;
+      gap: 15px;
+      background: #111;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 10px;
+      align-items: center;
+    }
+    .cliente-ficha .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+    .verificado {
+      color: #00c6ff;
+    }
+  </style>
+</body>
+</html>
