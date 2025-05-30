@@ -1,85 +1,74 @@
-<!-- modules/clientes/clientes.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clientes - KraveAI</title>
-  <link rel="stylesheet" href="../../styles.css" />
-</head>
-<body>
-  <div class="container">
-    <h1>👥 Clientes</h1>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    <input type="text" id="profileUrl" placeholder="Pega el URL del perfil de Instagram" style="width: 100%; padding: 8px; margin-bottom: 10px;" />
-    <button id="agregar-btn">➕ Añadir cliente</button>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDnmfCkekv7epdyhTck12C6ScZV08NChBg",
+    authDomain: "kraveai.firebaseapp.com",
+    projectId: "kraveai",
+    storageBucket: "kraveai.appspot.com",
+    messagingSenderId: "182277268373",
+    appId: "1:182277268373:web:58b6c37ab4178b69160c9c"
+  };
 
-    <div id="lista-clientes"></div>
-  </div>
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  function obtenerUsernameDesdeURL(url) {
+    const match = url.match(/instagram\\.com\\/([a-zA-Z0-9_.]+)/i);
+    return match ? match[1] : null;
+  }
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDnmfCkekv7epdyhTck12C6ScZV08NChBg",
-      authDomain: "kraveai.firebaseapp.com",
-      projectId: "kraveai",
-      storageBucket: "kraveai.appspot.com",
-      messagingSenderId: "182277268373",
-      appId: "1:182277268373:web:58b6c37ab4178b69160c9c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    function obtenerUsernameDesdeURL(url) {
-      const match = url.match(/instagram\\.com\\/([a-zA-Z0-9_.]+)/i);
-      return match ? match[1] : null;
+  async function agregarCliente() {
+    const url = document.getElementById("profileUrl").value.trim();
+    const username = obtenerUsernameDesdeURL(url);
+    console.log("Username extraído:", username);
+    if (!username) {
+      alert("URL inválido");
+      return;
     }
 
-    async function agregarCliente() {
-      const url = document.getElementById("profileUrl").value.trim();
-      const username = obtenerUsernameDesdeURL(url);
-      if (!username) return alert("URL inválido");
+    try {
+      console.log("Haciendo fetch al backend...");
+      const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
+      const data = await res.json();
+      console.log("Respuesta del backend:", data);
 
-      try {
-        const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
-        const data = await res.json();
-        if (!data || !data.username) throw new Error("No se pudo obtener el perfil.");
-
-        await addDoc(collection(db, "clientes"), data);
-        document.getElementById("profileUrl").value = "";
-        mostrarClientes();
-      } catch (err) {
-        alert("Error: " + err.message);
+      if (!data || !data.username) {
+        throw new Error("No se pudo obtener el perfil.");
       }
-    }
 
-    async function mostrarClientes() {
-      const contenedor = document.getElementById("lista-clientes");
-      contenedor.innerHTML = "";
-      const snapshot = await getDocs(collection(db, "clientes"));
-      snapshot.forEach((docSnap) => {
-        const c = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "cliente-ficha";
-        div.innerHTML = `
-          <img src="${c.profileImage}" class="avatar" />
-          <div>
-            <strong>@${c.username}</strong> ${c.isVerified ? '✔️' : ''}<br />
-            Seguidores: ${c.followers}
-          </div>
-          <button onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
-        `;
-        contenedor.appendChild(div);
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
+      await addDoc(collection(db, "clientes"), data);
+      document.getElementById("profileUrl").value = "";
       mostrarClientes();
+    } catch (err) {
+      alert("Error: " + err.message);
+      console.error(err);
+    }
+  }
+
+  async function mostrarClientes() {
+    const contenedor = document.getElementById("lista-clientes");
+    contenedor.innerHTML = "";
+    const snapshot = await getDocs(collection(db, "clientes"));
+    snapshot.forEach((docSnap) => {
+      const c = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "cliente-ficha";
+      div.innerHTML = `
+        <img src="${c.profileImage}" class="avatar" />
+        <div>
+          <strong>@${c.username}</strong> ${c.isVerified ? '✔️' : ''}<br />
+          Seguidores: ${c.followers}
+        </div>
+        <button onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
+      `;
+      contenedor.appendChild(div);
     });
-  </script>
-</body>
-</html>
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
+    mostrarClientes();
+  });
+</script>
