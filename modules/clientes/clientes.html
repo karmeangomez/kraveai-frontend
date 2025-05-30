@@ -1,21 +1,307 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clientes - KraveAI</title>
-  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 800px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2c3e50;
+      font-size: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    #profileUrl {
+      flex: 1;
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    #profileUrl:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+    
+    #agregar-btn {
+      background: linear-gradient(to right, #3498db, #2980b9);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+    
+    #agregar-btn:hover {
+      background: linear-gradient(to right, #2980b9, #2573a7);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+    }
+    
+    #agregar-btn:active {
+      transform: translateY(0);
+    }
+    
+    #agregar-btn:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    #lista-clientes {
+      margin-top: 20px;
+      display: grid;
+      gap: 15px;
+    }
+    
+    .cliente-ficha {
+      display: flex;
+      align-items: center;
+      padding: 18px;
+      border-radius: 14px;
+      background-color: #f8f9fa;
+      transition: all 0.3s ease;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .cliente-ficha:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-color: #3498db;
+    }
+    
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 18px;
+      border: 3px solid #3498db;
+    }
+    
+    .cliente-info {
+      flex: 1;
+    }
+    
+    .cliente-info strong {
+      font-size: 1.1rem;
+      color: #2c3e50;
+    }
+    
+    .cliente-info .seguidores {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+      margin-top: 5px;
+    }
+    
+    .ver-btn {
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .ver-btn:hover {
+      background: linear-gradient(to right, #27ae60, #219653);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+    }
+    
+    /* Notificaciones */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 18px 25px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transform: translateX(150%);
+      transition: transform 0.4s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.error {
+      background: linear-gradient(to right, #e74c3c, #c0392b);
+    }
+    
+    .notification.success {
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+    }
+    
+    .notification.warning {
+      background: linear-gradient(to right, #f39c12, #d35400);
+    }
+    
+    .notification.info {
+      background: linear-gradient(to right, #3498db, #2980b9);
+    }
+    
+    .notification-icon {
+      font-size: 1.5rem;
+    }
+    
+    /* Pantalla de carga */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .loader-container.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .loader {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #7f8c8d;
+    }
+    
+    .empty-state img {
+      width: 120px;
+      opacity: 0.7;
+      margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    
+    /* Responsive */
+    @media (max-width: 600px) {
+      .input-group {
+        flex-direction: column;
+      }
+      
+      .cliente-ficha {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .avatar {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+      
+      .cliente-info {
+        margin-bottom: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>👥 Clientes</h1>
-
-    <input type="text" id="profileUrl" placeholder="Pega el URL del perfil de Instagram" style="width: 100%; padding: 8px; margin-bottom: 10px;" />
-    <button id="agregar-btn">➕ Añadir cliente</button>
-
-    <div id="lista-clientes"></div>
+    <h1><span>👥</span> Gestión de Clientes</h1>
+    
+    <div class="input-group">
+      <input type="text" id="profileUrl" placeholder="Pega el URL del perfil de Instagram" />
+      <button id="agregar-btn">➕ Añadir cliente</button>
+    </div>
+    
+    <div id="lista-clientes">
+      <!-- Aquí se mostrarán los clientes -->
+    </div>
   </div>
-
+  
+  <!-- Notificaciones -->
+  <div class="notification" id="notification">
+    <span class="notification-icon" id="notification-icon">⚠️</span>
+    <span id="notification-message">Mensaje de notificación</span>
+  </div>
+  
+  <!-- Pantalla de carga -->
+  <div class="loader-container" id="loader">
+    <div class="loader"></div>
+  </div>
+  
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -31,67 +317,190 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    
+    // Elementos de la UI
+    const notification = document.getElementById('notification');
+    const notificationIcon = document.getElementById('notification-icon');
+    const notificationMessage = document.getElementById('notification-message');
+    const loader = document.getElementById('loader');
+    
+    // Mostrar notificación
+    function showNotification(type, message) {
+      notification.className = `notification ${type}`;
+      notificationMessage.textContent = message;
+      
+      // Icono según tipo
+      if (type === 'error') {
+        notificationIcon.textContent = '❌';
+      } else if (type === 'success') {
+        notificationIcon.textContent = '✅';
+      } else if (type === 'warning') {
+        notificationIcon.textContent = '⚠️';
+      } else {
+        notificationIcon.textContent = 'ℹ️';
+      }
+      
+      notification.classList.add('show');
+      
+      // Ocultar después de 4 segundos
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 4000);
+    }
+    
+    // Mostrar/ocultar loader
+    function toggleLoader(show) {
+      if (show) {
+        loader.classList.add('active');
+      } else {
+        loader.classList.remove('active');
+      }
+    }
 
     function extraerUsernameDeURL(url) {
       try {
-        const clean = new URL(url.trim());
-        const parts = clean.pathname.split("/").filter(Boolean);
+        // Eliminar espacios y verificar si es una URL válida
+        const cleanUrl = url.trim();
+        if (!cleanUrl) return null;
+        
+        // Si no empieza con http, añadir https://
+        let finalUrl = cleanUrl;
+        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+          finalUrl = 'https://' + cleanUrl;
+        }
+        
+        const urlObj = new URL(finalUrl);
+        const parts = urlObj.pathname.split("/").filter(Boolean);
+        
+        // Comprobar si es una URL de Instagram
+        if (!urlObj.hostname.includes('instagram.com')) {
+          showNotification('error', 'URL no válida: debe ser un perfil de Instagram');
+          return null;
+        }
+        
         return parts.length ? parts[0] : null;
-      } catch {
+      } catch (e) {
+        showNotification('error', 'URL inválida');
         return null;
       }
     }
 
     async function agregarCliente() {
       const url = document.getElementById("profileUrl").value.trim();
+      if (!url) {
+        showNotification('error', 'Por favor, ingresa una URL');
+        return;
+      }
+      
       const username = extraerUsernameDeURL(url);
-      if (!username) return alert("❌ URL inválido");
-
+      if (!username) return;
+      
+      // Deshabilitar botón y mostrar loader
+      const btn = document.getElementById("agregar-btn");
+      btn.disabled = true;
+      toggleLoader(true);
+      
       try {
-        const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
-        if (!res.ok) throw new Error("No se pudo conectar al backend.");
+        // Usar AbortController para manejar tiempo de espera
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000); // 10 segundos de timeout
+        
+        const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeout);
+        
+        if (!res.ok) {
+          // Intentar obtener el mensaje de error del backend
+          let errorMsg = 'No se pudo conectar al backend';
+          try {
+            const errorData = await res.json();
+            if (errorData.message) {
+              errorMsg = errorData.message;
+            }
+          } catch (e) {
+            // Si no podemos parsear la respuesta, usar el status
+            errorMsg = `Error del servidor: ${res.status} ${res.statusText}`;
+          }
+          throw new Error(errorMsg);
+        }
+        
         const data = await res.json();
-        if (!data || !data.username) throw new Error("No se pudo obtener el perfil.");
-
+        if (!data || !data.username) {
+          throw new Error("No se pudo obtener los datos del perfil");
+        }
+        
         await addDoc(collection(db, "clientes"), data);
         document.getElementById("profileUrl").value = "";
+        showNotification('success', `Cliente @${data.username} agregado correctamente`);
         mostrarClientes();
       } catch (err) {
-        alert("❌ Error: " + err.message);
-        console.error(err);
+        console.error("Error agregando cliente:", err);
+        
+        let errorMessage = err.message || "Error desconocido al agregar cliente";
+        
+        // Manejar error de timeout específicamente
+        if (err.name === 'AbortError') {
+          errorMessage = "El backend no respondió a tiempo. Intenta nuevamente.";
+        }
+        
+        showNotification('error', errorMessage);
+      } finally {
+        // Restaurar estado de la UI
+        btn.disabled = false;
+        toggleLoader(false);
       }
     }
 
     async function mostrarClientes() {
       const contenedor = document.getElementById("lista-clientes");
       contenedor.innerHTML = "<p>Cargando clientes...</p>";
-
+      
       try {
         const snapshot = await getDocs(collection(db, "clientes"));
+        
+        if (snapshot.empty) {
+          contenedor.innerHTML = `
+            <div class="empty-state">
+              <h3>No hay clientes registrados</h3>
+              <p>Añade tu primer cliente usando el formulario superior</p>
+            </div>
+          `;
+          return;
+        }
+        
         contenedor.innerHTML = "";
         snapshot.forEach((docSnap) => {
           const c = docSnap.data();
           const div = document.createElement("div");
           div.className = "cliente-ficha";
           div.innerHTML = `
-            <img src="${c.profileImage}" class="avatar" />
-            <div>
-              <strong>@${c.username}</strong> ${c.isVerified ? '✔️' : ''}<br />
-              Seguidores: ${c.followers}
+            <img src="${c.profileImage || 'https://via.placeholder.com/60'}" class="avatar" alt="Avatar de ${c.username}"/>
+            <div class="cliente-info">
+              <strong>@${c.username || 'Usuario desconocido'}</strong> ${c.isVerified ? '✔️' : ''}
+              <div class="seguidores">Seguidores: ${c.followers || 'N/A'}</div>
             </div>
-            <button onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
+            <button class="ver-btn" onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
           `;
           contenedor.appendChild(div);
         });
       } catch (e) {
-        contenedor.innerHTML = "<p style='color:red'>❌ No se pudieron cargar los clientes.</p>";
         console.error("Error mostrando clientes:", e);
+        contenedor.innerHTML = "<p style='color:red; text-align:center; padding:20px;'>❌ Error al cargar los clientes. Intenta recargar la página.</p>";
       }
     }
 
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
       mostrarClientes();
+      
+      // Permitir añadir con Enter
+      document.getElementById("profileUrl").addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+          agregarCliente();
+        }
+      });
     });
   </script>
 </body>
