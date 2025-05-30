@@ -10,7 +10,9 @@
 <body>
   <div class="container">
     <h1>👥 Clientes</h1>
-    <button id="agregar-btn">➕ Añadir cliente por URL</button>
+
+    <input type="text" id="profileUrl" placeholder="Pega el URL del perfil de Instagram" style="width: 100%; padding: 8px; margin-bottom: 10px;" />
+    <button id="agregar-btn">➕ Añadir cliente</button>
 
     <div id="lista-clientes"></div>
   </div>
@@ -37,7 +39,7 @@
     }
 
     async function agregarCliente() {
-      const url = prompt("Pega el URL del perfil de Instagram");
+      const url = document.getElementById("profileUrl").value.trim();
       const username = obtenerUsernameDesdeURL(url);
       if (!username) return alert("URL inválido");
 
@@ -47,6 +49,7 @@
         if (!data || !data.username) throw new Error("No se pudo obtener el perfil.");
 
         await addDoc(collection(db, "clientes"), data);
+        document.getElementById("profileUrl").value = "";
         mostrarClientes();
       } catch (err) {
         alert("Error: " + err.message);
