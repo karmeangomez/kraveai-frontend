@@ -22,32 +22,35 @@
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      appId: import.meta.env.VITE_FIREBASE_APP_ID
+      apiKey: "AIzaSyDnmfCkekv7epdyhTck12C6ScZV08NChBg",
+      authDomain: "kraveai.firebaseapp.com",
+      projectId: "kraveai",
+      storageBucket: "kraveai.appspot.com",
+      messagingSenderId: "182277268373",
+      appId: "1:182277268373:web:58b6c37ab4178b69160c9c"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    function obtenerUsernameDesdeURL(url) {
+      const match = url.match(/instagram\.com\/(\w+)/i);
+      return match ? match[1] : null;
+    }
+
     async function agregarCliente() {
       const url = prompt("Pega el URL del perfil de Instagram");
       if (!url) return;
 
+      const username = obtenerUsernameDesdeURL(url);
+      if (!username) return alert("URL inválido");
+
       try {
-        const res = await fetch("https://kraveai-backend.onrender.com/api/scrape", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url })
-        });
-
+        const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
         const data = await res.json();
-        if (!data.success) throw new Error("No se pudo obtener el perfil.");
+        if (!data || !data.username) throw new Error("No se pudo obtener el perfil.");
 
-        await addDoc(collection(db, "clientes"), data.perfil);
+        await addDoc(collection(db, "clientes"), data);
         mostrarClientes();
       } catch (err) {
         alert("Error: " + err.message);
@@ -63,10 +66,10 @@
         const div = document.createElement("div");
         div.className = "cliente-ficha";
         div.innerHTML = `
-          <img src="${c.profile_pic}" class="avatar" />
+          <img src="${c.profileImage}" class="avatar" />
           <div>
-            <strong>@${c.username}</strong> ${c.verified ? '<span class="verificado">✔️</span>' : ''}<br />
-            Seguidores: ${c.followers.toLocaleString()}
+            <strong>@${c.username}</strong> ${c.isVerified ? '<span class="verificado">✔️</span>' : ''}<br />
+            Seguidores: ${c.followers}
           </div>
           <button onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
         `;
