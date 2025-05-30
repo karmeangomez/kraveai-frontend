@@ -32,8 +32,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // ✅ Expresión regular corregida
     function obtenerUsernameDesdeURL(url) {
-      const match = url.match(/instagram\\.com\\/([a-zA-Z0-9_.]+)/i);
+      const match = url.match(/instagram\.com\/([a-zA-Z0-9_.]+)/i);
       return match ? match[1] : null;
     }
 
@@ -84,7 +85,7 @@
       }
     }
 
-    // ✅ Ejecutar esto al final, cuando DOM esté listo
+    // ✅ Carga inicial
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
       mostrarClientes();
