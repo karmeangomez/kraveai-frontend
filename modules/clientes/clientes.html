@@ -10,7 +10,7 @@
   <div class="container">
     <h1>👥 Clientes</h1>
 
-    <input type="text" id="profileUrl" placeholder="Pega el URL del perfil de Instagram" style="width:100%; padding:8px; margin-bottom:10px" />
+    <input type="text" id="profileUrl" placeholder="Pega el URL del perfil de Instagram" style="width: 100%; padding: 8px; margin-bottom: 10px;" />
     <button id="agregar-btn">➕ Añadir cliente</button>
 
     <div id="lista-clientes"></div>
@@ -20,7 +20,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // ✅ Tu configuración real de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDnmfCkekv7epdyhTck12C6ScZV08NChBg",
       authDomain: "kraveai.firebaseapp.com",
@@ -41,19 +40,13 @@
     async function agregarCliente() {
       const url = document.getElementById("profileUrl").value.trim();
       const username = obtenerUsernameDesdeURL(url);
-
-      if (!username) {
-        alert("⚠️ URL inválido. Asegúrate de que sea de Instagram.");
-        return;
-      }
+      if (!username) return alert("URL inválido");
 
       try {
-        console.log("🔍 Buscando datos de:", username);
         const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
         if (!res.ok) throw new Error("No se pudo conectar al backend.");
-
         const data = await res.json();
-        if (!data || !data.username) throw new Error("La respuesta no contiene datos válidos.");
+        if (!data || !data.username) throw new Error("No se pudo obtener el perfil.");
 
         await addDoc(collection(db, "clientes"), data);
         document.getElementById("profileUrl").value = "";
@@ -91,7 +84,8 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    // ✅ Ejecutar esto al final, cuando DOM esté listo
+    window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
       mostrarClientes();
     });
