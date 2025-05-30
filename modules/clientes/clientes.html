@@ -12,9 +12,7 @@
     <h1>👥 Clientes</h1>
     <button id="agregar-btn">➕ Añadir cliente por URL</button>
 
-    <div id="lista-clientes" class="clientes-lista">
-      <!-- Aquí se insertan los clientes desde Firebase -->
-    </div>
+    <div id="lista-clientes"></div>
   </div>
 
   <script type="module">
@@ -34,14 +32,12 @@
     const db = getFirestore(app);
 
     function obtenerUsernameDesdeURL(url) {
-      const match = url.match(/instagram\.com\/(\w+)/i);
+      const match = url.match(/instagram\\.com\\/([^/?#]+)/i);
       return match ? match[1] : null;
     }
 
     async function agregarCliente() {
       const url = prompt("Pega el URL del perfil de Instagram");
-      if (!url) return;
-
       const username = obtenerUsernameDesdeURL(url);
       if (!username) return alert("URL inválido");
 
@@ -68,7 +64,7 @@
         div.innerHTML = `
           <img src="${c.profileImage}" class="avatar" />
           <div>
-            <strong>@${c.username}</strong> ${c.isVerified ? '<span class="verificado">✔️</span>' : ''}<br />
+            <strong>@${c.username}</strong> ${c.isVerified ? '✔️' : ''}<br />
             Seguidores: ${c.followers}
           </div>
           <button onclick="window.location.href='ficha-cliente.html?user=${c.username}'">Ver</button>
