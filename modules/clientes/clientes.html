@@ -32,16 +32,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ✅ Expresión regular corregida
-    function obtenerUsernameDesdeURL(url) {
-      const match = url.match(/instagram\.com\/([a-zA-Z0-9_.]+)/i);
-      return match ? match[1] : null;
+    function extraerUsernameDeURL(url) {
+      try {
+        const clean = new URL(url.trim());
+        const parts = clean.pathname.split("/").filter(Boolean);
+        return parts.length ? parts[0] : null;
+      } catch {
+        return null;
+      }
     }
 
     async function agregarCliente() {
       const url = document.getElementById("profileUrl").value.trim();
-      const username = obtenerUsernameDesdeURL(url);
-      if (!username) return alert("URL inválido");
+      const username = extraerUsernameDeURL(url);
+      if (!username) return alert("❌ URL inválido");
 
       try {
         const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
@@ -85,7 +89,6 @@
       }
     }
 
-    // ✅ Carga inicial
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
       mostrarClientes();
