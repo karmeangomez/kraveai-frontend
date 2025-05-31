@@ -1,472 +1,24 @@
+<!-- Archivo HTML actualizado para que solo se escriba el username -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clientes - KraveAI</title>
-  <style>
-    :root {
-      --primary: #4361ee;
-      --secondary: #3f37c9;
-      --success: #4cc9f0;
-      --danger: #f72585;
-      --warning: #f8961e;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    }
-    
-    body {
-      background: linear-gradient(135deg, #6a11cb 0%, #4361ee 100%);
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: var(--dark);
-    }
-    
-    .container {
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-      width: 100%;
-      max-width: 800px;
-      padding: 35px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      position: relative;
-    }
-    
-    .logo {
-      position: absolute;
-      top: 0;
-      left: 0;
-      font-size: 1.8rem;
-      color: var(--primary);
-    }
-    
-    h1 {
-      font-size: 2.4rem;
-      color: var(--secondary);
-      margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-    
-    .subtitle {
-      color: var(--gray);
-      font-size: 1.1rem;
-      margin-bottom: 25px;
-    }
-    
-    .input-container {
-      background: #f0f4ff;
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 30px;
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.15);
-    }
-    
-    .input-group {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-    
-    #profileUrl {
-      flex: 1;
-      padding: 16px 20px;
-      border: 2px solid #dce1ff;
-      border-radius: 12px;
-      font-size: 1.05rem;
-      transition: all 0.3s ease;
-      background: white;
-    }
-    
-    #profileUrl:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
-    }
-    
-    #agregar-btn {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 16px 28px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    #agregar-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.5);
-    }
-    
-    #agregar-btn:active {
-      transform: translateY(0);
-    }
-    
-    #agregar-btn:disabled {
-      background: #adb5bd;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    .url-example {
-      color: var(--gray);
-      font-size: 0.9rem;
-      text-align: center;
-      margin-top: 10px;
-    }
-    
-    .url-example code {
-      background: #e9ecef;
-      padding: 3px 6px;
-      border-radius: 4px;
-    }
-    
-    #lista-clientes {
-      margin-top: 20px;
-      display: grid;
-      gap: 20px;
-    }
-    
-    .cliente-ficha {
-      display: flex;
-      align-items: center;
-      padding: 22px;
-      border-radius: 16px;
-      background-color: white;
-      transition: all 0.3s ease;
-      border: 1px solid #e9ecef;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .cliente-ficha::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 5px;
-      background: var(--primary);
-    }
-    
-    .cliente-ficha.error {
-      border-color: #ffcdd2;
-      background: #ffebee;
-    }
-    
-    .cliente-ficha.error::before {
-      background: var(--danger);
-    }
-    
-    .cliente-ficha:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    .avatar {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 20px;
-      border: 3px solid var(--primary);
-    }
-    
-    .cliente-info {
-      flex: 1;
-    }
-    
-    .cliente-info strong {
-      font-size: 1.2rem;
-      color: var(--dark);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .cliente-info .seguidores {
-      color: var(--gray);
-      font-size: 1rem;
-      margin-top: 6px;
-    }
-    
-    .ver-btn {
-      background: linear-gradient(to right, #4cc9f0, #4895ef);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 24px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      min-width: 100px;
-    }
-    
-    .ver-btn:hover {
-      background: linear-gradient(to right, #4895ef, #4361ee);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(76, 201, 240, 0.3);
-    }
-    
-    .ver-btn:disabled {
-      background: #ced4da;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    /* Notificaciones */
-    .notification {
-      position: fixed;
-      top: 25px;
-      right: 25px;
-      padding: 20px 30px;
-      border-radius: 14px;
-      color: white;
-      font-weight: 500;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-      transform: translateX(150%);
-      transition: transform 0.4s ease;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      max-width: 450px;
-    }
-    
-    .notification.show {
-      transform: translateX(0);
-    }
-    
-    .notification.error {
-      background: linear-gradient(to right, #f72585, #b5179e);
-    }
-    
-    .notification.success {
-      background: linear-gradient(to right, #4cc9f0, #4361ee);
-    }
-    
-    .notification.warning {
-      background: linear-gradient(to right, #f8961e, #f3722c);
-    }
-    
-    .notification.info {
-      background: linear-gradient(to right, #4895ef, #4361ee);
-    }
-    
-    .notification-icon {
-      font-size: 1.8rem;
-    }
-    
-    /* Pantalla de carga */
-    .loader-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.9);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-    
-    .loader-container.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .loader {
-      width: 70px;
-      height: 70px;
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid var(--primary);
-      border-radius: 50%;
-      animation: spin 1.2s linear infinite;
-      margin-bottom: 25px;
-    }
-    
-    .loader-text {
-      font-size: 1.2rem;
-      color: var(--dark);
-      font-weight: 500;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 50px 20px;
-      color: var(--gray);
-    }
-    
-    .empty-state img {
-      width: 150px;
-      opacity: 0.7;
-      margin-bottom: 25px;
-    }
-    
-    .empty-state h3 {
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: var(--dark);
-      font-size: 1.6rem;
-    }
-    
-    .empty-state p {
-      font-size: 1.1rem;
-      max-width: 500px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-    
-    .error-state {
-      background: #fff5f5;
-      border-radius: 16px;
-      padding: 25px;
-      text-align: center;
-      margin-top: 20px;
-      border: 1px solid #ffcccc;
-    }
-    
-    .error-state h3 {
-      color: var(--danger);
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    
-    .error-state p {
-      color: var(--dark);
-      margin-bottom: 20px;
-    }
-    
-    .retry-btn {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 25px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .retry-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-      .container {
-        padding: 25px;
-      }
-      
-      .input-group {
-        flex-direction: column;
-      }
-      
-      #agregar-btn {
-        width: 100%;
-        justify-content: center;
-      }
-      
-      .cliente-ficha {
-        flex-direction: column;
-        text-align: center;
-        padding: 25px;
-      }
-      
-      .avatar {
-        margin-right: 0;
-        margin-bottom: 20px;
-      }
-      
-      .cliente-info {
-        margin-bottom: 20px;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <div class="logo">KraveAI</div>
-      <h1><span>👥</span> Gestión de Clientes</h1>
-      <div class="subtitle">Administra todos tus clientes de Instagram en un solo lugar</div>
-    </div>
-    
-    <div class="input-container">
-      <div class="input-group">
-        <input type="text" id="profileUrl" placeholder="Pega el URL completo del perfil de Instagram" />
-        <button id="agregar-btn">
-          <span>➕</span> Añadir cliente
-        </button>
-      </div>
-      <div class="url-example">Ejemplo: <code>https://www.instagram.com/usuario_completo/</code></div>
-    </div>
-    
-    <div id="lista-clientes">
-      <!-- Aquí se mostrarán los clientes -->
-    </div>
+    <h1>Gestor de Clientes</h1>
+    <input type="text" id="profileUrl" placeholder="Ingresa solo el usuario de Instagram (ej. jimenagallegotv)">
+    <button id="agregar-btn">Añadir cliente</button>
+    <div id="lista-clientes"></div>
   </div>
-  
-  <!-- Notificaciones -->
-  <div class="notification" id="notification">
-    <span class="notification-icon" id="notification-icon">⚠️</span>
-    <span id="notification-message">Mensaje de notificación</span>
-  </div>
-  
-  <!-- Pantalla de carga -->
+
+  <div class="notification" id="notification"></div>
   <div class="loader-container" id="loader">
-    <div class="loader"></div>
-    <div class="loader-text" id="loader-text">Procesando solicitud...</div>
+    <div class="loader-text" id="loader-text">Procesando...</div>
   </div>
-  
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -482,125 +34,47 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    
-    // Elementos de la UI
-    const notification = document.getElementById('notification');
-    const notificationIcon = document.getElementById('notification-icon');
-    const notificationMessage = document.getElementById('notification-message');
-    const loader = document.getElementById('loader');
-    const loaderText = document.getElementById('loader-text');
-    
-    // Mostrar notificación
+
     function showNotification(type, message) {
-      notification.className = `notification ${type}`;
-      notificationMessage.textContent = message;
-      
-      // Icono según tipo
-      if (type === 'error') {
-        notificationIcon.textContent = '❌';
-      } else if (type === 'success') {
-        notificationIcon.textContent = '✅';
-      } else if (type === 'warning') {
-        notificationIcon.textContent = '⚠️';
-      } else {
-        notificationIcon.textContent = 'ℹ️';
-      }
-      
-      notification.classList.add('show');
-      
-      // Ocultar después de 5 segundos
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, 5000);
-    }
-    
-    // Mostrar/ocultar loader
-    function toggleLoader(show, text = "Procesando solicitud...") {
-      loaderText.textContent = text;
-      if (show) {
-        loader.classList.add('active');
-      } else {
-        loader.classList.remove('active');
-      }
+      const el = document.getElementById("notification");
+      el.innerText = message;
+      el.style.backgroundColor = type === 'error' ? '#ff0033' : '#33cc33';
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 5000);
     }
 
-    // Validación mejorada de URLs de Instagram
-    function validarURLInstagram(url) {
-      try {
-        const cleanUrl = url.trim();
-        if (!cleanUrl) return false;
-        
-        const instagramPattern = /^https?:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9_.]{3,30}\/?$/;
-        return instagramPattern.test(cleanUrl);
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function extraerUsernameDeURL(url) {
-      try {
-        if (!validarURLInstagram(url)) {
-          showNotification('error', 'URL de Instagram inválida. Debe ser un formato completo.');
-          return null;
-        }
-        
-        const clean = new URL(url.trim());
-        const parts = clean.pathname.split("/").filter(Boolean);
-        return parts.length ? parts[0] : null;
-      } catch (e) {
-        showNotification('error', 'Error al procesar la URL');
-        return null;
-      }
+    function toggleLoader(show, text = "Procesando...") {
+      document.getElementById("loader-text").innerText = text;
+      document.getElementById("loader").style.display = show ? 'flex' : 'none';
     }
 
     async function agregarCliente() {
-      const url = document.getElementById("profileUrl").value.trim();
-      if (!url) {
-        showNotification('error', 'Por favor, ingresa una URL de Instagram');
+      const rawInput = document.getElementById("profileUrl").value.trim();
+      const username = rawInput.replace(/^@/, "").split("/")[0];
+      if (!username) {
+        showNotification('error', 'Ingresa un usuario válido');
         return;
       }
-      
-      const username = extraerUsernameDeURL(url);
-      if (!username) return;
-      
-      // Deshabilitar botón y mostrar loader
+
       const btn = document.getElementById("agregar-btn");
       btn.disabled = true;
-      toggleLoader(true, "Obteniendo datos del perfil...");
-      
+      toggleLoader(true, "Conectando con Instagram...");
+
       try {
-        // URL ACTUALIZADA - APUNTA A TU BACKEND EN RENDER
         const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
-        
-        if (!res.ok) {
-          let errorMsg = 'Error al conectar con el backend';
-          try {
-            const errorData = await res.json();
-            if (errorData.error) {
-              errorMsg = errorData.error;
-            }
-          } catch (e) {
-            errorMsg = `Error ${res.status}: ${res.statusText}`;
-          }
-          throw new Error(errorMsg);
-        }
-        
+        if (!res.ok) throw new Error("No se pudo conectar al backend");
+
         const data = await res.json();
-        if (!data || !data.username) {
-          throw new Error("No se pudieron obtener datos válidos del perfil");
-        }
-        
-        toggleLoader(true, "Guardando cliente...");
-        
+        if (!data || !data.username) throw new Error("Datos inválidos del perfil");
+
         await addDoc(collection(db, "clientes"), data);
         document.getElementById("profileUrl").value = "";
-        showNotification('success', `¡Cliente @${data.username} agregado correctamente!`);
+        showNotification("success", `@${data.username} agregado correctamente`);
         mostrarClientes();
       } catch (err) {
-        console.error("Error agregando cliente:", err);
-        showNotification('error', err.message || "Error desconocido al agregar cliente");
+        console.error("Error:", err);
+        showNotification("error", err.message);
       } finally {
-        // Restaurar estado de la UI
         btn.disabled = false;
         toggleLoader(false);
       }
@@ -608,71 +82,17 @@
 
     async function mostrarClientes() {
       const contenedor = document.getElementById("lista-clientes");
-      contenedor.innerHTML = "<p>Cargando clientes...</p>";
-      
-      try {
-        const snapshot = await getDocs(collection(db, "clientes"));
-        
-        if (snapshot.empty) {
-          contenedor.innerHTML = `
-            <div class="empty-state">
-              <h3>No hay clientes registrados</h3>
-              <p>Añade tu primer cliente usando el formulario superior</p>
-            </div>
-          `;
-          return;
-        }
-        
-        contenedor.innerHTML = "";
-        snapshot.forEach((docSnap) => {
-          const c = docSnap.data();
-          const isIncomplete = !c.username || !c.profileImage || !c.followers;
-          
-          const div = document.createElement("div");
-          div.className = `cliente-ficha ${isIncomplete ? 'error' : ''}`;
-          div.innerHTML = `
-            <img src="${c.profileImage || 'https://via.placeholder.com/70?text=?'}" class="avatar" alt="Avatar de ${c.username || 'usuario'}"/>
-            <div class="cliente-info">
-              <strong>
-                ${c.username ? '@' + c.username : 'Usuario desconocido'} 
-                ${c.isVerified ? '✔️' : ''}
-              </strong>
-              <div class="seguidores">Seguidores: ${c.followers || 'N/A'}</div>
-              ${isIncomplete ? '<div style="color:#f72585; margin-top:8px; font-size:0.9rem;">⚠️ Datos incompletos</div>' : ''}
-            </div>
-            <button class="ver-btn" onclick="window.location.href='ficha-cliente.html?user=${c.username || ''}'" ${isIncomplete ? 'disabled' : ''}>
-              ${isIncomplete ? 'Datos faltantes' : 'Ver'}
-            </button>
-          `;
-          contenedor.appendChild(div);
-        });
-      } catch (e) {
-        console.error("Error mostrando clientes:", e);
-        contenedor.innerHTML = `
-          <div class="error-state">
-            <h3><span>❌</span> Error al cargar clientes</h3>
-            <p>No se pudieron cargar los clientes desde la base de datos.</p>
-            <p>Por favor, intenta recargar la página.</p>
-            <button class="retry-btn" onclick="location.reload()">Recargar</button>
-          </div>
-        `;
-      }
+      contenedor.innerHTML = "Cargando...";
+      const snapshot = await getDocs(collection(db, "clientes"));
+      contenedor.innerHTML = "";
+      snapshot.forEach(doc => {
+        const c = doc.data();
+        contenedor.innerHTML += `<div><img src="${c.profileImage}" width="40"> @${c.username} - Seguidores: ${c.followers}</div>`;
+      });
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
-      mostrarClientes();
-      
-      // Permitir añadir con Enter
-      document.getElementById("profileUrl").addEventListener("keyup", (e) => {
-        if (e.key === "Enter") {
-          agregarCliente();
-        }
-      });
-      
-      // Enfocar automáticamente el campo de entrada
-      document.getElementById("profileUrl").focus();
-    });
+    document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
+    window.addEventListener("DOMContentLoaded", mostrarClientes);
   </script>
 </body>
 </html>
