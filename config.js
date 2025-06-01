@@ -1,9 +1,6 @@
-// config.js
+// config.js - Versión final con backend único
 window.API = {
-  // Scraping real de Instagram
-  instagram: "https://kraveai-backend-docker.onrender.com",
-
-  // IA, voz y Bitly (tu backend original)
+  instagram: "https://kraveai-backend.onrender.com",
   chat: "https://kraveai-backend.onrender.com",
   voz: "https://kraveai-backend.onrender.com",
   bitly: "https://kraveai-backend.onrender.com"
