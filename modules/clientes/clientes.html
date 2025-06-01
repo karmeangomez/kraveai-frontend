@@ -1,98 +1,58 @@
-<!-- Archivo HTML actualizado para que solo se escriba el username -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clientes - KraveAI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clientes Instagram</title>
+  <link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Gestor de Clientes</h1>
-    <input type="text" id="profileUrl" placeholder="Ingresa solo el usuario de Instagram (ej. jimenagallegotv)">
-    <button id="agregar-btn">Añadir cliente</button>
-    <div id="lista-clientes"></div>
+    <h1>Clientes de Instagram</h1>
+    <input type="text" id="username" placeholder="Usuario de Instagram" />
+    <button onclick="buscarCliente()">Buscar</button>
+    <div id="resultado"></div>
   </div>
 
-  <div class="notification" id="notification"></div>
-  <div class="loader-container" id="loader">
-    <div class="loader-text" id="loader-text">Procesando...</div>
-  </div>
+  <!-- Conexión global a config.js -->
+  <script src="../../config.js"></script>
+  <script>
+    async function buscarCliente() {
+      const user = document.getElementById("username").value.trim();
+      const result = document.getElementById("resultado");
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDnmfCkekv7epdyhTck12C6ScZV08NChBg",
-      authDomain: "kraveai.firebaseapp.com",
-      projectId: "kraveai",
-      storageBucket: "kraveai.appspot.com",
-      messagingSenderId: "182277268373",
-      appId: "1:182277268373:web:58b6c37ab4178b69160c9c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    function showNotification(type, message) {
-      const el = document.getElementById("notification");
-      el.innerText = message;
-      el.style.backgroundColor = type === 'error' ? '#ff0033' : '#33cc33';
-      el.style.display = 'block';
-      setTimeout(() => el.style.display = 'none', 5000);
-    }
-
-    function toggleLoader(show, text = "Procesando...") {
-      document.getElementById("loader-text").innerText = text;
-      document.getElementById("loader").style.display = show ? 'flex' : 'none';
-    }
-
-    async function agregarCliente() {
-      const rawInput = document.getElementById("profileUrl").value.trim();
-      const username = rawInput.replace(/^@/, "").split("/")[0];
-      if (!username) {
-        showNotification('error', 'Ingresa un usuario válido');
+      if (!user) {
+        result.innerText = "Escribe un nombre de usuario.";
         return;
       }
 
-      const btn = document.getElementById("agregar-btn");
-      btn.disabled = true;
-      toggleLoader(true, "Conectando con Instagram...");
+      result.innerText = "Buscando...";
 
       try {
-        const res = await fetch(`https://kraveai-backend.onrender.com/api/scrape?username=${username}`);
-        if (!res.ok) throw new Error("No se pudo conectar al backend");
-
+        const res = await fetch(`${API.instagram}/api/scrape?username=${user}`);
         const data = await res.json();
-        if (!data || !data.username) throw new Error("Datos inválidos del perfil");
 
-        await addDoc(collection(db, "clientes"), data);
-        document.getElementById("profileUrl").value = "";
-        showNotification("success", `@${data.username} agregado correctamente`);
-        mostrarClientes();
+        if (data.profile) {
+          const p = data.profile;
+          result.innerHTML = `
+            <img src="${p.profilePic}" width="100" /><br/>
+            <strong>${p.fullName} (${p.username})</strong><br/>
+            Verificado: ${p.isVerified ? '✅' : '❌'}<br/>
+            Privada: ${p.isPrivate ? '🔒' : '🌐'}<br/>
+            Seguidores: ${p.followers}<br/>
+            Siguiendo: ${p.following}<br/>
+            Publicaciones: ${p.posts}<br/>
+            Bio: ${p.bio || '–'}<br/>
+            Enlace: <a href="${p.bioUrl}" target="_blank">${p.bioUrlDisplay}</a>
+          `;
+        } else {
+          result.innerText = "No se encontró el perfil.";
+        }
       } catch (err) {
-        console.error("Error:", err);
-        showNotification("error", err.message);
-      } finally {
-        btn.disabled = false;
-        toggleLoader(false);
+        result.innerText = "Error al obtener el perfil.";
+        console.error(err);
       }
     }
-
-    async function mostrarClientes() {
-      const contenedor = document.getElementById("lista-clientes");
-      contenedor.innerHTML = "Cargando...";
-      const snapshot = await getDocs(collection(db, "clientes"));
-      contenedor.innerHTML = "";
-      snapshot.forEach(doc => {
-        const c = doc.data();
-        contenedor.innerHTML += `<div><img src="${c.profileImage}" width="40"> @${c.username} - Seguidores: ${c.followers}</div>`;
-      });
-    }
-
-    document.getElementById("agregar-btn").addEventListener("click", agregarCliente);
-    window.addEventListener("DOMContentLoaded", mostrarClientes);
   </script>
 </body>
 </html>
