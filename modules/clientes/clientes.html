@@ -5,16 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clientes Instagram</title>
   <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .profile-card {
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      background: #1a1a1a;
+      color: #fff;
+      max-width: 360px;
+    }
+    .profile-card img {
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+    }
+    .label { color: #888; font-size: 0.85rem; }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Clientes de Instagram</h1>
-    <input type="text" id="username" placeholder="Usuario de Instagram" />
+    <h1>Buscar cliente de Instagram</h1>
+    <input type="text" id="username" placeholder="Usuario (ej. keniaos)" />
     <button onclick="buscarCliente()">Buscar</button>
     <div id="resultado"></div>
   </div>
 
-  <!-- Conexión global a config.js -->
   <script src="../../config.js"></script>
   <script>
     async function buscarCliente() {
@@ -22,11 +39,11 @@
       const result = document.getElementById("resultado");
 
       if (!user) {
-        result.innerText = "Escribe un nombre de usuario.";
+        result.innerText = "⚠️ Escribe un nombre de usuario.";
         return;
       }
 
-      result.innerText = "Buscando...";
+      result.innerText = "⏳ Buscando perfil...";
 
       try {
         const res = await fetch(`${API.instagram}/api/scrape?username=${user}`);
@@ -35,22 +52,19 @@
         if (data.profile) {
           const p = data.profile;
           result.innerHTML = `
-            <img src="${p.profilePic}" width="100" /><br/>
-            <strong>${p.fullName} (${p.username})</strong><br/>
-            Verificado: ${p.isVerified ? '✅' : '❌'}<br/>
-            Privada: ${p.isPrivate ? '🔒' : '🌐'}<br/>
-            Seguidores: ${p.followers}<br/>
-            Siguiendo: ${p.following}<br/>
-            Publicaciones: ${p.posts}<br/>
-            Bio: ${p.bio || '–'}<br/>
-            Enlace: <a href="${p.bioUrl}" target="_blank">${p.bioUrlDisplay}</a>
+            <div class="profile-card">
+              <img src="${p.profileImage || ''}" />
+              <h2>${p.username || '–'} ${p.isVerified ? '✅' : ''}</h2>
+              <p class="label">Seguidores:</p><p>${p.followers || '–'}</p>
+              <p class="label">Imagen:</p><p><a href="${p.profileImage}" target="_blank">Ver foto</a></p>
+            </div>
           `;
         } else {
-          result.innerText = "No se encontró el perfil.";
+          result.innerHTML = "❌ No se encontró el perfil.";
         }
       } catch (err) {
-        result.innerText = "Error al obtener el perfil.";
-        console.error(err);
+        console.error("[Scrape] Error:", err);
+        result.innerHTML = "⚠️ Error al obtener el perfil.";
       }
     }
   </script>
