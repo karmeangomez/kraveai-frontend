@@ -91,7 +91,7 @@
       const user = document.getElementById("username").value.trim();
       if (!user) return alert("Escribe un nombre de usuario");
 
-      const res = await fetch(`${API.instagram}/api/scrape?username=${user}`);
+      const res = await fetch(`${API.instagram}/api/scrape?username=${user}&turbo=true`);
       const data = await res.json();
 
       if (data.profile) {
