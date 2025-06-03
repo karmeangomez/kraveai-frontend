@@ -78,7 +78,7 @@
 <body>
   <h1>Agregar nuevo cliente</h1>
   <div class="input-area">
-    <input type="text" id="username" placeholder="Usuario (ej. keniaos)" />
+    <input type="text" id="username" placeholder="Usuario (ej. karmeangomez)" />
     <button onclick="agregarCliente()">Añadir</button>
   </div>
 
@@ -111,7 +111,7 @@
     async function eliminarCliente(username) {
       const confirmar = confirm(`¿Eliminar definitivamente a @${username}?`);
       if (!confirmar) return;
-      await fetch(`${API.instagram}/eliminar-cliente?username=${username}`, {
+      await fetch(`${API.instagram}/eliminar-cliente/${username}`, {
         method: "DELETE"
       });
       alert("🗑️ Cliente eliminado");
