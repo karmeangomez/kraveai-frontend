@@ -73,47 +73,86 @@
       margin-top: 0.6rem;
       cursor: pointer;
     }
+    .status-msg {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
   <h1>Agregar nuevo cliente</h1>
   <div class="input-area">
     <input type="text" id="username" placeholder="Usuario (ej. karmeangomez)" />
-    <button onclick="agregarCliente()">Añadir</button>
+    <button id="buscarBtn" onclick="buscarCliente()">Buscar</button>
   </div>
+
+  <div id="status" class="status-msg"></div>
+  <div id="preview"></div>
 
   <h2>Clientes guardados</h2>
   <div id="clientes" class="clientes-container"></div>
 
   <script src="../../config.js"></script>
   <script>
-    async function agregarCliente() {
+    async function buscarCliente() {
+      const btn = document.getElementById("buscarBtn");
       const user = document.getElementById("username").value.trim();
+      const status = document.getElementById("status");
+      const preview = document.getElementById("preview");
+
       if (!user) return alert("Escribe un nombre de usuario");
 
-      const res = await fetch(`${API.instagram}/api/scrape?username=${user}&turbo=true`);
-      const data = await res.json();
+      btn.textContent = "Buscando...";
+      btn.disabled = true;
+      status.textContent = "⏳ Cargando perfil...";
+      preview.innerHTML = "";
 
-      if (data.profile) {
-        await fetch(`${API.instagram}/guardar-cliente`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data.profile)
-        });
-        alert("✅ Cliente guardado");
-        cargarClientes();
-        document.getElementById("username").value = "";
-      } else {
-        alert("❌ No se pudo guardar");
+      try {
+        const res = await fetch(`${API.instagram}/api/scrape?username=${user}&turbo=true`);
+        const data = await res.json();
+
+        if (data.profile) {
+          const c = data.profile;
+          preview.innerHTML = `
+            <div class="cliente-card">
+              <img src="${c.profilePic}" alt="perfil" />
+              <h3>${c.username} ${c.verified ? '<img class="verificado" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" />' : ''}</h3>
+              <p class="label">Seguidores:</p>
+              <p>${c.followers || 'N/A'}</p>
+              <button onclick="guardarCliente(${JSON.stringify(c).replace(/"/g, '&quot;')})">Añadir</button>
+            </div>
+          `;
+          status.textContent = "✅ Perfil encontrado. Puedes añadirlo.";
+        } else {
+          status.textContent = "❌ No se pudo encontrar el perfil o ocurrió un error.";
+        }
+      } catch (err) {
+        status.textContent = "⚠️ Error al buscar el perfil. Intenta de nuevo.";
+        console.error(err);
+      } finally {
+        btn.textContent = "Buscar";
+        btn.disabled = false;
       }
+    }
+
+    async function guardarCliente(data) {
+      await fetch(`${API.instagram}/guardar-cliente`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      alert("✅ Cliente guardado");
+      cargarClientes();
+      document.getElementById("username").value = "";
+      document.getElementById("preview").innerHTML = "";
+      document.getElementById("status").textContent = "";
     }
 
     async function eliminarCliente(username) {
       const confirmar = confirm(`¿Eliminar definitivamente a @${username}?`);
       if (!confirmar) return;
-      await fetch(`${API.instagram}/eliminar-cliente/${username}`, {
-        method: "DELETE"
-      });
+      await fetch(`${API.instagram}/eliminar-cliente/${username}`, { method: "DELETE" });
       alert("🗑️ Cliente eliminado");
       cargarClientes();
     }
@@ -125,8 +164,8 @@
       try {
         const res = await fetch(`${API.instagram}/firestore/clientes`);
         const clientes = await res.json();
-
         contenedor.innerHTML = "";
+
         for (const c of clientes) {
           contenedor.innerHTML += `
             <div class="cliente-card">
