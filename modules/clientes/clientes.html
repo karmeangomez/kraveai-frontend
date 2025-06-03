@@ -26,9 +26,9 @@
 </head>
 <body>
   <div class="container">
-    <h1>Buscar cliente de Instagram</h1>
+    <h1>Buscar y añadir cliente de Instagram</h1>
     <input type="text" id="username" placeholder="Usuario (ej. keniaos)" />
-    <button onclick="buscarCliente()">Buscar</button>
+    <button onclick="buscarCliente()">Añadir cliente</button>
     <div id="resultado"></div>
   </div>
 
@@ -51,14 +51,22 @@
 
         if (data.profile) {
           const p = data.profile;
+
+          // Aquí simulas que se guarda como cliente (puedes conectar esto con Firestore, Firebase, etc.)
+          console.log("✅ Cliente añadido:", p);
+
           result.innerHTML = `
             <div class="profile-card">
-              <img src="${p.profileImage || ''}" />
-              <h2>${p.username || '–'} ${p.isVerified ? '✅' : ''}</h2>
+              <img src="${p.profilePic || ''}" />
+              <h2>${p.username || '–'} ${p.verified ? '✅' : ''}</h2>
+              <p class="label">Nombre:</p><p>${p.fullName || '–'}</p>
               <p class="label">Seguidores:</p><p>${p.followers || '–'}</p>
-              <p class="label">Imagen:</p><p><a href="${p.profileImage}" target="_blank">Ver foto</a></p>
+              <p class="label">Imagen:</p><p><a href="${p.profilePic}" target="_blank">Ver foto</a></p>
+              <p style="color:#4caf50;margin-top:1rem">✅ Cliente añadido correctamente</p>
             </div>
           `;
+
+          // TODO: aquí puedes llamar a tu endpoint /api/guardar-cliente con POST para almacenarlo
         } else {
           result.innerHTML = "❌ No se encontró el perfil.";
         }
