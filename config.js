@@ -1,7 +1,7 @@
-// config.js - Versión final con backend único
+// config.js – Versión oficial para Railway
 window.API = {
-  instagram: "https://kraveai-backend.onrender.com",
-  chat: "https://kraveai-backend.onrender.com",
-  voz: "https://kraveai-backend.onrender.com",
-  bitly: "https://kraveai-backend.onrender.com"
+  instagram: "https://kraveai-backend.up.railway.app",
+  chat: "https://kraveai-backend.up.railway.app",
+  voz: "https://kraveai-backend.up.railway.app",
+  bitly: "https://kraveai-backend.up.railway.app"
 };
