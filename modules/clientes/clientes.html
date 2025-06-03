@@ -26,13 +26,12 @@
 </head>
 <body>
   <div class="container">
-    <h1>Buscar y añadir cliente de Instagram</h1>
+    <h1>Buscar cliente de Instagram</h1>
     <input type="text" id="username" placeholder="Usuario (ej. keniaos)" />
-    <button onclick="buscarCliente()">Añadir cliente</button>
+    <button onclick="buscarCliente()">Buscar</button>
     <div id="resultado"></div>
   </div>
 
-  <script src="../../config.js"></script>
   <script>
     async function buscarCliente() {
       const user = document.getElementById("username").value.trim();
@@ -46,15 +45,11 @@
       result.innerText = "⏳ Buscando perfil...";
 
       try {
-        const res = await fetch(`${API.instagram}/api/scrape?username=${user}`);
+        const res = await fetch(`https://kraveai-backend.up.railway.app/api/scrape?username=${user}`);
         const data = await res.json();
 
         if (data.profile) {
           const p = data.profile;
-
-          // Aquí simulas que se guarda como cliente (puedes conectar esto con Firestore, Firebase, etc.)
-          console.log("✅ Cliente añadido:", p);
-
           result.innerHTML = `
             <div class="profile-card">
               <img src="${p.profilePic || ''}" />
@@ -62,11 +57,9 @@
               <p class="label">Nombre:</p><p>${p.fullName || '–'}</p>
               <p class="label">Seguidores:</p><p>${p.followers || '–'}</p>
               <p class="label">Imagen:</p><p><a href="${p.profilePic}" target="_blank">Ver foto</a></p>
-              <p style="color:#4caf50;margin-top:1rem">✅ Cliente añadido correctamente</p>
+              <p style="color:#4caf50;margin-top:1rem">✅ Cliente obtenido correctamente</p>
             </div>
           `;
-
-          // TODO: aquí puedes llamar a tu endpoint /api/guardar-cliente con POST para almacenarlo
         } else {
           result.innerHTML = "❌ No se encontró el perfil.";
         }
