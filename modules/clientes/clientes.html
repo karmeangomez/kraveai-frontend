@@ -7,145 +7,124 @@
   <link rel="stylesheet" href="../../styles.css" />
   <style>
     body {
-      background: #0e0e0e;
-      font-family: 'Segoe UI', sans-serif;
-      color: #f1f1f1;
+      background: #0d0d0d;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       padding: 2rem;
     }
     h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-      font-weight: 600;
       font-size: 1.8rem;
-      color: #00c8ff;
+      margin-bottom: 1rem;
+    }
+    .input-area {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
     input {
-      padding: 0.5rem;
-      border-radius: 10px;
-      border: 1px solid #333;
-      background: #181818;
-      color: white;
-      width: 220px;
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: none;
+      width: 250px;
     }
     button {
-      background: #00c8ff;
+      background: #00C6FB;
+      color: #fff;
       border: none;
-      padding: 0.5rem 1.2rem;
-      margin-left: 0.5rem;
-      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
       cursor: pointer;
-      color: white;
-      font-weight: bold;
-      transition: background 0.2s ease;
     }
-    button:hover {
-      background: #00a6d6;
-    }
-    .cliente-lista {
-      margin-top: 2rem;
+    .clientes-container {
       display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .profile-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-wrap: wrap;
       gap: 1rem;
+    }
+    .cliente-card {
       background: #1a1a1a;
       padding: 1rem;
       border-radius: 12px;
-      border: 1px solid #2a2a2a;
-      box-shadow: 0 0 10px rgba(0, 200, 255, 0.1);
+      max-width: 280px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-    .profile-card img.avatar {
-      width: 56px;
-      height: 56px;
+    .cliente-card img {
       border-radius: 50%;
+      width: 80px;
+      height: 80px;
       object-fit: cover;
-      border: 2px solid #00c8ff;
+      margin-bottom: 0.5rem;
     }
-    .profile-info {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.3;
-      flex: 1;
+    .verificado {
+      vertical-align: middle;
+      width: 16px;
+      margin-left: 4px;
     }
-    .username {
-      font-size: 1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      color: #ffffff;
-    }
-    .followers {
-      font-size: 0.9rem;
-      color: #a0a0a0;
-    }
-    .delete-btn {
-      background: transparent;
-      border: none;
+    .label {
+      font-size: 0.85rem;
       color: #999;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .delete-btn:hover {
-      color: #ff4c4c;
     }
   </style>
 </head>
 <body>
-  <h1>Agregar Cliente de Instagram</h1>
-  <div style="text-align: center;">
-    <input type="text" id="username" placeholder="ej. keniaos" />
-    <button onclick="buscarCliente()">Buscar</button>
+  <h1>Agregar nuevo cliente</h1>
+  <div class="input-area">
+    <input type="text" id="username" placeholder="Usuario (ej. keniaos)" />
+    <button onclick="agregarCliente()">Añadir</button>
   </div>
-  <div class="cliente-lista" id="clientes"></div>
 
+  <h2>Clientes guardados</h2>
+  <div id="clientes" class="clientes-container"></div>
+
+  <script src="../../config.js"></script>
   <script>
-    async function buscarCliente() {
+    async function agregarCliente() {
       const user = document.getElementById("username").value.trim();
-      const contenedor = document.getElementById("clientes");
+      if (!user) return alert("Escribe un nombre de usuario");
 
-      if (!user) return;
-      try {
-        const res = await fetch(`https://kraveai-backend.up.railway.app/api/scrape?username=${user}`);
-        const data = await res.json();
+      const res = await fetch(`${API.instagram}/api/scrape?username=${user}`);
+      const data = await res.json();
 
-        if (!data.profile || data.profile.username === 'N/A') {
-          alert("No se pudo obtener ese perfil.");
-          return;
-        }
-
-        const p = data.profile;
-
-        const card = document.createElement('div');
-        card.className = 'profile-card';
-
-        const checkIcon = '<img src="https://static.cdninstagram.com/rsrc.php/v3/yx/r/k7sxtlGJhWc.png" width="14" style="margin-bottom:-1px">';
-
-        card.innerHTML = `
-          <img class="avatar" src="${p.profilePic}" alt="avatar" />
-          <div class="profile-info">
-            <div class="username">@${p.username} ${p.verified ? checkIcon : ''}</div>
-            <div class="followers">${p.followers || '0'} seguidores</div>
-          </div>
-          <button class="delete-btn" title="Eliminar" onclick="confirmarEliminacion(this)">✕</button>
-        `;
-
-        contenedor.prepend(card);
+      if (data.profile) {
+        await fetch(`${API.instagram}/guardar-cliente`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data.profile)
+        });
+        alert("✅ Cliente guardado");
+        cargarClientes();
         document.getElementById("username").value = "";
-      } catch (e) {
-        alert("Error al buscar perfil: " + e.message);
+      } else {
+        alert("❌ No se pudo guardar");
       }
     }
 
-    function confirmarEliminacion(btn) {
-      if (confirm("¿Seguro que quieres eliminar este cliente?")) {
-        btn.parentElement.remove();
+    async function cargarClientes() {
+      const contenedor = document.getElementById("clientes");
+      contenedor.innerHTML = "⏳ Cargando...";
+
+      try {
+        const res = await fetch(`${API.instagram}/firestore/clientes`);
+        const clientes = await res.json();
+
+        contenedor.innerHTML = "";
+        for (const c of clientes) {
+          contenedor.innerHTML += `
+            <div class="cliente-card">
+              <img src="${c.profilePic}" alt="perfil" />
+              <h3>${c.username} ${c.verified ? '<img class="verificado" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" />' : ''}</h3>
+              <p class="label">Seguidores:</p>
+              <p>${c.followers || 'N/A'}</p>
+            </div>
+          `;
+        }
+      } catch (err) {
+        contenedor.innerHTML = "⚠️ No se pudieron cargar los clientes";
+        console.error(err);
       }
     }
+
+    cargarClientes();
   </script>
 </body>
 </html>
