@@ -35,6 +35,13 @@
       border-radius: 6px;
       cursor: pointer;
     }
+    .crear-cuentas-btn {
+      background: #4CAF50; /* Color verde para diferenciar */
+      margin-top: 1rem;
+    }
+    .crear-cuentas-btn:hover {
+      background: #45a049;
+    }
     .clientes-container {
       display: flex;
       flex-wrap: wrap;
@@ -78,6 +85,22 @@
       font-size: 0.95rem;
       color: #ccc;
     }
+    .crear-cuentas-section {
+      margin-top: 2rem;
+    }
+    .crear-cuentas-section input[type="number"] {
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: none;
+      width: 100px;
+      margin-right: 1rem;
+    }
+    .crear-cuentas-section button {
+      background: #008CBA; /* Azul para "Aceptar" */
+    }
+    .crear-cuentas-section button:hover {
+      background: #007B9A;
+    }
   </style>
 </head>
 <body>
@@ -92,6 +115,17 @@
 
   <h2>Clientes guardados</h2>
   <div id="clientes" class="clientes-container"></div>
+
+  <!-- Nueva sección para Crear Cuentas -->
+  <div class="crear-cuentas-section">
+    <h2>Crear Cuentas</h2>
+    <div>
+      <label for="accountCount">Número de cuentas (1-10):</label>
+      <input type="number" id="accountCount" min="1" max="10" value="3">
+      <button onclick="crearCuentas()">Aceptar</button>
+    </div>
+    <div id="crear-result" class="status-msg"></div>
+  </div>
 
   <script src="../../config.js"></script>
   <script>
@@ -120,7 +154,7 @@
               <h3>${c.username} ${c.verified ? '<img class="verificado" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" />' : ''}</h3>
               <p class="label">Seguidores:</p>
               <p>${c.followers || 'N/A'}</p>
-              <button onclick="guardarCliente(${JSON.stringify(c).replace(/"/g, '&quot;')})">Añadir</button>
+              <button onclick="guardarCliente(${JSON.stringify(c).replace(/"/g, '"')})">Añadir</button>
             </div>
           `;
           status.textContent = "✅ Perfil encontrado. Puedes añadirlo.";
@@ -180,6 +214,47 @@
       } catch (err) {
         contenedor.innerHTML = "⚠️ No se pudieron cargar los clientes";
         console.error(err);
+      }
+    }
+
+    async function crearCuentas() {
+      const count = parseInt(document.getElementById('accountCount').value);
+      const resultDiv = document.getElementById('crear-result');
+      resultDiv.textContent = 'Creando cuentas...';
+
+      if (count < 1 || count > 10) {
+        resultDiv.textContent = 'Error: El número de cuentas debe estar entre 1 y 10.';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API.instagram}/create-accounts`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ count }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          resultDiv.innerHTML = '<h3>Cuentas Creadas:</h3>';
+          data.accounts.forEach((account, index) => {
+            resultDiv.innerHTML += `
+              <p><strong>Cuenta ${index + 1}:</strong></p>
+              <p>Usuario: ${account.username}</p>
+              <p>Contraseña: ${account.password}</p>
+              <p>Email: ${account.email}</p>
+              <p>Nombre: ${account.fullName}</p>
+              <p>Creada: ${new Date(account.createdAt).toLocaleString()}</p>
+              <hr>
+            `;
+          });
+        } else {
+          resultDiv.textContent = `Error: ${data.error || 'No se pudieron crear las cuentas.'} Detalles: ${data.details || ''}`;
+        }
+      } catch (error) {
+        resultDiv.textContent = `Error al conectar con el servidor: ${error.message}`;
       }
     }
 
