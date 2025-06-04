@@ -7,7 +7,6 @@
   <title>KraveAI</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Estilos específicos para el nuevo diseño */
     .container {
       display: flex;
       flex-direction: column;
@@ -119,7 +118,6 @@
     .send-button button:hover {
       background: #e6003c;
     }
-    /* Submenú para Crear Cuentas */
     .submenu {
       display: none;
       position: absolute;
@@ -184,14 +182,14 @@
 <body>
   <div class="container">
     <div class="header">
-      <img src="assets/icons/kraveai-logo.svg" alt="KraveAI Logo" />
+      <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" alt="KraveAI Logo" />
       <h1>KraveAI</h1>
       <p>Domina todas tus redes con IA</p>
     </div>
 
     <div class="social-buttons">
       <a href="#" class="social-button" onclick="toggleSubmenu('instagram-menu')">
-        <img src="assets/icons/instagram.svg" alt="Instagram" /> Instagram
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" /> Instagram
       </a>
       <div id="instagram-menu" class="submenu">
         <a href="modules/instagram/likes.html">❤️ Likes</a>
@@ -207,35 +205,35 @@
       </div>
 
       <a href="#" class="social-button" onclick="toggleSubmenu('tiktok-menu')">
-        <img src="assets/icons/tiktok.svg" alt="TikTok" /> TikTok
+        <img src="https://cdn-icons-png.flaticon.com/512/3045/3045665.png" alt="TikTok" /> TikTok
       </a>
       <div id="tiktok-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
       <a href="#" class="social-button" onclick="toggleSubmenu('youtube-menu')">
-        <img src="assets/icons/youtube.svg" alt="YouTube" /> YouTube
+        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" /> YouTube
       </a>
       <div id="youtube-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
       <a href="#" class="social-button" onclick="toggleSubmenu('spotify-menu')">
-        <img src="assets/icons/spotify.svg" alt="Spotify" /> Spotify
+        <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" /> Spotify
       </a>
       <div id="spotify-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
       <a href="#" class="social-button" onclick="toggleSubmenu('threads-menu')">
-        <img src="assets/icons/threads.svg" alt="Threads" /> Threads
+        <img src="https://cdn-icons-png.flaticon.com/512/9068/9068922.png" alt="Threads" /> Threads
       </a>
       <div id="threads-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
       <a href="#" class="social-button" onclick="toggleSubmenu('bestia-menu')">
-        <img src="assets/icons/lobo.svg" alt="Modo Bestia" /> Modo Bestia
+        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050266.png" alt="Modo Bestia" /> Modo Bestia
       </a>
       <div id="bestia-menu" class="submenu">
         <a href="#">🔥 Activar cruzado</a>
@@ -278,7 +276,6 @@
       const submenu = document.getElementById(menuId);
       submenu.classList.toggle('active');
 
-      // Ocultar otros submenús
       document.querySelectorAll('.submenu').forEach(otherMenu => {
         if (otherMenu !== submenu) otherMenu.classList.remove('active');
       });
