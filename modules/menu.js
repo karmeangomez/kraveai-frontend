@@ -1,25 +1,27 @@
 // menu.js - Manejo de submenús para KraveAI
-document.querySelectorAll('.menu-toggle').forEach(button => {
-  button.addEventListener('click', () => {
-    const targetId = button.getAttribute('data-target');
-    const submenu = document.getElementById(targetId);
-    const isVisible = submenu.style.display === 'block';
-
-    // Ocultar todos los submenús primero
-    document.querySelectorAll('.submenu').forEach(menu => {
-      menu.style.display = 'none';
-    });
-
-    // Mostrar u ocultar el submenú actual
-    submenu.style.display = isVisible ? 'none' : 'block';
+document.querySelectorAll('.social-button').forEach(button => {
+  button.addEventListener('click', (event) => {
+    const menuId = button.getAttribute('onclick').match(/'([^']+)'/)[1];
+    toggleSubmenu(event, menuId);
   });
 });
 
+function toggleSubmenu(event, menuId) {
+  event.preventDefault();
+  const submenu = document.getElementById(menuId);
+  submenu.classList.toggle('active');
+
+  // Ocultar otros submenús
+  document.querySelectorAll('.submenu').forEach(otherMenu => {
+    if (otherMenu !== submenu) otherMenu.classList.remove('active');
+  });
+}
+
 // Cerrar submenús al hacer clic fuera
 document.addEventListener('click', (event) => {
-  if (!event.target.closest('.menu-toggle') && !event.target.closest('.submenu')) {
+  if (!event.target.closest('.social-button') && !event.target.closest('.submenu')) {
     document.querySelectorAll('.submenu').forEach(menu => {
-      menu.style.display = 'none';
+      menu.classList.remove('active');
     });
   }
 });
