@@ -3,15 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0d0d" />
   <title>KraveAI</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
+    /* Estilos específicos para el nuevo diseño */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      min-height: 100vh;
+      background: #0d0d0d;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 0.5rem;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    .header p {
+      font-size: 0.8rem;
+      color: #a0a0a0;
+      margin: 0;
+    }
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 2rem;
+    }
+    .social-button {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    .social-button:hover {
+      background: #222;
+    }
+    .social-button img {
+      width: 24px;
+      height: 24px;
+      margin-right: 1rem;
+    }
+    .clients-section {
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 2rem;
+    }
+    .clients-section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .client-item {
+      display: flex;
+      align-items: center;
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .client-item img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 1rem;
+    }
+    .client-item p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    .client-item span {
+      color: #a0a0a0;
+      font-size: 0.8rem;
+    }
+    .send-button {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      width: 100%;
+      max-width: 300px;
+    }
+    .send-button p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    .send-button button {
+      background: #ff2d55;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .send-button button:hover {
+      background: #e6003c;
+    }
+    /* Submenú para Crear Cuentas */
+    .submenu {
+      display: none;
+      position: absolute;
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+    .submenu.active {
+      display: block;
+    }
+    .submenu a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+    .submenu a:hover {
+      background: #333;
+    }
     .crear-cuentas-section {
       display: none;
       padding: 1rem;
       background: #1a1a1a;
       border-radius: 6px;
       margin-top: 1rem;
+      width: 100%;
+      max-width: 300px;
     }
     .crear-cuentas-section.active {
       display: block;
@@ -43,15 +183,17 @@
 </head>
 <body>
   <div class="container">
-    <div class="refresh-btn" onclick="location.reload()">⟳</div>
-    <div class="core"></div>
+    <div class="header">
+      <img src="assets/icons/kraveai-logo.svg" alt="KraveAI Logo" />
+      <h1>KraveAI</h1>
+      <p>Domina todas tus redes con IA</p>
+    </div>
 
-    <div class="main-buttons">
-      <button class="menu-toggle" data-target="instagram-menu">
-        <img src="assets/icons/instagram.svg" />Instagram
-      </button>
+    <div class="social-buttons">
+      <a href="#" class="social-button" onclick="toggleSubmenu('instagram-menu')">
+        <img src="assets/icons/instagram.svg" alt="Instagram" /> Instagram
+      </a>
       <div id="instagram-menu" class="submenu">
-        <a href="modules/clientes/clientes.html">👥 Clientes</a>
         <a href="modules/instagram/likes.html">❤️ Likes</a>
         <a href="modules/instagram/comments.html">💬 Comentarios</a>
         <a href="modules/instagram/views.html">👁 Vistas</a>
@@ -64,40 +206,61 @@
         <a href="#" onclick="toggleCrearCuentas(event)">➕ Crear cuentas</a>
       </div>
 
-      <button class="menu-toggle" data-target="tiktok-menu">
-        <img src="assets/icons/tiktok.svg" />TikTok
-      </button>
+      <a href="#" class="social-button" onclick="toggleSubmenu('tiktok-menu')">
+        <img src="assets/icons/tiktok.svg" alt="TikTok" /> TikTok
+      </a>
       <div id="tiktok-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
-      <button class="menu-toggle" data-target="youtube-menu">
-        <img src="assets/icons/youtube.svg" />YouTube
-      </button>
+      <a href="#" class="social-button" onclick="toggleSubmenu('youtube-menu')">
+        <img src="assets/icons/youtube.svg" alt="YouTube" /> YouTube
+      </a>
       <div id="youtube-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
-      <button class="menu-toggle" data-target="spotify-menu">
-        <img src="assets/icons/spotify.svg" />Spotify
-      </button>
+      <a href="#" class="social-button" onclick="toggleSubmenu('spotify-menu')">
+        <img src="assets/icons/spotify.svg" alt="Spotify" /> Spotify
+      </a>
       <div id="spotify-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
-      <button class="menu-toggle" data-target="threads-menu">
-        <img src="assets/icons/threads.svg" />Threads
-      </button>
+      <a href="#" class="social-button" onclick="toggleSubmenu('threads-menu')">
+        <img src="assets/icons/threads.svg" alt="Threads" /> Threads
+      </a>
       <div id="threads-menu" class="submenu">
         <a href="#">Próximamente...</a>
       </div>
 
-      <button class="menu-toggle" data-target="bestia-menu">
-        <img src="assets/icons/lobo.svg" />Modo Bestia
-      </button>
+      <a href="#" class="social-button" onclick="toggleSubmenu('bestia-menu')">
+        <img src="assets/icons/lobo.svg" alt="Modo Bestia" /> Modo Bestia
+      </a>
       <div id="bestia-menu" class="submenu">
         <a href="#">🔥 Activar cruzado</a>
       </div>
+    </div>
+
+    <div class="clients-section">
+      <h2>Clientes recientes</h2>
+      <div class="client-item">
+        <img src="https://via.placeholder.com/40" alt="Ariana" />
+        <div>
+          <p>arianaoficial <span>Instagram</span></p>
+        </div>
+      </div>
+      <div class="client-item">
+        <img src="https://via.placeholder.com/40" alt="Plenkay" />
+        <div>
+          <p>plenkay <span>YouTube</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="send-button">
+      <p>¿Qué quieres automatizar hoy?</p>
+      <button>Enviar</button>
     </div>
 
     <div id="crear-cuentas-section" class="crear-cuentas-section">
@@ -110,6 +273,17 @@
 
   <script src="modules/menu.js"></script>
   <script>
+    function toggleSubmenu(event, menuId) {
+      event.preventDefault();
+      const submenu = document.getElementById(menuId);
+      submenu.classList.toggle('active');
+
+      // Ocultar otros submenús
+      document.querySelectorAll('.submenu').forEach(otherMenu => {
+        if (otherMenu !== submenu) otherMenu.classList.remove('active');
+      });
+    }
+
     function toggleCrearCuentas(event) {
       event.preventDefault();
       const section = document.getElementById('crear-cuentas-section');
@@ -119,10 +293,10 @@
     async function crearCuentas() {
       const count = parseInt(document.getElementById('accountCount').value);
       const resultDiv = document.getElementById('crear-result');
-      resultDiv.textContent = 'Creando cuentas...';
+      resultDiv.innerHTML = '<span>Creando cuentas...</span>';
 
       if (count < 1 || count > 10) {
-        resultDiv.textContent = 'Error: El número de cuentas debe estar entre 1 y 10.';
+        resultDiv.innerHTML = '<span class="error-message">Error: El número de cuentas debe estar entre 1 y 10.</span>';
         return;
       }
 
@@ -137,7 +311,7 @@
 
         const data = await response.json();
         if (data.success) {
-          resultDiv.innerHTML = '<h3>Cuentas Creadas:</h3>';
+          resultDiv.innerHTML = '<h3 class="success-message">Cuentas Creadas:</h3>';
           data.accounts.forEach((account, index) => {
             resultDiv.innerHTML += `
               <p><strong>Cuenta ${index + 1}:</strong></p>
@@ -150,4 +324,15 @@
             `;
           });
         } else {
-          resultDiv.textContent = `Error: ${data.error || 'No se pudieron crear las cuentas.'} Detalles: ${data.details || ''}`;
+          resultDiv.innerHTML = `<span class="error-message">Error: ${data.error || 'No se pudieron crear las cuentas.'} Detalles: ${data.details || ''}</span>`;
+          if (data.details && data.details.includes('CAPTCHA')) {
+            resultDiv.innerHTML += '<p class="error-message">⚠️ Instagram solicitó un CAPTCHA. Intenta de nuevo más tarde.</p>';
+          }
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error-message">Error al conectar con el servidor: ${error.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
