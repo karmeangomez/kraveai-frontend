@@ -127,6 +127,11 @@
       a.click();
       URL.revokeObjectURL(url);
     }
+
+    // Keep-alive para backend (Railway)
+    setInterval(() => {
+      fetch("https://kraveai-backend.up.railway.app/health").catch(() => {});
+    }, 30000);
   </script>
 </body>
 </html>
