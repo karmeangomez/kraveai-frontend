@@ -1,10 +1,10 @@
-// config.js – Versión oficial para Railway
+// config.js – Versión oficial para Raspberry Pi
 
 window.API = {
-  instagram: "https://kraveai-backend.up.railway.app",
-  chat: "https://kraveai-backend.up.railway.app",
-  voz: "https://kraveai-backend.up.railway.app",
-  bitly: "https://kraveai-backend.up.railway.app",
-  crearCuenta: "https://kraveai-backend.up.railway.app/crear-cuenta",
-  crearLote: "https://kraveai-backend.up.railway.app/create-accounts"
+  instagram: "http://192.168.1.197:3000",
+  chat: "http://192.168.1.197:3000",
+  voz: "http://192.168.1.197:3000",
+  bitly: "http://192.168.1.197:3000",
+  crearCuenta: "http://192.168.1.197:3000/crear-cuenta",
+  crearLote: "http://192.168.1.197:3000/create-accounts"
 };
