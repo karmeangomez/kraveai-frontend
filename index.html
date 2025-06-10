@@ -5,26 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d0d0d" />
   <title>KraveAI</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
     body, html {
-      margin: 0; padding: 0; background: #0d0d0d; color: white;
+      margin: 0;
+      padding: 0;
+      background: #0d0d0d;
+      color: white;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     .container {
-      display: flex; flex-direction: column; align-items: center; padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
     }
-    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-    p { font-size: 0.9rem; color: #a0a0a0; margin-bottom: 2rem; }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 0.9rem;
+      color: #a0a0a0;
+      margin-bottom: 2rem;
+    }
     select, button {
-      padding: 0.6rem; border: none; border-radius: 6px; font-size: 0.9rem;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
     }
-    select { background: #1a1a1a; color: white; margin-right: 0.5rem; }
-    button { background: #ff2d55; color: white; cursor: pointer; }
-    button:hover { background: #e6003c; }
-    .controls { margin-bottom: 1.5rem; }
+    select {
+      background: #1a1a1a;
+      color: white;
+      margin-right: 0.5rem;
+    }
+    button {
+      background: #ff2d55;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #e6003c;
+    }
+    .controls {
+      margin-bottom: 1.5rem;
+    }
     pre {
-      background: #1a1a1a; padding: 1rem; border-radius: 8px; max-width: 100%;
-      overflow-x: auto; font-size: 0.75rem; white-space: pre-wrap;
+      background: #1a1a1a;
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 100%;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -40,10 +74,11 @@
         <option value="5">5 cuentas</option>
         <option value="10">10 cuentas</option>
         <option value="25">25 cuentas</option>
+        <option value="50">50 cuentas</option>
+        <option value="100">100 cuentas</option>
       </select>
       <button onclick="crearLote()">Crear</button>
-      <button onclick="verEstado()">Ver estado</button>
-      <button onclick="mostrarCuentas()">Ver cuentas guardadas</button>
+      <button onclick="descargarUsuarios()" style="background:#444; margin-left: 0.5rem;">Descargar .txt</button>
     </div>
 
     <pre id="resultado">⬇️ Aquí aparecerán las cuentas creadas…</pre>
@@ -51,10 +86,7 @@
 
   <script>
     window.API = {
-      instagram: "http://192.168.1.197:3000",
-      chat: "http://192.168.1.197:3000",
-      voz: "http://192.168.1.197:3000",
-      bitly: "http://192.168.1.197:3000",
+      instagram: "http://192.168.1.197:3000", // IP local de tu Raspberry
       crearCuenta: "http://192.168.1.197:3000/crear-cuenta",
       crearLote: "http://192.168.1.197:3000/create-accounts"
     };
@@ -63,39 +95,53 @@
 
     async function crearLote() {
       const cantidad = parseInt(document.getElementById('cantidad').value);
-      const res = await fetch(`${window.API.crearLote}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count: cantidad })
-      });
+      try {
+        const res = await fetch(`${window.API.crearLote}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ count: cantidad })
+        });
 
-      const data = await res.json();
-      cuentasGeneradas = data.accounts || [];
+        const data = await res.json();
+        if (!data.success) {
+          document.getElementById('resultado').textContent = `❌ Error: ${data.error || 'No se pudo crear ninguna cuenta.'}`;
+          return;
+        }
 
-      const salida = cuentasGeneradas.map(c =>
-        `👤 Usuario: ${c.usuario || c.username}\n📧 Email: ${c.email || 'no-disponible'}\n🔐 Contraseña: ${c.password || '12345678'}\n---`
-      ).join('\n');
+        cuentasGeneradas = data.accounts || [];
 
-      document.getElementById('resultado').textContent = salida;
+        const salida = cuentasGeneradas.map(c =>
+          `✅ Usuario: ${c.usuario || c.username}\n📧 Email: ${c.email || 'no-disponible'}\n🔐 Contraseña: ${c.password || '12345678'}\n---`
+        ).join('\n');
+
+        document.getElementById('resultado').textContent = salida;
+
+      } catch (err) {
+        document.getElementById('resultado').textContent = `❌ Error al contactar el servidor: ${err.message}`;
+      }
     }
 
-    async function verEstado() {
-      const res = await fetch(`${window.API.instagram}/health`);
-      const estado = await res.json();
+    function descargarUsuarios() {
+      if (!cuentasGeneradas.length) {
+        alert("⚠️ Aún no se han generado cuentas.");
+        return;
+      }
 
-      document.getElementById('resultado').textContent =
-        `🟢 Estado: ${estado.status}\n🧠 Memoria: ${Math.round(estado.memory / 1024 / 1024)} MB\n⏱️ Uptime: ${Math.round(estado.uptime)} segundos`;
-    }
+      const contenido = [
+        "🔐 Cuentas creadas por KraveAI",
+        "==============================",
+        ...cuentasGeneradas.map(c =>
+          `Usuario: ${c.usuario || c.username}\nEmail: ${c.email || 'no-disponible'}\nContraseña: ${c.password || '12345678'}\n---`
+        )
+      ].join('\n');
 
-    async function mostrarCuentas() {
-      const res = await fetch(`${window.API.instagram}/cuentas`);
-      const cuentas = await res.json();
-
-      const salida = cuentas.map(c =>
-        `👤 Usuario: ${c.usuario || c.username}\n📧 Email: ${c.email || 'no-disponible'}\n🔐 Contraseña: ${c.password || '12345678'}\n---`
-      ).join('\n');
-
-      document.getElementById('resultado').textContent = salida || "⚠️ No hay cuentas guardadas.";
+      const blob = new Blob([contenido], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cuentas_kraveai_${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>
