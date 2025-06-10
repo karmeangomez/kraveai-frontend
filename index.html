@@ -2,127 +2,55 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>KraveAI - Instagram</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <title>KraveAI</title>
   <link rel="stylesheet" href="assets/style.css" />
-  <style>
-    body {
-      background: #000;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .header, .submenu, .crear-cuentas, .footer {
-      padding: 1.2rem;
-    }
-    .submenu button {
-      display: block;
-      width: 100%;
-      padding: 1rem;
-      margin: 0.5rem 0;
-      background: #111;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .submenu button:hover {
-      background: #2a7cf7;
-    }
-    .crear-cuentas {
-      display: none;
-      background: #111;
-      border-radius: 10px;
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-    .crear-cuentas select, .crear-cuentas button {
-      width: 100%;
-      padding: 0.8rem;
-      margin-top: 0.6rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: none;
-    }
-    .crear-cuentas button {
-      background: #ff2d55;
-      color: white;
-    }
-    .resultado {
-      margin-top: 1rem;
-      white-space: pre-wrap;
-      background: #1a1a1a;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-  </style>
 </head>
 <body>
-  <div class="header">
-    <h1>KraveAI - Instagram</h1>
-    <p>Automatiza tus acciones con IA</p>
-  </div>
+  <header class="header">
+    <img src="assets/icons/logo.png" class="logo" alt="KraveAI Logo" />
+    <h1 class="krave-title">KraveAI</h1>
+    <p class="subtitle">Domina todas tus redes con IA</p>
+  </header>
 
-  <div class="submenu">
-    <button onclick="alert('Clientes')">Clientes</button>
-    <button onclick="alert('Servicios')">Servicios</button>
-    <button onclick="alert('Likes')">Likes</button>
-    <button onclick="alert('Followers')">Followers</button>
-    <button onclick="alert('Views')">Views</button>
-    <button onclick="alert('Comentarios')">Comentarios</button>
-    <button onclick="alert('Compartidos')">Compartidos</button>
-    <button onclick="document.querySelector('.crear-cuentas').style.display = 'block'">➕ Crear cuentas</button>
-  </div>
+  <div class="circle-animation"></div>
 
-  <div class="crear-cuentas">
-    <h3>Crear cuentas de Instagram</h3>
-    <select id="cantidad">
-      <option value="1">1 cuenta</option>
-      <option value="5">5 cuentas</option>
-      <option value="10">10 cuentas</option>
-      <option value="25">25 cuentas</option>
-      <option value="50">50 cuentas</option>
-    </select>
-    <button onclick="crearCuentas()">Crear ahora</button>
-    <div class="resultado" id="resultado">⬇️ Aquí aparecerán las cuentas creadas…</div>
-  </div>
+  <section class="social-buttons">
+    <h2>Redes sociales</h2>
+    <div class="grid">
+      <a class="btn" href="modules/instagram/index.html"><img src="assets/icons/instagram.png" /> Instagram</a>
+      <a class="btn" href="modules/tiktok/index.html"><img src="assets/icons/tiktok.png" /> TikTok</a>
+      <a class="btn" href="modules/youtube/index.html"><img src="assets/icons/youtube.png" /> YouTube</a>
+      <a class="btn" href="modules/spotify/index.html"><img src="assets/icons/spotify.png" /> Spotify</a>
+      <a class="btn" href="modules/threads/index.html"><img src="assets/icons/threads.png" /> Threads</a>
+      <a class="btn" href="modules/bestia/index.html"><img src="assets/icons/bestia.png" /> Modo Bestia</a>
+    </div>
+  </section>
 
-  <div class="footer">
-    <p style="color: #666">© KraveAI - Modo Instagram</p>
-  </div>
+  <section class="clientes">
+    <h2>Clientes recientes</h2>
+    <div class="client-card">
+      <img src="https://i.pravatar.cc/100?img=1" alt="ariana" />
+      <div>
+        <strong>arianaoficial</strong><br />
+        <span>Instagram</span>
+      </div>
+      <span class="icon">👤</span>
+    </div>
+    <div class="client-card">
+      <img src="https://i.pravatar.cc/100?img=2" alt="plenkay" />
+      <div>
+        <strong>plenkay</strong><br />
+        <span>YouTube</span>
+      </div>
+      <span class="icon">📺</span>
+    </div>
+  </section>
 
-  <script>
-    async function crearCuentas() {
-      const cantidad = parseInt(document.getElementById('cantidad').value);
-      document.getElementById('resultado').textContent = '⏳ Creando cuentas...';
-
-      try {
-        const res = await fetch("http://localhost:3000/create-accounts", {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ count: cantidad })
-        });
-
-        const data = await res.json();
-        const cuentas = data.accounts || [];
-
-        if (!cuentas.length) {
-          document.getElementById('resultado').textContent = '❌ No se pudieron crear cuentas.';
-          return;
-        }
-
-        const resultado = cuentas.map(c =>
-          `👤 Usuario: ${c.usuario || c.username}\n📧 Email: ${c.email}\n🔐 Clave: ${c.password}\n---`
-        ).join('\n');
-
-        document.getElementById('resultado').textContent = resultado;
-      } catch (err) {
-        document.getElementById('resultado').textContent = '❌ Error al contactar el servidor.';
-      }
-    }
-  </script>
+  <footer class="input-bar">
+    <input type="text" placeholder="¿Qué quieres automatizar hoy?" />
+    <button>Enviar</button>
+  </footer>
 </body>
 </html>
