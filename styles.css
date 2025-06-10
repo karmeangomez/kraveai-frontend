@@ -1,9 +1,10 @@
-/* styles.css - Estilos para el nuevo diseño móvil de KraveAI */
-body {
+/* styles.css - KraveAI frontend */
+
+body, html {
   margin: 0;
   padding: 0;
   background: #0d0d0d;
-  color: #fff;
+  color: white;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -11,202 +12,53 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
-  min-height: 100vh;
+  padding: 2rem;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.header img {
-  width: 40px;
-  height: 40px;
+h1 {
+  font-size: 1.8rem;
   margin-bottom: 0.5rem;
 }
 
-.header h1 {
-  font-size: 1.5rem;
-  margin: 0;
-}
-
-.header p {
-  font-size: 0.8rem;
+p {
+  font-size: 0.9rem;
   color: #a0a0a0;
-  margin: 0;
-}
-
-.social-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  width: 100%;
-  max-width: 300px;
   margin-bottom: 2rem;
 }
 
-.social-button {
-  background: #1a1a1a;
-  border-radius: 10px;
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-decoration: none;
-  color: #fff;
-  font-size: 1rem;
-  transition: background 0.3s;
-}
-
-.social-button:hover {
-  background: #222;
-}
-
-.social-button img {
-  width: 24px;
-  height: 24px;
-  margin-right: 1rem;
-}
-
-.clients-section {
-  width: 100%;
-  max-width: 300px;
-  margin-bottom: 2rem;
-}
-
-.clients-section h2 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-
-.client-item {
-  display: flex;
-  align-items: center;
-  background: #1a1a1a;
-  border-radius: 10px;
-  padding: 0.8rem;
-  margin-bottom: 0.8rem;
-}
-
-.client-item img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 1rem;
-}
-
-.client-item p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.client-item span {
-  color: #a0a0a0;
-  font-size: 0.8rem;
-}
-
-.send-button {
-  background: #1a1a1a;
-  border-radius: 10px;
-  padding: 1rem;
-  text-align: center;
-  width: 100%;
-  max-width: 300px;
-}
-
-.send-button p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.send-button button {
-  background: #ff2d55;
+select, button {
+  padding: 0.6rem;
   border: none;
-  padding: 0.5rem 1rem;
   border-radius: 6px;
-  color: #fff;
-  cursor: pointer;
   font-size: 0.9rem;
 }
 
-.send-button button:hover {
+select {
+  background: #1a1a1a;
+  color: white;
+  margin-right: 0.5rem;
+}
+
+button {
+  background: #ff2d55;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
   background: #e6003c;
 }
 
-.submenu {
-  display: none;
-  position: absolute;
+.controls {
+  margin-bottom: 1.5rem;
+}
+
+pre {
   background: #1a1a1a;
-  border-radius: 6px;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  z-index: 10;
-}
-
-.submenu.active {
-  display: block;
-}
-
-.submenu a {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: background 0.3s;
-}
-
-.submenu a:hover {
-  background: #333;
-}
-
-.crear-cuentas-section {
-  display: none;
   padding: 1rem;
-  background: #1a1a1a;
-  border-radius: 6px;
-  margin-top: 1rem;
-  width: 100%;
-  max-width: 300px;
-}
-
-.crear-cuentas-section.active {
-  display: block;
-}
-
-.crear-cuentas-section input[type="number"] {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: none;
-  width: 80px;
-  margin-right: 1rem;
-}
-
-.crear-cuentas-section button {
-  background: #00C6FB;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.crear-cuentas-section button:hover {
-  background: #00b0e4;
-}
-
-.crear-result {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #ccc;
-}
-
-.error-message {
-  color: #ff3a3a;
-}
-
-.success-message {
-  color: #4CAF50;
+  border-radius: 8px;
+  max-width: 100%;
+  overflow-x: auto;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
 }
