@@ -1,99 +1,62 @@
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #000;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.header, .ios-header {
-  background-color: #121212;
-  padding: 1em;
-  text-align: center;
-  border-bottom: 1px solid #222;
-}
-
-.krave-title, .ios-title {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 0.2em 0;
-}
-
-.subtitle {
-  color: #888;
-  font-size: 0.9em;
-}
-
-.grid, .ios-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1em;
-  padding: 1em;
-}
-
-.grid button, .ios-grid button, .btn {
-  background-color: #1c1c1c;
-  border-radius: 12px;
-  color: #fff;
-  padding: 0.8em;
-  border: none;
-  cursor: pointer;
+.ios-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5em;
+  z-index: 1000;
 }
 
-.grid button:hover, .ios-grid button:hover, .btn:hover {
-  background-color: #333;
-}
-
-.footer {
-  padding: 1em;
+.modal-content {
+  background: #111;
+  padding: 1.5em;
+  border-radius: 12px;
   text-align: center;
-  background-color: #121212;
-  border-top: 1px solid #222;
+  width: 80%;
+  max-width: 400px;
 }
 
-.clientes, .social-buttons, .ios-section {
-  padding: 1em;
-  background-color: #111;
-  margin-bottom: 1em;
-  border-radius: 12px;
+.modal-content h3 {
+  margin: 0 0 1em;
+  font-size: 1.2em;
 }
 
-.client-card, .ios-client-card {
-  background-color: #1c1c1c;
-  padding: 0.8em;
-  border-radius: 12px;
+.modal-content p {
+  margin: 0 0 1.5em;
+  color: #bbb;
+}
+
+.ios-form {
   display: flex;
-  align-items: center;
-  gap: 0.7em;
-  margin-bottom: 0.8em;
+  flex-direction: column;
+  gap: 1em;
 }
 
-.input-bar {
-  display: flex;
-  padding: 1em;
-  background-color: #111;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+.ios-form label {
+  font-size: 0.95em;
+  color: #ccc;
 }
 
-.input-bar input {
-  flex: 1;
+.ios-form input,
+.ios-form select {
   padding: 0.8em;
-  border-radius: 12px 0 0 12px;
+  border: none;
+  border-radius: 12px;
   background-color: #222;
   color: white;
-  border: none;
+  font-size: 0.95em;
 }
 
-.input-bar button {
-  padding: 0.8em;
-  border-radius: 0 12px 12px 0;
-  background-color: #2a7cf7;
-  color: white;
-  border: none;
+.ios-button-group {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+}
+
+.btn.secondary {
+  background-color: #333;
 }
