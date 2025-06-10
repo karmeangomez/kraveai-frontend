@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Cuentas - KraveAI</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <style>
+    body { background: #0d0d0d; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .container { max-width: 500px; margin: 2em auto; padding: 1.5em; background: #111; border-radius: 12px; }
+    h2 { text-align: center; color: #ff2d55; }
+    label { display: block; margin-top: 1em; margin-bottom: 0.5em; font-weight: bold; }
+    select, button {
+      width: 100%;
+      padding: 0.8em;
+      margin-top: 0.5em;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    select { background: #222; color: white; }
+    button { background-color: #ff2d55; color: white; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #e6003c; }
+    pre { background: #1a1a1a; padding: 1em; border-radius: 10px; margin-top: 1.5em; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Crear Cuentas de Instagram</h2>
+    <label for="cantidad">Cantidad de cuentas a crear:</label>
+    <select id="cantidad">
+      <option value="1">1 cuenta</option>
+      <option value="5">5 cuentas</option>
+      <option value="10">10 cuentas</option>
+      <option value="20">20 cuentas</option>
+    </select>
+    <button onclick="crearCuentas()">Crear</button>
+    <pre id="resultado">⬇️ Aquí aparecerán las cuentas creadas…</pre>
+  </div>
+
+  <script>
+    async function crearCuentas() {
+      const cantidad = parseInt(document.getElementById('cantidad').value);
+      const resultado = document.getElementById('resultado');
+      resultado.textContent = '⏳ Creando cuentas...';
+
+      try {
+        const res = await fetch('http://192.168.1.197:3000/create-accounts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ count: cantidad })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          const texto = data.accounts.map(c =>
+            `👤 Usuario: ${c.usuario || c.username}\n📧 Email: ${c.email || 'no-disponible'}\n🔐 Contraseña: ${c.password || '12345678'}\n---`
+          ).join('\n');
+          resultado.textContent = texto;
+        } else {
+          resultado.textContent = `❌ Error: ${data.error || 'Error desconocido'}`;
+        }
+      } catch (err) {
+        resultado.textContent = `❌ Error de conexión: ${err.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
