@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>KraveAI</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
   <header class="header">
@@ -18,12 +18,13 @@
   <section class="social-buttons">
     <h2>Redes sociales</h2>
     <div class="grid">
-      <button class="btn" onclick="location.href='instagram.html'"><img src="assets/icons/instagram.png" /> Instagram</button>
+      <button class="btn" onclick="window.location.href='instagram.html'"><img src="assets/icons/instagram.png" /> Instagram</button>
       <button class="btn"><img src="assets/icons/tiktok.png" /> TikTok</button>
       <button class="btn"><img src="assets/icons/youtube.png" /> YouTube</button>
       <button class="btn"><img src="assets/icons/spotify.png" /> Spotify</button>
       <button class="btn"><img src="assets/icons/threads.png" /> Threads</button>
       <button class="btn"><img src="assets/icons/bestia.png" /> Modo Bestia</button>
+      <button class="btn" onclick="window.location.href='crear-cuentas.html'"><img src="assets/icons/crear-cuentas.png" /> Crear cuentas</button>
     </div>
   </section>
 
@@ -48,10 +49,11 @@
   </section>
 
   <footer class="input-bar">
-    <input type="text" placeholder="¿Qué quieres automatizar hoy?" />
-    <button>Enviar</button>
+    <input type="text" placeholder="¿Qué quieres automatizar hoy?" id="chat-input" />
+    <button onclick="sendChat()">Enviar</button>
   </footer>
 
   <script src="assets/js/app.js"></script>
+  <script src="assets/js/ia.js"></script>
 </body>
 </html>
