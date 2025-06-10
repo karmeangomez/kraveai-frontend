@@ -1,56 +1,614 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0d0d0d" />
-  <title>KraveAI</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KraveAI - Panel de Redes Sociales</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6e44ff;
+      --secondary: #00c9b7;
+      --dark: #121212;
+      --darker: #0a0a0a;
+      --light: #f0f0f0;
+      --gray: #8c8ca1;
+      --card-bg: #1a1a1a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--darker), var(--dark));
+      color: var(--light);
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 2rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .logo span {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 30px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 30px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      color: var(--gray);
+      margin-top: 5px;
+      font-size: 1rem;
+    }
+
+    /* Social Media Section */
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-item {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 12px;
+      padding: 18px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .social-item:hover {
+      transform: translateY(-5px);
+      background: rgba(40, 40, 40, 0.8);
+      border-color: rgba(110, 68, 255, 0.3);
+    }
+
+    .social-icon {
+      font-size: 2.2rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .social-name {
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .checkbox-container {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+
+    /* Custom Checkbox */
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #555;
+      border-radius: 6px;
+      background: transparent;
+      position: relative;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"]:checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    input[type="checkbox"]:checked::after {
+      content: "✓";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    /* Beast Mode */
+    .beast-mode {
+      background: linear-gradient(135deg, #ff0080, #ff8c00);
+      color: white;
+      text-align: center;
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 15px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: block;
+      width: 100%;
+    }
+
+    .beast-mode:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 20px rgba(255, 0, 128, 0.3);
+    }
+
+    /* Clients Section */
+    .clients-list {
+      margin-top: 20px;
+    }
+
+    .client-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      background: rgba(30, 30, 30, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .client-info {
+      flex-grow: 1;
+      margin-left: 15px;
+    }
+
+    .client-name {
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+
+    .client-platform {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* Automation Section */
+    .automation-box {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .automation-box input {
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 15px;
+      color: white;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .automation-box input::placeholder {
+      color: var(--gray);
+    }
+
+    .automation-box button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .automation-box button:hover {
+      background: #5a35d5;
+    }
+
+    /* GitHub Section */
+    .github-section {
+      margin-top: 30px;
+    }
+
+    .github-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .repo-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+      color: var(--gray);
+    }
+
+    .repo-branch {
+      background: rgba(30, 30, 30, 0.7);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .files-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .files-table th {
+      text-align: left;
+      padding: 12px 15px;
+      font-weight: 500;
+      color: var(--gray);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .files-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .file-icon {
+      margin-right: 10px;
+      color: var(--secondary);
+    }
+
+    .commit-date {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .social-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+    }
+  </style>
 </head>
 <body>
-  <header class="header">
-    <img src="assets/icons/logo.png" class="logo" alt="KraveAI Logo" />
-    <h1 class="krave-title">KraveAI</h1>
-    <p class="subtitle">Domina todas tus redes con IA</p>
-  </header>
-
-  <div class="circle-animation"></div>
-
-  <section class="social-buttons">
-    <h2>Redes sociales</h2>
-    <div class="grid">
-      <a class="btn" href="modules/instagram/index.html"><img src="assets/icons/instagram.png" /> Instagram</a>
-      <a class="btn" href="modules/tiktok/index.html"><img src="assets/icons/tiktok.png" /> TikTok</a>
-      <a class="btn" href="modules/youtube/index.html"><img src="assets/icons/youtube.png" /> YouTube</a>
-      <a class="btn" href="modules/spotify/index.html"><img src="assets/icons/spotify.png" /> Spotify</a>
-      <a class="btn" href="modules/threads/index.html"><img src="assets/icons/threads.png" /> Threads</a>
-      <a class="btn" href="modules/bestia/index.html"><img src="assets/icons/bestia.png" /> Modo Bestia</a>
-    </div>
-  </section>
-
-  <section class="clientes">
-    <h2>Clientes recientes</h2>
-    <div class="client-card">
-      <img src="https://i.pravatar.cc/100?img=1" alt="ariana" />
-      <div>
-        <strong>arianaoficial</strong><br />
-        <span>Instagram</span>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-brain"></i>
+        Krave<span>AI</span>
       </div>
-      <span class="icon">👤</span>
-    </div>
-    <div class="client-card">
-      <img src="https://i.pravatar.cc/100?img=2" alt="plenkay" />
-      <div>
-        <strong>plenkay</strong><br />
-        <span>YouTube</span>
+      <div class="user-info">
+        <div class="user-avatar">KG</div>
+        <div>
+          <div>Karmean Gomez</div>
+          <div style="color: var(--gray); font-size: 0.9rem;">Admin</div>
+        </div>
       </div>
-      <span class="icon">📺</span>
-    </div>
-  </section>
+    </header>
 
-  <footer class="input-bar">
-    <input type="text" placeholder="¿Qué quieres automatizar hoy?" />
-    <button>Enviar</button>
-  </footer>
+    <div class="main-content">
+      <div class="left-column">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <i class="fas fa-hashtag"></i> Redes sociales
+              </div>
+              <div class="card-subtitle">Domina todas tus redes con IA</div>
+            </div>
+          </div>
+
+          <div class="social-grid">
+            <div class="social-item">
+              <div class="checkbox-container">
+                <input type="checkbox" id="instagram">
+              </div>
+              <div class="social-icon">
+                <i class="fab fa-instagram" style="color: #E1306C;"></i>
+              </div>
+              <div class="social-name">Instagram</div>
+            </div>
+            
+            <div class="social-item">
+              <div class="checkbox-container">
+                <input type="checkbox" id="tiktok" checked>
+              </div>
+              <div class="social-icon">
+                <i class="fab fa-tiktok" style="color: #69C9D0;"></i>
+              </div>
+              <div class="social-name">Tiktok</div>
+            </div>
+            
+            <div class="social-item">
+              <div class="checkbox-container">
+                <input type="checkbox" id="youtube">
+              </div>
+              <div class="social-icon">
+                <i class="fab fa-youtube" style="color: #FF0000;"></i>
+              </div>
+              <div class="social-name">YouTube</div>
+            </div>
+            
+            <div class="social-item">
+              <div class="checkbox-container">
+                <input type="checkbox" id="spotify">
+              </div>
+              <div class="social-icon">
+                <i class="fab fa-spotify" style="color: #1DB954;"></i>
+              </div>
+              <div class="social-name">Spotify</div>
+            </div>
+            
+            <div class="social-item">
+              <div class="checkbox-container">
+                <input type="checkbox" id="threads">
+              </div>
+              <div class="social-icon">
+                <i class="fab fa-threads" style="color: #000;"></i>
+              </div>
+              <div class="social-name">Threads</div>
+            </div>
+          </div>
+
+          <button class="beast-mode">Modo Bestia</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <i class="fas fa-users"></i> Clientes recientes
+              </div>
+            </div>
+          </div>
+
+          <div class="clients-list">
+            <div class="client-item">
+              <div class="checkbox-container">
+                <input type="checkbox" id="client1">
+              </div>
+              <div class="client-info">
+                <div class="client-name">arianaoficial</div>
+                <div class="client-platform">Instagram</div>
+              </div>
+            </div>
+            
+            <div class="client-item">
+              <div class="checkbox-container">
+                <input type="checkbox" id="client2" checked>
+              </div>
+              <div class="client-info">
+                <div class="client-name">plenkay</div>
+                <div class="client-platform">YouTube</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="automation-box">
+            <input type="text" placeholder="¿Qué quieres automatizar hoy?">
+            <button>Enviar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-column">
+        <div class="card github-section">
+          <div class="github-header">
+            <i class="fab fa-github" style="font-size: 1.8rem;"></i>
+            <div class="card-title">GitHub</div>
+          </div>
+          
+          <div class="repo-info">
+            <div class="repo-branch">
+              <i class="fas fa-code-branch"></i> main
+            </div>
+            <div>kraveai-frontend / modules / instagram /</div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <i class="fas fa-user"></i>
+            <div>karmeangomez</div>
+            <div class="commit-date">last week</div>
+          </div>
+          
+          <table class="files-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Last commit date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <i class="far fa-file file-icon"></i>
+                  comments.html
+                </td>
+                <td class="commit-date">2 weeks ago</td>
+              </tr>
+              <tr>
+                <td>
+                  <i class="far fa-file file-icon"></i>
+                  crear-cuentas.html
+                </td>
+                <td class="commit-date">last week</td>
+              </tr>
+              <tr>
+                <td>
+                  <i class="far fa-file file-icon"></i>
+                  likes.html
+                </td>
+                <td class="commit-date">2 weeks ago</td>
+              </tr>
+              <tr>
+                <td>
+                  <i class="far fa-file file-icon"></i>
+                  views.html
+                </td>
+                <td class="commit-date">2 weeks ago</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <i class="fas fa-rocket"></i> Acciones rápidas
+              </div>
+            </div>
+          </div>
+          
+          <div class="social-grid">
+            <a href="clientes.html" class="social-item">
+              <div class="social-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="social-name">Clientes</div>
+            </a>
+            
+            <a href="likes.html" class="social-item">
+              <div class="social-icon">
+                <i class="fas fa-heart"></i>
+              </div>
+              <div class="social-name">Likes</div>
+            </a>
+            
+            <a href="followers.html" class="social-item">
+              <div class="social-icon">
+                <i class="fas fa-user-plus"></i>
+              </div>
+              <div class="social-name">Seguidores</div>
+            </a>
+            
+            <a href="comentarios.html" class="social-item">
+              <div class="social-icon">
+                <i class="fas fa-comment"></i>
+              </div>
+              <div class="social-name">Comentarios</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simular funcionalidad de checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        if(this.checked) {
+          this.parentElement.parentElement.style.borderColor = 'rgba(110, 68, 255, 0.5)';
+        } else {
+          this.parentElement.parentElement.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+        }
+      });
+    });
+    
+    // Botón Modo Bestia
+    document.querySelector('.beast-mode').addEventListener('click', function() {
+      this.innerHTML = '¡Activando Modo Bestia!';
+      this.style.background = 'linear-gradient(135deg, #ff8c00, #ff0080)';
+      
+      setTimeout(() => {
+        this.innerHTML = 'Modo Bestia Activado!';
+        this.style.background = 'linear-gradient(135deg, #00c9b7, #6e44ff)';
+      }, 1500);
+    });
+  </script>
 </body>
 </html>
