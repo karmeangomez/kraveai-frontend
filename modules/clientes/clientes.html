@@ -2,263 +2,37 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clientes Instagram</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <style>
-    body {
-      background: #0d0d0d;
-      color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      padding: 2rem;
-    }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
-    .input-area {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    input {
-      padding: 0.6rem;
-      border-radius: 6px;
-      border: none;
-      width: 250px;
-    }
-    button {
-      background: #00C6FB;
-      color: #fff;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .crear-cuentas-btn {
-      background: #4CAF50; /* Color verde para diferenciar */
-      margin-top: 1rem;
-    }
-    .crear-cuentas-btn:hover {
-      background: #45a049;
-    }
-    .clientes-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .cliente-card {
-      background: #1a1a1a;
-      padding: 1rem;
-      border-radius: 12px;
-      max-width: 280px;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-    .cliente-card img {
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      margin-bottom: 0.5rem;
-    }
-    .verificado {
-      vertical-align: middle;
-      width: 16px;
-      margin-left: 4px;
-    }
-    .label {
-      font-size: 0.85rem;
-      color: #999;
-    }
-    .delete-btn {
-      background: #ff3a3a;
-      color: #fff;
-      padding: 0.4rem 0.8rem;
-      border: none;
-      border-radius: 6px;
-      margin-top: 0.6rem;
-      cursor: pointer;
-    }
-    .status-msg {
-      margin-top: 1rem;
-      font-size: 0.95rem;
-      color: #ccc;
-    }
-    .crear-cuentas-section {
-      margin-top: 2rem;
-    }
-    .crear-cuentas-section input[type="number"] {
-      padding: 0.6rem;
-      border-radius: 6px;
-      border: none;
-      width: 100px;
-      margin-right: 1rem;
-    }
-    .crear-cuentas-section button {
-      background: #008CBA; /* Azul para "Aceptar" */
-    }
-    .crear-cuentas-section button:hover {
-      background: #007B9A;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>KraveAI - Instagram</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
-  <h1>Agregar nuevo cliente</h1>
-  <div class="input-area">
-    <input type="text" id="username" placeholder="Usuario (ej. karmeangomez)" />
-    <button id="buscarBtn" onclick="buscarCliente()">Buscar</button>
-  </div>
+  <header class="ios-header">
+    <img src="assets/icons/logo.png" class="logo" alt="KraveAI Logo" />
+    <h1 class="ios-title">Instagram</h1>
+    <p class="subtitle">Gestiona tu presencia en Instagram</p>
+  </header>
 
-  <div id="status" class="status-msg"></div>
-  <div id="preview"></div>
-
-  <h2>Clientes guardados</h2>
-  <div id="clientes" class="clientes-container"></div>
-
-  <!-- Nueva sección para Crear Cuentas -->
-  <div class="crear-cuentas-section">
-    <h2>Crear Cuentas</h2>
-    <div>
-      <label for="accountCount">Número de cuentas (1-10):</label>
-      <input type="number" id="accountCount" min="1" max="10" value="3">
-      <button onclick="crearCuentas()">Aceptar</button>
+  <section class="ios-section social-buttons">
+    <h2 class="ios-title">Opciones</h2>
+    <div class="ios-grid">
+      <button class="btn" onclick="window.location.href='clientes.html'"><img src="assets/icons/clientes.png" /> Clientes</button>
+      <button class="btn" onclick="window.location.href='servicios.html'"><img src="assets/icons/servicios.png" /> Servicios</button>
+      <button class="btn" onclick="window.location.href='likes.html'"><img src="assets/icons/likes.png" /> Likes</button>
+      <button class="btn" onclick="window.location.href='followers.html'"><img src="assets/icons/followers.png" /> Followers</button>
+      <button class="btn" onclick="window.location.href='views.html'"><img src="assets/icons/views.png" /> Views</button>
+      <button class="btn" onclick="window.location.href='comentarios.html'"><img src="assets/icons/comentarios.png" /> Comentarios</button>
+      <button class="btn" onclick="window.location.href='compartidos.html'"><img src="assets/icons/compartidos.png" /> Compartidos</button>
+      <button class="btn" onclick="window.location.href='crear-cuentas.html'"><img src="assets/icons/crear-cuentas.png" /> Crear cuentas</button>
     </div>
-    <div id="crear-result" class="status-msg"></div>
-  </div>
+  </section>
 
-  <script src="../../config.js"></script>
-  <script>
-    async function buscarCliente() {
-      const btn = document.getElementById("buscarBtn");
-      const user = document.getElementById("username").value.trim();
-      const status = document.getElementById("status");
-      const preview = document.getElementById("preview");
+  <footer class="input-bar">
+    <input type="text" placeholder="¿Qué quieres automatizar hoy?" id="chat-input" />
+    <button onclick="sendChat()">Enviar</button>
+  </footer>
 
-      if (!user) return alert("Escribe un nombre de usuario");
-
-      btn.textContent = "Buscando...";
-      btn.disabled = true;
-      status.textContent = "⏳ Cargando perfil...";
-      preview.innerHTML = "";
-
-      try {
-        const res = await fetch(`${API.instagram}/api/scrape?username=${user}&turbo=true`);
-        const data = await res.json();
-
-        if (data.profile) {
-          const c = data.profile;
-          preview.innerHTML = `
-            <div class="cliente-card">
-              <img src="${c.profilePic}" alt="perfil" />
-              <h3>${c.username} ${c.verified ? '<img class="verificado" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" />' : ''}</h3>
-              <p class="label">Seguidores:</p>
-              <p>${c.followers || 'N/A'}</p>
-              <button onclick="guardarCliente(${JSON.stringify(c).replace(/"/g, '"')})">Añadir</button>
-            </div>
-          `;
-          status.textContent = "✅ Perfil encontrado. Puedes añadirlo.";
-        } else {
-          status.textContent = "❌ No se pudo encontrar el perfil o ocurrió un error.";
-        }
-      } catch (err) {
-        status.textContent = "⚠️ Error al buscar el perfil. Intenta de nuevo.";
-        console.error(err);
-      } finally {
-        btn.textContent = "Buscar";
-        btn.disabled = false;
-      }
-    }
-
-    async function guardarCliente(data) {
-      await fetch(`${API.instagram}/guardar-cliente`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      alert("✅ Cliente guardado");
-      cargarClientes();
-      document.getElementById("username").value = "";
-      document.getElementById("preview").innerHTML = "";
-      document.getElementById("status").textContent = "";
-    }
-
-    async function eliminarCliente(username) {
-      const confirmar = confirm(`¿Eliminar definitivamente a @${username}?`);
-      if (!confirmar) return;
-      await fetch(`${API.instagram}/eliminar-cliente/${username}`, { method: "DELETE" });
-      alert("🗑️ Cliente eliminado");
-      cargarClientes();
-    }
-
-    async function cargarClientes() {
-      const contenedor = document.getElementById("clientes");
-      contenedor.innerHTML = "⏳ Cargando...";
-
-      try {
-        const res = await fetch(`${API.instagram}/firestore/clientes`);
-        const clientes = await res.json();
-        contenedor.innerHTML = "";
-
-        for (const c of clientes) {
-          contenedor.innerHTML += `
-            <div class="cliente-card">
-              <img src="${c.profilePic}" alt="perfil" />
-              <h3>${c.username} ${c.verified ? '<img class="verificado" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" />' : ''}</h3>
-              <p class="label">Seguidores:</p>
-              <p>${c.followers || 'N/A'}</p>
-              <button class="delete-btn" onclick="eliminarCliente('${c.username}')">Eliminar</button>
-            </div>
-          `;
-        }
-      } catch (err) {
-        contenedor.innerHTML = "⚠️ No se pudieron cargar los clientes";
-        console.error(err);
-      }
-    }
-
-    async function crearCuentas() {
-      const count = parseInt(document.getElementById('accountCount').value);
-      const resultDiv = document.getElementById('crear-result');
-      resultDiv.textContent = 'Creando cuentas...';
-
-      if (count < 1 || count > 10) {
-        resultDiv.textContent = 'Error: El número de cuentas debe estar entre 1 y 10.';
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API.instagram}/create-accounts`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ count }),
-        });
-
-        const data = await response.json();
-        if (data.success) {
-          resultDiv.innerHTML = '<h3>Cuentas Creadas:</h3>';
-          data.accounts.forEach((account, index) => {
-            resultDiv.innerHTML += `
-              <p><strong>Cuenta ${index + 1}:</strong></p>
-              <p>Usuario: ${account.username}</p>
-              <p>Contraseña: ${account.password}</p>
-              <p>Email: ${account.email}</p>
-              <p>Nombre: ${account.fullName}</p>
-              <p>Creada: ${new Date(account.createdAt).toLocaleString()}</p>
-              <hr>
-            `;
-          });
-        } else {
-          resultDiv.textContent = `Error: ${data.error || 'No se pudieron crear las cuentas.'} Detalles: ${data.details || ''}`;
-        }
-      } catch (error) {
-        resultDiv.textContent = `Error al conectar con el servidor: ${error.message}`;
-      }
-    }
-
-    cargarClientes();
-  </script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/ia.js"></script>
 </body>
 </html>
