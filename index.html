@@ -1,71 +1,17 @@
+<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0d0d0d" />
-  <title>KraveAI</title>
+  <title>KraveAI – Raspberry</title>
   <link rel="stylesheet" href="styles.css" />
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      background: #0d0d0d;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-    }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-    }
-    p {
-      font-size: 0.9rem;
-      color: #a0a0a0;
-      margin-bottom: 2rem;
-    }
-    select, button {
-      padding: 0.6rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-    select {
-      background: #1a1a1a;
-      color: white;
-      margin-right: 0.5rem;
-    }
-    button {
-      background: #ff2d55;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #e6003c;
-    }
-    .controls {
-      margin-bottom: 1.5rem;
-    }
-    pre {
-      background: #1a1a1a;
-      padding: 1rem;
-      border-radius: 8px;
-      max-width: 100%;
-      overflow-x: auto;
-      font-size: 0.75rem;
-      white-space: pre-wrap;
-    }
-  </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>KraveAI</h1>
-    <p>Automatiza la creación masiva de cuentas de Instagram con IA 🤖</p>
+    <p>Creación de cuentas de Instagram en tu Raspberry Pi ⚡️</p>
 
     <div class="controls">
       <label for="cantidad">Cantidad:</label>
@@ -75,7 +21,6 @@
         <option value="10">10 cuentas</option>
         <option value="25">25 cuentas</option>
         <option value="50">50 cuentas</option>
-        <option value="100">100 cuentas</option>
       </select>
       <button onclick="crearLote()">Crear</button>
       <button onclick="descargarUsuarios()" style="background:#444; margin-left: 0.5rem;">Descargar .txt</button>
@@ -89,7 +34,7 @@
 
     async function crearLote() {
       const cantidad = parseInt(document.getElementById('cantidad').value);
-      const res = await fetch("https://kraveai-backend.up.railway.app/create-accounts", {
+      const res = await fetch(window.API.crearLote, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ count: cantidad })
@@ -127,11 +72,6 @@
       a.click();
       URL.revokeObjectURL(url);
     }
-
-    // Keep-alive para backend (Railway)
-    setInterval(() => {
-      fetch("https://kraveai-backend.up.railway.app/health").catch(() => {});
-    }, 30000);
   </script>
 </body>
 </html>
