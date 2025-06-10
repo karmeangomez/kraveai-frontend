@@ -1,64 +1,44 @@
-/* styles.css - KraveAI frontend */
-
-body, html {
-  margin: 0;
-  padding: 0;
-  background: #0d0d0d;
-  color: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+.ios-header {
+  background-color: #111;
+  padding: 1em;
+  text-align: center;
+  color: #fff;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
+.ios-title {
+  font-size: 1.3em;
+  font-weight: bold;
 }
 
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+.ios-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+  padding: 1em;
 }
 
-p {
-  font-size: 0.9rem;
-  color: #a0a0a0;
-  margin-bottom: 2rem;
-}
-
-select, button {
-  padding: 0.6rem;
+.ios-grid button {
+  background-color: #222;
+  border-radius: 12px;
+  color: #fff;
+  padding: 1em;
   border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-}
-
-select {
-  background: #1a1a1a;
-  color: white;
-  margin-right: 0.5rem;
-}
-
-button {
-  background: #ff2d55;
-  color: white;
   cursor: pointer;
 }
 
-button:hover {
-  background: #e6003c;
+.ios-grid button:hover {
+  background-color: #333;
 }
 
-.controls {
-  margin-bottom: 1.5rem;
+.footer {
+  padding: 1em;
+  text-align: center;
+  background-color: #111;
 }
 
-pre {
-  background: #1a1a1a;
-  padding: 1rem;
-  border-radius: 8px;
-  max-width: 100%;
-  overflow-x: auto;
-  font-size: 0.75rem;
-  white-space: pre-wrap;
+.ios-section {
+  padding: 1em;
+  background-color: #111;
+  border-radius: 12px;
+  margin: 1em;
 }
