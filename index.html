@@ -4,21 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>KraveAI</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <header class="header">
+  <header class="ios-header">
     <img src="assets/icons/logo.png" class="logo" alt="KraveAI Logo" />
-    <h1 class="krave-title">KraveAI</h1>
+    <h1 class="ios-title">KraveAI</h1>
     <p class="subtitle">Domina todas tus redes con IA</p>
   </header>
 
   <div class="circle-animation"></div>
 
-  <section class="social-buttons">
+  <section class="ios-section">
     <h2>Redes sociales</h2>
-    <div class="grid">
-      <button class="btn" onclick="window.location.href='instagram.html'"><img src="assets/icons/instagram.png" /> Instagram</button>
+    <div class="ios-grid">
+      <button class="btn" onclick="location.href='instagram.html'"><img src="assets/icons/instagram.png" /> Instagram</button>
       <button class="btn"><img src="assets/icons/tiktok.png" /> TikTok</button>
       <button class="btn"><img src="assets/icons/youtube.png" /> YouTube</button>
       <button class="btn"><img src="assets/icons/spotify.png" /> Spotify</button>
@@ -27,9 +27,9 @@
     </div>
   </section>
 
-  <section class="clientes">
+  <section class="ios-section">
     <h2>Clientes recientes</h2>
-    <div class="client-card">
+    <div class="ios-client-card">
       <img src="https://i.pravatar.cc/100?img=1" alt="ariana" />
       <div>
         <strong>arianaoficial</strong><br />
@@ -37,7 +37,7 @@
       </div>
       <span class="icon">👤</span>
     </div>
-    <div class="client-card">
+    <div class="ios-client-card">
       <img src="https://i.pravatar.cc/100?img=2" alt="plenkay" />
       <div>
         <strong>plenkay</strong><br />
@@ -48,11 +48,10 @@
   </section>
 
   <footer class="input-bar">
-    <input type="text" placeholder="¿Qué quieres automatizar hoy?" id="chat-input" />
-    <button onclick="sendChat()">Enviar</button>
+    <input type="text" placeholder="¿Qué quieres automatizar hoy?" />
+    <button>Enviar</button>
   </footer>
 
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/ia.js"></script>
 </body>
 </html>
