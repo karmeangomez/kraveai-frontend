@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KraveAI - Panel de Redes Sociales</title>
+  <title>KraveAI - Panel Principal</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -32,7 +32,7 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
@@ -80,16 +80,10 @@
     }
 
     /* Main Content */
-    .main-content {
-      display: grid;
-      grid-template-columns: 1fr 350px;
-      gap: 30px;
-    }
-
     .card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 25px;
+      padding: 30px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.05);
       margin-bottom: 30px;
@@ -119,7 +113,7 @@
     /* Social Media Section */
     .social-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 15px;
       margin-top: 20px;
     }
@@ -127,7 +121,7 @@
     .social-item {
       background: rgba(30, 30, 30, 0.7);
       border-radius: 12px;
-      padding: 18px 15px;
+      padding: 20px 15px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -137,6 +131,8 @@
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.05);
+      text-decoration: none;
+      color: white;
     }
 
     .social-item:hover {
@@ -159,63 +155,6 @@
     .social-name {
       font-weight: 500;
       font-size: 1rem;
-    }
-
-    .checkbox-container {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-    }
-
-    /* Custom Checkbox */
-    input[type="checkbox"] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 22px;
-      height: 22px;
-      border: 2px solid #555;
-      border-radius: 6px;
-      background: transparent;
-      position: relative;
-      cursor: pointer;
-    }
-
-    input[type="checkbox"]:checked {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
-    input[type="checkbox"]:checked::after {
-      content: "✓";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-
-    /* Beast Mode */
-    .beast-mode {
-      background: linear-gradient(135deg, #ff0080, #ff8c00);
-      color: white;
-      text-align: center;
-      padding: 16px;
-      border-radius: 12px;
-      margin-top: 15px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-      display: block;
-      width: 100%;
-    }
-
-    .beast-mode:hover {
-      transform: scale(1.02);
-      box-shadow: 0 5px 20px rgba(255, 0, 128, 0.3);
     }
 
     /* Clients Section */
@@ -290,73 +229,46 @@
       background: #5a35d5;
     }
 
-    /* GitHub Section */
-    .github-section {
+    /* Beast Mode */
+    .beast-mode {
+      background: linear-gradient(135deg, #ff0080, #ff8c00);
+      color: white;
+      text-align: center;
+      padding: 16px;
+      border-radius: 12px;
       margin-top: 30px;
-    }
-
-    .github-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .repo-info {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 15px;
-      color: var(--gray);
-    }
-
-    .repo-branch {
-      background: rgba(30, 30, 30, 0.7);
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .files-table {
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: block;
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
     }
 
-    .files-table th {
-      text-align: left;
-      padding: 12px 15px;
-      font-weight: 500;
-      color: var(--gray);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    .beast-mode:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 20px rgba(255, 0, 128, 0.3);
     }
 
-    .files-table td {
-      padding: 12px 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .file-icon {
-      margin-right: 10px;
-      color: var(--secondary);
-    }
-
-    .commit-date {
-      color: var(--gray);
-      font-size: 0.9rem;
+    /* Beast Mode Activated */
+    .beast-activated {
+      background: linear-gradient(135deg, #00c9b7, #6e44ff);
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
     }
 
     /* Responsive */
-    @media (max-width: 900px) {
-      .main-content {
-        grid-template-columns: 1fr;
+    @media (max-width: 600px) {
+      .social-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
       
-      .social-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      .logo {
+        font-size: 1.5rem;
       }
     }
   </style>
@@ -377,228 +289,188 @@
       </div>
     </header>
 
-    <div class="main-content">
-      <div class="left-column">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">
-                <i class="fas fa-hashtag"></i> Redes sociales
-              </div>
-              <div class="card-subtitle">Domina todas tus redes con IA</div>
-            </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">
+            <i class="fas fa-hashtag"></i> Redes sociales
           </div>
-
-          <div class="social-grid">
-            <div class="social-item">
-              <div class="checkbox-container">
-                <input type="checkbox" id="instagram">
-              </div>
-              <div class="social-icon">
-                <i class="fab fa-instagram" style="color: #E1306C;"></i>
-              </div>
-              <div class="social-name">Instagram</div>
-            </div>
-            
-            <div class="social-item">
-              <div class="checkbox-container">
-                <input type="checkbox" id="tiktok" checked>
-              </div>
-              <div class="social-icon">
-                <i class="fab fa-tiktok" style="color: #69C9D0;"></i>
-              </div>
-              <div class="social-name">Tiktok</div>
-            </div>
-            
-            <div class="social-item">
-              <div class="checkbox-container">
-                <input type="checkbox" id="youtube">
-              </div>
-              <div class="social-icon">
-                <i class="fab fa-youtube" style="color: #FF0000;"></i>
-              </div>
-              <div class="social-name">YouTube</div>
-            </div>
-            
-            <div class="social-item">
-              <div class="checkbox-container">
-                <input type="checkbox" id="spotify">
-              </div>
-              <div class="social-icon">
-                <i class="fab fa-spotify" style="color: #1DB954;"></i>
-              </div>
-              <div class="social-name">Spotify</div>
-            </div>
-            
-            <div class="social-item">
-              <div class="checkbox-container">
-                <input type="checkbox" id="threads">
-              </div>
-              <div class="social-icon">
-                <i class="fab fa-threads" style="color: #000;"></i>
-              </div>
-              <div class="social-name">Threads</div>
-            </div>
-          </div>
-
-          <button class="beast-mode">Modo Bestia</button>
+          <div class="card-subtitle">Domina todas tus redes con IA</div>
         </div>
+      </div>
 
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">
-                <i class="fas fa-users"></i> Clientes recientes
-              </div>
-            </div>
+      <div class="social-grid">
+        <a href="#instagram-panel" class="social-item" id="instagram-link">
+          <div class="social-icon">
+            <i class="fab fa-instagram" style="color: #E1306C;"></i>
           </div>
-
-          <div class="clients-list">
-            <div class="client-item">
-              <div class="checkbox-container">
-                <input type="checkbox" id="client1">
-              </div>
-              <div class="client-info">
-                <div class="client-name">arianaoficial</div>
-                <div class="client-platform">Instagram</div>
-              </div>
-            </div>
-            
-            <div class="client-item">
-              <div class="checkbox-container">
-                <input type="checkbox" id="client2" checked>
-              </div>
-              <div class="client-info">
-                <div class="client-name">plenkay</div>
-                <div class="client-platform">YouTube</div>
-              </div>
-            </div>
+          <div class="social-name">Instagram</div>
+        </a>
+        
+        <a href="#" class="social-item">
+          <div class="social-icon">
+            <i class="fab fa-tiktok" style="color: #69C9D0;"></i>
           </div>
-        </div>
+          <div class="social-name">Tiktok</div>
+        </a>
+        
+        <a href="#" class="social-item">
+          <div class="social-icon">
+            <i class="fab fa-youtube" style="color: #FF0000;"></i>
+          </div>
+          <div class="social-name">YouTube</div>
+        </a>
+        
+        <a href="#" class="social-item">
+          <div class="social-icon">
+            <i class="fab fa-spotify" style="color: #1DB954;"></i>
+          </div>
+          <div class="social-name">Spotify</div>
+        </a>
+        
+        <a href="#" class="social-item">
+          <div class="social-icon">
+            <i class="fab fa-threads" style="color: #000;"></i>
+          </div>
+          <div class="social-name">Threads</div>
+        </a>
+      </div>
 
-        <div class="card">
-          <div class="automation-box">
-            <input type="text" placeholder="¿Qué quieres automatizar hoy?">
-            <button>Enviar</button>
+      <button class="beast-mode">Modo Bestia</button>
+      <div class="beast-activated">¡Modo Bestia Activado!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">
+            <i class="fas fa-users"></i> Clientes recientes
           </div>
         </div>
       </div>
 
-      <div class="right-column">
-        <div class="card github-section">
-          <div class="github-header">
-            <i class="fab fa-github" style="font-size: 1.8rem;"></i>
-            <div class="card-title">GitHub</div>
+      <div class="clients-list">
+        <div class="client-item">
+          <div class="client-info">
+            <div class="client-name">arianaoficial</div>
+            <div class="client-platform">Instagram</div>
           </div>
-          
-          <div class="repo-info">
-            <div class="repo-branch">
-              <i class="fas fa-code-branch"></i> main
-            </div>
-            <div>kraveai-frontend / modules / instagram /</div>
-          </div>
-          
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <i class="fas fa-user"></i>
-            <div>karmeangomez</div>
-            <div class="commit-date">last week</div>
-          </div>
-          
-          <table class="files-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Last commit date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <i class="far fa-file file-icon"></i>
-                  comments.html
-                </td>
-                <td class="commit-date">2 weeks ago</td>
-              </tr>
-              <tr>
-                <td>
-                  <i class="far fa-file file-icon"></i>
-                  crear-cuentas.html
-                </td>
-                <td class="commit-date">last week</td>
-              </tr>
-              <tr>
-                <td>
-                  <i class="far fa-file file-icon"></i>
-                  likes.html
-                </td>
-                <td class="commit-date">2 weeks ago</td>
-              </tr>
-              <tr>
-                <td>
-                  <i class="far fa-file file-icon"></i>
-                  views.html
-                </td>
-                <td class="commit-date">2 weeks ago</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
         
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">
-                <i class="fas fa-rocket"></i> Acciones rápidas
-              </div>
+        <div class="client-item">
+          <div class="client-info">
+            <div class="client-name">plenkay</div>
+            <div class="client-platform">YouTube</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="automation-box">
+        <input type="text" placeholder="¿Qué quieres automatizar hoy?">
+        <button>Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de Instagram (inicialmente oculto) -->
+  <div id="instagram-panel" style="display: none;">
+    <div class="container">
+      <header>
+        <div class="logo">
+          <i class="fab fa-instagram" style="color: #E1306C;"></i>
+          <span>Instagram</span>
+        </div>
+        <div>
+          <a href="#" id="volver-inicio" style="color: #2a7cf7; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Volver al inicio
+          </a>
+        </div>
+      </header>
+
+      <div class="card">
+        <h1 style="font-size: 1.8rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-camera"></i> Panel de Instagram
+        </h1>
+        <p style="color: var(--gray); margin-bottom: 30px;">Elige qué deseas automatizar</p>
+
+        <div class="social-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-users"></i>
             </div>
-          </div>
+            <div class="social-name">Clientes</div>
+          </a>
           
-          <div class="social-grid">
-            <a href="clientes.html" class="social-item">
-              <div class="social-icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <div class="social-name">Clientes</div>
-            </a>
-            
-            <a href="likes.html" class="social-item">
-              <div class="social-icon">
-                <i class="fas fa-heart"></i>
-              </div>
-              <div class="social-name">Likes</div>
-            </a>
-            
-            <a href="followers.html" class="social-item">
-              <div class="social-icon">
-                <i class="fas fa-user-plus"></i>
-              </div>
-              <div class="social-name">Seguidores</div>
-            </a>
-            
-            <a href="comentarios.html" class="social-item">
-              <div class="social-icon">
-                <i class="fas fa-comment"></i>
-              </div>
-              <div class="social-name">Comentarios</div>
-            </a>
-          </div>
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-tools"></i>
+            </div>
+            <div class="social-name">Servicios</div>
+          </a>
+          
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-heart"></i>
+            </div>
+            <div class="social-name">Likes</div>
+          </a>
+          
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="social-name">Seguidores</div>
+          </a>
+          
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-eye"></i>
+            </div>
+            <div class="social-name">Vistas</div>
+          </a>
+          
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-comment"></i>
+            </div>
+            <div class="social-name">Comentarios</div>
+          </a>
+          
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-share"></i>
+            </div>
+            <div class="social-name">Compartidos</div>
+          </a>
+          
+          <a href="#" class="social-item">
+            <div class="social-icon">
+              <i class="fas fa-plus-circle"></i>
+            </div>
+            <div class="social-name">Crear cuentas</div>
+          </a>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Simular funcionalidad de checkboxes
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', function() {
-        if(this.checked) {
-          this.parentElement.parentElement.style.borderColor = 'rgba(110, 68, 255, 0.5)';
-        } else {
-          this.parentElement.parentElement.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-        }
-      });
+    // Mostrar panel de Instagram al hacer clic
+    document.getElementById('instagram-link').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelector('.container').style.display = 'none';
+      document.getElementById('instagram-panel').style.display = 'block';
     });
-    
+
+    // Volver al inicio
+    document.getElementById('volver-inicio').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('instagram-panel').style.display = 'none';
+      document.querySelector('.container').style.display = 'block';
+    });
+
     // Botón Modo Bestia
     document.querySelector('.beast-mode').addEventListener('click', function() {
       this.innerHTML = '¡Activando Modo Bestia!';
@@ -607,7 +479,29 @@
       setTimeout(() => {
         this.innerHTML = 'Modo Bestia Activado!';
         this.style.background = 'linear-gradient(135deg, #00c9b7, #6e44ff)';
+        document.querySelector('.beast-activated').style.display = 'block';
       }, 1500);
+    });
+    
+    // Simular envío de formulario
+    document.querySelector('button').addEventListener('click', function() {
+      const input = document.querySelector('input[type="text"]');
+      if(input.value.trim() !== '') {
+        this.innerHTML = 'Enviando...';
+        this.disabled = true;
+        
+        setTimeout(() => {
+          this.innerHTML = 'Enviado ✓';
+          this.style.background = '#00c9b7';
+          input.value = '';
+          
+          setTimeout(() => {
+            this.innerHTML = 'Enviar';
+            this.style.background = 'var(--primary)';
+            this.disabled = false;
+          }, 2000);
+        }, 1000);
+      }
     });
   </script>
 </body>
