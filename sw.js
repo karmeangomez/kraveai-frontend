@@ -1,42 +1,39 @@
-const CACHE_NAME = 'kraveai-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/assets/style.css',
-  '/assets/icon-192.png',
-  '/assets/icon-512.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+const CACHE_NAME = 'kraveai-cache-v1';
+const URLS_TO_CACHE = [
+  'index.html',
+  'styles.css',
+  'manifest.json',
+  'assets/icons/icon-192.png',
+  'assets/icons/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(ASSETS_TO_CACHE);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(URLS_TO_CACHE);
+    })
   );
 });
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        return response || fetch(event.request);
-      })
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
   );
 });
 
 self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
+  const whitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
+    caches.keys().then((keyList) =>
+      Promise.all(
+        keyList.map((key) => {
+          if (!whitelist.includes(key)) {
+            return caches.delete(key);
           }
         })
-      );
-    })
+      )
+    )
   );
 });
