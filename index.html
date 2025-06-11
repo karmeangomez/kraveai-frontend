@@ -2,119 +2,51 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#121212">
-  <meta name="description" content="KraveAI - Automatización de redes sociales con IA">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>KraveAI</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/assets/icon-192.png">
   <style>
     :root {
       --primary: #6e44ff;
-      --primary-dark: #5a35d5;
-      --secondary: #00c9b7;
-      --secondary-dark: #00a896;
       --dark: #121212;
-      --darker: #0a0a0a;
       --light: #f0f0f0;
-      --gray: #8c8ca1;
-      --card-bg: #1a1a1a;
-      --app-bg: #000;
     }
-
-    * {
+    
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--app-bg);
+      background-color: var(--dark);
       color: var(--light);
+      font-family: 'Segoe UI', sans-serif;
       height: 100vh;
-      overflow: hidden;
-      touch-action: pan-y;
-    }
-
-    /* Safe area para iPhones con notch */
-    @supports (padding: max(0px)) {
-      body {
-        padding: env(safe-area-inset-top) env(safe-area-inset-right) 
-                 env(safe-area-inset-bottom) env(safe-area-inset-left);
-      }
-    }
-
-    /* Mobile App Container - Versión PWA optimizada */
-    .mobile-app {
-      width: 100vw;
-      height: 100vh;
-      max-width: 100%;
-      max-height: -webkit-fill-available;
-      background: linear-gradient(135deg, var(--darker), var(--dark));
-      overflow: hidden;
-      position: relative;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
-
-    /* Resto de tus estilos... (manteniendo el mismo CSS que tenías antes) */
+    
+    .app-container {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: var(--primary);
+    }
   </style>
 </head>
 <body>
-  <!-- Tu interfaz de KraveAI aquí (igual que en tu versión anterior) -->
-  
+  <div class="app-container">
+    <h1>KraveAI</h1>
+    <p>Aplicación cargada correctamente</p>
+  </div>
+
   <script>
-    // Registro del Service Worker para funcionalidad offline
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('ServiceWorker registrado con éxito:', registration.scope);
-          })
-          .catch(error => {
-            console.log('Error al registrar ServiceWorker:', error);
-          });
-      });
-    }
-
-    // Detección de modo standalone (cuando la PWA está instalada)
-    window.addEventListener('DOMContentLoaded', () => {
-      if (window.matchMedia('(display-mode: standalone)').matches) {
-        console.log('La PWA está ejecutándose en modo standalone');
-      }
-    });
-
-    // Manejo del botón de instalación
-    let deferredPrompt;
-    const installButton = document.createElement('button');
+    // Verificación básica de JavaScript
+    console.log("La aplicación se está ejecutando");
     
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      
-      // Muestra el botón de instalación
-      installButton.style.position = 'fixed';
-      installButton.style.bottom = '20px';
-      installButton.style.right = '20px';
-      installButton.style.zIndex = '1000';
-      installButton.textContent = 'Instalar KraveAI';
-      installButton.addEventListener('click', installPWA);
-      document.body.appendChild(installButton);
+    // Comprueba si hay errores en la consola
+    window.addEventListener('error', function(e) {
+      console.error('Error capturado:', e.message);
     });
-
-    async function installPWA() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          installButton.remove();
-        }
-        deferredPrompt = null;
-      }
-    }
   </script>
 </body>
 </html>
