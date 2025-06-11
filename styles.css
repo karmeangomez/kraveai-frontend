@@ -1,4 +1,3 @@
-/* Reset básico */
 * {
   margin: 0;
   padding: 0;
@@ -7,24 +6,30 @@
 
 body {
   background-color: #121212;
-  color: #FFFFFF;
-  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
+.mobile-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .app-header {
-  background-color: #1a1a1a;
+  background: #1a1a1a;
   padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: bold;
 }
 
-/* Contenido */
 .app-content {
   flex: 1;
   padding: 20px;
+  font-size: 1.1rem;
 }
