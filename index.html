@@ -53,6 +53,7 @@
     /* Header */
     .app-header {
       padding: 20px;
+      padding-top: calc(20px + env(safe-area-inset-top, 0px));
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -122,6 +123,7 @@
       padding: 20px;
       scrollbar-width: none;
       -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch; /* Mejora el desplazamiento en iOS */
     }
 
     .app-content::-webkit-scrollbar {
@@ -464,6 +466,7 @@
       display: flex;
       justify-content: space-around;
       padding: 18px 10px;
+      padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
       background: rgba(26, 26, 46, 0.95);
       backdrop-filter: blur(10px);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
