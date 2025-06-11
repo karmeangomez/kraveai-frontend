@@ -8,6 +8,52 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="assets/icons/icon-192.png">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 20px;
+    }
+    .menu-button {
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      padding: 16px;
+      color: white;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .menu-button i {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .submenu {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px 20px;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .submenu-button {
+      background-color: #292929;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      color: white;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <div class="mobile-app">
@@ -17,13 +63,54 @@
     </header>
 
     <main class="app-content">
-      <h1>🚀 KraveAI activo</h1>
-      <p>Tu frontend ya está funcionando como PWA sin pantalla negra.</p>
+      <h1 style="margin-bottom: 16px;">📱 Elige una plataforma</h1>
+      <div class="menu">
+        <div class="menu-button" onclick="toggleSubmenu('instagram-submenu')">
+          <i class="fab fa-instagram"></i>Instagram
+        </div>
+        <div class="menu-button" onclick="toggleSubmenu('tiktok-submenu')">
+          <i class="fab fa-tiktok"></i>TikTok
+        </div>
+        <div class="menu-button" onclick="toggleSubmenu('youtube-submenu')">
+          <i class="fab fa-youtube"></i>YouTube
+        </div>
+        <div class="menu-button" onclick="toggleSubmenu('spotify-submenu')">
+          <i class="fab fa-spotify"></i>Spotify
+        </div>
+        <div class="menu-button" onclick="toggleSubmenu('threads-submenu')">
+          <i class="fab fa-threads"></i>Threads
+        </div>
+      </div>
+
+      <div id="instagram-submenu" class="submenu">
+        <div class="submenu-button">Clientes</div>
+        <div class="submenu-button">Crear cuentas</div>
+        <div class="submenu-button">Modo Inteligente</div>
+      </div>
+      <div id="tiktok-submenu" class="submenu">
+        <div class="submenu-button">Clientes</div>
+        <div class="submenu-button">Crear cuentas</div>
+        <div class="submenu-button">Modo Inteligente</div>
+      </div>
+      <div id="youtube-submenu" class="submenu">
+        <div class="submenu-button">Clientes</div>
+        <div class="submenu-button">Crear canales</div>
+        <div class="submenu-button">Modo Inteligente</div>
+      </div>
+      <div id="spotify-submenu" class="submenu">
+        <div class="submenu-button">Clientes</div>
+        <div class="submenu-button">Crear artistas</div>
+        <div class="submenu-button">Modo Inteligente</div>
+      </div>
+      <div id="threads-submenu" class="submenu">
+        <div class="submenu-button">Clientes</div>
+        <div class="submenu-button">Crear cuentas</div>
+        <div class="submenu-button">Modo Inteligente</div>
+      </div>
     </main>
   </div>
 
   <script>
-    // Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
@@ -32,10 +119,20 @@
       });
     }
 
-    // Error handler
     window.addEventListener('error', function (e) {
       console.error("JS Error:", e.message);
     });
+
+    function toggleSubmenu(id) {
+      const submenus = document.querySelectorAll('.submenu');
+      submenus.forEach(el => {
+        if (el.id === id) {
+          el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    }
   </script>
 </body>
 </html>
