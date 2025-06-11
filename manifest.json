@@ -1,33 +1,20 @@
 {
   "name": "KraveAI",
   "short_name": "KraveAI",
-  "description": "Automatización de redes sociales con IA",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#6e44ff",
   "icons": [
     {
-      "src": "/assets/icon-192.png",
+      "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "/assets/icon-512.png",
+      "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "/assets/screenshot1.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-  "categories": ["social", "productivity"],
-  "orientation": "portrait"
+  ]
 }
