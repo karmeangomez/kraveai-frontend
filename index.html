@@ -2,25 +2,40 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prueba KraveAI</title>
-  <style>
-    body {
-      background-color: red;
-      color: white;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    h1 {
-      font-size: 2rem;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#121212">
+  <title>KraveAI</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>✅ SI VES ESTO, TODO FUNCIONA BIEN</h1>
+  <div class="mobile-app">
+    <header class="app-header">
+      <div class="logo">KraveAI</div>
+      <div class="user-avatar">KG</div>
+    </header>
+
+    <main class="app-content">
+      <h1>🚀 KraveAI activo</h1>
+      <p>Tu frontend ya está funcionando como PWA sin pantalla negra.</p>
+    </main>
+  </div>
+
+  <script>
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('✅ SW registrado:', reg.scope))
+          .catch(err => console.error('❌ SW error:', err));
+      });
+    }
+
+    // Error handler
+    window.addEventListener('error', function (e) {
+      console.error("JS Error:", e.message);
+    });
+  </script>
 </body>
 </html>
