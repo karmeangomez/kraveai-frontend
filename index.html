@@ -2,50 +2,70 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#121212">
   <title>KraveAI</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="assets/style.css">
   <style>
-    :root {
-      --primary: #6e44ff;
-      --dark: #121212;
-      --light: #f0f0f0;
-    }
-    
-    body {
+    * {
       margin: 0;
       padding: 0;
-      background-color: var(--dark);
-      color: var(--light);
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #121212;
+      color: #FFFFFF;
       font-family: 'Segoe UI', sans-serif;
-      height: 100vh;
+      min-height: 100vh;
+    }
+
+    .mobile-app {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .app-header {
+      background: #1a1a1a;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
     }
-    
-    .app-container {
-      text-align: center;
+
+    .app-content {
+      flex: 1;
       padding: 20px;
-    }
-    
-    h1 {
-      color: var(--primary);
     }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <h1>KraveAI</h1>
-    <p>Aplicación cargada correctamente</p>
+  <div class="mobile-app">
+    <header class="app-header">
+      <div class="logo">KraveAI</div>
+      <div class="user-avatar">KG</div>
+    </header>
+
+    <main class="app-content">
+      <h1>¡Aplicación Funcionando!</h1>
+      <p>Contenido principal aquí</p>
+    </main>
   </div>
 
   <script>
-    // Verificación básica de JavaScript
-    console.log("La aplicación se está ejecutando");
-    
-    // Comprueba si hay errores en la consola
-    window.addEventListener('error', function(e) {
-      console.error('Error capturado:', e.message);
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('✅ ServiceWorker registrado:', reg.scope))
+          .catch(err => console.error('❌ Error registrando SW:', err));
+      });
+    }
+
+    window.addEventListener('error', function (e) {
+      console.error("[ERROR JS]:", e.message);
     });
   </script>
 </body>
