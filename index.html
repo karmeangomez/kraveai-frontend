@@ -3,70 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#121212">
-  <title>KraveAI</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="assets/icon-192.png">
-  <link rel="stylesheet" href="assets/style.css">
+  <title>Prueba KraveAI</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      background-color: #121212;
-      color: #FFFFFF;
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-    }
-
-    .mobile-app {
+      background-color: red;
+      color: white;
+      font-family: sans-serif;
       display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .app-header {
-      background: #1a1a1a;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-
-    .app-content {
-      flex: 1;
-      padding: 20px;
+    h1 {
+      font-size: 2rem;
     }
   </style>
 </head>
 <body>
-  <div class="mobile-app">
-    <header class="app-header">
-      <div class="logo">KraveAI</div>
-      <div class="user-avatar">KG</div>
-    </header>
-
-    <main class="app-content">
-      <h1>¡Aplicación Funcionando!</h1>
-      <p>Contenido principal aquí</p>
-    </main>
-  </div>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('✅ ServiceWorker registrado:', reg.scope))
-          .catch(err => console.error('❌ Error registrando SW:', err));
-      });
-    }
-
-    window.addEventListener('error', function (e) {
-      console.error("[ERROR JS]:", e.message);
-    });
-  </script>
+  <h1>✅ SI VES ESTO, TODO FUNCIONA BIEN</h1>
 </body>
 </html>
