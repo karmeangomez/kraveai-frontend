@@ -232,75 +232,6 @@
       transition: width 0.5s ease;
     }
 
-    .progress-steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 15px;
-      margin-top: 30px;
-    }
-
-    .step-card {
-      background: rgba(30, 30, 30, 0.5);
-      border-radius: 15px;
-      padding: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .step-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .step-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-    }
-
-    .step-title {
-      font-weight: 500;
-      font-size: 1.2rem;
-    }
-
-    .step-status {
-      margin-top: 10px;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      display: inline-block;
-    }
-
-    .status-pending {
-      background: rgba(255, 152, 0, 0.15);
-      color: var(--warning);
-      border: 1px solid rgba(255, 152, 0, 0.3);
-    }
-
-    .status-success {
-      background: rgba(76, 175, 80, 0.15);
-      color: var(--success);
-      border: 1px solid rgba(76, 175, 80, 0.3);
-    }
-
-    .status-error {
-      background: rgba(244, 67, 54, 0.15);
-      color: var(--error);
-      border: 1px solid rgba(244, 67, 54, 0.3);
-    }
-
-    .step-details {
-      margin-top: 15px;
-      color: var(--gray);
-      font-size: 0.95rem;
-    }
-
     /* Accounts List */
     .accounts-list {
       background: rgba(30, 30, 30, 0.5);
@@ -357,14 +288,45 @@
       color: var(--error);
     }
 
+    /* Status Indicators */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .status-pending {
+      background: rgba(255, 152, 0, 0.15);
+      color: var(--warning);
+      border: 1px solid rgba(255, 152, 0, 0.3);
+    }
+
+    .status-active {
+      background: rgba(76, 175, 80, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .status-error {
+      background: rgba(244, 67, 54, 0.15);
+      color: var(--error);
+      border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .form-actions {
         flex-direction: column;
-      }
-      
-      .progress-steps {
-        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -393,15 +355,6 @@
           <input type="number" id="account-count" class="form-input" value="5" min="1" max="100">
         </div>
         
-        <div class="form-group">
-          <label class="form-label">Tipo de cuentas</label>
-          <select id="account-type" class="form-input">
-            <option value="basic">Básicas (sin verificación)</option>
-            <option value="verified">Verificadas (requiere SMS)</option>
-            <option value="business">Empresariales</option>
-          </select>
-        </div>
-        
         <div class="form-actions">
           <button class="form-btn cancel-btn" id="cancel-btn">
             <i class="fas fa-times"></i> Cancelar
@@ -426,39 +379,9 @@
             <div class="progress-fill" id="progress-bar"></div>
           </div>
           
-          <div class="progress-steps">
-            <div class="step-card" id="step-creation">
-              <div class="step-header">
-                <div class="step-icon">
-                  <i class="fas fa-user-plus"></i>
-                </div>
-                <div class="step-title">Creación de cuenta</div>
-              </div>
-              <div class="step-status status-pending">Pendiente</div>
-              <div class="step-details">Generando usuario y contraseña</div>
-            </div>
-            
-            <div class="step-card" id="step-verification">
-              <div class="step-header">
-                <div class="step-icon">
-                  <i class="fas fa-sms"></i>
-                </div>
-                <div class="step-title">Verificación</div>
-              </div>
-              <div class="step-status status-pending">Pendiente</div>
-              <div class="step-details">Esperando verificación por SMS</div>
-            </div>
-            
-            <div class="step-card" id="step-profile">
-              <div class="step-header">
-                <div class="step-icon">
-                  <i class="fas fa-id-card"></i>
-                </div>
-                <div class="step-title">Configuración de perfil</div>
-              </div>
-              <div class="step-status status-pending">Pendiente</div>
-              <div class="step-details">Configurando foto y datos de perfil</div>
-            </div>
+          <div class="status-indicator" id="backend-status">
+            <div class="status-dot"></div>
+            <span id="status-text">Conectando con el backend...</span>
           </div>
         </div>
         
@@ -476,144 +399,104 @@
   </div>
 
   <script>
+    // Configuración de la API
+    const API_URL = "http://192.168.1.197:3000";
+    
     // Elementos DOM
     const createBtn = document.getElementById('create-btn');
     const cancelBtn = document.getElementById('cancel-btn');
     const accountCount = document.getElementById('account-count');
-    const accountType = document.getElementById('account-type');
     const progressSection = document.getElementById('progress-section');
     const progressBar = document.getElementById('progress-bar');
     const createdCount = document.getElementById('created-count');
     const totalCount = document.getElementById('total-count');
     const accountsContainer = document.getElementById('accounts-container');
-    
-    // Elementos de los pasos
-    const stepCreation = document.getElementById('step-creation');
-    const stepVerification = document.getElementById('step-verification');
-    const stepProfile = document.getElementById('step-profile');
+    const statusIndicator = document.getElementById('backend-status');
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.querySelector('#backend-status .status-dot');
     
     // Estado de la creación
     let creationInProgress = false;
     let accountsCreated = 0;
     let totalAccounts = 0;
+    let eventSource = null;
     
-    // Función para conectar con el backend
-    async function connectToBackend(accountCount, accountType) {
-      // En una implementación real, aquí harías una llamada a tu API
-      // Ejemplo: 
-      // const response = await fetch('/api/create-accounts', {
-      //   method: 'POST',
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: JSON.stringify({ count: accountCount, type: accountType })
-      // });
-      // return await response.json();
+    // Función para conectar con el backend usando Server-Sent Events
+    function connectToBackend(count) {
+      // Cerrar conexión existente si hay una
+      if (eventSource) eventSource.close();
       
-      // Simulación de conexión al backend
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve({ success: true, message: "Conexión establecida con el backend" });
-        }, 1000);
-      });
-    }
-    
-    // Función para crear una cuenta
-    async function createAccount(accountNumber, total) {
-      // Actualizar estado
-      updateStepStatus(stepCreation, 'pending', 'Creando cuenta...');
+      // Crear nueva conexión SSE
+      eventSource = new EventSource(`${API_URL}/create-accounts-sse?count=${count}`);
       
-      // Simular proceso de creación (en una implementación real, esto sería una llamada a la API)
-      await simulateProcess(1500);
-      
-      // Generar datos de cuenta
-      const username = `user_${Math.random().toString(36).substring(2, 8)}`;
-      const password = Math.random().toString(36).substring(2, 10);
-      const accountId = `acc_${Date.now()}_${accountNumber}`;
-      
-      // Actualizar estado
-      updateStepStatus(stepCreation, 'success', 'Cuenta creada');
-      updateStepStatus(stepVerification, 'pending', 'Verificando...');
-      
-      // Simular verificación
-      await simulateProcess(2000);
-      
-      // 10% de probabilidad de fallo en verificación
-      const verificationSuccess = Math.random() > 0.1;
-      
-      if (verificationSuccess) {
-        updateStepStatus(stepVerification, 'success', 'Verificación exitosa');
-        updateStepStatus(stepProfile, 'pending', 'Configurando perfil...');
+      // Manejar mensajes del servidor
+      eventSource.onmessage = function(event) {
+        const data = JSON.parse(event.data);
         
-        // Simular configuración de perfil
-        await simulateProcess(1000);
-        updateStepStatus(stepProfile, 'success', 'Perfil configurado');
-      } else {
-        updateStepStatus(stepVerification, 'error', 'Error en verificación');
-        updateStepStatus(stepProfile, 'error', 'No se pudo configurar');
-      }
+        switch(data.type) {
+          case 'status':
+            updateStatus(data.message, data.status);
+            break;
+            
+          case 'account-created':
+            accountsCreated++;
+            updateProgress();
+            addAccountToList(data.account);
+            break;
+            
+          case 'error':
+            updateStatus(`Error: ${data.message}`, 'error');
+            break;
+            
+          case 'complete':
+            updateStatus('Proceso completado con éxito', 'success');
+            completeProcess();
+            break;
+        }
+      };
       
-      // Agregar cuenta a la lista
-      addAccountToList(accountId, username, verificationSuccess);
-      
-      // Actualizar progreso
-      accountsCreated++;
-      updateProgress();
-      
-      // Resetear pasos para la siguiente cuenta
-      resetSteps();
-      
-      return { success: verificationSuccess, username, accountId };
+      eventSource.onerror = function() {
+        updateStatus('Error de conexión con el servidor', 'error');
+        completeProcess();
+      };
     }
     
-    // Función para actualizar el estado de un paso
-    function updateStepStatus(stepElement, status, details = '') {
-      const statusElement = stepElement.querySelector('.step-status');
-      const detailsElement = stepElement.querySelector('.step-details');
+    // Función para actualizar el estado
+    function updateStatus(message, status) {
+      statusText.textContent = message;
       
-      statusElement.classList.remove('status-pending', 'status-success', 'status-error');
+      // Limpiar clases previas
+      statusIndicator.classList.remove('status-pending', 'status-active', 'status-error');
+      statusDot.style.backgroundColor = '';
       
       switch(status) {
         case 'pending':
-          statusElement.classList.add('status-pending');
-          statusElement.textContent = 'En progreso';
+          statusIndicator.classList.add('status-pending');
+          statusDot.style.backgroundColor = 'var(--warning)';
           break;
-        case 'success':
-          statusElement.classList.add('status-success');
-          statusElement.textContent = 'Completado';
+        case 'active':
+          statusIndicator.classList.add('status-active');
+          statusDot.style.backgroundColor = 'var(--success)';
           break;
         case 'error':
-          statusElement.classList.add('status-error');
-          statusElement.textContent = 'Error';
+          statusIndicator.classList.add('status-error');
+          statusDot.style.backgroundColor = 'var(--error)';
           break;
       }
-      
-      if (details) {
-        detailsElement.textContent = details;
-      }
-    }
-    
-    // Función para resetear los pasos
-    function resetSteps() {
-      setTimeout(() => {
-        updateStepStatus(stepCreation, 'pending', 'Preparándose para crear cuenta');
-        updateStepStatus(stepVerification, 'pending', 'Esperando verificación');
-        updateStepStatus(stepProfile, 'pending', 'Configuración pendiente');
-      }, 500);
     }
     
     // Función para agregar cuenta a la lista
-    function addAccountToList(id, username, success) {
+    function addAccountToList(account) {
       const accountItem = document.createElement('div');
       accountItem.className = 'account-item';
-      accountItem.id = id;
       
       accountItem.innerHTML = `
         <div class="account-info">
-          <div class="account-username">${username}</div>
-          <div class="account-id">${id}</div>
+          <div class="account-username">${account.username || account.usuario || 'N/A'}</div>
+          <div class="account-id">${account.id || 'N/A'}</div>
         </div>
-        <div class="account-status ${success ? 'account-success' : 'account-error'}">
-          <i class="fas fa-${success ? 'check' : 'times'}"></i>
-          ${success ? 'Creada' : 'Error'}
+        <div class="account-status account-success">
+          <i class="fas fa-check"></i> Creada
         </div>
       `;
       
@@ -631,9 +514,20 @@
       totalCount.textContent = totalAccounts;
     }
     
-    // Función para simular un proceso
-    function simulateProcess(duration) {
-      return new Promise(resolve => setTimeout(resolve, duration));
+    // Función para completar el proceso
+    function completeProcess() {
+      creationInProgress = false;
+      createBtn.disabled = false;
+      createBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar creación';
+      createBtn.style.background = '';
+      
+      // Cerrar conexión SSE después de 5 segundos
+      setTimeout(() => {
+        if (eventSource) {
+          eventSource.close();
+          eventSource = null;
+        }
+      }, 5000);
     }
     
     // Evento para crear cuentas
@@ -649,6 +543,7 @@
       // Iniciar proceso
       creationInProgress = true;
       createBtn.disabled = true;
+      createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
       accountsCreated = 0;
       totalAccounts = count;
       
@@ -657,69 +552,31 @@
       accountsContainer.innerHTML = '';
       updateProgress();
       
-      // Resetear estado inicial
-      resetSteps();
-      
-      try {
-        // Conectar con el backend
-        updateStepStatus(stepCreation, 'pending', 'Conectando con el backend...');
-        const connectionResult = await connectToBackend(count, accountType.value);
-        
-        if (!connectionResult.success) {
-          throw new Error(connectionResult.message || 'Error al conectar con el backend');
-        }
-        
-        // Crear cuentas una por una
-        for (let i = 0; i < count; i++) {
-          await createAccount(i + 1, count);
-        }
-        
-        // Finalizar proceso
-        createBtn.textContent = '¡Proceso completado!';
-        createBtn.style.background = 'var(--success)';
-        
-      } catch (error) {
-        console.error('Error en el proceso:', error);
-        createBtn.textContent = 'Error - Intentar nuevamente';
-        createBtn.style.background = 'var(--error)';
-      } finally {
-        setTimeout(() => {
-          creationInProgress = false;
-          createBtn.disabled = false;
-          createBtn.textContent = '<i class="fas fa-play"></i> Iniciar creación';
-          createBtn.style.background = '';
-        }, 3000);
-      }
+      // Iniciar conexión con el backend
+      connectToBackend(count);
+      updateStatus('Conectando con el backend...', 'pending');
     });
     
     // Evento para cancelar
     cancelBtn.addEventListener('click', function() {
       if (creationInProgress) {
         if (confirm('¿Estás seguro de cancelar el proceso?')) {
+          // Cerrar conexión SSE
+          if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+          }
+          
+          // Resetear UI
           creationInProgress = false;
-          resetUI();
+          createBtn.disabled = false;
+          createBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar creación';
+          updateStatus('Proceso cancelado', 'error');
         }
       } else {
         // Aquí iría la lógica para volver al panel principal
         alert('Volviendo al panel principal');
       }
-    });
-    
-    // Función para resetear la UI
-    function resetUI() {
-      createBtn.disabled = false;
-      createBtn.textContent = '<i class="fas fa-play"></i> Iniciar creación';
-      createBtn.style.background = '';
-      accountsCreated = 0;
-      totalAccounts = 0;
-      updateProgress();
-      resetSteps();
-    }
-    
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
-      // Configuración inicial
-      resetSteps();
     });
   </script>
 </body>
