@@ -3,980 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>KraveAI - Panel de Control</title>
+  <title>KraveAI</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #6e44ff;
-      --primary-dark: #5a35d5;
-      --secondary: #00c9b7;
-      --dark: #121212;
-      --darker: #0a0a0a;
-      --light: #f0f0f0;
-      --gray: #8c8ca1;
-      --card-bg: #1a1a1a;
-      --success: #4CAF50;
-      --warning: #ff9800;
-      --error: #f44336;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background: linear-gradient(135deg, var(--darker), var(--dark));
-      color: var(--light);
-      min-height: 100vh;
-      display: flex;
-      overflow-x: hidden;
-      line-height: 1.6;
-    }
-
-    /* Panel Lateral */
-    .app-sidebar {
-      width: 280px;
-      background: rgba(20, 20, 30, 0.95);
-      backdrop-filter: blur(10px);
-      border-right: 1px solid rgba(110, 68, 255, 0.3);
-      padding: 20px;
-      height: 100vh;
-      position: sticky;
-      top: 0;
-      overflow-y: auto;
-      z-index: 100;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.8rem;
-      font-weight: 800;
-      margin-bottom: 40px;
-    }
-
-    .logo span {
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 30px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-    }
-
-    .user-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-
-    .user-info {
-      flex: 1;
-    }
-
-    .user-name {
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .user-status {
-      font-size: 0.9rem;
-      color: var(--secondary);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--secondary);
-    }
-
-    /* Menú de Navegación */
-    .nav-menu {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .nav-item {
-      padding: 15px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .nav-item:hover {
-      background: rgba(110, 68, 255, 0.1);
-    }
-
-    .nav-item.active {
-      background: rgba(110, 68, 255, 0.2);
-      color: var(--primary);
-    }
-
-    .nav-item i {
-      width: 24px;
-      text-align: center;
-    }
-
-    /* Contenido Principal */
-    .app-main {
-      flex: 1;
-      padding: 20px;
-      max-width: 1200px;
-      width: calc(100% - 280px);
-    }
-
-    .section {
-      margin-bottom: 30px;
-    }
-
-    .section-title {
-      font-size: 1.7rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .section-subtitle {
-      color: var(--gray);
-      font-size: 1.05rem;
-      margin-bottom: 25px;
-    }
-
-    /* Dashboard Cards */
-    .dashboard-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .card-title {
-      color: var(--gray);
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-    }
-
-    .card-value {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .card-desc {
-      font-size: 0.9rem;
-      color: var(--gray);
-    }
-
-    /* Create Accounts Panel */
-    .create-form {
-      background: rgba(30, 30, 30, 0.7);
-      border-radius: 20px;
-      padding: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      margin-top: 20px;
-    }
-
-    .form-title {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .form-group {
-      margin-bottom: 25px;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 500;
-      font-size: 1.1rem;
-    }
-
-    .form-input {
-      width: 100%;
-      background: rgba(20, 20, 20, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 16px;
-      color: white;
-      font-size: 1.1rem;
-      outline: none;
-    }
-
-    .form-input:focus {
-      border-color: var(--primary);
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 15px;
-      margin-top: 30px;
-    }
-
-    .form-btn {
-      flex: 1;
-      padding: 18px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-    }
-
-    .submit-btn {
-      background: var(--primary);
-      color: white;
-    }
-
-    .submit-btn:hover {
-      background: var(--primary-dark);
-    }
-
-    .cancel-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--light);
-    }
-
-    .cancel-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Progress Section */
-    .progress-section {
-      margin-top: 40px;
-      display: none;
-    }
-
-    .progress-container {
-      background: rgba(30, 30, 30, 0.5);
-      border-radius: 20px;
-      padding: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      margin-bottom: 25px;
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .progress-title {
-      font-size: 1.4rem;
-      font-weight: 600;
-    }
-
-    .progress-stats {
-      color: var(--gray);
-      font-size: 1.1rem;
-    }
-
-    .progress-bar {
-      height: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 20px 0;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      border-radius: 10px;
-      width: 0%;
-      transition: width 0.5s ease;
-    }
-
-    /* Accounts List */
-    .accounts-list {
-      background: rgba(30, 30, 30, 0.5);
-      border-radius: 20px;
-      padding: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .list-header {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      font-weight: 500;
-    }
-
-    .account-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 15px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .account-item:last-child {
-      border-bottom: none;
-    }
-
-    .account-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .account-username {
-      font-weight: 500;
-      font-size: 1.1rem;
-    }
-
-    .account-status {
-      font-size: 0.9rem;
-      margin-top: 5px;
-    }
-
-    .account-success {
-      color: var(--success);
-    }
-
-    .account-pending {
-      color: var(--warning);
-    }
-
-    .account-error {
-      color: var(--error);
-    }
-
-    /* Status Indicators */
-    .status-indicator {
-      display: inline-flex;
-      align-items: center;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      margin-top: 10px;
-    }
-
-    .status-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    .status-pending {
-      background: rgba(255, 152, 0, 0.15);
-      color: var(--warning);
-      border: 1px solid rgba(255, 152, 0, 0.3);
-    }
-
-    .status-active {
-      background: rgba(76, 175, 80, 0.15);
-      color: var(--success);
-      border: 1px solid rgba(76, 175, 80, 0.3);
-    }
-
-    .status-error {
-      background: rgba(244, 67, 54, 0.15);
-      color: var(--error);
-      border: 1px solid rgba(244, 67, 54, 0.3);
-    }
-
-    /* Accounts Table */
-    .accounts-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--card-bg);
-      border-radius: 15px;
-      overflow: hidden;
-    }
-
-    .accounts-table th {
-      background: rgba(110, 68, 255, 0.2);
-      text-align: left;
-      padding: 15px 20px;
-      font-weight: 600;
-    }
-
-    .accounts-table td {
-      padding: 15px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .accounts-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .app-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding: 15px;
-      }
-
-      .app-main {
-        width: 100%;
-        padding: 15px;
-      }
-
-      .form-actions {
-        flex-direction: column;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Panel Lateral -->
-  <div class="app-sidebar">
+  <header class="app-header">
     <div class="logo">
-      <i class="fab fa-instagram" style="color: #E1306C;"></i>
+      <i class="fas fa-brain"></i>
       <span>KraveAI</span>
     </div>
+    <div class="user-avatar">KG</div>
+  </header>
 
-    <div class="user-profile">
-      <div class="user-avatar">KG</div>
-      <div class="user-info">
-        <div class="user-name">Kevin González</div>
-        <div class="user-status">
-          <div class="status-dot"></div>
-          <span>Online</span>
-        </div>
+  <main class="app-content">
+    <section class="section">
+      <div class="section-title">
+        <i class="fas fa-hashtag"></i> Redes sociales
       </div>
-    </div>
+      <div class="section-subtitle">Domina todas tus redes con IA</div>
 
-    <div class="nav-menu">
-      <div class="nav-item active" data-section="dashboard">
-        <i class="fas fa-chart-line"></i>
-        <span>Dashboard</span>
+      <div class="social-grid">
+        <div class="social-item" id="instagram-link">
+          <div class="social-icon"><i class="fab fa-instagram"></i></div>
+          <div class="social-name">Instagram</div>
+        </div>
+        <div class="social-item"><div class="social-icon"><i class="fab fa-tiktok"></i></div><div class="social-name">TikTok</div></div>
+        <div class="social-item"><div class="social-icon"><i class="fab fa-youtube"></i></div><div class="social-name">YouTube</div></div>
+        <div class="social-item"><div class="social-icon"><i class="fab fa-spotify"></i></div><div class="social-name">Spotify</div></div>
+        <div class="social-item"><div class="social-icon"><i class="fab fa-threads"></i></div><div class="social-name">Threads</div></div>
       </div>
-      <div class="nav-item" data-section="create-accounts">
-        <i class="fas fa-user-plus"></i>
-        <span>Crear Cuentas</span>
-      </div>
-      <div class="nav-item" data-section="manage-accounts">
-        <i class="fas fa-users"></i>
-        <span>Gestionar Cuentas</span>
-      </div>
-      <div class="nav-item" data-section="settings">
-        <i class="fas fa-cog"></i>
-        <span>Configuración</span>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Contenido Principal -->
-  <div class="app-main">
-    <!-- Sección Dashboard (activa por defecto) -->
-    <div class="section" id="dashboard-section">
+    <!-- Panel de Instagram -->
+    <section class="section" id="instagram-panel" style="display: none;">
       <div class="section-title">
-        <i class="fas fa-chart-line"></i> Panel de Control
+        <i class="fab fa-instagram"></i> Panel Instagram
       </div>
-      <div class="section-subtitle">
-        Estadísticas y resumen de tu sistema de creación de cuentas
+      <div class="social-grid">
+        <button class="social-item">Clientes</button>
+        <button class="social-item">Likes</button>
+        <button class="social-item">Followers</button>
+        <button class="social-item">Views</button>
+        <button class="social-item">Comentarios</button>
+        <button class="social-item">Compartidos</button>
+        <button class="social-item" id="crear-cuentas-btn">Crear cuentas</button>
       </div>
-      
-      <div class="dashboard-cards">
-        <div class="card">
-          <div class="card-title">Cuentas Creadas</div>
-          <div class="card-value" id="total-accounts">0</div>
-          <div class="card-desc">Total de cuentas creadas</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Cuentas Activas</div>
-          <div class="card-value" id="active-accounts">0</div>
-          <div class="card-desc">Cuentas verificadas y activas</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Tasa de Éxito</div>
-          <div class="card-value" id="success-rate">0%</div>
-          <div class="card-desc">Porcentaje de éxito en creación</div>
-        </div>
-      </div>
-      
+    </section>
+
+    <!-- Crear cuentas Panel -->
+    <section class="section" id="crear-cuentas-panel" style="display: none;">
       <div class="section-title">
-        <i class="fas fa-history"></i> Actividad Reciente
+        <i class="fas fa-user-plus"></i> Crear cuentas de Instagram
       </div>
-      <div class="accounts-list">
-        <div class="list-header">
-          <div>Cuenta</div>
-          <div>Estado</div>
-        </div>
-        <div id="recent-accounts">
-          <!-- Las cuentas recientes se agregarán aquí -->
-        </div>
-      </div>
-    </div>
-    
-    <!-- Sección Crear Cuentas (oculta inicialmente) -->
-    <div class="section" id="create-accounts-section" style="display: none;">
-      <div class="section-title">
-        <i class="fas fa-user-plus"></i> Crear nuevas cuentas
-      </div>
-      <div class="section-subtitle">
-        Sistema automatizado para creación de cuentas de Instagram
-      </div>
-      
+
       <div class="create-form">
-        <div class="form-group">
-          <label class="form-label">Número de cuentas a crear</label>
-          <input type="number" id="account-count" class="form-input" value="5" min="1" max="100">
-        </div>
-        
-        <div class="form-actions">
-          <button class="form-btn cancel-btn" id="cancel-btn">
-            <i class="fas fa-times"></i> Cancelar
-          </button>
-          <button class="form-btn submit-btn" id="create-btn">
-            <i class="fas fa-play"></i> Iniciar creación
-          </button>
-        </div>
+        <label for="account-count">¿Cuántas cuentas quieres crear?</label>
+        <input type="number" id="account-count" class="form-input" value="3" min="1" max="100">
+        <button id="create-btn" class="form-btn submit-btn">
+          <i class="fas fa-play"></i> Iniciar creación
+        </button>
       </div>
-      
-      <!-- Sección de progreso (inicialmente oculta) -->
+
       <div class="progress-section" id="progress-section">
         <div class="progress-container">
-          <div class="progress-header">
-            <div class="progress-title">Progreso de creación</div>
-            <div class="progress-stats">
-              <span id="created-count">0</span> de <span id="total-count">0</span> cuentas creadas
-            </div>
-          </div>
-          
+          <div class="progress-title">Progreso</div>
           <div class="progress-bar">
-            <div class="progress-fill" id="progress-bar"></div>
+            <div class="progress-fill" id="progress-bar-fill"></div>
           </div>
-          
-          <div class="status-indicator" id="backend-status">
-            <div class="status-dot"></div>
-            <span id="status-text">Conectando con el backend...</span>
-          </div>
-        </div>
-        
-        <div class="accounts-list">
-          <div class="list-header">
-            <div>Cuenta</div>
-            <div>Estado</div>
-          </div>
-          <div id="accounts-container">
-            <!-- Las cuentas se agregarán aquí dinámicamente -->
-          </div>
+          <div id="accounts-container" class="accounts-list"></div>
         </div>
       </div>
-    </div>
-    
-    <!-- Sección Gestionar Cuentas (oculta inicialmente) -->
-    <div class="section" id="manage-accounts-section" style="display: none;">
-      <div class="section-title">
-        <i class="fas fa-users"></i> Gestionar Cuentas
-      </div>
-      <div class="section-subtitle">
-        Todas las cuentas creadas por el sistema
-      </div>
-      
-      <div class="accounts-list">
-        <table class="accounts-table">
-          <thead>
-            <tr>
-              <th>Usuario</th>
-              <th>Email</th>
-              <th>Contraseña</th>
-              <th>Fecha</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="all-accounts">
-            <!-- Las cuentas se cargarán aquí -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Sección Configuración (oculta inicialmente) -->
-    <div class="section" id="settings-section" style="display: none;">
-      <div class="section-title">
-        <i class="fas fa-cog"></i> Configuración
-      </div>
-      <div class="section-subtitle">
-        Personaliza el comportamiento de tu sistema
-      </div>
-      
-      <div class="create-form">
-        <div class="form-group">
-          <label class="form-label">URL del Backend</label>
-          <input type="text" id="backend-url" class="form-input" value="http://localhost:3000">
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Máximo de cuentas por lote</label>
-          <input type="number" id="max-batch" class="form-input" value="20" min="1" max="100">
-        </div>
-        
-        <div class="form-actions">
-          <button class="form-btn cancel-btn" id="reset-btn">
-            <i class="fas fa-undo"></i> Restablecer
-          </button>
-          <button class="form-btn submit-btn" id="save-settings">
-            <i class="fas fa-save"></i> Guardar Cambios
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script>
-    // Configuración de la API
-    let API_URL = localStorage.getItem('backendUrl') || "http://localhost:3000";
-    
-    // Elementos DOM
-    const navItems = document.querySelectorAll('.nav-item');
-    const sections = {
-      dashboard: document.getElementById('dashboard-section'),
-      'create-accounts': document.getElementById('create-accounts-section'),
-      'manage-accounts': document.getElementById('manage-accounts-section'),
-      settings: document.getElementById('settings-section')
-    };
-    
-    const createBtn = document.getElementById('create-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
-    const accountCount = document.getElementById('account-count');
-    const progressSection = document.getElementById('progress-section');
-    const progressBar = document.getElementById('progress-bar');
-    const createdCount = document.getElementById('created-count');
-    const totalCount = document.getElementById('total-count');
-    const accountsContainer = document.getElementById('accounts-container');
-    const statusIndicator = document.getElementById('backend-status');
-    const statusText = document.getElementById('status-text');
-    const statusDot = document.querySelector('#backend-status .status-dot');
-    const backendUrlInput = document.getElementById('backend-url');
-    const saveSettingsBtn = document.getElementById('save-settings');
-    const resetBtn = document.getElementById('reset-btn');
-    
-    // Estado de la creación
-    let creationInProgress = false;
-    let accountsCreated = 0;
-    let totalAccounts = 0;
-    let eventSource = null;
-    
-    // Navegación entre secciones
-    navItems.forEach(item => {
-      item.addEventListener('click', function() {
-        const sectionId = this.getAttribute('data-section');
-        
-        // Actualizar estado activo en menú
-        navItems.forEach(nav => nav.classList.remove('active'));
-        this.classList.add('active');
-        
-        // Mostrar sección correspondiente
-        Object.values(sections).forEach(section => section.style.display = 'none');
-        sections[sectionId].style.display = 'block';
-        
-        // Si es la sección de gestión, cargar cuentas
-        if (sectionId === 'manage-accounts') {
-          loadAllAccounts();
-        }
+    // Mostrar el panel de Instagram
+    document.getElementById('instagram-link').addEventListener('click', () => {
+      document.getElementById('instagram-panel').style.display = 'block';
+    });
+
+    // Mostrar el panel de crear cuentas
+    document.getElementById('crear-cuentas-btn').addEventListener('click', () => {
+      document.getElementById('crear-cuentas-panel').style.display = 'block';
+    });
+
+    // Conexión SSE con backend
+    document.getElementById('create-btn').addEventListener('click', () => {
+      const cantidad = parseInt(document.getElementById('account-count').value) || 1;
+      const source = new EventSource(`/create-accounts-sse?count=${cantidad}`);
+
+      let creadas = 0;
+
+      source.addEventListener('status', e => {
+        const data = JSON.parse(e.data);
+        console.log('🟡 Estado:', data.message);
+      });
+
+      source.addEventListener('account-created', e => {
+        const data = JSON.parse(e.data);
+        const cuenta = data.account;
+        creadas++;
+
+        const el = document.createElement('div');
+        el.className = 'account-item';
+        el.textContent = `✅ ${cuenta.usuario} (${cuenta.email})`;
+        document.getElementById('accounts-container').appendChild(el);
+
+        const fill = document.getElementById('progress-bar-fill');
+        fill.style.width = `${(creadas / cantidad) * 100}%`;
+      });
+
+      source.addEventListener('complete', () => {
+        console.log('🎉 Creación completada');
+        source.close();
       });
     });
-    
-    // Función para conectar con el backend usando Server-Sent Events
-    function connectToBackend(count) {
-      // Cerrar conexión existente si hay una
-      if (eventSource) eventSource.close();
-      
-      // Crear nueva conexión SSE
-      eventSource = new EventSource(`${API_URL}/create-accounts-sse?count=${count}`);
-      
-      // Manejar mensajes del servidor
-      eventSource.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        
-        switch(data.type) {
-          case 'status':
-            updateStatus(data.message, data.status);
-            break;
-            
-          case 'account-created':
-            accountsCreated++;
-            updateProgress();
-            addAccountToList(data.account);
-            addRecentAccount(data.account);
-            updateDashboardStats();
-            break;
-            
-          case 'error':
-            updateStatus(`Error: ${data.message}`, 'error');
-            break;
-            
-          case 'complete':
-            updateStatus('Proceso completado con éxito', 'success');
-            completeProcess();
-            break;
-        }
-      };
-      
-      eventSource.onerror = function() {
-        updateStatus('Error de conexión con el servidor', 'error');
-        completeProcess();
-      };
-    }
-    
-    // Función para actualizar el estado
-    function updateStatus(message, status) {
-      statusText.textContent = message;
-      
-      // Limpiar clases previas
-      statusIndicator.classList.remove('status-pending', 'status-active', 'status-error');
-      statusDot.style.backgroundColor = '';
-      
-      switch(status) {
-        case 'pending':
-          statusIndicator.classList.add('status-pending');
-          statusDot.style.backgroundColor = 'var(--warning)';
-          break;
-        case 'active':
-          statusIndicator.classList.add('status-active');
-          statusDot.style.backgroundColor = 'var(--success)';
-          break;
-        case 'error':
-          statusIndicator.classList.add('status-error');
-          statusDot.style.backgroundColor = 'var(--error)';
-          break;
-      }
-    }
-    
-    // Función para agregar cuenta a la lista de creación
-    function addAccountToList(account) {
-      const accountItem = document.createElement('div');
-      accountItem.className = 'account-item';
-      
-      accountItem.innerHTML = `
-        <div class="account-info">
-          <div class="account-username">${account.usuario || account.username || 'N/A'}</div>
-          <div class="account-email">${account.email || 'N/A'}</div>
-        </div>
-        <div class="account-status account-success">
-          <i class="fas fa-check"></i> Creada
-        </div>
-      `;
-      
-      accountsContainer.appendChild(accountItem);
-      
-      // Scroll al último elemento
-      accountsContainer.scrollTop = accountsContainer.scrollHeight;
-    }
-    
-    // Función para agregar cuenta a la lista reciente
-    function addRecentAccount(account) {
-      const recentAccounts = document.getElementById('recent-accounts');
-      const accountItem = document.createElement('div');
-      accountItem.className = 'account-item';
-      
-      accountItem.innerHTML = `
-        <div class="account-info">
-          <div class="account-username">${account.usuario || account.username || 'N/A'}</div>
-          <div class="account-email">${account.email || 'N/A'}</div>
-        </div>
-        <div class="account-status account-success">
-          <i class="fas fa-check"></i> Creada
-        </div>
-      `;
-      
-      // Agregar al inicio
-      if (recentAccounts.firstChild) {
-        recentAccounts.insertBefore(accountItem, recentAccounts.firstChild);
-      } else {
-        recentAccounts.appendChild(accountItem);
-      }
-      
-      // Limitar a 5 elementos
-      if (recentAccounts.children.length > 5) {
-        recentAccounts.removeChild(recentAccounts.lastChild);
-      }
-    }
-    
-    // Función para actualizar la barra de progreso
-    function updateProgress() {
-      const progress = (accountsCreated / totalAccounts) * 100;
-      progressBar.style.width = `${progress}%`;
-      createdCount.textContent = accountsCreated;
-      totalCount.textContent = totalAccounts;
-    }
-    
-    // Función para completar el proceso
-    function completeProcess() {
-      creationInProgress = false;
-      createBtn.disabled = false;
-      createBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar creación';
-      createBtn.style.background = '';
-      
-      // Cerrar conexión SSE después de 5 segundos
-      setTimeout(() => {
-        if (eventSource) {
-          eventSource.close();
-          eventSource = null;
-        }
-      }, 5000);
-    }
-    
-    // Función para cargar todas las cuentas
-    async function loadAllAccounts() {
-      try {
-        const response = await fetch(`${API_URL}/cuentas`);
-        const accounts = await response.json();
-        
-        const tableBody = document.getElementById('all-accounts');
-        tableBody.innerHTML = '';
-        
-        accounts.forEach(account => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${account.usuario || account.username}</td>
-            <td>${account.email}</td>
-            <td>${account.password}</td>
-            <td>${new Date(account.fecha).toLocaleString()}</td>
-            <td class="account-success">Activa</td>
-          `;
-          tableBody.appendChild(row);
-        });
-        
-        // Actualizar estadísticas del dashboard
-        document.getElementById('total-accounts').textContent = accounts.length;
-        document.getElementById('active-accounts').textContent = accounts.filter(a => a.estado !== 'error').length;
-        document.getElementById('success-rate').textContent = 
-          accounts.length > 0 ? `${Math.round((accounts.filter(a => a.estado === 'active').length / accounts.length) * 100}%` : '0%';
-        
-      } catch (err) {
-        console.error('Error cargando cuentas:', err);
-      }
-    }
-    
-    // Función para actualizar estadísticas del dashboard
-    function updateDashboardStats() {
-      const totalElement = document.getElementById('total-accounts');
-      const activeElement = document.getElementById('active-accounts');
-      
-      totalElement.textContent = parseInt(totalElement.textContent) + 1;
-      activeElement.textContent = parseInt(activeElement.textContent) + 1;
-    }
-    
-    // Evento para crear cuentas
-    createBtn.addEventListener('click', async function() {
-      if (creationInProgress) return;
-      
-      const count = parseInt(accountCount.value);
-      if (isNaN(count) || count < 1) {
-        alert('Por favor ingresa un número válido de cuentas');
-        return;
-      }
-      
-      // Iniciar proceso
-      creationInProgress = true;
-      createBtn.disabled = true;
-      createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
-      accountsCreated = 0;
-      totalAccounts = count;
-      
-      // Mostrar sección de progreso
-      progressSection.style.display = 'block';
-      accountsContainer.innerHTML = '';
-      updateProgress();
-      
-      // Iniciar conexión con el backend
-      connectToBackend(count);
-      updateStatus('Conectando con el backend...', 'pending');
-    });
-    
-    // Evento para cancelar
-    cancelBtn.addEventListener('click', function() {
-      if (creationInProgress) {
-        if (confirm('¿Estás seguro de cancelar el proceso?')) {
-          // Cerrar conexión SSE
-          if (eventSource) {
-            eventSource.close();
-            eventSource = null;
-          }
-          
-          // Resetear UI
-          creationInProgress = false;
-          createBtn.disabled = false;
-          createBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar creación';
-          updateStatus('Proceso cancelado', 'error');
-        }
-      } else {
-        // Volver al dashboard
-        navItems.forEach(nav => nav.classList.remove('active'));
-        document.querySelector('.nav-item[data-section="dashboard"]').classList.add('active');
-        
-        Object.values(sections).forEach(section => section.style.display = 'none');
-        sections.dashboard.style.display = 'block';
-      }
-    });
-    
-    // Guardar configuración
-    saveSettingsBtn.addEventListener('click', function() {
-      const url = backendUrlInput.value.trim();
-      if (url) {
-        API_URL = url;
-        localStorage.setItem('backendUrl', url);
-        alert('Configuración guardada con éxito');
-      } else {
-        alert('Por favor ingresa una URL válida');
-      }
-    });
-    
-    // Restablecer configuración
-    resetBtn.addEventListener('click', function() {
-      backendUrlInput.value = "http://localhost:3000";
-      localStorage.setItem('backendUrl', "http://localhost:3000");
-      API_URL = "http://localhost:3000";
-      alert('Configuración restablecida');
-    });
-    
-    // Inicialización
-    backendUrlInput.value = API_URL;
-    loadAllAccounts();
   </script>
 </body>
 </html>
