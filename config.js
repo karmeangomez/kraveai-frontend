@@ -1,10 +1,8 @@
-// config.js – Versión oficial para Raspberry Pi
-
 window.API = {
-  instagram: "http://192.168.1.197:3000",
-  chat: "http://192.168.1.197:3000",
-  voz: "http://192.168.1.197:3000",
-  bitly: "http://192.168.1.197:3000",
-  crearCuenta: "http://192.168.1.197:3000/crear-cuenta",
-  crearLote: "http://192.168.1.197:3000/create-accounts"
+  instagram: "http://karmean.duckdns.org:3000",
+  chat: "http://karmean.duckdns.org:3000",
+  voz: "http://karmean.duckdns.org:3000",
+  bitly: "http://karmean.duckdns.org:3000",
+  crearCuenta: "http://karmean.duckdns.org:3000/crear-cuenta",
+  crearLote: "http://karmean.duckdns.org:3000/create-accounts"
 };
