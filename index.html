@@ -519,7 +519,6 @@
     .status-indicator {
       display: inline-flex;
       align-items: center;
-      background: rgba(76, 175, 80, 0.15);
       padding: 8px 20px;
       border-radius: 50px;
       margin-top: 20px;
@@ -710,6 +709,16 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
   </style>
 </head>
 <body>
@@ -769,13 +778,13 @@
         </div>
       </div>
       
-      <button class="beast-mode">
+      <button class="beast-mode pulse">
         <i class="fas fa-paw"></i> Modo Bestia
       </button>
       
       <div class="status-indicator">
-        <div class="status-dot"></div>
-        Sistema operativo al 100%
+        <div class="status-dot" id="system-status-dot"></div>
+        <span id="system-status-text">Conectando al backend...</span>
       </div>
     </div>
 
@@ -879,7 +888,7 @@
     </div>
   </div>
 
-  <!-- Create Accounts Panel (Actualizado) -->
+  <!-- Create Accounts Panel -->
   <div id="create-accounts-panel">
     <div class="back-button" id="volver-instagram">
       <i class="fas fa-arrow-left"></i> Volver
@@ -910,7 +919,7 @@
           </div>
         </div>
         
-        <!-- Sección de progreso (inicialmente oculta) -->
+        <!-- Progress Section -->
         <div class="progress-section" id="progress-section">
           <div class="progress-container">
             <div class="progress-header">
@@ -936,7 +945,7 @@
               <div>Estado</div>
             </div>
             <div id="accounts-container">
-              <!-- Las cuentas se agregarán aquí dinámicamente -->
+              <!-- Accounts will be added here dynamically -->
             </div>
           </div>
         </div>
@@ -995,14 +1004,19 @@
     const statusText = document.getElementById('status-text');
     const statusDot = document.querySelector('#backend-status .status-dot-panel');
     
+    // Elementos de estado del sistema
+    const systemStatusDot = document.getElementById('system-status-dot');
+    const systemStatusText = document.getElementById('system-status-text');
+    
     // Configuración de la API
-    const API_URL = "https://sb-scenarios-finnish-subtle.trycloudflare.com"; // Cambia según tu configuración
+    const API_URL = "https://api.kraveapi.xyz"; // Usando tu dominio personalizado
     
     // Estado de la creación
     let creationInProgress = false;
     let accountsCreated = 0;
     let totalAccounts = 0;
     let eventSource = null;
+    let reconnectAttempts = 0;
     
     // Navegación entre paneles
     instagramLink.addEventListener('click', function(e) {
@@ -1075,44 +1089,74 @@
     // Función para conectar con el backend usando Server-Sent Events
     function connectToBackend(count) {
       // Cerrar conexión existente si hay una
-      if (eventSource) eventSource.close();
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+      }
       
       // Crear nueva conexión SSE
-      eventSource = new EventSource(`${API_URL}/create-accounts-sse?count=${count}`);
-      
-      // Manejar mensajes del servidor
-      eventSource.onmessage = function(event) {
-        const data = JSON.parse(event.data);
+      try {
+        eventSource = new EventSource(`${API_URL}/create-accounts-sse?count=${count}`);
         
-        switch(data.type) {
-          case 'status':
-            updateStatus(data.message, data.status);
-            break;
-            
-          case 'account-created':
-            accountsCreated++;
-            updateProgress();
-            addAccountToList(data.account);
-            showNotification(`Cuenta creada: ${data.account.usuario}`);
-            break;
-            
-          case 'error':
-            updateStatus(`Error: ${data.message}`, 'error');
-            showNotification(`Error: ${data.message}`);
-            break;
-            
-          case 'complete':
-            updateStatus('Proceso completado con éxito', 'success');
-            showNotification('Creación de cuentas completada');
-            completeProcess();
-            break;
-        }
-      };
-      
-      eventSource.onerror = function() {
-        updateStatus('Error de conexión con el servidor', 'error');
-        completeProcess();
-      };
+        // Manejar evento de conexión exitosa
+        eventSource.addEventListener('open', () => {
+          reconnectAttempts = 0;
+          updateStatus('Conectado al backend', 'active');
+        });
+        
+        // Manejar eventos personalizados
+        eventSource.addEventListener('status', (event) => {
+          const data = JSON.parse(event.data);
+          updateStatus(data.message, data.status);
+        });
+        
+        eventSource.addEventListener('account-created', (event) => {
+          const data = JSON.parse(event.data);
+          accountsCreated++;
+          updateProgress();
+          addAccountToList(data.account);
+          showNotification(`Cuenta creada: ${data.account.usuario}`);
+        });
+        
+        eventSource.addEventListener('error', (event) => {
+          const data = JSON.parse(event.data);
+          updateStatus(`Error: ${data.message}`, 'error');
+          showNotification(`Error: ${data.message}`);
+        });
+        
+        eventSource.addEventListener('complete', (event) => {
+          updateStatus('Proceso completado con éxito', 'success');
+          showNotification('Creación de cuentas completada');
+          completeProcess();
+        });
+        
+        // Manejar errores de conexión
+        eventSource.onerror = function() {
+          updateStatus('Error de conexión con el servidor', 'error');
+          
+          // Intentar reconectar
+          reconnectAttempts++;
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+          
+          setTimeout(() => {
+            if (creationInProgress) {
+              updateStatus(`Reconectando (intento ${reconnectAttempts})...`, 'pending');
+              connectToBackend(count);
+            }
+          }, delay);
+        };
+      } catch (error) {
+        updateStatus('Error al conectar con el backend', 'error');
+        showNotification('Error de conexión con el backend');
+        
+        // Intentar reconectar después de 5 segundos
+        setTimeout(() => {
+          if (creationInProgress) {
+            updateStatus('Reconectando...', 'pending');
+            connectToBackend(count);
+          }
+        }, 5000);
+      }
     }
     
     // Función para actualizar el estado
@@ -1174,14 +1218,13 @@
       createBtn.disabled = false;
       createBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar creación';
       createBtn.style.background = '';
+      reconnectAttempts = 0;
       
-      // Cerrar conexión SSE después de 5 segundos
-      setTimeout(() => {
-        if (eventSource) {
-          eventSource.close();
-          eventSource = null;
-        }
-      }, 5000);
+      // Cerrar conexión SSE
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+      }
     }
     
     // Evento para crear cuentas
@@ -1200,6 +1243,7 @@
       createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
       accountsCreated = 0;
       totalAccounts = count;
+      reconnectAttempts = 0;
       
       // Mostrar sección de progreso
       progressSection.style.display = 'block';
@@ -1226,6 +1270,7 @@
           createBtn.disabled = false;
           createBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar creación';
           updateStatus('Proceso cancelado', 'error');
+          reconnectAttempts = 0;
         }
       } else {
         // Volver al panel de Instagram
@@ -1233,9 +1278,59 @@
       }
     });
 
+    // Función para verificar conexión con el backend
+    async function checkBackendConnection() {
+      try {
+        const response = await fetch(`${API_URL}/health`);
+        if (response.ok) {
+          systemStatusDot.style.backgroundColor = 'var(--success)';
+          systemStatusText.textContent = 'Conectado al backend | Sistema al 100%';
+          return true;
+        } else {
+          throw new Error('Backend responded with error');
+        }
+      } catch (error) {
+        systemStatusDot.style.backgroundColor = 'var(--error)';
+        systemStatusText.textContent = 'Error de conexión con el backend';
+        return false;
+      }
+    }
+    
+    // Función para verificar conexión con Telegram
+    async function testTelegramConnection() {
+      try {
+        const response = await fetch(`${API_URL}/test-telegram`);
+        if (response.ok) {
+          return true;
+        } else {
+          showNotification('⚠️ Error conectando con Telegram');
+          return false;
+        }
+      } catch (error) {
+        showNotification('⚠️ Error conectando con Telegram');
+        return false;
+      }
+    }
+    
     // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
-      showNotification('KraveAI activo - Sistema operativo al 100%');
+    document.addEventListener('DOMContentLoaded', async function() {
+      showNotification('KraveAI activo - Conectando al backend...');
+      
+      // Verificar conexión con el backend
+      if (await checkBackendConnection()) {
+        showNotification('Conexión con el backend establecida');
+        
+        // Verificar conexión con Telegram
+        await testTelegramConnection();
+      } else {
+        showNotification('⚠️ Error conectando con el backend');
+      }
+      
+      // Verificar conexiones periódicamente (cada 2 minutos)
+      setInterval(async () => {
+        await checkBackendConnection();
+        await testTelegramConnection();
+      }, 120000);
     });
   </script>
 </body>
