@@ -1,8 +1,8 @@
 window.API = {
-  instagram: "http://karmean.duckdns.org:3000",
-  chat: "http://karmean.duckdns.org:3000",
-  voz: "http://karmean.duckdns.org:3000",
-  bitly: "http://karmean.duckdns.org:3000",
-  crearCuenta: "http://karmean.duckdns.org:3000/crear-cuenta",
-  crearLote: "http://karmean.duckdns.org:3000/create-accounts"
+  instagram: "https://9e0b-187-190-207-172.ngrok-free.app",
+  chat: "https://9e0b-187-190-207-172.ngrok-free.app",
+  voz: "https://9e0b-187-190-207-172.ngrok-free.app",
+  bitly: "https://9e0b-187-190-207-172.ngrok-free.app",
+  crearCuenta: "https://9e0b-187-190-207-172.ngrok-free.app/crear-cuenta",
+  crearLote: "https://9e0b-187-190-207-172.ngrok-free.app/create-accounts"
 };
