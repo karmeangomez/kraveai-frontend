@@ -1,8 +1,10 @@
+const API_URL = "https://33cf-187-190-207-172.ngrok-free.app";
+
 window.API = {
-  instagram: "https://9e0b-187-190-207-172.ngrok-free.app",
-  chat: "https://9e0b-187-190-207-172.ngrok-free.app",
-  voz: "https://9e0b-187-190-207-172.ngrok-free.app",
-  bitly: "https://9e0b-187-190-207-172.ngrok-free.app",
-  crearCuenta: "https://9e0b-187-190-207-172.ngrok-free.app/crear-cuenta",
-  crearLote: "https://9e0b-187-190-207-172.ngrok-free.app/create-accounts"
+  instagram: API_URL,
+  chat: API_URL,
+  voz: API_URL,
+  bitly: API_URL,
+  crearCuenta: `${API_URL}/crear-cuenta`,
+  crearLote: `${API_URL}/create-accounts`
 };
