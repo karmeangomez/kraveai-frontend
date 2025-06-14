@@ -612,6 +612,7 @@
     .account-info {
       display: flex;
       flex-direction: column;
+      width: 70%;
     }
 
     .account-username {
@@ -619,9 +620,25 @@
       font-size: 1.1rem;
     }
 
+    .account-email {
+      font-size: 0.9rem;
+      color: var(--gray);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .account-proxy {
+      font-size: 0.8rem;
+      color: var(--secondary);
+      margin-top: 4px;
+    }
+
     .account-status {
       font-size: 0.9rem;
       margin-top: 5px;
+      width: 30%;
+      text-align: right;
     }
 
     .account-success {
@@ -671,6 +688,29 @@
       border: 1px solid rgba(244, 67, 54, 0.3);
     }
 
+    /* Accounts Filter */
+    .accounts-filter {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .social-grid {
@@ -683,6 +723,14 @@
       
       .instagram-grid {
         grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .account-info {
+        width: 60%;
+      }
+      
+      .account-status {
+        width: 40%;
       }
     }
 
@@ -702,6 +750,14 @@
       .form-actions {
         flex-direction: column;
       }
+      
+      .account-info {
+        width: 50%;
+      }
+      
+      .account-status {
+        width: 50%;
+      }
     }
 
     /* Animations */
@@ -718,6 +774,15 @@
     
     .pulse {
       animation: pulse 2s infinite;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
     }
   </style>
 </head>
@@ -949,6 +1014,40 @@
             </div>
           </div>
         </div>
+        
+        <!-- Existing Accounts Section -->
+        <div class="section" id="existing-accounts-section">
+          <div class="section-title">
+            <i class="fas fa-database"></i> Cuentas Creadas
+          </div>
+          <div class="section-subtitle">Todas las cuentas generadas por el sistema</div>
+          
+          <div class="accounts-filter">
+            <button class="filter-btn active" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="active">Activas</button>
+            <button class="filter-btn" data-filter="inactive">Inactivas</button>
+            <button class="filter-btn" data-filter="today">Hoy</button>
+          </div>
+          
+          <div class="accounts-list">
+            <div class="list-header">
+              <div>Usuario / Email</div>
+              <div>Estado</div>
+            </div>
+            <div id="existing-accounts-container">
+              <div class="account-item fade-in">
+                <div class="account-info">
+                  <div class="account-username">ejemplo_user</div>
+                  <div class="account-email">ejemplo@email.com</div>
+                  <div class="account-proxy">proxy1:8080</div>
+                </div>
+                <div class="account-status account-success">
+                  <i class="fas fa-check-circle"></i> Activa
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1004,6 +1103,10 @@
     const statusText = document.getElementById('status-text');
     const statusDot = document.querySelector('#backend-status .status-dot-panel');
     
+    // Elementos para cuentas existentes
+    const existingAccountsContainer = document.getElementById('existing-accounts-container');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
     // Elementos de estado del sistema
     const systemStatusDot = document.getElementById('system-status-dot');
     const systemStatusText = document.getElementById('system-status-text');
@@ -1032,6 +1135,7 @@
     crearCuentasLink.addEventListener('click', function(e) {
       e.preventDefault();
       createAccountsPanel.classList.add('active');
+      cargarCuentasExistentes(); // Cargar cuentas al abrir el panel
     });
 
     volverInstagram.addEventListener('click', function(e) {
@@ -1116,6 +1220,9 @@
           updateProgress();
           addAccountToList(data.account);
           showNotification(`Cuenta creada: ${data.account.usuario}`);
+          
+          // Actualizar lista de cuentas existentes
+          cargarCuentasExistentes();
         });
         
         eventSource.addEventListener('error', (event) => {
@@ -1128,6 +1235,9 @@
           updateStatus('Proceso completado con éxito', 'success');
           showNotification('Creación de cuentas completada');
           completeProcess();
+          
+          // Actualizar lista de cuentas existentes
+          cargarCuentasExistentes();
         });
         
         // Manejar errores de conexión
@@ -1186,15 +1296,16 @@
     // Función para agregar cuenta a la lista
     function addAccountToList(account) {
       const accountItem = document.createElement('div');
-      accountItem.className = 'account-item';
+      accountItem.className = 'account-item fade-in';
       
       accountItem.innerHTML = `
         <div class="account-info">
           <div class="account-username">${account.usuario || account.username || 'N/A'}</div>
           <div class="account-email">${account.email || 'N/A'}</div>
+          <div class="account-proxy">${account.proxy ? account.proxy.substring(0, 20) + '...' : 'N/A'}</div>
         </div>
         <div class="account-status account-success">
-          <i class="fas fa-check"></i> Creada
+          <i class="fas fa-check-circle"></i> Creada
         </div>
       `;
       
@@ -1312,6 +1423,55 @@
       }
     }
     
+    // Función para cargar cuentas existentes
+    async function cargarCuentasExistentes() {
+      try {
+        const response = await fetch(`${API_URL}/cuentas`);
+        if (!response.ok) throw new Error('Error al cargar cuentas');
+        const cuentas = await response.json();
+
+        existingAccountsContainer.innerHTML = '';
+
+        if (cuentas.length === 0) {
+          existingAccountsContainer.innerHTML = '<div class="account-item" style="justify-content:center; color:var(--gray);">No hay cuentas creadas</div>';
+          return;
+        }
+
+        cuentas.forEach(cuenta => {
+          const accountItem = document.createElement('div');
+          accountItem.className = 'account-item fade-in';
+          accountItem.innerHTML = `
+            <div class="account-info">
+              <div class="account-username">${cuenta.usuario || 'N/A'}</div>
+              <div class="account-email">${cuenta.email || 'N/A'}</div>
+              <div class="account-proxy">${cuenta.proxy ? cuenta.proxy.substring(0, 20) + '...' : 'N/A'}</div>
+            </div>
+            <div class="account-status ${cuenta.status === 'active' ? 'account-success' : 'account-error'}">
+              ${cuenta.status === 'active' ? '<i class="fas fa-check-circle"></i> Activa' : '<i class="fas fa-exclamation-circle"></i> Inactiva'}
+            </div>
+          `;
+          existingAccountsContainer.appendChild(accountItem);
+        });
+      } catch (error) {
+        console.error('Error:', error);
+        existingAccountsContainer.innerHTML = '<div class="account-item" style="justify-content:center; color:var(--error);">Error al cargar las cuentas</div>';
+      }
+    }
+    
+    // Eventos para los filtros
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remover clase activa de todos los botones
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        // Agregar clase activa al botón seleccionado
+        button.classList.add('active');
+        
+        const filter = button.dataset.filter;
+        // Aquí implementarías la lógica de filtrado
+        showNotification(`Filtro aplicado: ${button.textContent}`);
+      });
+    });
+
     // Inicialización
     document.addEventListener('DOMContentLoaded', async function() {
       showNotification('KraveAI activo - Conectando al backend...');
@@ -1331,6 +1491,9 @@
         await checkBackendConnection();
         await testTelegramConnection();
       }, 120000);
+      
+      // Cargar cuentas existentes
+      cargarCuentasExistentes();
     });
   </script>
 </body>
