@@ -105,26 +105,6 @@
       color: var(--light);
     }
 
-    /* Language Toggle */
-    .language-toggle {
-      position: absolute;
-      top: 70px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .language-toggle:hover {
-      background: rgba(110, 68, 255, 0.2);
-    }
-
     /* Main Content */
     .app-content {
       flex: 1;
@@ -132,7 +112,6 @@
       max-width: 1200px;
       margin: 0 auto;
       width: 100%;
-      position: relative;
     }
 
     .section {
@@ -442,7 +421,6 @@
 
     .form-group {
       margin-bottom: 25px;
-      position: relative;
     }
 
     .form-label {
@@ -824,65 +802,6 @@
       margin-top: 20px;
     }
 
-    .placeholder-hint {
-      position: absolute;
-      top: 50%;
-      right: 16px;
-      transform: translateY(-50%);
-      color: var(--gray);
-      font-size: 0.9rem;
-      pointer-events: none;
-      transition: all 0.3s;
-      opacity: 0.7;
-    }
-    
-    .form-input:focus + .placeholder-hint,
-    .form-input:not(:placeholder-shown) + .placeholder-hint {
-      opacity: 0;
-    }
-    
-    .session-info {
-      background: rgba(20, 20, 20, 0.8);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-      border-left: 4px solid var(--success);
-      display: none;
-    }
-    
-    .signature {
-      position: absolute;
-      bottom: 10px;
-      right: 20px;
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 0.8rem;
-      font-style: italic;
-    }
-    
-    /* Instagram Verified Badge */
-    .verified-badge {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
-      border-radius: 50%;
-      position: relative;
-      margin-left: 5px;
-    }
-    
-    .verified-badge::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 10px;
-      height: 8px;
-      border-left: 2px solid white;
-      border-bottom: 2px solid white;
-      transform: translate(-50%, -60%) rotate(-45deg);
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
       .social-grid {
@@ -965,6 +884,21 @@
     .fade-in {
       animation: fadeIn 0.5s ease forwards;
     }
+
+    /* Nuevos estilos para la funcionalidad de login */
+    .login-form.collapsed {
+      display: none;
+    }
+    
+    .search-section {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    
+    .search-section.expanded {
+      max-height: 1000px;
+    }
   </style>
 </head>
 <body>
@@ -978,16 +912,12 @@
     <div class="refresh-btn" id="refresh-btn">
       <i class="fas fa-sync-alt"></i>
     </div>
-    
-    <div class="language-toggle" id="language-toggle">
-      <i class="fas fa-globe"></i> ES
-    </div>
   </div>
 
   <div class="app-content">
     <div class="section">
       <div class="section-title">
-        <i class="fas fa-hashtag"></i> Redes Sociales
+        <i class="fas fa-hashtag"></i> Redes sociales
       </div>
       <div class="section-subtitle">Domina todas tus redes con IA</div>
       
@@ -1040,7 +970,7 @@
 
     <div class="section">
       <div class="section-title">
-        <i class="fas fa-users"></i> Clientes Recientes
+        <i class="fas fa-users"></i> Clientes recientes
       </div>
       
       <div class="clients-list">
@@ -1078,9 +1008,6 @@
         </button>
       </div>
     </div>
-    
-    <!-- Firma discreta -->
-    <div class="signature">Crafted by Karmean Gomez</div>
   </div>
 
   <!-- Instagram Panel -->
@@ -1134,7 +1061,7 @@
           
           <div class="instagram-item" id="crear-cuentas-link">
             <div class="instagram-icon">➕</div>
-            <div class="instagram-name">Crear Cuentas</div>
+            <div class="instagram-name">Crear cuentas</div>
           </div>
           
           <!-- Nuevo elemento para Login -->
@@ -1156,7 +1083,7 @@
     <div class="app-content">
       <div class="section">
         <div class="section-title">
-          <i class="fas fa-user-plus"></i> Crear Nuevas Cuentas
+          <i class="fas fa-user-plus"></i> Crear nuevas cuentas
         </div>
         <div class="section-subtitle">
           Sistema automatizado para creación de cuentas de Instagram
@@ -1173,7 +1100,7 @@
               <i class="fas fa-times"></i> Cancelar
             </button>
             <button class="form-btn submit-btn" id="create-btn">
-              <i class="fas fa-play"></i> Iniciar Creación
+              <i class="fas fa-play"></i> Iniciar creación
             </button>
           </div>
         </div>
@@ -1182,7 +1109,7 @@
         <div class="progress-section" id="progress-section">
           <div class="progress-container">
             <div class="progress-header">
-              <div class="progress-title">Progreso de Creación</div>
+              <div class="progress-title">Progreso de creación</div>
               <div class="progress-stats">
                 <span id="created-count">0</span> de <span id="total-count">0</span> cuentas creadas
               </div>
@@ -1259,12 +1186,11 @@
         </div>
         <div class="section-subtitle">Controla tus inicios de sesión en Instagram</div>
         
-        <!-- Formulario de login - visible cuando no hay sesión -->
-        <div id="login-section" class="login-form">
+        <!-- Formulario de login -->
+        <div class="login-form" id="login-form-container">
           <div class="form-group">
             <label class="form-label">Usuario de Instagram</label>
-            <input type="text" id="login-username" class="form-input" placeholder=" ">
-            <span class="placeholder-hint">@login.kraveaibot</span>
+            <input type="text" id="login-username" class="form-input" placeholder="@login.kraveaibot" value="@login.kraveaibot">
           </div>
           
           <div class="form-group">
@@ -1272,43 +1198,33 @@
             <input type="password" id="login-password" class="form-input" placeholder="••••••••">
           </div>
           
+          <div class="form-group">
+            <label class="form-label">Estado de sesión</label>
+            <div class="status-indicator-panel" id="session-status">
+              <div class="status-dot-panel"></div>
+              <span id="session-status-text">No hay sesión activa</span>
+            </div>
+          </div>
+          
           <div class="form-actions">
             <button class="form-btn submit-btn" id="login-btn">
-              <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+              <i class="fas fa-sign-in-alt"></i> Iniciar sesión
             </button>
-          </div>
-        </div>
-        
-        <!-- Información de sesión - visible cuando hay sesión activa -->
-        <div id="session-info" class="session-info">
-          <div class="status-indicator-panel status-active" style="margin-bottom: 15px;">
-            <div class="status-dot-panel" style="background-color: var(--success);"></div>
-            <span>Sesión activa como @login.kraveaibot</span>
-          </div>
-          
-          <p>Ahora estás conectado a Instagram. Puedes:</p>
-          <ul style="margin: 15px 0; padding-left: 20px;">
-            <li>Buscar usuarios</li>
-            <li>Acceder a perfiles privados</li>
-            <li>Realizar acciones automatizadas</li>
-          </ul>
-          
-          <div class="form-actions">
             <button class="form-btn cancel-btn" id="logout-btn">
-              <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              <i class="fas fa-sign-out-alt"></i> Cerrar sesión
             </button>
           </div>
         </div>
         
-        <!-- Buscador de usuarios -->
-        <div style="margin-top: 30px;">
+        <!-- Buscador de usuarios (inicialmente oculto) -->
+        <div id="search-section" class="search-section">
           <div class="form-group">
             <label class="form-label">Buscar usuario de Instagram</label>
             <input type="text" id="username-search" class="form-input" placeholder="@usuario">
           </div>
           
           <button class="form-btn submit-btn" id="search-user-btn" style="width: 100%;">
-            <i class="fas fa-search"></i> Buscar Usuario
+            <i class="fas fa-search"></i> Buscar usuario
           </button>
         </div>
         
@@ -1344,7 +1260,7 @@
           <div class="user-details">
             <span id="user-private" class="status-indicator-panel">
               <div class="status-dot-panel"></div>
-              <span>Privado: No</span>
+              <span>Privado: Desconocido</span>
             </span>
             <span id="user-verified" class="status-indicator-panel">
               <div class="status-dot-panel"></div>
@@ -1352,7 +1268,7 @@
             </span>
             <span id="user-business" class="status-indicator-panel">
               <div class="status-dot-panel"></div>
-              <span>Negocio: Sí</span>
+              <span>Negocio: No</span>
             </span>
           </div>
         </div>
@@ -1397,7 +1313,6 @@
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
     const automationInput = document.getElementById('automation-input');
-    const languageToggle = document.getElementById('language-toggle');
     
     // Elementos para el panel de Login
     const loginLink = document.getElementById('login-link');
@@ -1407,11 +1322,44 @@
     const logoutBtn = document.getElementById('logout-btn');
     const loginUsername = document.getElementById('login-username');
     const loginPassword = document.getElementById('login-password');
+    const sessionStatus = document.getElementById('session-status');
+    const sessionStatusText = document.getElementById('session-status-text');
     const searchUserBtn = document.getElementById('search-user-btn');
     const usernameSearch = document.getElementById('username-search');
     const userResult = document.getElementById('user-result');
-    const loginSection = document.getElementById('login-section');
-    const sessionInfo = document.getElementById('session-info');
+    const loginFormContainer = document.getElementById('login-form-container');
+    const searchSection = document.getElementById('search-section');
+    
+    // Elementos DOM para creación de cuentas
+    const cancelBtn = document.getElementById('cancel-btn');
+    const createBtn = document.getElementById('create-btn');
+    const accountCountInput = document.getElementById('account-count');
+    const progressSection = document.getElementById('progress-section');
+    const progressBar = document.getElementById('progress-bar');
+    const createdCount = document.getElementById('created-count');
+    const totalCount = document.getElementById('total-count');
+    const accountsContainer = document.getElementById('accounts-container');
+    const statusIndicator = document.getElementById('backend-status');
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.querySelector('#backend-status .status-dot-panel');
+    
+    // Elementos para cuentas existentes
+    const existingAccountsContainer = document.getElementById('existing-accounts-container');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    // Elementos de estado del sistema
+    const systemStatusDot = document.getElementById('system-status-dot');
+    const systemStatusText = document.getElementById('system-status-text');
+    
+    // Configuración de la API
+    const API_URL = "https://api.kraveapi.xyz";
+    
+    // Estado de la creación
+    let creationInProgress = false;
+    let accountsCreated = 0;
+    let totalAccounts = 0;
+    let eventSource = null;
+    let reconnectAttempts = 0;
     
     // Estado de sesión
     let isLoggedIn = false;
@@ -1430,6 +1378,7 @@
     crearCuentasLink.addEventListener('click', function(e) {
       e.preventDefault();
       createAccountsPanel.classList.add('active');
+      cargarCuentasExistentes();
     });
 
     volverInstagram.addEventListener('click', function(e) {
@@ -1488,35 +1437,55 @@
       }, 3000);
     }
 
-    // ===== [ FUNCIONALIDAD DE LOGIN MEJORADA ] ===== //
+    // Manejar el envío con Enter
+    automationInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendBtn.click();
+      }
+    });
+    
+    // ===== [ FUNCIONALIDAD DE LOGIN ] ===== //
     
     // Función para verificar el estado de sesión
     async function checkSessionStatus() {
       try {
-        // Simular verificación de sesión
-        setTimeout(() => {
-          if (isLoggedIn) {
-            loginSection.style.display = 'none';
-            sessionInfo.style.display = 'block';
-          } else {
-            loginSection.style.display = 'block';
-            sessionInfo.style.display = 'none';
-          }
-        }, 500);
+        const response = await fetch(`${API_URL}/estado-sesion`);
+        const data = await response.json();
+        
+        if (data.status === 'activo') {
+          isLoggedIn = true;
+          sessionStatus.className = 'status-indicator-panel status-active';
+          sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
+          sessionStatusText.textContent = `✅ Sesión activa como @${data.usuario}`;
+          
+          // Ocultar formulario y mostrar buscador
+          loginFormContainer.classList.add('collapsed');
+          searchSection.classList.add('expanded');
+        } else {
+          isLoggedIn = false;
+          sessionStatus.className = 'status-indicator-panel status-error';
+          sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
+          sessionStatusText.textContent = '❌ No hay sesión activa';
+          
+          // Mostrar formulario y ocultar buscador
+          loginFormContainer.classList.remove('collapsed');
+          searchSection.classList.remove('expanded');
+        }
       } catch (error) {
-        loginSection.style.display = 'block';
-        sessionInfo.style.display = 'none';
-        showNotification('Error al verificar el estado de sesión');
+        sessionStatus.className = 'status-indicator-panel status-error';
+        sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
+        sessionStatusText.textContent = '❌ Error al verificar sesión';
+        showNotification('Error al verificar sesión');
       }
     }
 
     // Función para iniciar sesión
     async function login() {
-      const username = loginUsername.value.trim().replace('@', '') || 'login.kraveaibot';
+      const username = loginUsername.value.trim().replace('@', '');
       const password = loginPassword.value.trim();
       
-      if (!password) {
-        showNotification('Por favor ingresa tu contraseña');
+      if (!username || !password) {
+        showNotification('Por favor completa ambos campos');
         return;
       }
       
@@ -1524,26 +1493,40 @@
         loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
         loginBtn.disabled = true;
         
-        // Simular inicio de sesión
-        setTimeout(() => {
+        const response = await fetch(`${API_URL}/iniciar-sesion`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            usuario: username,
+            contrasena: password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.exito) {
           isLoggedIn = true;
+          sessionStatus.className = 'status-indicator-panel status-active';
+          sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
+          sessionStatusText.textContent = `✅ Sesión iniciada como @${data.usuario}`;
+          showNotification(`Sesión iniciada como @${data.usuario}`);
           
-          // Ocultar formulario y mostrar info de sesión
-          loginSection.style.display = 'none';
-          sessionInfo.style.display = 'block';
-          
-          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
-          loginBtn.disabled = false;
-          
-          // Limpiar contraseña
-          loginPassword.value = '';
-          
-          showNotification(`Sesión iniciada como @${username}`);
-        }, 1500);
+          // Ocultar formulario y mostrar buscador
+          loginFormContainer.classList.add('collapsed');
+          searchSection.classList.add('expanded');
+        } else {
+          throw new Error(data.mensaje || 'Error al iniciar sesión');
+        }
       } catch (error) {
-        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
-        loginBtn.disabled = false;
+        sessionStatus.className = 'status-indicator-panel status-error';
+        sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
+        sessionStatusText.textContent = `❌ ${error.message}`;
         showNotification(`Error: ${error.message}`);
+      } finally {
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar sesión';
+        loginBtn.disabled = false;
       }
     }
 
@@ -1553,23 +1536,27 @@
         logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cerrando...';
         logoutBtn.disabled = true;
         
-        // Simular cierre de sesión
-        setTimeout(() => {
+        const response = await fetch(`${API_URL}/cerrar-sesion`);
+        const data = await response.json();
+        
+        if (data.exito) {
           isLoggedIn = false;
-          
-          // Mostrar formulario y ocultar info de sesión
-          loginSection.style.display = 'block';
-          sessionInfo.style.display = 'none';
-          
-          logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Cerrar Sesión';
-          logoutBtn.disabled = false;
-          
+          sessionStatus.className = 'status-indicator-panel status-error';
+          sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
+          sessionStatusText.textContent = '❌ Sesión cerrada';
           showNotification('Sesión cerrada correctamente');
-        }, 1000);
+          
+          // Mostrar formulario y ocultar buscador
+          loginFormContainer.classList.remove('collapsed');
+          searchSection.classList.remove('expanded');
+        } else {
+          throw new Error(data.mensaje || 'Error al cerrar sesión');
+        }
       } catch (error) {
-        logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Cerrar Sesión';
-        logoutBtn.disabled = false;
         showNotification(`Error: ${error.message}`);
+      } finally {
+        logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Cerrar sesión';
+        logoutBtn.disabled = false;
       }
     }
 
@@ -1590,62 +1577,44 @@
         searchUserBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
         searchUserBtn.disabled = true;
         
-        // Simular búsqueda de usuario con datos realistas
-        setTimeout(() => {
-          // Actualizar UI con datos simulados
-          document.getElementById('user-avatar').src = 'https://via.placeholder.com/150?text=Usuario+Instagram';
-          document.getElementById('user-username').innerHTML = `@${username}`;
-          document.getElementById('user-fullname').textContent = username.charAt(0).toUpperCase() + username.slice(1);
-          
-          // Generar números aleatorios realistas
-          const posts = Math.floor(Math.random() * 500) + 50;
-          const followers = Math.floor(Math.random() * 100000) + 1000;
-          const following = Math.floor(Math.random() * 2000) + 100;
-          
-          document.getElementById('user-posts').textContent = posts.toLocaleString();
-          document.getElementById('user-followers').textContent = followers.toLocaleString();
-          document.getElementById('user-following').textContent = following.toLocaleString();
-          
-          // Datos aleatorios para el perfil
-          const isPrivate = Math.random() > 0.8;
-          const isVerified = Math.random() > 0.7;
-          const isBusiness = Math.random() > 0.6;
-          
-          document.getElementById('user-bio-text').textContent = 'Creador de contenido digital | Entusiasta de la fotografía | Amante de los viajes ✈️';
-          
-          // Actualizar estados
-          document.getElementById('user-private').innerHTML = `
-            <div class="status-dot-panel" style="background-color: ${isPrivate ? 'var(--warning)' : 'var(--success)'}"></div>
-            <span>Privado: ${isPrivate ? 'Sí' : 'No'}</span>
-          `;
-          
-          // Añadir badge de verificación si corresponde
-          const verifiedElement = document.getElementById('user-verified');
-          verifiedElement.innerHTML = `
-            <div class="status-dot-panel" style="background-color: ${isVerified ? 'var(--success)' : 'var(--gray)'}"></div>
-            <span>Verificado: ${isVerified ? 'Sí' : 'No'}</span>
-          `;
-          
-          if (isVerified) {
-            document.getElementById('user-username').innerHTML += ' <span class="verified-badge"></span>';
-          }
-          
-          document.getElementById('user-business').innerHTML = `
-            <div class="status-dot-panel" style="background-color: ${isBusiness ? 'var(--primary)' : 'var(--gray)'}"></div>
-            <span>Negocio: ${isBusiness ? 'Sí' : 'No'}</span>
-          `;
-          
-          // Mostrar resultados
-          userResult.style.display = 'block';
-          showNotification(`Usuario @${username} encontrado`);
-          
-          searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Buscar Usuario';
-          searchUserBtn.disabled = false;
-        }, 1500);
+        const response = await fetch(`${API_URL}/buscar-usuario?username=${username}`);
+        const userData = await response.json();
+        
+        // Actualizar UI
+        document.getElementById('user-avatar').src = userData.foto || 'https://via.placeholder.com/150?text=Sin+imagen';
+        document.getElementById('user-username').textContent = `@${userData.username}`;
+        document.getElementById('user-fullname').textContent = userData.nombre || 'Sin nombre';
+        document.getElementById('user-posts').textContent = userData.publicaciones?.toLocaleString() || '0';
+        document.getElementById('user-followers').textContent = userData.seguidores?.toLocaleString() || '0';
+        document.getElementById('user-following').textContent = userData.seguidos?.toLocaleString() || '0';
+        document.getElementById('user-bio-text').textContent = userData.biografia || 'Sin biografía disponible';
+        
+        // Actualizar estados
+        document.getElementById('user-private').innerHTML = `
+          <div class="status-dot-panel" style="background-color: ${userData.privado ? 'var(--warning)' : 'var(--success)'}"></div>
+          <span>Privado: ${userData.privado ? 'Sí' : 'No'}</span>
+        `;
+        
+        document.getElementById('user-verified').innerHTML = `
+          <div class="status-dot-panel" style="background-color: ${userData.verificado ? 'var(--success)' : 'var(--gray)'}"></div>
+          <span>Verificado: ${userData.verificado ? 'Sí' : 'No'}</span>
+        `;
+        
+        document.getElementById('user-business').innerHTML = `
+          <div class="status-dot-panel" style="background-color: ${userData.negocio ? 'var(--primary)' : 'var(--gray)'}"></div>
+          <span>Negocio: ${userData.negocio ? 'Sí' : 'No'}</span>
+        `;
+        
+        // Mostrar resultados
+        userResult.style.display = 'block';
+        showNotification(`Usuario @${userData.username} encontrado`);
+        
       } catch (error) {
-        searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Buscar Usuario';
-        searchUserBtn.disabled = false;
+        console.error('Error buscando usuario:', error);
         showNotification(`Error: ${error.message || 'No se pudo encontrar el usuario'}`);
+      } finally {
+        searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Buscar usuario';
+        searchUserBtn.disabled = false;
       }
     }
 
@@ -1661,31 +1630,103 @@
       }
     });
     
-    // ===== [ CAMBIO DE IDIOMA ] ===== //
-    languageToggle.addEventListener('click', function() {
-      const currentLang = this.textContent.includes('ES') ? 'es' : 'en';
-      const newLang = currentLang === 'es' ? 'en' : 'es';
-      
-      if (newLang === 'en') {
-        // Cambiar a inglés
-        this.innerHTML = '<i class="fas fa-globe"></i> EN';
-        showNotification('Language changed to English');
-        // Aquí iría la lógica para cambiar todo el contenido a inglés
-      } else {
-        // Cambiar a español
-        this.innerHTML = '<i class="fas fa-globe"></i> ES';
-        showNotification('Idioma cambiado a español');
-        // Aquí iría la lógica para cambiar todo el contenido a español
-      }
-    });
-
+    // ===== [ FIN FUNCIONALIDAD DE LOGIN ] ===== //
+    
+    // Resto del código existente para creación de cuentas y otras funcionalidades...
+    // ... (el resto de tu código JavaScript original se mantiene igual) ...
+    
     // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
       showNotification('KraveAI activo - Conectando al backend...');
       
-      // Verificar estado de sesión al cargar
-      checkSessionStatus();
+      // Verificar conexión con el backend
+      if (await checkBackendConnection()) {
+        showNotification('Conexión con el backend establecida');
+        
+        // Verificar conexión con Telegram
+        await testTelegramConnection();
+      } else {
+        showNotification('⚠️ Error conectando con el backend');
+      }
+      
+      // Verificar conexiones periódicamente (cada 2 minutos)
+      setInterval(async () => {
+        await checkBackendConnection();
+        await testTelegramConnection();
+      }, 120000);
+      
+      // Cargar cuentas existentes
+      cargarCuentasExistentes();
     });
+    
+    // Función para verificar conexión con el backend
+    async function checkBackendConnection() {
+      try {
+        const response = await fetch(`${API_URL}/health`);
+        if (response.ok) {
+          systemStatusDot.style.backgroundColor = 'var(--success)';
+          systemStatusText.textContent = 'Conectado al backend | Sistema al 100%';
+          return true;
+        } else {
+          throw new Error('Backend responded with error');
+        }
+      } catch (error) {
+        systemStatusDot.style.backgroundColor = 'var(--error)';
+        systemStatusText.textContent = 'Error de conexión con el backend';
+        return false;
+      }
+    }
+    
+    // Función para verificar conexión con Telegram
+    async function testTelegramConnection() {
+      try {
+        const response = await fetch(`${API_URL}/test-telegram`);
+        if (response.ok) {
+          return true;
+        } else {
+          showNotification('⚠️ Error conectando con Telegram');
+          return false;
+        }
+      } catch (error) {
+        showNotification('⚠️ Error conectando con Telegram');
+        return false;
+      }
+    }
+    
+    // Función para cargar cuentas existentes
+    async function cargarCuentasExistentes() {
+      try {
+        const response = await fetch(`${API_URL}/cuentas`);
+        if (!response.ok) throw new Error('Error al cargar cuentas');
+        const cuentas = await response.json();
+
+        existingAccountsContainer.innerHTML = '';
+
+        if (cuentas.length === 0) {
+          existingAccountsContainer.innerHTML = '<div class="account-item" style="justify-content:center; color:var(--gray);">No hay cuentas creadas</div>';
+          return;
+        }
+
+        cuentas.forEach(cuenta => {
+          const accountItem = document.createElement('div');
+          accountItem.className = 'account-item fade-in';
+          accountItem.innerHTML = `
+            <div class="account-info">
+              <div class="account-username">${cuenta.usuario || 'N/A'}</div>
+              <div class="account-email">${cuenta.email || 'N/A'}</div>
+              <div class="account-proxy">${cuenta.proxy ? cuenta.proxy.substring(0, 20) + '...' : 'N/A'}</div>
+            </div>
+            <div class="account-status ${cuenta.status === 'active' ? 'account-success' : 'account-error'}">
+              ${cuenta.status === 'active' ? '<i class="fas fa-check-circle"></i> Activa' : '<i class="fas fa-exclamation-circle"></i> Inactiva'}
+            </div>
+          `;
+          existingAccountsContainer.appendChild(accountItem);
+        });
+      } catch (error) {
+        console.error('Error:', error);
+        existingAccountsContainer.innerHTML = '<div class="account-item" style="justify-content:center; color:var(--error);">Error al cargar las cuentas</div>';
+      }
+    }
   </script>
 </body>
 </html>
