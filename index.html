@@ -632,6 +632,7 @@
       display: flex;
       flex-direction: column;
       width: 70%;
+      font-size: 0.9rem;
     }
 
     .account-username {
@@ -800,6 +801,11 @@
       border-radius: 20px;
       padding: 25px;
       margin-top: 20px;
+      display: block; /* Por defecto visible */
+    }
+
+    .login-form.hidden {
+      display: none; /* Ocultar cuando se inicie sesión */
     }
 
     /* Responsive Design */
@@ -1172,7 +1178,7 @@
         <div class="section-subtitle">Controla tus inicios de sesión en Instagram</div>
         
         <!-- Formulario de login -->
-        <div class="login-form">
+        <div class="login-form" id="login-form">
           <div class="form-group">
             <label class="form-label">Usuario de Instagram</label>
             <input type="text" id="login-username" class="form-input" placeholder="@login.kraveaibot" value="@login.kraveaibot">
@@ -1303,6 +1309,7 @@
     const loginLink = document.getElementById('login-link');
     const volverLoginBtn = document.getElementById('volver-login');
     const loginPanel = document.getElementById('login-panel');
+    const loginForm = document.getElementById('login-form');
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const loginUsername = document.getElementById('login-username');
@@ -1440,17 +1447,21 @@
           sessionStatus.className = 'status-indicator-panel status-active';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
           sessionStatusText.textContent = `✅ Sesión activa como @${data.usuario}`;
+          loginForm.classList.add('hidden'); // Ocultar formulario si hay sesión activa
           showNotification(`Sesión activa como @${data.usuario}`);
         } else {
           isLoggedIn = false;
           sessionStatus.className = 'status-indicator-panel status-error';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
           sessionStatusText.textContent = '❌ No hay sesión activa';
+          loginForm.classList.remove('hidden'); // Mostrar formulario si no hay sesión
         }
       } catch (error) {
+        isLoggedIn = false;
         sessionStatus.className = 'status-indicator-panel status-error';
         sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
         sessionStatusText.textContent = '❌ Error al verificar sesión';
+        loginForm.classList.remove('hidden'); // Mostrar formulario en caso de error
         showNotification('Error al verificar sesión');
       }
     }
@@ -1487,6 +1498,7 @@
           sessionStatus.className = 'status-indicator-panel status-active';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
           sessionStatusText.textContent = `✅ Sesión iniciada como @${data.usuario}`;
+          loginForm.classList.add('hidden'); // Ocultar formulario tras login exitoso
           showNotification(`Sesión iniciada como @${data.usuario}`);
         } else {
           throw new Error(data.mensaje || 'Error al iniciar sesión');
@@ -1495,6 +1507,7 @@
         sessionStatus.className = 'status-indicator-panel status-error';
         sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
         sessionStatusText.textContent = `❌ ${error.message}`;
+        loginForm.classList.remove('hidden'); // Mostrar formulario en caso de error
         showNotification(`Error: ${error.message}`);
       } finally {
         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar sesión';
@@ -1516,6 +1529,7 @@
           sessionStatus.className = 'status-indicator-panel status-error';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
           sessionStatusText.textContent = '❌ Sesión cerrada';
+          loginForm.classList.remove('hidden'); // Mostrar formulario tras cerrar sesión
           showNotification('Sesión cerrada correctamente');
         } else {
           throw new Error(data.mensaje || 'Error al cerrar sesión');
@@ -1599,9 +1613,6 @@
     });
     
     // ===== [ FIN FUNCIONALIDAD DE LOGIN ] ===== //
-    
-    // Resto del código existente para creación de cuentas y otras funcionalidades...
-    // ... (el resto de tu código JavaScript original se mantiene igual) ...
     
     // Inicialización
     document.addEventListener('DOMContentLoaded', async function() {
