@@ -1033,27 +1033,17 @@
         searchUserBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
         searchUserBtn.disabled = true;
         
-        // Simular búsqueda (en un caso real se usaría la API)
-        const userData = {
-          username: username,
-          nombre: username.charAt(0).toUpperCase() + username.slice(1),
-          publicaciones: Math.floor(Math.random() * 1000),
-          seguidores: Math.floor(Math.random() * 10000),
-          seguidos: Math.floor(Math.random() * 500),
-          biografia: `Perfil de ${username}. Contenido digital de calidad.`,
-          privado: false,
-          verificado: Math.random() > 0.5,
-          negocio: Math.random() > 0.5
-        };
+        const response = await fetch(`${API_URL}/buscar-usuario?username=${username}`);
+        const userData = await response.json();
         
         // Actualizar UI
-        document.getElementById('user-avatar').textContent = username.charAt(0).toUpperCase();
+        document.getElementById('user-avatar').textContent = userData.username.charAt(0).toUpperCase();
         document.getElementById('user-username').textContent = `@${userData.username}`;
-        document.getElementById('user-fullname').textContent = userData.nombre;
-        document.getElementById('user-posts').textContent = userData.publicaciones;
-        document.getElementById('user-followers').textContent = userData.seguidores;
-        document.getElementById('user-following').textContent = userData.seguidos;
-        document.getElementById('user-bio-text').textContent = userData.biografia;
+        document.getElementById('user-fullname').textContent = userData.nombre || userData.username;
+        document.getElementById('user-posts').textContent = userData.publicaciones || '0';
+        document.getElementById('user-followers').textContent = userData.seguidores || '0';
+        document.getElementById('user-following').textContent = userData.siguiendo || '0';
+        document.getElementById('user-bio-text').textContent = userData.biografia || 'Sin biografía disponible';
         
         // Actualizar estados
         document.getElementById('user-private').innerHTML = `
@@ -1100,13 +1090,50 @@
     document.addEventListener('DOMContentLoaded', async function() {
       showNotification('KraveAI activo - Conectando al backend...');
       
-      // Simular conexión con el backend
-      setTimeout(() => {
-        systemStatusDot.style.backgroundColor = 'var(--success)';
-        systemStatusText.textContent = 'Conectado al backend | Sistema al 100%';
+      // Verificar conexión con el backend
+      if (await checkBackendConnection()) {
         showNotification('Conexión con el backend establecida');
-      }, 1500);
+        
+        // Verificar conexión con Telegram
+        await testTelegramConnection();
+      } else {
+        showNotification('⚠️ Error conectando con el backend');
+      }
     });
+    
+    // Función para verificar conexión con el backend
+    async function checkBackendConnection() {
+      try {
+        const response = await fetch(`${API_URL}/health`);
+        if (response.ok) {
+          systemStatusDot.style.backgroundColor = 'var(--success)';
+          systemStatusText.textContent = 'Conectado al backend | Sistema al 100%';
+          return true;
+        } else {
+          throw new Error('Backend responded with error');
+        }
+      } catch (error) {
+        systemStatusDot.style.backgroundColor = 'var(--error)';
+        systemStatusText.textContent = 'Error de conexión con el backend';
+        return false;
+      }
+    }
+    
+    // Función para verificar conexión con Telegram
+    async function testTelegramConnection() {
+      try {
+        const response = await fetch(`${API_URL}/test-telegram`);
+        if (response.ok) {
+          return true;
+        } else {
+          showNotification('⚠️ Error conectando con Telegram');
+          return false;
+        }
+      } catch (error) {
+        showNotification('⚠️ Error conectando con Telegram');
+        return false;
+      }
+    }
   </script>
 </body>
 </html>
