@@ -801,11 +801,40 @@
       border-radius: 20px;
       padding: 25px;
       margin-top: 20px;
-      display: block; /* Por defecto visible */
+      display: block;
+      transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease;
+      max-height: 500px;
+      overflow: hidden;
     }
 
     .login-form.hidden {
-      display: none; /* Ocultar cuando se inicie sesión */
+      opacity: 0;
+      max-height: 0;
+      padding: 0;
+      pointer-events: none;
+    }
+
+    #logout-btn.hidden {
+      display: none;
+    }
+
+    /* Estilo para "Created by Karmean Gómez" */
+    .created-by {
+      text-align: center;
+      color: var(--gray);
+      font-size: 0.85rem;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+
+    /* Estilo para el tick de verificación de Instagram */
+    .verified-tick {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-left: 5px;
+      vertical-align: middle;
     }
 
     /* Responsive Design */
@@ -999,6 +1028,10 @@
         </button>
       </div>
     </div>
+
+    <div class="created-by">
+      Created by Karmean Gómez
+    </div>
   </div>
 
   <!-- Instagram Panel -->
@@ -1055,7 +1088,6 @@
             <div class="instagram-name">Crear cuentas</div>
           </div>
           
-          <!-- Nuevo elemento para Login -->
           <div class="instagram-item" id="login-link">
             <div class="instagram-icon">🔐</div>
             <div class="instagram-name">Login</div>
@@ -1096,7 +1128,6 @@
           </div>
         </div>
         
-        <!-- Progress Section -->
         <div class="progress-section" id="progress-section">
           <div class="progress-container">
             <div class="progress-header">
@@ -1122,12 +1153,10 @@
               <div>Estado</div>
             </div>
             <div id="accounts-container">
-              <!-- Accounts will be added here dynamically -->
             </div>
           </div>
         </div>
         
-        <!-- Existing Accounts Section -->
         <div class="section" id="existing-accounts-section">
           <div class="section-title">
             <i class="fas fa-database"></i> Cuentas Creadas
@@ -1177,7 +1206,6 @@
         </div>
         <div class="section-subtitle">Controla tus inicios de sesión en Instagram</div>
         
-        <!-- Formulario de login -->
         <div class="login-form" id="login-form">
           <div class="form-group">
             <label class="form-label">Usuario de Instagram</label>
@@ -1207,7 +1235,6 @@
           </div>
         </div>
         
-        <!-- Buscador de usuarios -->
         <div style="margin-top: 30px;">
           <div class="form-group">
             <label class="form-label">Buscar usuario de Instagram</label>
@@ -1219,7 +1246,6 @@
           </button>
         </div>
         
-        <!-- Resultados de búsqueda -->
         <div id="user-result" class="user-result">
           <div class="user-header">
             <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
@@ -1352,7 +1378,7 @@
     let reconnectAttempts = 0;
     
     // Estado de sesión
-    let isLoggedIn = false;
+    let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     
     // Navegación entre paneles
     instagramLink.addEventListener('click', function(e) {
@@ -1376,11 +1402,15 @@
       createAccountsPanel.classList.remove('active');
     });
     
-    // Navegación al panel de Login
     loginLink.addEventListener('click', function(e) {
       e.preventDefault();
       loginPanel.classList.add('active');
       checkSessionStatus();
+      if (isLoggedIn) {
+        logoutBtn.classList.remove('hidden');
+      } else {
+        logoutBtn.classList.add('hidden');
+      }
     });
 
     volverLoginBtn.addEventListener('click', function() {
@@ -1436,7 +1466,6 @@
     
     // ===== [ FUNCIONALIDAD DE LOGIN ] ===== //
     
-    // Función para verificar el estado de sesión
     async function checkSessionStatus() {
       try {
         const response = await fetch(`${API_URL}/estado-sesion`);
@@ -1444,29 +1473,34 @@
         
         if (data.status === 'activo') {
           isLoggedIn = true;
+          localStorage.setItem('isLoggedIn', 'true');
           sessionStatus.className = 'status-indicator-panel status-active';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
           sessionStatusText.textContent = `✅ Sesión activa como @${data.usuario}`;
-          loginForm.classList.add('hidden'); // Ocultar formulario si hay sesión activa
+          loginForm.classList.add('hidden');
+          logoutBtn.classList.remove('hidden');
           showNotification(`Sesión activa como @${data.usuario}`);
         } else {
           isLoggedIn = false;
+          localStorage.setItem('isLoggedIn', 'false');
           sessionStatus.className = 'status-indicator-panel status-error';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
           sessionStatusText.textContent = '❌ No hay sesión activa';
-          loginForm.classList.remove('hidden'); // Mostrar formulario si no hay sesión
+          loginForm.classList.remove('hidden');
+          logoutBtn.classList.add('hidden');
         }
       } catch (error) {
         isLoggedIn = false;
+        localStorage.setItem('isLoggedIn', 'false');
         sessionStatus.className = 'status-indicator-panel status-error';
         sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
         sessionStatusText.textContent = '❌ Error al verificar sesión';
-        loginForm.classList.remove('hidden'); // Mostrar formulario en caso de error
+        loginForm.classList.remove('hidden');
+        logoutBtn.classList.add('hidden');
         showNotification('Error al verificar sesión');
       }
     }
 
-    // Función para iniciar sesión
     async function login() {
       const username = loginUsername.value.trim().replace('@', '');
       const password = loginPassword.value.trim();
@@ -1495,10 +1529,12 @@
         
         if (data.exito) {
           isLoggedIn = true;
+          localStorage.setItem('isLoggedIn', 'true');
           sessionStatus.className = 'status-indicator-panel status-active';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
           sessionStatusText.textContent = `✅ Sesión iniciada como @${data.usuario}`;
-          loginForm.classList.add('hidden'); // Ocultar formulario tras login exitoso
+          loginForm.classList.add('hidden');
+          logoutBtn.classList.remove('hidden');
           showNotification(`Sesión iniciada como @${data.usuario}`);
         } else {
           throw new Error(data.mensaje || 'Error al iniciar sesión');
@@ -1507,7 +1543,8 @@
         sessionStatus.className = 'status-indicator-panel status-error';
         sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
         sessionStatusText.textContent = `❌ ${error.message}`;
-        loginForm.classList.remove('hidden'); // Mostrar formulario en caso de error
+        loginForm.classList.remove('hidden');
+        logoutBtn.classList.add('hidden');
         showNotification(`Error: ${error.message}`);
       } finally {
         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar sesión';
@@ -1515,7 +1552,6 @@
       }
     }
 
-    // Función para cerrar sesión
     async function logout() {
       try {
         logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cerrando...';
@@ -1526,10 +1562,12 @@
         
         if (data.exito) {
           isLoggedIn = false;
+          localStorage.setItem('isLoggedIn', 'false');
           sessionStatus.className = 'status-indicator-panel status-error';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
           sessionStatusText.textContent = '❌ Sesión cerrada';
-          loginForm.classList.remove('hidden'); // Mostrar formulario tras cerrar sesión
+          loginForm.classList.remove('hidden');
+          logoutBtn.classList.add('hidden');
           showNotification('Sesión cerrada correctamente');
         } else {
           throw new Error(data.mensaje || 'Error al cerrar sesión');
@@ -1542,7 +1580,6 @@
       }
     }
 
-    // Función para buscar usuario
     async function searchUser() {
       const username = usernameSearch.value.trim().replace('@', '');
       if (!username) {
@@ -1562,16 +1599,27 @@
         const response = await fetch(`${API_URL}/buscar-usuario?username=${username}`);
         const userData = await response.json();
         
-        // Actualizar UI
         document.getElementById('user-avatar').src = userData.foto || 'https://via.placeholder.com/150?text=Sin+imagen';
-        document.getElementById('user-username').textContent = `@${userData.username}`;
+        
+        const usernameElement = document.getElementById('user-username');
+        usernameElement.innerHTML = `@${userData.username}`;
+        if (userData.verificado) {
+          usernameElement.innerHTML += `
+            <span class="verified-tick">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="12" fill="#0095f6"/>
+                <path d="M9 12.5L11 14.5L15 10.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          `;
+        }
+        
         document.getElementById('user-fullname').textContent = userData.nombre || 'Sin nombre';
         document.getElementById('user-posts').textContent = userData.publicaciones?.toLocaleString() || '0';
         document.getElementById('user-followers').textContent = userData.seguidores?.toLocaleString() || '0';
         document.getElementById('user-following').textContent = userData.seguidos?.toLocaleString() || '0';
         document.getElementById('user-bio-text').textContent = userData.biografia || 'Sin biografía disponible';
         
-        // Actualizar estados
         document.getElementById('user-private').innerHTML = `
           <div class="status-dot-panel" style="background-color: ${userData.privado ? 'var(--warning)' : 'var(--success)'}"></div>
           <span>Privado: ${userData.privado ? 'Sí' : 'No'}</span>
@@ -1587,7 +1635,6 @@
           <span>Negocio: ${userData.negocio ? 'Sí' : 'No'}</span>
         `;
         
-        // Mostrar resultados
         userResult.style.display = 'block';
         showNotification(`Usuario @${userData.username} encontrado`);
         
@@ -1600,12 +1647,10 @@
       }
     }
 
-    // Event listeners para login
     loginBtn.addEventListener('click', login);
     logoutBtn.addEventListener('click', logout);
     searchUserBtn.addEventListener('click', searchUser);
     
-    // Buscar al presionar Enter
     usernameSearch.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         searchUser();
@@ -1614,31 +1659,24 @@
     
     // ===== [ FIN FUNCIONALIDAD DE LOGIN ] ===== //
     
-    // Inicialización
     document.addEventListener('DOMContentLoaded', async function() {
       showNotification('KraveAI activo - Conectando al backend...');
       
-      // Verificar conexión con el backend
       if (await checkBackendConnection()) {
         showNotification('Conexión con el backend establecida');
-        
-        // Verificar conexión con Telegram
         await testTelegramConnection();
       } else {
         showNotification('⚠️ Error conectando con el backend');
       }
       
-      // Verificar conexiones periódicamente (cada 2 minutos)
       setInterval(async () => {
         await checkBackendConnection();
         await testTelegramConnection();
       }, 120000);
       
-      // Cargar cuentas existentes
       cargarCuentasExistentes();
     });
     
-    // Función para verificar conexión con el backend
     async function checkBackendConnection() {
       try {
         const response = await fetch(`${API_URL}/health`);
@@ -1656,7 +1694,6 @@
       }
     }
     
-    // Función para verificar conexión con Telegram
     async function testTelegramConnection() {
       try {
         const response = await fetch(`${API_URL}/test-telegram`);
@@ -1672,7 +1709,6 @@
       }
     }
     
-    // Función para cargar cuentas existentes
     async function cargarCuentasExistentes() {
       try {
         const response = await fetch(`${API_URL}/cuentas`);
