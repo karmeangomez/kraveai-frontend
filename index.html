@@ -105,6 +105,26 @@
       color: var(--light);
     }
 
+    /* Language Toggle */
+    .language-toggle {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .language-toggle:hover {
+      background: rgba(110, 68, 255, 0.2);
+    }
+
     /* Main Content */
     .app-content {
       flex: 1;
@@ -112,6 +132,7 @@
       max-width: 1200px;
       margin: 0 auto;
       width: 100%;
+      position: relative;
     }
 
     .section {
@@ -837,6 +858,30 @@
       font-size: 0.8rem;
       font-style: italic;
     }
+    
+    /* Instagram Verified Badge */
+    .verified-badge {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+      border-radius: 50%;
+      position: relative;
+      margin-left: 5px;
+    }
+    
+    .verified-badge::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 8px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: translate(-50%, -60%) rotate(-45deg);
+    }
 
     /* Responsive Design */
     @media (max-width: 768px) {
@@ -933,14 +978,18 @@
     <div class="refresh-btn" id="refresh-btn">
       <i class="fas fa-sync-alt"></i>
     </div>
+    
+    <div class="language-toggle" id="language-toggle">
+      <i class="fas fa-globe"></i> ES
+    </div>
   </div>
 
   <div class="app-content">
     <div class="section">
       <div class="section-title">
-        <i class="fas fa-hashtag"></i> Social Networks
+        <i class="fas fa-hashtag"></i> Redes Sociales
       </div>
-      <div class="section-subtitle">Master all your social networks with AI</div>
+      <div class="section-subtitle">Domina todas tus redes con IA</div>
       
       <div class="social-grid">
         <div class="social-item" id="instagram-link">
@@ -980,18 +1029,18 @@
       </div>
       
       <button class="beast-mode pulse">
-        <i class="fas fa-paw"></i> Beast Mode
+        <i class="fas fa-paw"></i> Modo Bestia
       </button>
       
       <div class="status-indicator">
         <div class="status-dot" id="system-status-dot"></div>
-        <span id="system-status-text">Connecting to backend...</span>
+        <span id="system-status-text">Conectando al backend...</span>
       </div>
     </div>
 
     <div class="section">
       <div class="section-title">
-        <i class="fas fa-users"></i> Recent Clients
+        <i class="fas fa-users"></i> Clientes Recientes
       </div>
       
       <div class="clients-list">
@@ -1019,11 +1068,11 @@
 
     <div class="section">
       <div class="section-title">
-        <i class="fas fa-bolt"></i> Automation
+        <i class="fas fa-bolt"></i> Automatización
       </div>
       
       <div class="automation-box">
-        <input type="text" placeholder="What do you want to automate today?" id="automation-input">
+        <input type="text" placeholder="¿Qué quieres automatizar hoy?" id="automation-input">
         <button class="send-button" id="send-btn">
           <i class="fas fa-paper-plane"></i>
         </button>
@@ -1037,25 +1086,25 @@
   <!-- Instagram Panel -->
   <div id="instagram-panel">
     <div class="back-button" id="volver-inicio">
-      <i class="fas fa-arrow-left"></i> Back
+      <i class="fas fa-arrow-left"></i> Volver
     </div>
     
     <div class="app-content">
       <div class="section">
         <div class="section-title">
-          <i class="fab fa-instagram" style="color: #E1306C;"></i> Instagram Panel
+          <i class="fab fa-instagram" style="color: #E1306C;"></i> Panel de Instagram
         </div>
-        <div class="section-subtitle">Choose what you want to automate</div>
+        <div class="section-subtitle">Elige qué deseas automatizar</div>
         
         <div class="instagram-grid">
           <div class="instagram-item">
             <div class="instagram-icon">👥</div>
-            <div class="instagram-name">Clients</div>
+            <div class="instagram-name">Clientes</div>
           </div>
           
           <div class="instagram-item">
             <div class="instagram-icon">🔧</div>
-            <div class="instagram-name">Services</div>
+            <div class="instagram-name">Servicios</div>
           </div>
           
           <div class="instagram-item">
@@ -1065,27 +1114,27 @@
           
           <div class="instagram-item">
             <div class="instagram-icon">➕</div>
-            <div class="instagram-name">Followers</div>
+            <div class="instagram-name">Seguidores</div>
           </div>
           
           <div class="instagram-item">
             <div class="instagram-icon">👁️</div>
-            <div class="instagram-name">Views</div>
+            <div class="instagram-name">Vistas</div>
           </div>
           
           <div class="instagram-item">
             <div class="instagram-icon">💬</div>
-            <div class="instagram-name">Comments</div>
+            <div class="instagram-name">Comentarios</div>
           </div>
           
           <div class="instagram-item">
             <div class="instagram-icon">🔁</div>
-            <div class="instagram-name">Shares</div>
+            <div class="instagram-name">Compartidos</div>
           </div>
           
           <div class="instagram-item" id="crear-cuentas-link">
             <div class="instagram-icon">➕</div>
-            <div class="instagram-name">Create Accounts</div>
+            <div class="instagram-name">Crear Cuentas</div>
           </div>
           
           <!-- Nuevo elemento para Login -->
@@ -1101,30 +1150,30 @@
   <!-- Create Accounts Panel -->
   <div id="create-accounts-panel">
     <div class="back-button" id="volver-instagram">
-      <i class="fas fa-arrow-left"></i> Back
+      <i class="fas fa-arrow-left"></i> Volver
     </div>
     
     <div class="app-content">
       <div class="section">
         <div class="section-title">
-          <i class="fas fa-user-plus"></i> Create New Accounts
+          <i class="fas fa-user-plus"></i> Crear Nuevas Cuentas
         </div>
         <div class="section-subtitle">
-          Automated system for Instagram account creation
+          Sistema automatizado para creación de cuentas de Instagram
         </div>
         
         <div class="create-form">
           <div class="form-group">
-            <label class="form-label">Number of accounts to create</label>
+            <label class="form-label">Número de cuentas a crear</label>
             <input type="number" id="account-count" class="form-input" value="5" min="1" max="100">
           </div>
           
           <div class="form-actions">
             <button class="form-btn cancel-btn" id="cancel-btn">
-              <i class="fas fa-times"></i> Cancel
+              <i class="fas fa-times"></i> Cancelar
             </button>
             <button class="form-btn submit-btn" id="create-btn">
-              <i class="fas fa-play"></i> Start Creation
+              <i class="fas fa-play"></i> Iniciar Creación
             </button>
           </div>
         </div>
@@ -1133,9 +1182,9 @@
         <div class="progress-section" id="progress-section">
           <div class="progress-container">
             <div class="progress-header">
-              <div class="progress-title">Creation Progress</div>
+              <div class="progress-title">Progreso de Creación</div>
               <div class="progress-stats">
-                <span id="created-count">0</span> of <span id="total-count">0</span> accounts created
+                <span id="created-count">0</span> de <span id="total-count">0</span> cuentas creadas
               </div>
             </div>
             
@@ -1145,14 +1194,14 @@
             
             <div class="status-indicator-panel" id="backend-status">
               <div class="status-dot-panel"></div>
-              <span id="status-text">Connecting to backend...</span>
+              <span id="status-text">Conectando con el backend...</span>
             </div>
           </div>
           
           <div class="accounts-list">
             <div class="list-header">
-              <div>Account</div>
-              <div>Status</div>
+              <div>Cuenta</div>
+              <div>Estado</div>
             </div>
             <div id="accounts-container">
               <!-- Accounts will be added here dynamically -->
@@ -1163,31 +1212,31 @@
         <!-- Existing Accounts Section -->
         <div class="section" id="existing-accounts-section">
           <div class="section-title">
-            <i class="fas fa-database"></i> Created Accounts
+            <i class="fas fa-database"></i> Cuentas Creadas
           </div>
-          <div class="section-subtitle">All accounts generated by the system</div>
+          <div class="section-subtitle">Todas las cuentas generadas por el sistema</div>
           
           <div class="accounts-filter">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="active">Active</button>
-            <button class="filter-btn" data-filter="inactive">Inactive</button>
-            <button class="filter-btn" data-filter="today">Today</button>
+            <button class="filter-btn active" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="active">Activas</button>
+            <button class="filter-btn" data-filter="inactive">Inactivas</button>
+            <button class="filter-btn" data-filter="today">Hoy</button>
           </div>
           
           <div class="accounts-list">
             <div class="list-header">
-              <div>User / Email</div>
-              <div>Status</div>
+              <div>Usuario / Email</div>
+              <div>Estado</div>
             </div>
             <div id="existing-accounts-container">
               <div class="account-item fade-in">
                 <div class="account-info">
-                  <div class="account-username">example_user</div>
-                  <div class="account-email">example@email.com</div>
+                  <div class="account-username">ejemplo_user</div>
+                  <div class="account-email">ejemplo@email.com</div>
                   <div class="account-proxy">proxy1:8080</div>
                 </div>
                 <div class="account-status account-success">
-                  <i class="fas fa-check-circle"></i> Active
+                  <i class="fas fa-check-circle"></i> Activa
                 </div>
               </div>
             </div>
@@ -1200,32 +1249,32 @@
   <!-- Login Panel -->
   <div id="login-panel">
     <div class="back-button" id="volver-login">
-      <i class="fas fa-arrow-left"></i> Back
+      <i class="fas fa-arrow-left"></i> Volver
     </div>
     
     <div class="app-content">
       <div class="section">
         <div class="section-title">
-          <i class="fas fa-key"></i> Session Management
+          <i class="fas fa-key"></i> Gestión de Sesiones
         </div>
-        <div class="section-subtitle">Control your Instagram login sessions</div>
+        <div class="section-subtitle">Controla tus inicios de sesión en Instagram</div>
         
         <!-- Formulario de login - visible cuando no hay sesión -->
         <div id="login-section" class="login-form">
           <div class="form-group">
-            <label class="form-label">Instagram Username</label>
+            <label class="form-label">Usuario de Instagram</label>
             <input type="text" id="login-username" class="form-input" placeholder=" ">
             <span class="placeholder-hint">@login.kraveaibot</span>
           </div>
           
           <div class="form-group">
-            <label class="form-label">Password</label>
+            <label class="form-label">Contraseña</label>
             <input type="password" id="login-password" class="form-input" placeholder="••••••••">
           </div>
           
           <div class="form-actions">
             <button class="form-btn submit-btn" id="login-btn">
-              <i class="fas fa-sign-in-alt"></i> Login
+              <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
             </button>
           </div>
         </div>
@@ -1234,19 +1283,19 @@
         <div id="session-info" class="session-info">
           <div class="status-indicator-panel status-active" style="margin-bottom: 15px;">
             <div class="status-dot-panel" style="background-color: var(--success);"></div>
-            <span>Session active as @login.kraveaibot</span>
+            <span>Sesión activa como @login.kraveaibot</span>
           </div>
           
-          <p>You are now logged in to Instagram. You can:</p>
+          <p>Ahora estás conectado a Instagram. Puedes:</p>
           <ul style="margin: 15px 0; padding-left: 20px;">
-            <li>Search users</li>
-            <li>Access private profiles</li>
-            <li>Perform automated actions</li>
+            <li>Buscar usuarios</li>
+            <li>Acceder a perfiles privados</li>
+            <li>Realizar acciones automatizadas</li>
           </ul>
           
           <div class="form-actions">
             <button class="form-btn cancel-btn" id="logout-btn">
-              <i class="fas fa-sign-out-alt"></i> Logout
+              <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </button>
           </div>
         </div>
@@ -1254,12 +1303,12 @@
         <!-- Buscador de usuarios -->
         <div style="margin-top: 30px;">
           <div class="form-group">
-            <label class="form-label">Search Instagram User</label>
-            <input type="text" id="username-search" class="form-input" placeholder="@username">
+            <label class="form-label">Buscar usuario de Instagram</label>
+            <input type="text" id="username-search" class="form-input" placeholder="@usuario">
           </div>
           
           <button class="form-btn submit-btn" id="search-user-btn" style="width: 100%;">
-            <i class="fas fa-search"></i> Search User
+            <i class="fas fa-search"></i> Buscar Usuario
           </button>
         </div>
         
@@ -1276,15 +1325,15 @@
           <div class="user-stats">
             <div class="stat">
               <div class="stat-value" id="user-posts">0</div>
-              <div class="stat-label">Posts</div>
+              <div class="stat-label">Publicaciones</div>
             </div>
             <div class="stat">
               <div class="stat-value" id="user-followers">0</div>
-              <div class="stat-label">Followers</div>
+              <div class="stat-label">Seguidores</div>
             </div>
             <div class="stat">
               <div class="stat-value" id="user-following">0</div>
-              <div class="stat-label">Following</div>
+              <div class="stat-label">Siguiendo</div>
             </div>
           </div>
           
@@ -1295,15 +1344,15 @@
           <div class="user-details">
             <span id="user-private" class="status-indicator-panel">
               <div class="status-dot-panel"></div>
-              <span>Private: Unknown</span>
+              <span>Privado: No</span>
             </span>
             <span id="user-verified" class="status-indicator-panel">
               <div class="status-dot-panel"></div>
-              <span>Verified: No</span>
+              <span>Verificado: No</span>
             </span>
             <span id="user-business" class="status-indicator-panel">
               <div class="status-dot-panel"></div>
-              <span>Business: No</span>
+              <span>Negocio: Sí</span>
             </span>
           </div>
         </div>
@@ -1314,19 +1363,19 @@
   <div class="nav-bar">
     <a href="#" class="nav-item active">
       <i class="fas fa-home"></i>
-      <span>Home</span>
+      <span>Inicio</span>
     </a>
     <a href="#" class="nav-item">
       <i class="fas fa-chart-line"></i>
-      <span>Analytics</span>
+      <span>Analítica</span>
     </a>
     <a href="#" class="nav-item">
       <i class="fas fa-cogs"></i>
-      <span>Settings</span>
+      <span>Ajustes</span>
     </a>
     <a href="#" class="nav-item">
       <i class="fas fa-user"></i>
-      <span>Profile</span>
+      <span>Perfil</span>
     </a>
   </div>
 
@@ -1348,6 +1397,7 @@
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
     const automationInput = document.getElementById('automation-input');
+    const languageToggle = document.getElementById('language-toggle');
     
     // Elementos para el panel de Login
     const loginLink = document.getElementById('login-link');
@@ -1362,9 +1412,6 @@
     const userResult = document.getElementById('user-result');
     const loginSection = document.getElementById('login-section');
     const sessionInfo = document.getElementById('session-info');
-    
-    // Configuración de la API
-    const API_URL = "https://api.kraveapi.xyz";
     
     // Estado de sesión
     let isLoggedIn = false;
@@ -1404,7 +1451,7 @@
     // Botón de enviar
     sendBtn.addEventListener('click', function() {
       if(automationInput.value.trim() !== '') {
-        showNotification(`Automating: "${automationInput.value}"`);
+        showNotification(`Automatizando: "${automationInput.value}"`);
         automationInput.value = '';
       }
     });
@@ -1412,7 +1459,7 @@
     // Botón de refresh
     refreshBtn.addEventListener('click', function() {
       this.style.animation = 'rotate 1s linear';
-      showNotification('Data updated');
+      showNotification('Datos actualizados');
       
       setTimeout(() => {
         this.style.animation = '';
@@ -1421,13 +1468,13 @@
 
     // Botón Modo Bestia
     beastModeBtn.addEventListener('click', function() {
-      this.innerHTML = '<i class="fas fa-paw"></i> Activating Beast Mode!';
+      this.innerHTML = '<i class="fas fa-paw"></i> ¡Activando Modo Bestia!';
       this.style.background = 'linear-gradient(135deg, #ff8c00, #ff0080)';
       
       setTimeout(() => {
-        this.innerHTML = '<i class="fas fa-paw"></i> Beast Mode Activated!';
+        this.innerHTML = '<i class="fas fa-paw"></i> ¡Modo Bestia Activado!';
         this.style.background = 'linear-gradient(135deg, #00c9b7, #6e44ff)';
-        showNotification('Beast Mode activated');
+        showNotification('Modo Bestia activado');
       }, 1500);
     });
 
@@ -1446,25 +1493,20 @@
     // Función para verificar el estado de sesión
     async function checkSessionStatus() {
       try {
-        const response = await fetch(`${API_URL}/estado-sesion`);
-        const data = await response.json();
-        
-        if (data.status === 'activo') {
-          isLoggedIn = true;
-          // Ocultar formulario y mostrar info de sesión
-          loginSection.style.display = 'none';
-          sessionInfo.style.display = 'block';
-          showNotification(`Session active as @${data.usuario}`);
-        } else {
-          isLoggedIn = false;
-          // Mostrar formulario y ocultar info de sesión
-          loginSection.style.display = 'block';
-          sessionInfo.style.display = 'none';
-        }
+        // Simular verificación de sesión
+        setTimeout(() => {
+          if (isLoggedIn) {
+            loginSection.style.display = 'none';
+            sessionInfo.style.display = 'block';
+          } else {
+            loginSection.style.display = 'block';
+            sessionInfo.style.display = 'none';
+          }
+        }, 500);
       } catch (error) {
         loginSection.style.display = 'block';
         sessionInfo.style.display = 'none';
-        showNotification('Error checking session status');
+        showNotification('Error al verificar el estado de sesión');
       }
     }
 
@@ -1474,15 +1516,15 @@
       const password = loginPassword.value.trim();
       
       if (!password) {
-        showNotification('Please enter your password');
+        showNotification('Por favor ingresa tu contraseña');
         return;
       }
       
       try {
-        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
         loginBtn.disabled = true;
         
-        // Simular llamada a API
+        // Simular inicio de sesión
         setTimeout(() => {
           isLoggedIn = true;
           
@@ -1490,16 +1532,16 @@
           loginSection.style.display = 'none';
           sessionInfo.style.display = 'block';
           
-          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
           loginBtn.disabled = false;
           
           // Limpiar contraseña
           loginPassword.value = '';
           
-          showNotification(`Successfully logged in as @${username}`);
+          showNotification(`Sesión iniciada como @${username}`);
         }, 1500);
       } catch (error) {
-        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
         loginBtn.disabled = false;
         showNotification(`Error: ${error.message}`);
       }
@@ -1508,10 +1550,10 @@
     // Función para cerrar sesión
     async function logout() {
       try {
-        logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
+        logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cerrando...';
         logoutBtn.disabled = true;
         
-        // Simular llamada a API
+        // Simular cierre de sesión
         setTimeout(() => {
           isLoggedIn = false;
           
@@ -1519,13 +1561,13 @@
           loginSection.style.display = 'block';
           sessionInfo.style.display = 'none';
           
-          logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+          logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Cerrar Sesión';
           logoutBtn.disabled = false;
           
-          showNotification('Successfully logged out');
+          showNotification('Sesión cerrada correctamente');
         }, 1000);
       } catch (error) {
-        logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+        logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Cerrar Sesión';
         logoutBtn.disabled = false;
         showNotification(`Error: ${error.message}`);
       }
@@ -1535,41 +1577,75 @@
     async function searchUser() {
       const username = usernameSearch.value.trim().replace('@', '');
       if (!username) {
-        showNotification('Please enter a username');
+        showNotification('Por favor ingresa un nombre de usuario');
         return;
       }
       
       if (!isLoggedIn) {
-        showNotification('You must login first to search users');
+        showNotification('Debes iniciar sesión primero para buscar usuarios');
         return;
       }
       
       try {
-        searchUserBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+        searchUserBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
         searchUserBtn.disabled = true;
         
-        // Simular búsqueda de usuario
+        // Simular búsqueda de usuario con datos realistas
         setTimeout(() => {
           // Actualizar UI con datos simulados
-          document.getElementById('user-avatar').src = 'https://via.placeholder.com/150?text=User+Image';
-          document.getElementById('user-username').textContent = `@${username}`;
+          document.getElementById('user-avatar').src = 'https://via.placeholder.com/150?text=Usuario+Instagram';
+          document.getElementById('user-username').innerHTML = `@${username}`;
           document.getElementById('user-fullname').textContent = username.charAt(0).toUpperCase() + username.slice(1);
-          document.getElementById('user-posts').textContent = Math.floor(Math.random() * 1000).toLocaleString();
-          document.getElementById('user-followers').textContent = Math.floor(Math.random() * 10000).toLocaleString();
-          document.getElementById('user-following').textContent = Math.floor(Math.random() * 1000).toLocaleString();
-          document.getElementById('user-bio-text').textContent = 'Digital creator | Photography enthusiast | Travel lover ✈️';
+          
+          // Generar números aleatorios realistas
+          const posts = Math.floor(Math.random() * 500) + 50;
+          const followers = Math.floor(Math.random() * 100000) + 1000;
+          const following = Math.floor(Math.random() * 2000) + 100;
+          
+          document.getElementById('user-posts').textContent = posts.toLocaleString();
+          document.getElementById('user-followers').textContent = followers.toLocaleString();
+          document.getElementById('user-following').textContent = following.toLocaleString();
+          
+          // Datos aleatorios para el perfil
+          const isPrivate = Math.random() > 0.8;
+          const isVerified = Math.random() > 0.7;
+          const isBusiness = Math.random() > 0.6;
+          
+          document.getElementById('user-bio-text').textContent = 'Creador de contenido digital | Entusiasta de la fotografía | Amante de los viajes ✈️';
+          
+          // Actualizar estados
+          document.getElementById('user-private').innerHTML = `
+            <div class="status-dot-panel" style="background-color: ${isPrivate ? 'var(--warning)' : 'var(--success)'}"></div>
+            <span>Privado: ${isPrivate ? 'Sí' : 'No'}</span>
+          `;
+          
+          // Añadir badge de verificación si corresponde
+          const verifiedElement = document.getElementById('user-verified');
+          verifiedElement.innerHTML = `
+            <div class="status-dot-panel" style="background-color: ${isVerified ? 'var(--success)' : 'var(--gray)'}"></div>
+            <span>Verificado: ${isVerified ? 'Sí' : 'No'}</span>
+          `;
+          
+          if (isVerified) {
+            document.getElementById('user-username').innerHTML += ' <span class="verified-badge"></span>';
+          }
+          
+          document.getElementById('user-business').innerHTML = `
+            <div class="status-dot-panel" style="background-color: ${isBusiness ? 'var(--primary)' : 'var(--gray)'}"></div>
+            <span>Negocio: ${isBusiness ? 'Sí' : 'No'}</span>
+          `;
           
           // Mostrar resultados
           userResult.style.display = 'block';
-          showNotification(`User @${username} found`);
+          showNotification(`Usuario @${username} encontrado`);
           
-          searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Search User';
+          searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Buscar Usuario';
           searchUserBtn.disabled = false;
         }, 1500);
       } catch (error) {
-        searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Search User';
+        searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Buscar Usuario';
         searchUserBtn.disabled = false;
-        showNotification(`Error: ${error.message || 'Could not find user'}`);
+        showNotification(`Error: ${error.message || 'No se pudo encontrar el usuario'}`);
       }
     }
 
@@ -1585,11 +1661,27 @@
       }
     });
     
-    // ===== [ FIN FUNCIONALIDAD DE LOGIN ] ===== //
-    
+    // ===== [ CAMBIO DE IDIOMA ] ===== //
+    languageToggle.addEventListener('click', function() {
+      const currentLang = this.textContent.includes('ES') ? 'es' : 'en';
+      const newLang = currentLang === 'es' ? 'en' : 'es';
+      
+      if (newLang === 'en') {
+        // Cambiar a inglés
+        this.innerHTML = '<i class="fas fa-globe"></i> EN';
+        showNotification('Language changed to English');
+        // Aquí iría la lógica para cambiar todo el contenido a inglés
+      } else {
+        // Cambiar a español
+        this.innerHTML = '<i class="fas fa-globe"></i> ES';
+        showNotification('Idioma cambiado a español');
+        // Aquí iría la lógica para cambiar todo el contenido a español
+      }
+    });
+
     // Inicialización
-    document.addEventListener('DOMContentLoaded', async function() {
-      showNotification('KraveAI active - Connecting to backend...');
+    document.addEventListener('DOMContentLoaded', function() {
+      showNotification('KraveAI activo - Conectando al backend...');
       
       // Verificar estado de sesión al cargar
       checkSessionStatus();
