@@ -1894,9 +1894,30 @@
         });
 
         sse.addEventListener("error", (event) => {
-          console.error("Error SSE:", event);
-          showNotification('❌ Error creando cuentas');
-          sse.close();
+          try {
+            const cuenta = JSON.parse(event.data);
+            const cuentaHTML = `
+              <div class="account-item fade-in">
+                <div class="account-info">
+                  <div class="account-username">${cuenta.usuario || 'N/A'}</div>
+                  <div class="account-email">${cuenta.email || 'N/A'}</div>
+                  <div class="account-proxy">${cuenta.proxy || 'sin proxy'}</div>
+                </div>
+                <div class="account-status account-error">
+                  <i class="fas fa-times-circle"></i> ${cuenta.message || cuenta.error || '❌ Error'}
+                </div>
+              </div>
+            `;
+            accountsContainer.insertAdjacentHTML('beforeend', cuentaHTML);
+            // Avanza contador visual igual que si fuera éxito
+            const total = parseInt(totalCount.textContent);
+            const actuales = parseInt(createdCount.textContent) + 1;
+            createdCount.textContent = actuales;
+            progressBar.style.width = `${(actuales / total) * 100}%`;
+          } catch (err) {
+            console.error('Error procesando SSE de error:', err);
+            showNotification('❌ Error inesperado en SSE');
+          }
         });
 
         sse.addEventListener("complete", () => {
