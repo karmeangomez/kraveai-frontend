@@ -402,6 +402,25 @@
       transform: translateX(0);
     }
 
+    /* Accounts Panel */
+    #panel-cuentas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #panel-cuentas.active {
+      transform: translateX(0);
+    }
+
     .create-form {
       background: rgba(30, 30, 30, 0.7);
       border-radius: 20px;
@@ -551,7 +570,7 @@
       border-radius: 50%;
       margin-right: 10px;
     }
-    
+
     /* Progress Section */
     .progress-section {
       margin-top: 40px;
@@ -935,6 +954,43 @@
   </div>
 
   <div class="app-content">
+    <!-- PANEL DE CUENTAS -->
+    <div id="panel-cuentas" style="display: none;">
+      <div class="back-button" id="volver-inicio-cuentas">
+        <i class="fas fa-arrow-left"></i> Volver
+      </div>
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-database"></i> Cuentas Generadas
+        </div>
+        <div class="section-subtitle">Visualiza todas las cuentas generadas</div>
+        <div style="margin-top: 10px; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.6rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.95rem;">Total: <strong><span id="contador-cuentas">0</span></strong></span>
+            <button onclick="cargarCuentas()" style="padding: 6px 12px; border-radius: 8px; background: #222; color: white; border: 1px solid #444;">🔄 Actualizar</button>
+          </div>
+          <input id="buscador-cuentas" placeholder="Buscar usuario o email..." oninput="filtrarCuentas()" style="padding: 10px; border-radius: 10px; border: 1px solid #444; background-color: #121212; color: white; font-size: 0.9rem;" />
+          <button onclick="limpiarBusqueda()" style="padding: 6px 12px; border-radius: 8px; background: #111; color: white; border: 1px solid #444; width: fit-content;">❌ Limpiar búsqueda</button>
+        </div>
+        <div style="overflow-x: auto; max-height: 55vh; overflow-y: auto; border-radius: 10px; border: 1px solid #333; scroll-behavior: smooth;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background-color: #1e1e1e;">
+              <tr>
+                <th style="padding: 8px;">Usuario</th>
+                <th style="padding: 8px;">Email</th>
+                <th style="padding: 8px;">Proxy</th>
+                <th style="padding: 8px;">Intentos</th>
+                <th style="padding: 8px;">Guardado</th>
+                <th style="padding: 8px;">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-cuentas" style="font-size: 0.9rem;"></tbody>
+          </table>
+        </div>
+        <button onclick="exportarCSV()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px 16px; background: #00c9b7; color: black; border: none; border-radius: 999px; box-shadow: 0 4px 10px rgba(0,0,0,0.4); font-weight: 600;">⬇ Exportar CSV</button>
+      </div>
+    </div>
+
     <div class="section">
       <div class="section-title">
         <i class="fas fa-hashtag"></i> Redes sociales
@@ -1091,6 +1147,11 @@
           <div class="instagram-item" id="login-link">
             <div class="instagram-icon">🔐</div>
             <div class="instagram-name">Login</div>
+          </div>
+          
+          <div class="instagram-item" id="ver-cuentas-link">
+            <div class="instagram-icon">📋</div>
+            <div class="instagram-name">Ver cuentas generadas</div>
           </div>
         </div>
       </div>
@@ -1346,6 +1407,11 @@
     const usernameSearch = document.getElementById('username-search');
     const userResult = document.getElementById('user-result');
     
+    // Elementos para el panel de cuentas
+    const verCuentasLink = document.getElementById('ver-cuentas-link');
+    const volverInicioCuentas = document.getElementById('volver-inicio-cuentas');
+    const panelCuentas = document.getElementById('panel-cuentas');
+    
     // Elementos DOM para creación de cuentas
     const cancelBtn = document.getElementById('cancel-btn');
     const createBtn = document.getElementById('create-btn');
@@ -1380,10 +1446,16 @@
     // Estado de sesión
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     
+    // Estado para cuentas generadas
+    let cuentasActuales = [];
+
     // Navegación entre paneles
     instagramLink.addEventListener('click', function(e) {
       e.preventDefault();
       instagramPanel.classList.add('active');
+      panelCuentas.classList.remove('active');
+      createAccountsPanel.classList.remove('active');
+      loginPanel.classList.remove('active');
     });
 
     volverInicio.addEventListener('click', function(e) {
@@ -1394,17 +1466,24 @@
     crearCuentasLink.addEventListener('click', function(e) {
       e.preventDefault();
       createAccountsPanel.classList.add('active');
+      instagramPanel.classList.remove('active');
+      panelCuentas.classList.remove('active');
+      loginPanel.classList.remove('active');
       cargarCuentasExistentes();
     });
 
     volverInstagram.addEventListener('click', function(e) {
       e.preventDefault();
       createAccountsPanel.classList.remove('active');
+      instagramPanel.classList.add('active');
     });
     
     loginLink.addEventListener('click', function(e) {
       e.preventDefault();
       loginPanel.classList.add('active');
+      instagramPanel.classList.remove('active');
+      createAccountsPanel.classList.remove('active');
+      panelCuentas.classList.remove('active');
       checkSessionStatus();
       if (isLoggedIn) {
         logoutBtn.classList.remove('hidden');
@@ -1415,6 +1494,22 @@
 
     volverLoginBtn.addEventListener('click', function() {
       loginPanel.classList.remove('active');
+      instagramPanel.classList.add('active');
+    });
+
+    verCuentasLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      panelCuentas.classList.add('active');
+      instagramPanel.classList.remove('active');
+      createAccountsPanel.classList.remove('active');
+      loginPanel.classList.remove('active');
+      cargarCuentas();
+    });
+
+    volverInicioCuentas.addEventListener('click', function(e) {
+      e.preventDefault();
+      panelCuentas.classList.remove('active');
+      instagramPanel.classList.add('active');
     });
 
     // Botón de enviar
@@ -1813,6 +1908,78 @@
         showNotification('❌ Error iniciando creación de cuentas');
       }
     }
+
+    // ===== [ FUNCIONALIDAD DE PANEL DE CUENTAS ] ===== //
+
+    async function cargarCuentas() {
+      try {
+        const res = await fetch(`${API_URL}/cuentas`);
+        const data = await res.json();
+        cuentasActuales = data.reverse();
+        document.getElementById("contador-cuentas").textContent = cuentasActuales.length;
+        filtrarCuentas();
+      } catch (err) {
+        console.error("Error cargando cuentas:", err);
+        showNotification('⚠️ Error al cargar cuentas');
+      }
+    }
+
+    function filtrarCuentas() {
+      const filtro = document.getElementById("buscador-cuentas").value.toLowerCase();
+      const tabla = document.getElementById("tabla-cuentas");
+      tabla.innerHTML = "";
+
+      const filtradas = cuentasActuales.filter(c =>
+        c.usuario.toLowerCase().includes(filtro) || c.email.toLowerCase().includes(filtro)
+      );
+
+      filtradas.forEach(cuenta => {
+        const row = document.createElement("tr");
+        row.style.transition = "all 0.2s ease-in-out";
+        row.innerHTML = `
+          <td style="padding: 8px;">${cuenta.usuario}</td>
+          <td style="padding: 8px;">${cuenta.email}</td>
+          <td style="padding: 8px;">${cuenta.proxy}</td>
+          <td style="padding: 8px; text-align: center;">${cuenta.intentos || "-"}</td>
+          <td style="padding: 8px;">${new Date(cuenta.guardado_en || cuenta.timestamp).toLocaleString()}</td>
+          <td style="padding: 8px;">${cuenta.status === "success" ? "✅" : "❌"}</td>
+        `;
+        tabla.appendChild(row);
+      });
+    }
+
+    function limpiarBusqueda() {
+      document.getElementById("buscador-cuentas").value = "";
+      filtrarCuentas();
+    }
+
+    function exportarCSV() {
+      if (!cuentasActuales.length) return;
+
+      const encabezados = ["usuario", "email", "proxy", "intentos", "guardado_en", "status"];
+      const filas = cuentasActuales.map(c =>
+        [c.usuario, c.email, c.proxy, c.intentos || '', new Date(c.guardado_en || c.timestamp).toLocaleString(), c.status]
+      );
+
+      let csv = encabezados.join(",") + "\n";
+      filas.forEach(fila => {
+        csv += fila.map(v => `"${v}"`).join(",") + "\n";
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cuentas_generadas.csv";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    // Inicializar carga de cuentas al abrir el panel
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarCuentas();
+      setInterval(cargarCuentas, 60000);
+    });
 
   </script>
 </body>
