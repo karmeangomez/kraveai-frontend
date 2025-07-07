@@ -30,7 +30,7 @@
     }
 
     body {
-      background: var(--dark);
+      background: linear-gradient(135deg, var(--darker), var(--dark));
       color: var(--light);
       min-height: 100vh;
       display: flex;
@@ -50,7 +50,7 @@
       border-bottom: 1px solid rgba(110, 68, 255, 0.3);
       position: sticky;
       top: 0;
-      z-index: 1000;
+      z-index: 100;
     }
 
     .logo {
@@ -293,8 +293,8 @@
       transform: scale(1.05);
     }
 
-    /* Panels */
-    #instagram-panel, #create-accounts-panel, #login-panel, #panel-cuentas, #comments-panel {
+    /* Instagram Panel */
+    #instagram-panel {
       position: fixed;
       top: 0;
       left: 0;
@@ -308,7 +308,7 @@
       transition: transform 0.4s ease;
     }
 
-    #instagram-panel.active, #create-accounts-panel.active, #login-panel.active, #panel-cuentas.active, #comments-panel.active {
+    #instagram-panel.active {
       transform: translateX(0);
     }
 
@@ -362,6 +362,82 @@
       font-weight: 500;
       font-size: 1.1rem;
       text-align: center;
+    }
+
+    /* Create Accounts Panel */
+    #create-accounts-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #create-accounts-panel.active {
+      transform: translateX(0);
+    }
+
+    /* Login Panel */
+    #login-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 300;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #login-panel.active {
+      transform: translateX(0);
+    }
+
+    /* Accounts Panel */
+    #panel-cuentas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #panel-cuentas.active {
+      transform: translateX(0);
+    }
+
+    /* Comments Panel */
+    #comments-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #comments-panel.active {
+      transform: translateX(0);
     }
 
     .create-form {
@@ -589,25 +665,25 @@
           </div>
           <div class="social-name">Instagram</div>
         </a>
-        <a href="#" class="social-item">
+        <a href="#" class="social-item" id="tiktok-link">
           <div class="social-icon" style="background: rgba(105, 201, 208, 0.15);">
             <i class="fab fa-tiktok" style="color: #69C9D0;"></i>
           </div>
           <div class="social-name">Tiktok</div>
         </a>
-        <a href="#" class="social-item">
+        <a href="#" class="social-item" id="youtube-link">
           <div class="social-icon" style="background: rgba(255, 0, 0, 0.15);">
             <i class="fab fa-youtube" style="color: #FF0000;"></i>
           </div>
           <div class="social-name">YouTube</div>
         </a>
-        <a href="#" class="social-item">
+        <a href="#" class="social-item" id="spotify-link">
           <div class="social-icon" style="background: rgba(29, 185, 84, 0.15);">
             <i class="fab fa-spotify" style="color: #1DB954;"></i>
           </div>
           <div class="social-name">Spotify</div>
         </a>
-        <a href="#" class="social-item">
+        <a href="#" class="social-item" id="threads-link">
           <div class="social-icon" style="background: rgba(255, 255, 255, 0.15);">
             <i class="fab fa-threads" style="color: #fff;"></i>
           </div>
@@ -624,10 +700,55 @@
         <span id="system-status-text">Conectando al backend...</span>
       </div>
     </div>
+
+    <div class="section">
+      <div class="section-title">
+        <i class="fas fa-users"></i> Clientes recientes
+      </div>
+
+      <div class="clients-list">
+        <div class="client-item">
+          <div class="client-icon" style="background: rgba(225, 48, 108, 0.15);">
+            <i class="fab fa-instagram" style="color: #E1306C;"></i>
+          </div>
+          <div class="client-info">
+            <div class="client-name">arianaoficial</div>
+            <div class="client-platform">Instagram</div>
+          </div>
+        </div>
+
+        <div class="client-item">
+          <div class="client-icon" style="background: rgba(255, 0, 0, 0.15);">
+            <i class="fab fa-youtube" style="color: #FF0000;"></i>
+          </div>
+          <div class="client-info">
+            <div class="client-name">plenkay</div>
+            <div class="client-platform">YouTube</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <i class="fas fa-bolt"></i> Automatización
+      </div>
+
+      <div class="automation-box">
+        <input type="text" placeholder="¿Qué quieres automatizar hoy?" id="automation-input">
+        <button class="send-button" id="send-btn">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="created-by">
+      Created by Karmean Gómez
+    </div>
   </div>
 
   <!-- Instagram Panel -->
-  <div id="instagram-panel" class="active"> <!-- Activado por defecto -->
+  <div id="instagram-panel" class="active"> <!-- Activo por defecto -->
     <div class="back-button" id="volver-inicio">
       <i class="fas fa-arrow-left"></i> Volver
     </div>
@@ -700,81 +821,4 @@
           Sistema automatizado para creación de cuentas de Instagram
         </div>
 
-        <div class="create-form">
-          <div class="form-group">
-            <label class="form-label">Número de cuentas a crear</label>
-            <input type="number" id="account-count" class="form-input" value="5" min="1" max="100">
-          </div>
-
-          <div class="form-actions">
-            <button class="form-btn cancel-btn" id="cancel-btn">
-              <i class="fas fa-times"></i> Cancelar
-            </button>
-            <button class="form-btn submit-btn" id="create-btn">
-              <i class="fas fa-play"></i> Iniciar creación
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Login Panel -->
-  <div id="login-panel">
-    <div class="back-button" id="volver-login">
-      <i class="fas fa-arrow-left"></i> Volver
-    </div>
-
-    <div class="app-content">
-      <div class="section">
-        <div class="section-title">
-          <i class="fas fa-key"></i> Gestión de Sesiones
-        </div>
-        <div class="section-subtitle">Controla tus inicios de sesión en Instagram</div>
-
-        <div class="login-form" id="login-form">
-          <div class="form-group">
-            <label class="form-label">Usuario de Instagram</label>
-            <input type="text" id="login-username" class="form-input" placeholder="@login.kraveaibot" value="@login.kraveaibot">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input type="password" id="login-password" class="form-input" placeholder="••••••••">
-          </div>
-
-          <div class="form-actions">
-            <button class="form-btn submit-btn" id="login-btn">
-              <i class="fas fa-sign-in-alt"></i> Iniciar sesión
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Comments Panel -->
-  <div id="comments-panel">
-    <div class="back-button" id="volver-inicio-comments">
-      <i class="fas fa-arrow-left"></i> Volver
-    </div>
-    <div class="app-content">
-      <div class="section">
-        <div class="section-title">
-          <i class="fas fa-comments"></i> Automatización de Comentarios
-        </div>
-        <div class="section-subtitle">
-          Configura y lanza comentarios masivos en Instagram.
-        </div>
-        <form id="formComentarios" class="create-form">
-          <div class="form-group">
-            <label class="form-label">URL del Post</label>
-            <input type="text" name="url" class="form-input" placeholder="https://www.instagram.com/p/CXXXXX/" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Cantidad de Comentarios</label>
-            <input type="number" name="cantidad" class="form-input" value="30" min="1" max="100" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Modo</label>
-            <select na
+        <d
