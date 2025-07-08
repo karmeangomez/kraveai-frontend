@@ -1,1067 +1,812 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#121212">
-  <title>KraveAI - Panel de Control</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #6e44ff;
-      --primary-dark: #5a35d5;
-      --secondary: #00c9b7;
-      --dark: #121212;
-      --darker: #0a0a0a;
-      --light: #f0f0f0;
-      --gray: #8c8ca1;
-      --card-bg: #1a1a1a;
-      --success: #4CAF50;
-      --warning: #ff9800;
-      --error: #f44336;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background: linear-gradient(135deg, var(--darker), var(--dark));
-      color: var(--light);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      line-height: 1.6;
-    }
-
-    /* Header */
-    .app-header {
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(26, 26, 46, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(110, 68, 255, 0.3);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.8rem;
-      font-weight: 800;
-    }
-
-    .logo span {
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .user-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-
-    .refresh-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gray);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      opacity: 0.7;
-      z-index: 5;
-    }
-
-    .refresh-btn:hover {
-      opacity: 1;
-      background: rgba(110, 68, 255, 0.2);
-      color: var(--light);
-    }
-
-    /* Main Content */
-    .app-content {
-      flex: 1;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .section {
-      margin-bottom: 30px;
-    }
-
-    .section-title {
-      font-size: 1.7rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .section-subtitle {
-      color: var(--gray);
-      font-size: 1.05rem;
-      margin-bottom: 25px;
-    }
-
-    /* Social Grid */
-    .social-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 18px;
-      margin-bottom: 25px;
-    }
-
-    .social-item {
-      background: rgba(30, 30, 30, 0.7);
-      border-radius: 20px;
-      padding: 25px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      text-decoration: none;
-      color: white;
-    }
-
-    .social-item:hover {
-      transform: translateY(-5px);
-      background: rgba(110, 68, 255, 0.2);
-      border-color: var(--primary);
-    }
-
-    .social-icon {
-      font-size: 2.5rem;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .social-name {
-      font-weight: 500;
-      font-size: 1.05rem;
-      text-align: center;
-    }
-
-    /* Beast Mode */
-    .beast-mode {
-      background: linear-gradient(135deg, #ff0080, #ff8c00);
-      color: white;
-      text-align: center;
-      padding: 18px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-      display: block;
-      width: 100%;
-      margin: 25px 0;
-    }
-
-    .beast-mode:hover {
-      transform: scale(1.02);
-      box-shadow: 0 5px 20px rgba(255, 0, 128, 0.3);
-    }
-
-    /* Clients List */
-    .clients-list {
-      background: rgba(30, 30, 30, 0.5);
-      border-radius: 20px;
-      padding: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .client-item {
-      display: flex;
-      align-items: center;
-      padding: 18px 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .client-item:last-child {
-      border-bottom: none;
-    }
-
-    .client-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: rgba(110, 68, 255, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-right: 15px;
-    }
-
-    .client-info {
-      flex-grow: 1;
-    }
-
-    .client-name {
-      font-weight: 500;
-      font-size: 1.2rem;
-    }
-
-    .client-platform {
-      color: var(--gray);
-      font-size: 1rem;
-      margin-top: 5px;
-    }
-
-    /* Automation Box */
-    .automation-box {
-      background: rgba(30, 30, 30, 0.7);
-      border-radius: 20px;
-      padding: 18px;
-      margin-top: 30px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .automation-box input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1.1rem;
-      padding: 14px;
-      outline: none;
-    }
-
-    .automation-box input::placeholder {
-      color: var(--gray);
-    }
-
-    .send-button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .send-button:hover {
-      background: var(--primary-dark);
-      transform: scale(1.05);
-    }
-
-    /* Instagram Panel */
-    #instagram-panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--dark);
-      z-index: 100;
-      overflow-y: auto;
-      padding: 20px;
-      transform: translateX(100%);
-      transition: transform 0.4s ease;
-    }
-
-    #instagram-panel.active {
-      transform: translateX(0);
-    }
-
-    .back-button {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      margin-bottom: 25px;
-      padding: 12px 0;
-      font-size: 1.1rem;
-      cursor: pointer;
-      width: fit-content;
-    }
-
-    .instagram-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 18px;
-      margin-top: 15px;
-    }
-
-    .instagram-item {
-      background: rgba(30, 30, 30, 0.7);
-      border-radius: 20px;
-      padding: 30px 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      text-decoration: none;
-      color: white;
-    }
-
-    .instagram-item:hover {
-      transform: translateY(-5px);
-      background: rgba(225, 48, 108, 0.2);
-      border-color: #E1306C;
-    }
-
-    .instagram-icon {
-      font-size: 2.8rem;
-    }
-
-    .instagram-name {
-      font-weight: 500;
-      font-size: 1.1rem;
-      text-align: center;
-    }
-
-    /* Create Accounts Panel */
-    #create-accounts-panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--dark);
-      z-index: 200;
-      overflow-y: auto;
-      padding: 20px;
-      transform: translateX(100%);
-      transition: transform 0.4s ease;
-    }
-
-    #create-accounts-panel.active {
-      transform: translateX(0);
-    }
-
-    /* Login Panel */
-    #login-panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--dark);
-      z-index: 300;
-      overflow-y: auto;
-      padding: 20px;
-      transform: translateX(100%);
-      transition: transform 0.4s ease;
-    }
-
-    #login-panel.active {
-      transform: translateX(0);
-    }
-
-    /* Comments Panel */
-    #comments-panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--dark);
-      z-index: 200;
-      overflow-y: auto;
-      padding: 20px;
-      transform: translateX(100%);
-      transition: transform 0.4s ease;
-    }
-
-    #comments-panel.active {
-      transform: translateX(0);
-    }
-
-    .create-form {
-      background: rgba(30, 30, 30, 0.7);
-      border-radius: 20px;
-      padding: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      margin-top: 20px;
-    }
-
-    .form-title {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .form-group {
-      margin-bottom: 25px;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 500;
-      font-size: 1.1rem;
-    }
-
-    .form-input {
-      width: 100%;
-      background: rgba(20, 20, 20, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 16px;
-      color: white;
-      font-size: 1.1rem;
-      outline: none;
-    }
-
-    .form-input:focus {
-      border-color: var(--primary);
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 15px;
-      margin-top: 30px;
-    }
-
-    .form-btn {
-      flex: 1;
-      padding: 18px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-    }
-
-    .submit-btn {
-      background: var(--primary);
-      color: white;
-    }
-
-    .submit-btn:hover {
-      background: var(--primary-dark);
-    }
-
-    .cancel-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--light);
-    }
-
-    .cancel-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Navigation Bar */
-    .nav-bar {
-      display: flex;
-      justify-content: space-around;
-      padding: 18px 10px;
-      background: rgba(26, 26, 46, 0.95);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      position: sticky;
-      bottom: 0;
-      z-index: 100;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: var(--gray);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: all 0.3s ease;
-    }
-
-    .nav-item i {
-      font-size: 1.5rem;
-      margin-bottom: 5px;
-    }
-
-    .nav-item.active, .nav-item:hover {
-      color: var(--primary);
-    }
-
-    /* Notification */
-    .notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(26, 26, 46, 0.9);
-      color: white;
-      padding: 15px 30px;
-      border-radius: 50px;
-      z-index: 1000;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(110, 68, 255, 0.3);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .notification.show {
-      opacity: 1;
-    }
-
-    /* Status Indicator */
-    .status-indicator {
-      display: inline-flex;
-      align-items: center;
-      padding: 8px 20px;
-      border-radius: 50px;
-      margin-top: 20px;
-      font-size: 0.9rem;
-    }
-
-    .status-dot {
-      width: 12px;
-      height: 12px;
-      background: var(--success);
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .social-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .section-title {
-        font-size: 1.5rem;
-      }
-
-      .instagram-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .social-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .app-header {
-        padding: 15px;
-      }
-
-      .app-content {
-        padding: 15px;
-      }
-
-      .form-actions {
-        flex-direction: column;
-      }
-    }
-
-    /* Animations */
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .fade-in {
-      animation: fadeIn 0.5s ease forwards;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#121212">
+  <title>KraveAI - Panel de Control</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6e44ff;
+      --primary-dark: #5a35d5;
+      --secondary: #00c9b7;
+      --dark: #121212;
+      --darker: #0a0a0a;
+      --light: #f0f0f0;
+      --gray: #8c8ca1;
+      --card-bg: #1a1a1a;
+      --success: #4CAF50;
+      --warning: #ff9800;
+      --error: #f44336;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--darker), var(--dark));
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .app-header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(110, 68, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .logo span {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .refresh-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0.7;
+      z-index: 5;
+    }
+
+    .refresh-btn:hover {
+      opacity: 1;
+      background: rgba(110, 68, 255, 0.2);
+      color: var(--light);
+    }
+
+    /* Main Content */
+    .app-content {
+      flex: 1;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-subtitle {
+      color: var(--gray);
+      font-size: 1.05rem;
+      margin-bottom: 25px;
+    }
+
+    /* Social Grid */
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+
+    .social-item {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 20px;
+      padding: 25px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-decoration: none;
+      color: white;
+    }
+
+    .social-item:hover {
+      transform: translateY(-5px);
+      background: rgba(110, 68, 255, 0.2);
+      border-color: var(--primary);
+    }
+
+    .social-icon {
+      font-size: 2.5rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .social-name {
+      font-weight: 500;
+      font-size: 1.05rem;
+      text-align: center;
+    }
+
+    /* Beast Mode */
+    .beast-mode {
+      background: linear-gradient(135deg, #ff0080, #ff8c00);
+      color: white;
+      text-align: center;
+      padding: 18px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: block;
+      width: 100%;
+      margin: 25px 0;
+    }
+
+    .beast-mode:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 20px rgba(255, 0, 128, 0.3);
+    }
+
+    /* Clients List */
+    .clients-list {
+      background: rgba(30, 30, 30, 0.5);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .client-item {
+      display: flex;
+      align-items: center;
+      padding: 18px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .client-item:last-child {
+      border-bottom: none;
+    }
+
+    .client-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(110, 68, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-right: 15px;
+    }
+
+    .client-info {
+      flex-grow: 1;
+    }
+
+    .client-name {
+      font-weight: 500;
+      font-size: 1.2rem;
+    }
+
+    .client-platform {
+      color: var(--gray);
+      font-size: 1rem;
+      margin-top: 5px;
+    }
+
+    /* Automation Box */
+    .automation-box {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 20px;
+      padding: 18px;
+      margin-top: 30px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .automation-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      padding: 14px;
+      outline: none;
+    }
+
+    .automation-box input::placeholder {
+      color: var(--gray);
+    }
+
+    .send-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .send-button:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    /* Instagram Panel */
+    #instagram-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 100;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #instagram-panel.active {
+      transform: translateX(0);
+    }
+
+    .back-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 25px;
+      padding: 12px 0;
+      font-size: 1.1rem;
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    .instagram-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 18px;
+      margin-top: 15px;
+    }
+
+    .instagram-item {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 20px;
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-decoration: none;
+      color: white;
+    }
+
+    .instagram-item:hover {
+      transform: translateY(-5px);
+      background: rgba(225, 48, 108, 0.2);
+      border-color: #E1306C;
+    }
+
+    .instagram-icon {
+      font-size: 2.8rem;
+    }
+
+    .instagram-name {
+      font-weight: 500;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    /* Create Accounts Panel */
+    #create-accounts-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #create-accounts-panel.active {
+      transform: translateX(0);
+    }
+
+    /* Login Panel */
+    #login-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 300;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #login-panel.active {
+      transform: translateX(0);
+    }
+
+    /* Comments Panel */
+    #comments-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark);
+      z-index: 200;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+    }
+
+    #comments-panel.active {
+      transform: translateX(0);
+    }
+
+    .create-form {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: 20px;
+    }
+
+    .form-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(20, 20, 20, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      color: white;
+      font-size: 1.1rem;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .form-btn {
+      flex: 1;
+      padding: 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .submit-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .cancel-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+    }
+
+    .cancel-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Navigation Bar */
+    .nav-bar {
+      display: flex;
+      justify-content: space-around;
+      padding: 18px 10px;
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item i {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+
+    .nav-item.active, .nav-item:hover {
+      color: var(--primary);
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26, 26, 46, 0.9);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      z-index: 1000;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(110, 68, 255, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .notification.show {
+      opacity: 1;
+    }
+
+    /* Status Indicator */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 20px;
+      border-radius: 50px;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--success);
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .social-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+
+      .instagram-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .social-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .app-header {
+        padding: 15px;
+      }
+
+      .app-content {
+        padding: 15px;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+    }
+
+    /* Animations */
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+  </style>
 </head>
 <body>
-  <div class="app-header">
-    <div class="logo">
-      <i class="fas fa-brain"></i>
-      <span>KraveAI</span>
-    </div>
-    <div class="user-avatar">KG</div>
-    <div class="refresh-btn" id="refresh-btn">
-      <i class="fas fa-sync-alt"></i>
-    </div>
-  </div>
+  <div class="app-header">
+    <div class="logo">
+      <i class="fas fa-brain"></i>
+      <span>KraveAI</span>
+    </div>
+    <div class="user-avatar">KG</div>
+    <div class="refresh-btn" id="refresh-btn">
+      <i class="fas fa-sync-alt"></i>
+    </div>
+  </div>
 
-  <div class="app-content">
-    <div class="section">
-      <div class="section-title">
-        <i class="fas fa-hashtag"></i> Redes sociales
-      </div>
-      <div class="section-subtitle">Domina todas tus redes con IA</div>
+  <div class="app-content">
+    <div class="section">
+      <div class="section-title">
+        <i class="fas fa-hashtag"></i> Redes sociales
+      </div>
+      <div class="section-subtitle">Domina todas tus redes con IA</div>
 
-      <div class="social-grid">
-        <a href="#" class="social-item" id="instagram-link">
-          <div class="social-icon" style="background: rgba(225, 48, 108, 0.15);">
-            <i class="fab fa-instagram" style="color: #E1306C;"></i>
-          </div>
-          <div class="social-name">Instagram</div>
-        </a>
-        <a href="#" class="social-item" id="tiktok-link">
-          <div class="social-icon" style="background: rgba(105, 201, 208, 0.15);">
-            <i class="fab fa-tiktok" style="color: #69C9D0;"></i>
-          </div>
-          <div class="social-name">Tiktok</div>
-        </a>
-        <a href="#" class="social-item" id="youtube-link">
-          <div class="social-icon" style="background: rgba(255, 0, 0, 0.15);">
-            <i class="fab fa-youtube" style="color: #FF0000;"></i>
-          </div>
-          <div class="social-name">YouTube</div>
-        </a>
-        <a href="#" class="social-item" id="spotify-link">
-          <div class="social-icon" style="background: rgba(29, 185, 84, 0.15);">
-            <i class="fab fa-spotify" style="color: #1DB954;"></i>
-          </div>
-          <div class="social-name">Spotify</div>
-        </a>
-        <a href="#" class="social-item" id="threads-link">
-          <div class="social-icon" style="background: rgba(255, 255, 255, 0.15);">
-            <i class="fab fa-threads" style="color: #fff;"></i>
-          </div>
-          <div class="social-name">Threads</div>
-        </a>
-      </div>
+      <div class="social-grid">
+        <a href="#" class="social-item" id="instagram-link">
+          <div class="social-icon" style="background: rgba(225, 48, 108, 0.15);">
+            <i class="fab fa-instagram" style="color: #E1306C;"></i>
+          </div>
+          <div class="social-name">Instagram</div>
+        </a>
+        <a href="#" class="social-item" id="tiktok-link">
+          <div class="social-icon" style="background: rgba(105, 201, 208, 0.15);">
+            <i class="fab fa-tiktok" style="color: #69C9D0;"></i>
+          </div>
+          <div class="social-name">Tiktok</div>
+        </a>
+        <a href="#" class="social-item" id="youtube-link">
+          <div class="social-icon" style="background: rgba(255, 0, 0, 0.15);">
+            <i class="fab fa-youtube" style="color: #FF0000;"></i>
+          </div>
+          <div class="social-name">YouTube</div>
+        </a>
+        <a href="#" class="social-item" id="spotify-link">
+          <div class="social-icon" style="background: rgba(29, 185, 84, 0.15);">
+            <i class="fab fa-spotify" style="color: #1DB954;"></i>
+          </div>
+          <div class="social-name">Spotify</div>
+        </a>
+        <a href="#" class="social-item" id="threads-link">
+          <div class="social-icon" style="background: rgba(255, 255, 255, 0.15);">
+            <i class="fab fa-threads" style="color: #fff;"></i>
+          </div>
+          <div class="social-name">Threads</div>
+        </a>
+      </div>
 
-      <button class="beast-mode pulse">
-        <i class="fas fa-paw"></i> Modo Bestia
-      </button>
+      <button class="beast-mode pulse">
+        <i class="fas fa-paw"></i> Modo Bestia
+      </button>
 
-      <div class="status-indicator">
-        <div class="status-dot" id="system-status-dot"></div>
-        <span id="system-status-text">Conectando al backend...</span>
-      </div>
-    </div>
+      <div class="status-indicator">
+        <div class="status-dot" id="system-status-dot"></div>
+        <span id="system-status-text">Conectando al backend...</span>
+      </div>
+    </div>
 
-    <div class="section">
-      <div class="section-title">
-        <i class="fas fa-users"></i> Clientes recientes
-      </div>
+    <div class="section">
+      <div class="section-title">
+        <i class="fas fa-users"></i> Clientes recientes
+      </div>
 
-      <div class="clients-list">
-        <div class="client-item">
-          <div class="client-icon" style="background: rgba(225, 48, 108, 0.15);">
-            <i class="fab fa-instagram" style="color: #E1306C;"></i>
-          </div>
-          <div class="client-info">
-            <div class="client-name">arianaoficial</div>
-            <div class="client-platform">Instagram</div>
-          </div>
-        </div>
+      <div class="clients-list">
+        <div class="client-item">
+          <div class="client-icon" style="background: rgba(225, 48, 108, 0.15);">
+            <i class="fab fa-instagram" style="color: #E1306C;"></i>
+          </div>
+          <div class="client-info">
+            <div class="client-name">arianaoficial</div>
+            <div class="client-platform">Instagram</div>
+          </div>
+        </div>
 
-        <div class="client-item">
-          <div class="client-icon" style="background: rgba(255, 0, 0, 0.15);">
-            <i class="fab fa-youtube" style="color: #FF0000;"></i>
-          </div>
-          <div class="client-info">
-            <div class="client-name">plenkay</div>
-            <div class="client-platform">YouTube</div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <div class="client-item">
+          <div class="client-icon" style="background: rgba(255, 0, 0, 0.15);">
+            <i class="fab fa-youtube" style="color: #FF0000;"></i>
+          </div>
+          <div class="client-info">
+            <div class="client-name">plenkay</div>
+            <div class="client-platform">YouTube</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="section">
-      <div class="section-title">
-        <i class="fas fa-bolt"></i> Automatización
-      </div>
+    <div class="section">
+      <div class="section-title">
+        <i class="fas fa-bolt"></i> Automatización
+      </div>
 
-      <div class="automation-box">
-        <input type="text" placeholder="¿Qué quieres automatizar hoy?" id="automation-input">
-        <button class="send-button" id="send-btn">
-          <i class="fas fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
+      <div class="automation-box">
+        <input type="text" placeholder="¿Qué quieres automatizar hoy?" id="automation-input">
+        <button class="send-button" id="send-btn">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
 
-    <div class="created-by">
-      Created by Karmean Gómez
-    </div>
-  </div>
+    <div class="created-by">
+      Created by Karmean Gómez
+    </div>
+  </div>
 
-  <!-- Instagram Panel -->
-  <div id="instagram-panel">
-    <div class="back-button" id="volver-inicio">
-      <i class="fas fa-arrow-left"></i> Volver
-    </div>
+  <!-- Instagram Panel -->
+  <div id="instagram-panel">
+    <div class="back-button" id="volver-inicio">
+      <i class="fas fa-arrow-left"></i> Volver
+    </div>
 
-    <div class="app-content">
-      <div class="section">
-        <div class="section-title">
-          <i class="fab fa-instagram" style="color: #E1306C;"></i> Panel de Instagram
-        </div>
-        <div class="section-subtitle">Elige qué deseas automatizar</div>
+    <div class="app-content">
+      <div class="section">
+        <div class="section-title">
+          <i class="fab fa-instagram" style="color: #E1306C;"></i> Panel de Instagram
+        </div>
+        <div class="section-subtitle">Elige qué deseas automatizar</div>
 
-        <div class="instagram-grid">
-          <div class="instagram-item">
-            <div class="instagram-icon">👥</div>
-            <div class="instagram-name">Clientes</div>
-          </div>
-          <div class="instagram-item">
-            <div class="instagram-icon">🔧</div>
-            <div class="instagram-name">Servicios</div>
-          </div>
-          <div class="instagram-item">
-            <div class="instagram-icon">❤️</div>
-            <div class="instagram-name">Likes</div>
-          </div>
-          <div class="instagram-item">
-            <div class="instagram-icon">➕</div>
-            <div class="instagram-name">Seguidores</div>
-          </div>
-          <div class="instagram-item">
-            <div class="instagram-icon">👁️</div>
-            <div class="instagram-name">Vistas</div>
-          </div>
-          <div class="instagram-item" id="comments-link">
-            <div class="instagram-icon">💬</div>
-            <div class="instagram-name">Comentarios</div>
-          </div>
-          <div class="instagram-item">
-            <div class="instagram-icon">🔁</div>
-            <div class="instagram-name">Compartidos</div>
-          </div>
-          <div class="instagram-item" id="crear-cuentas-link">
-            <div class="instagram-icon">➕</div>
-            <div class="instagram-name">Crear cuentas</div>
-          </div>
-          <div class="instagram-item" id="login-link">
-            <div class="instagram-icon">🔐</div>
-            <div class="instagram-name">Login</div>
-          </div>
-          <div class="instagram-item" id="ver-cuentas-link">
-            <div class="instagram-icon">📋</div>
-            <div class="instagram-name">Ver cuentas generadas</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+        <div class="instagram-grid">
+          <div class="instagram-item">
+            <div class="instagram-icon">👥</div>
+            <div class="instagram-name">Clientes</div>
+          </div>
+          <div class="instagram-item">
+            <div class="instagram-icon">🔧</div>
+            <div class="instagram-name">Servicios</div>
+          </div>
+          <div class="instagram-item">
+            <div class="instagram-icon">❤️</div>
+            <div class="instagram-name">Likes</div>
+          </div>
+          <div class="instagram-item">
+            <div class="instagram-icon">➕</div>
+            <div class="instagram-name">Seguidores</div>
+          </div>
+          <div class="instagram-item">
+            <div class="instagram-icon">👁️</div>
+            <div class="instagram-name">Vistas</div>
+          </div>
+          <div class="instagram-item" id="comments-link">
+            <div class="instagram-icon">💬</div>
+            <div class="instagram-name">Comentarios</div>
+          </div>
+          <div class="instagram-item">
+            <div class="instagram-icon">🔁</div>
+            <div class="instagram-name">Compartidos</div>
+          </div>
+          <div class="instagram-item" id="crear-cuentas-link">
+            <div class="instagram-icon">➕</div>
+            <div class="instagram-name">Crear cuentas</div>
+          </div>
+          <div class="instagram-item" id="login-link">
+            <div class="instagram-icon">🔐</div>
+            <div class="instagram-name">Login</div>
+          </div>
+          <div class="instagram-item" id="ver-cuentas-link">
+            <div class="instagram-icon">📋</div>
+            <div class="instagram-name">Ver cuentas generadas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Create Accounts Panel -->
-  <div id="create-accounts-panel">
-    <div class="back-button" id="volver-instagram">
-      <i class="fas fa-arrow-left"></i> Volver
-    </div>
+  <!-- Create Accounts Panel -->
+  <div id="create-accounts-panel">
+    <div class="back-button" id="volver-instagram">
+      <i class="fas fa-arrow-left"></i> Volver
+    </div>
 
-    <div class="app-content">
-      <div class="section">
-        <div class="section-title">
-          <i class="fas fa-user-plus"></i> Crear nuevas cuentas
-        </div>
-        <div class="section-subtitle">
-          Sistema automatizado para creación de cuentas de Instagram
-        </div>
+    <div class="app-content">
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-user-plus"></i> Crear nuevas cuentas
+        </div>
+        <div class="section-subtitle">
+          Sistema automatizado para creación de cuentas de Instagram
+        </div>
 
-        <div class="create-form">
-          <div class="form-group">
-            <label class="form-label">Número de cuentas a crear</label>
-            <input type="number" id="account-count" class="form-input" value="5" min="1" max="100">
-          </div>
+        <div class="create-form">
+          <div class="form-group">
+            <label class="form-label">Número de cuentas a crear</label>
+            <input type="number" id="account-count" class="form-input" value="5" min="1" max="100">
+          </div>
 
-          <div class="form-actions">
-            <button class="form-btn cancel-btn" id="cancel-btn">
-              <i class="fas fa-times"></i> Cancelar
-            </button>
-            <button class="form-btn submit-btn" id="create-btn">
-              <i class="fas fa-play"></i> Iniciar creación
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Login Panel -->
-  <div id="login-panel">
-    <div class="back-button" id="volver-login">
-      <i class="fas fa-arrow-left"></i> Volver
-    </div>
-
-    <div class="app-content">
-      <div class="section">
-        <div class="section-title">
-          <i class="fas fa-sign-in-alt"></i> Login
-        </div>
-        <div class="section-subtitle">Inicia sesión con tus cuentas</div>
-
-        <form id="loginForm" class="create-form">
-          <div class="form-group">
-            <label class="form-label">Usuario</label>
-            <input type="text" name="username" class="form-input" placeholder="Ingresa tu usuario" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input type="password" name="password" class="form-input" placeholder="Ingresa tu contraseña" required>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="form-btn submit-btn">Iniciar Sesión</button>
-          </div>
-        </form>
-
-        <div class="section-title" style="margin-top: 20px;">
-          <i class="fas fa-user-plus"></i> Agregar Cuenta Manual
-        </div>
-        <form id="addAccountForm" class="create-form">
-          <div class="form-group">
-            <label class="form-label">Usuario</label>
-            <input type="text" name="manualUsername" class="form-input" placeholder="Ingresa el usuario" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input type="password" name="manualPassword" class="form-input" placeholder="Ingresa la contraseña" required>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="form-btn submit-btn">Guardar Cuenta</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Comments Panel -->
-  <div id="comments-panel">
-    <div class="back-button" id="volver-inicio-comments">
-      <i class="fas fa-arrow-left"></i> Volver
-    </div>
-    <div class="app-content">
-      <div class="section">
-        <div class="section-title">
-          <i class="fas fa-comments"></i> Automatización de Comentarios
-        </div>
-        <div class="section-subtitle">
-          Configura y lanza comentarios masivos en Instagram.
-        </div>
-        <form id="formComentarios" class="create-form">
-          <div class="form-group">
-            <label class="form-label">URL del Post</label>
-            <input type="text" name="url" class="form-input" placeholder="https://www.instagram.com/p/CXXXXX/" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Cantidad de Comentarios</label>
-            <input type="number" name="cantidad" class="form-input" value="30" min="1" max="100" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Modo</label>
-            <select name="modo" class="form-input">
-              <option value="auto">Auto (basado en imagen)</option>
-              <option value="personalizado">Personalizado (con estilo)</option>
-              <option value="manual">Manual (pegar comentarios)</option>
-            </select>
-          </div>
-          <div class="form-group" id="manualSection" style="display: none;">
-            <label class="form-label">Comentarios Manuales</label>
-            <textarea name="comentarios" class="form-input" placeholder="Pega un comentario por línea" rows="4"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Apodo (Opcional)</label>
-            <input type="text" name="apodo" class="form-input" placeholder="Ej: Gera">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Estilo</label>
-            <input type="text" name="estilo" class="form-input" placeholder="Ej: fitness, sexy, guapo">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Actividad</label>
-            <input type="text" name="actividad" class="form-input" placeholder="Ej: entrenador personal">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Ejemplos de Comentarios</label>
-            <textarea name="ejemplos" class="form-input" placeholder="Un comentario por línea" rows="4"></textarea>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="form-btn submit-btn">Lanzar Comentarios</button>
-            <button type="button" class="form-btn cancel-btn" id="cancelComment">Cancelar</button>
-          </div>
-        </form>
-        <div id="commentStatus" class="status-indicator" style="display: none;">
-          <div class="status-dot"></div>
-          <span id="commentMessage"></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="nav-bar">
-    <a href="#" class="nav-item active">
-      <i class="fas fa-home"></i>
-      <span>Inicio</span>
-    </a>
-    <a href="#" class="nav-item">
-      <i class="fas fa-chart-line"></i>
-      <span>Analítica</span>
-    </a>
-    <a href="#" class="nav-item">
-      <i class="fas fa-cogs"></i>
-      <span>Ajustes</span>
-    </a>
-    <a href="#" class="nav-item">
-      <i class="fas fa-user"></i>
-      <span>Perfil</span>
-    </a>
-  </div>
-
-  <div class="notification" id="notification">
-    <i class="fas fa-check-circle"></i> <span id="notification-text"></span>
-  </div>
-
-  <script>
-    // Elementos DOM para navegación
-    const instagramLink = document.getElementById('instagram-link');
-    const volverInicio = document.getElementById('volver-inicio');
-    const crearCuentasLink = document.getElementById('crear-cuentas-link');
-    const volverInstagram = document.getElementById('volver-instagram');
-    const loginLink = document.getElementById('login-link');
-    const volverLogin = document.getElementById('volver-login');
-    const commentsLink = document.getElementById('comments-link');
-    const volverInicioComments = document.getElementById('volver-inicio-comments');
-    const instagramPanel = document.getElementById('instagram-panel');
-    const createAccountsPanel = document.getElementById('create-accounts-panel');
-    const loginPanel = document.getElementById('login-panel');
-    const commentsPanel = document.getElementById('comments-panel');
-    const notification = document.getElementById('notification');
-    const notificationText = document.getElementById('notification-text');
-    const automationInput = document.getElementById('automation-input');
-    const sendBtn = document.getElementById('send-btn');
-    const refreshBtn = document.getElementById('refresh-btn');
-    const beastModeBtn = document.querySelector('.beast-mode');
-
-    // Mostrar notificación
-    function showNotification(message) {
-      notificationText.textContent = message;
-      notification.classList.add('show');
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, 3000);
-    }
-
-    // Navegación entre paneles
-    instagramLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      instagramPanel.classList.add('active');
-    });
-
-    volverInicio.addEventListener('click', function(e) {
-      e.preventDefault();
-      instagramPanel.classList.remove('active');
-    });
-
-    crearCuentasLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      createAccountsPanel.classList.add('active');
-      instagramPanel.classList.remove('active');
-    });
-
-    volverInstagram.addEventListener('click', function(e) {
-      e.preventDefault();
-      createAccountsPanel.classList.remove('active');
-      instagramPanel.classList.add('active');
-    });
-
-    loginLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      loginPanel.classList.add('active');
-      instagramPanel.classList.remove('active');
-    });
-
-    volverLogin.addEventListener('click', function(e) {
-      e.preventDefault();
-      loginPanel.classList.remove('active');
-      instagramPanel.classList.add('active');
-    });
-
-    commentsLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      commentsPanel.classList.add('active');
-      instagramPanel.classList.remove('active');
-    });
-
-    volverInicioComments.addEventListener('click', function(e) {
-      e.preventDefault();
-      commentsPanel.classList.remove('active');
-      instagramPanel.classList.add('active');
-    });
-
-    // Botón de enviar
-    sendBtn.addEventListener('click', function() {
-      if (automationInput.value.trim() !== '') {
-        showNotification(`Automatizando: "${automationInput.value}"`);
-        automationInput.value = '';
-      }
-    });
-
-    // Botón de refresh
-    refreshBtn.addEventListener('click', function() {
-      this.style.animation = 'rotate 1s linear';
-      showNotification('Datos actualizados');
-      setTimeout(() => {
-        this.style.animation = '';
-      }, 1000);
-    });
-
-    // Botón Modo Bestia
-    beastModeBtn.addEventListener('click', function() {
-      this.innerHTML = '<i class="fas fa-paw"></i> ¡Activando Modo Bestia!';
-      this.style.background = 'linear-gradient(135deg, #ff8c00, #ff0080)';
-      setTimeout(() => {
-        this.innerHTML = '<i class="fas fa-paw"></i> ¡Modo Bestia Activado!';
-        this.style.background = 'linear-gradient(135deg, #00c9b7, #6e44ff)';
-        showNotification('Modo Bestia activado');
-      }, 1500);
-    });
-
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', () => {
-      showNotification('KraveAI listo - ¡Bienvenido!');
-    });
-  </script>
-</body>
-</html>
+          <div class="form-actions">
+            <button class="form-btn cancel-btn" id="cancel-btn">
+              <i cl
