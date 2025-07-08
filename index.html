@@ -79,7 +79,6 @@
       font-size: 1.2rem;
     }
 
-    /* Refresh Button */
     .refresh-btn {
       position: absolute;
       top: 20px;
@@ -399,25 +398,6 @@
     }
 
     #login-panel.active {
-      transform: translateX(0);
-    }
-
-    /* Accounts Panel */
-    #panel-cuentas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--dark);
-      z-index: 200;
-      overflow-y: auto;
-      padding: 20px;
-      transform: translateX(100%);
-      transition: transform 0.4s ease;
-    }
-
-    #panel-cuentas.active {
       transform: translateX(0);
     }
 
@@ -748,7 +728,7 @@
   </div>
 
   <!-- Instagram Panel -->
-  <div id="instagram-panel" class="active"> <!-- Activo por defecto -->
+  <div id="instagram-panel">
     <div class="back-button" id="volver-inicio">
       <i class="fas fa-arrow-left"></i> Volver
     </div>
@@ -821,4 +801,267 @@
           Sistema automatizado para creación de cuentas de Instagram
         </div>
 
-        <d
+        <div class="create-form">
+          <div class="form-group">
+            <label class="form-label">Número de cuentas a crear</label>
+            <input type="number" id="account-count" class="form-input" value="5" min="1" max="100">
+          </div>
+
+          <div class="form-actions">
+            <button class="form-btn cancel-btn" id="cancel-btn">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button class="form-btn submit-btn" id="create-btn">
+              <i class="fas fa-play"></i> Iniciar creación
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Panel -->
+  <div id="login-panel">
+    <div class="back-button" id="volver-login">
+      <i class="fas fa-arrow-left"></i> Volver
+    </div>
+
+    <div class="app-content">
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </div>
+        <div class="section-subtitle">Inicia sesión con tus cuentas</div>
+
+        <form id="loginForm" class="create-form">
+          <div class="form-group">
+            <label class="form-label">Usuario</label>
+            <input type="text" name="username" class="form-input" placeholder="Ingresa tu usuario" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input type="password" name="password" class="form-input" placeholder="Ingresa tu contraseña" required>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="form-btn submit-btn">Iniciar Sesión</button>
+          </div>
+        </form>
+
+        <div class="section-title" style="margin-top: 20px;">
+          <i class="fas fa-user-plus"></i> Agregar Cuenta Manual
+        </div>
+        <form id="addAccountForm" class="create-form">
+          <div class="form-group">
+            <label class="form-label">Usuario</label>
+            <input type="text" name="manualUsername" class="form-input" placeholder="Ingresa el usuario" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input type="password" name="manualPassword" class="form-input" placeholder="Ingresa la contraseña" required>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="form-btn submit-btn">Guardar Cuenta</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comments Panel -->
+  <div id="comments-panel">
+    <div class="back-button" id="volver-inicio-comments">
+      <i class="fas fa-arrow-left"></i> Volver
+    </div>
+    <div class="app-content">
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-comments"></i> Automatización de Comentarios
+        </div>
+        <div class="section-subtitle">
+          Configura y lanza comentarios masivos en Instagram.
+        </div>
+        <form id="formComentarios" class="create-form">
+          <div class="form-group">
+            <label class="form-label">URL del Post</label>
+            <input type="text" name="url" class="form-input" placeholder="https://www.instagram.com/p/CXXXXX/" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cantidad de Comentarios</label>
+            <input type="number" name="cantidad" class="form-input" value="30" min="1" max="100" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Modo</label>
+            <select name="modo" class="form-input">
+              <option value="auto">Auto (basado en imagen)</option>
+              <option value="personalizado">Personalizado (con estilo)</option>
+              <option value="manual">Manual (pegar comentarios)</option>
+            </select>
+          </div>
+          <div class="form-group" id="manualSection" style="display: none;">
+            <label class="form-label">Comentarios Manuales</label>
+            <textarea name="comentarios" class="form-input" placeholder="Pega un comentario por línea" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apodo (Opcional)</label>
+            <input type="text" name="apodo" class="form-input" placeholder="Ej: Gera">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estilo</label>
+            <input type="text" name="estilo" class="form-input" placeholder="Ej: fitness, sexy, guapo">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Actividad</label>
+            <input type="text" name="actividad" class="form-input" placeholder="Ej: entrenador personal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ejemplos de Comentarios</label>
+            <textarea name="ejemplos" class="form-input" placeholder="Un comentario por línea" rows="4"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="form-btn submit-btn">Lanzar Comentarios</button>
+            <button type="button" class="form-btn cancel-btn" id="cancelComment">Cancelar</button>
+          </div>
+        </form>
+        <div id="commentStatus" class="status-indicator" style="display: none;">
+          <div class="status-dot"></div>
+          <span id="commentMessage"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <a href="#" class="nav-item active">
+      <i class="fas fa-home"></i>
+      <span>Inicio</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-chart-line"></i>
+      <span>Analítica</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-cogs"></i>
+      <span>Ajustes</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Perfil</span>
+    </a>
+  </div>
+
+  <div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i> <span id="notification-text"></span>
+  </div>
+
+  <script>
+    // Elementos DOM para navegación
+    const instagramLink = document.getElementById('instagram-link');
+    const volverInicio = document.getElementById('volver-inicio');
+    const crearCuentasLink = document.getElementById('crear-cuentas-link');
+    const volverInstagram = document.getElementById('volver-instagram');
+    const loginLink = document.getElementById('login-link');
+    const volverLogin = document.getElementById('volver-login');
+    const commentsLink = document.getElementById('comments-link');
+    const volverInicioComments = document.getElementById('volver-inicio-comments');
+    const instagramPanel = document.getElementById('instagram-panel');
+    const createAccountsPanel = document.getElementById('create-accounts-panel');
+    const loginPanel = document.getElementById('login-panel');
+    const commentsPanel = document.getElementById('comments-panel');
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notification-text');
+    const automationInput = document.getElementById('automation-input');
+    const sendBtn = document.getElementById('send-btn');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const beastModeBtn = document.querySelector('.beast-mode');
+
+    // Mostrar notificación
+    function showNotification(message) {
+      notificationText.textContent = message;
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Navegación entre paneles
+    instagramLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      instagramPanel.classList.add('active');
+    });
+
+    volverInicio.addEventListener('click', function(e) {
+      e.preventDefault();
+      instagramPanel.classList.remove('active');
+    });
+
+    crearCuentasLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      createAccountsPanel.classList.add('active');
+      instagramPanel.classList.remove('active');
+    });
+
+    volverInstagram.addEventListener('click', function(e) {
+      e.preventDefault();
+      createAccountsPanel.classList.remove('active');
+      instagramPanel.classList.add('active');
+    });
+
+    loginLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginPanel.classList.add('active');
+      instagramPanel.classList.remove('active');
+    });
+
+    volverLogin.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginPanel.classList.remove('active');
+      instagramPanel.classList.add('active');
+    });
+
+    commentsLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      commentsPanel.classList.add('active');
+      instagramPanel.classList.remove('active');
+    });
+
+    volverInicioComments.addEventListener('click', function(e) {
+      e.preventDefault();
+      commentsPanel.classList.remove('active');
+      instagramPanel.classList.add('active');
+    });
+
+    // Botón de enviar
+    sendBtn.addEventListener('click', function() {
+      if (automationInput.value.trim() !== '') {
+        showNotification(`Automatizando: "${automationInput.value}"`);
+        automationInput.value = '';
+      }
+    });
+
+    // Botón de refresh
+    refreshBtn.addEventListener('click', function() {
+      this.style.animation = 'rotate 1s linear';
+      showNotification('Datos actualizados');
+      setTimeout(() => {
+        this.style.animation = '';
+      }, 1000);
+    });
+
+    // Botón Modo Bestia
+    beastModeBtn.addEventListener('click', function() {
+      this.innerHTML = '<i class="fas fa-paw"></i> ¡Activando Modo Bestia!';
+      this.style.background = 'linear-gradient(135deg, #ff8c00, #ff0080)';
+      setTimeout(() => {
+        this.innerHTML = '<i class="fas fa-paw"></i> ¡Modo Bestia Activado!';
+        this.style.background = 'linear-gradient(135deg, #00c9b7, #6e44ff)';
+        showNotification('Modo Bestia activado');
+      }, 1500);
+    });
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      showNotification('KraveAI listo - ¡Bienvenido!');
+    });
+  </script>
+</body>
+</html>
