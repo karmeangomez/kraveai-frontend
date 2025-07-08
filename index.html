@@ -973,6 +973,8 @@
     const sendBtn = document.getElementById('send-btn');
     const refreshBtn = document.getElementById('refresh-btn');
     const beastModeBtn = document.querySelector('.beast-mode');
+    const statusDot = document.getElementById('system-status-dot');
+    const statusText = document.getElementById('system-status-text');
 
     // Mostrar notificación
     function showNotification(message) {
@@ -981,6 +983,29 @@
       setTimeout(() => {
         notification.classList.remove('show');
       }, 3000);
+    }
+
+    // Conexión al backend
+    async function checkBackendConnection() {
+      try {
+        const response = await fetch('http://localhost:3000/status', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          statusDot.style.background = var(--success);
+          statusText.textContent = `Conectado al backend - ${data.message || 'OK'}`;
+        } else {
+          throw new Error('Respuesta no exitosa del backend');
+        }
+      } catch (error) {
+        statusDot.style.background = var(--error);
+        statusText.textContent = 'Error: No se pudo conectar al backend';
+        console.error('Error al conectar al backend:', error);
+      }
     }
 
     // Navegación entre paneles
@@ -1041,7 +1066,7 @@
     // Botón de refresh
     refreshBtn.addEventListener('click', function() {
       this.style.animation = 'rotate 1s linear';
-      showNotification('Datos actualizados');
+      checkBackendConnection(); // Reintenta la conexión al refrescar
       setTimeout(() => {
         this.style.animation = '';
       }, 1000);
@@ -1061,6 +1086,7 @@
     // Inicialización
     document.addEventListener('DOMContentLoaded', () => {
       showNotification('KraveAI listo - ¡Bienvenido!');
+      checkBackendConnection(); // Intenta conectar al cargar la página
     });
   </script>
 </body>
