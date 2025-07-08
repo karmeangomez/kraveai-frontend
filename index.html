@@ -1009,54 +1009,54 @@
     }
 
     // Navegación entre paneles
-    instagramLink.addEventListener('click', function(e) {
+    instagramLink.addEventListener('click', (e) => {
       e.preventDefault();
       instagramPanel.classList.add('active');
     });
 
-    volverInicio.addEventListener('click', function(e) {
+    volverInicio.addEventListener('click', (e) => {
       e.preventDefault();
       instagramPanel.classList.remove('active');
     });
 
-    crearCuentasLink.addEventListener('click', function(e) {
+    crearCuentasLink.addEventListener('click', (e) => {
       e.preventDefault();
       createAccountsPanel.classList.add('active');
       instagramPanel.classList.remove('active');
     });
 
-    volverInstagram.addEventListener('click', function(e) {
+    volverInstagram.addEventListener('click', (e) => {
       e.preventDefault();
       createAccountsPanel.classList.remove('active');
       instagramPanel.classList.add('active');
     });
 
-    loginLink.addEventListener('click', function(e) {
+    loginLink.addEventListener('click', (e) => {
       e.preventDefault();
       loginPanel.classList.add('active');
       instagramPanel.classList.remove('active');
     });
 
-    volverLogin.addEventListener('click', function(e) {
+    volverLogin.addEventListener('click', (e) => {
       e.preventDefault();
       loginPanel.classList.remove('active');
       instagramPanel.classList.add('active');
     });
 
-    commentsLink.addEventListener('click', function(e) {
+    commentsLink.addEventListener('click', (e) => {
       e.preventDefault();
       commentsPanel.classList.add('active');
       instagramPanel.classList.remove('active');
     });
 
-    volverInicioComments.addEventListener('click', function(e) {
+    volverInicioComments.addEventListener('click', (e) => {
       e.preventDefault();
       commentsPanel.classList.remove('active');
       instagramPanel.classList.add('active');
     });
 
     // Botón de enviar
-    sendBtn.addEventListener('click', function() {
+    sendBtn.addEventListener('click', () => {
       if (automationInput.value.trim() !== '') {
         showNotification(`Automatizando: "${automationInput.value}"`);
         automationInput.value = '';
@@ -1064,21 +1064,21 @@
     });
 
     // Botón de refresh
-    refreshBtn.addEventListener('click', function() {
-      this.style.animation = 'rotate 1s linear';
-      checkBackendConnection(); // Reintenta la conexión al refrescar
+    refreshBtn.addEventListener('click', () => {
+      refreshBtn.style.animation = 'rotate 1s linear';
+      checkBackendConnection();
       setTimeout(() => {
-        this.style.animation = '';
+        refreshBtn.style.animation = '';
       }, 1000);
     });
 
     // Botón Modo Bestia
-    beastModeBtn.addEventListener('click', function() {
-      this.innerHTML = '<i class="fas fa-paw"></i> ¡Activando Modo Bestia!';
-      this.style.background = 'linear-gradient(135deg, #ff8c00, #ff0080)';
+    beastModeBtn.addEventListener('click', () => {
+      beastModeBtn.innerHTML = '<i class="fas fa-paw"></i> ¡Activando Modo Bestia!';
+      beastModeBtn.style.background = 'linear-gradient(135deg, #ff8c00, #ff0080)';
       setTimeout(() => {
-        this.innerHTML = '<i class="fas fa-paw"></i> ¡Modo Bestia Activado!';
-        this.style.background = 'linear-gradient(135deg, #00c9b7, #6e44ff)';
+        beastModeBtn.innerHTML = '<i class="fas fa-paw"></i> ¡Modo Bestia Activado!';
+        beastModeBtn.style.background = 'linear-gradient(135deg, #00c9b7, #6e44ff)';
         showNotification('Modo Bestia activado');
       }, 1500);
     });
@@ -1086,7 +1086,7 @@
     // Inicialización
     document.addEventListener('DOMContentLoaded', () => {
       showNotification('KraveAI listo - ¡Bienvenido!');
-      checkBackendConnection(); // Intenta conectar al cargar la página
+      checkBackendConnection();
     });
   </script>
 </body>
