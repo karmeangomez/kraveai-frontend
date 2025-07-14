@@ -1370,6 +1370,7 @@
       }
     }
 
+    // FUNCIÓN CORREGIDA PARA GUARDAR CUENTAS
     async function addAccount() {
       const username = manualUsername.value.trim();
       const password = manualPassword.value.trim();
@@ -1383,7 +1384,8 @@
         addAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         addAccountBtn.disabled = true;
 
-        const response = await fetch(`${API_URL}/agregar-cuenta`, {
+        // LÍNEA CORREGIDA: /guardar-cuenta en lugar de /agregar-cuenta
+        const response = await fetch(`${API_URL}/guardar-cuenta`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuario: username, contrasena: password })
