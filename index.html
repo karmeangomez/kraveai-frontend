@@ -643,6 +643,31 @@
       vertical-align: middle;
     }
 
+    /* Cuentas activas */
+    .cuentas-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      color: white;
+      font-size: 0.9rem;
+    }
+    .cuentas-list li {
+      padding: 5px 10px;
+      background: rgba(255,255,255,0.05);
+      margin-bottom: 5px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cuentas-list li .status-dot {
+      margin-right: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .social-grid {
@@ -958,6 +983,16 @@
           </div>
         </div>
 
+        <!-- Sección de cuentas activas añadida -->
+        <div class="create-form" style="margin-top: 20px;">
+          <div class="form-group">
+            <label class="form-label">Cuentas activas:</label>
+            <ul id="cuentas-activas-list" class="cuentas-list">
+              <li>Cargando...</li>
+            </ul>
+          </div>
+        </div>
+
         <div style="margin-top: 30px;">
           <div class="form-group">
             <label class="form-label">Buscar usuario de Instagram</label>
@@ -1139,12 +1174,16 @@
     const cancelBtn = document.getElementById('cancel-btn');
     const createBtn = document.getElementById('create-btn');
     const accountCountInput = document.getElementById('account-count');
+    
+    // Nuevo elemento para lista de cuentas activas
+    const cuentasActivasList = document.getElementById('cuentas-activas-list');
 
     // Configuración de la API
     const API_URL = "https://api.kraveapi.xyz";
 
     // Estado
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    let cuentasActivasInterval;
 
     // Mostrar notificación
     function showNotification(message) {
@@ -1182,12 +1221,23 @@
       e.preventDefault();
       loginPanel.classList.add('active');
       instagramPanel.classList.remove('active');
-      checkSessionStatus();
+      checkSessionStatus().then(() => {
+        actualizarListaCuentasActivas();
+        // Iniciar el intervalo para actualizar cada 30 segundos
+        if (cuentasActivasInterval) {
+          clearInterval(cuentasActivasInterval);
+        }
+        cuentasActivasInterval = setInterval(actualizarListaCuentasActivas, 30000);
+      });
     });
 
     volverLogin.addEventListener('click', function(e) {
       e.preventDefault();
       loginPanel.classList.remove('active');
+      // Limpiamos el intervalo
+      if (cuentasActivasInterval) {
+        clearInterval(cuentasActivasInterval);
+      }
       instagramPanel.classList.add('active');
     });
 
@@ -1276,7 +1326,8 @@
           sessionStatus.className = 'status-indicator-panel status-active';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
           sessionStatusText.textContent = `✅ Sesión activa como @${data.usuario}`;
-          loginForm.classList.add('hidden');
+          // Ocultamos solo el formulario de login de krave
+          document.getElementById('login-form').style.display = 'none';
           logoutBtn.classList.remove('hidden');
           showNotification(`Sesión activa como @${data.usuario}`);
         } else {
@@ -1285,7 +1336,8 @@
           sessionStatus.className = 'status-indicator-panel status-error';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
           sessionStatusText.textContent = '❌ No hay sesión activa';
-          loginForm.classList.remove('hidden');
+          // Mostramos el formulario de login de krave
+          document.getElementById('login-form').style.display = 'block';
           logoutBtn.classList.add('hidden');
         }
       } catch (error) {
@@ -1294,7 +1346,7 @@
         sessionStatus.className = 'status-indicator-panel status-error';
         sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
         sessionStatusText.textContent = '❌ Error al verificar sesión';
-        loginForm.classList.remove('hidden');
+        document.getElementById('login-form').style.display = 'block';
         logoutBtn.classList.add('hidden');
         showNotification('Error al verificar sesión');
       }
@@ -1327,7 +1379,7 @@
           sessionStatus.className = 'status-indicator-panel status-active';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
           sessionStatusText.textContent = `✅ Sesión iniciada como @${data.usuario}`;
-          loginForm.classList.add('hidden');
+          document.getElementById('login-form').style.display = 'none';
           logoutBtn.classList.remove('hidden');
           showNotification(`Sesión iniciada como @${data.usuario}`);
         } else {
@@ -1337,7 +1389,7 @@
         sessionStatus.className = 'status-indicator-panel status-error';
         sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
         sessionStatusText.textContent = `❌ ${error.message}`;
-        loginForm.classList.remove('hidden');
+        document.getElementById('login-form').style.display = 'block';
         logoutBtn.classList.add('hidden');
         showNotification(`Error: ${error.message}`);
       } finally {
@@ -1360,7 +1412,7 @@
           sessionStatus.className = 'status-indicator-panel status-error';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--error)';
           sessionStatusText.textContent = '❌ Sesión cerrada';
-          loginForm.classList.remove('hidden');
+          document.getElementById('login-form').style.display = 'block';
           logoutBtn.classList.add('hidden');
           showNotification('Sesión cerrada correctamente');
         } else {
@@ -1374,7 +1426,7 @@
       }
     }
 
-    // FUNCIÓN CORREGIDA PARA GUARDAR CUENTAS
+    // Guardar cuentas
     async function addAccount() {
       const username = manualUsername.value.trim();
       const password = manualPassword.value.trim();
@@ -1388,7 +1440,6 @@
         addAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         addAccountBtn.disabled = true;
 
-        // LÍNEA CORREGIDA: /guardar-cuenta en lugar de /agregar-cuenta
         const response = await fetch(`${API_URL}/guardar-cuenta`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1401,6 +1452,8 @@
           showNotification(`Cuenta @${username} guardada exitosamente`);
           manualUsername.value = '';
           manualPassword.value = '';
+          // Actualizar la lista de cuentas activas
+          await actualizarListaCuentasActivas();
         } else {
           throw new Error(data.mensaje || 'Error al guardar la cuenta');
         }
@@ -1489,6 +1542,42 @@
       }
     }
 
+    // Función para actualizar lista de cuentas activas
+    async function actualizarListaCuentasActivas() {
+      const lista = document.getElementById("cuentas-activas-list");
+      if (!lista) return;
+      
+      lista.innerHTML = "<li>Cargando...</li>";
+      try {
+        const res = await fetch(`${API_URL}/health`);
+        const data = await res.json();
+        // Filtrar la cuenta 'krave'
+        const cuentas = data.accounts.filter(acc => acc !== 'krave');
+
+        if (cuentas.length === 0) {
+            lista.innerHTML = "<li>No hay cuentas activas aún</li>";
+        } else {
+            lista.innerHTML = "";
+            cuentas.forEach(acc => {
+                const item = document.createElement("li");
+                
+                // Añadir punto de estado
+                const statusDot = document.createElement("div");
+                statusDot.className = "status-dot";
+                item.appendChild(statusDot);
+                
+                // Nombre de la cuenta
+                const accountName = document.createTextNode("@" + acc);
+                item.appendChild(accountName);
+                
+                lista.appendChild(item);
+            });
+        }
+      } catch (err) {
+        lista.innerHTML = "<li>Error al cargar</li>";
+      }
+    }
+
     // Event Listeners
     loginBtn.addEventListener('click', login);
     logoutBtn.addEventListener('click', logout);
@@ -1509,7 +1598,10 @@
         await checkBackendConnection();
         await testTelegramConnection();
       }, 120000);
-      if (loginPanel.classList.contains('active')) checkSessionStatus();
+      if (loginPanel.classList.contains('active')) {
+        await checkSessionStatus();
+        await actualizarListaCuentasActivas();
+      }
     });
   </script>
   
