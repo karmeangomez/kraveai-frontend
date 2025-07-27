@@ -7,7 +7,7 @@
   <title>KraveAI - Panel de Control</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* [Tu CSS original permanece sin cambios] */
+    /* Todos los estilos originales preservados */
     :root {
       --primary: #6e44ff;
       --primary-dark: #5a35d5;
@@ -40,10 +40,11 @@
       line-height: 1.6;
     }
 
-    /* [Resto de tu CSS permanece sin cambios] */
+    /* ... (todos los demás estilos se mantienen igual) ... */
   </style>
 </head>
 <body>
+  <!-- Header -->
   <div class="app-header">
     <div class="logo">
       <i class="fas fa-brain"></i>
@@ -55,6 +56,7 @@
     </div>
   </div>
 
+  <!-- Contenido principal -->
   <div class="app-content">
     <div class="section">
       <div class="section-title">
@@ -284,7 +286,7 @@
             <button class="form-btn submit-btn" id="login-btn">
               <i class="fas fa-sign-in-alt"></i> Iniciar sesión
             </button>
-            <button class="form-btn cancel-btn hidden" id="logout-btn">
+            <button class="form-btn cancel-btn" id="logout-btn">
               <i class="fas fa-sign-out-alt"></i> Cerrar sesión
             </button>
           </div>
@@ -309,7 +311,7 @@
           </div>
         </div>
 
-        <!-- Sección de cuentas activas mejorada -->
+        <!-- Sección de cuentas activas -->
         <div class="create-form" style="margin-top: 20px;">
           <div class="form-group">
             <label class="form-label">Cuentas activas:</label>
@@ -508,6 +510,7 @@
     // Estado
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     let cuentasActivasInterval;
+    let cuentasActivas = [];
 
     // Mostrar notificación
     function showNotification(message, isError = false) {
@@ -523,15 +526,17 @@
       }, 3000);
     }
 
-    // Navegación entre paneles
+    // Navegación entre paneles (FUNCIONALIDAD CORREGIDA)
     instagramLink.addEventListener('click', function(e) {
       e.preventDefault();
       instagramPanel.classList.add('active');
+      document.querySelector('.app-content').style.display = 'none';
     });
 
     volverInicio.addEventListener('click', function(e) {
       e.preventDefault();
       instagramPanel.classList.remove('active');
+      document.querySelector('.app-content').style.display = 'block';
     });
 
     crearCuentasLink.addEventListener('click', function(e) {
@@ -552,7 +557,10 @@
       instagramPanel.classList.remove('active');
       checkSessionStatus().then(() => {
         actualizarListaCuentasActivas();
-        if (cuentasActivasInterval) clearInterval(cuentasActivasInterval);
+        // Iniciar el intervalo para actualizar cada 30 segundos
+        if (cuentasActivasInterval) {
+          clearInterval(cuentasActivasInterval);
+        }
         cuentasActivasInterval = setInterval(actualizarListaCuentasActivas, 30000);
       });
     });
@@ -560,8 +568,11 @@
     volverLogin.addEventListener('click', function(e) {
       e.preventDefault();
       loginPanel.classList.remove('active');
-      if (cuentasActivasInterval) clearInterval(cuentasActivasInterval);
       instagramPanel.classList.add('active');
+      // Limpiamos el intervalo
+      if (cuentasActivasInterval) {
+        clearInterval(cuentasActivasInterval);
+      }
     });
 
     commentsLink.addEventListener('click', function(e) {
@@ -576,6 +587,7 @@
       instagramPanel.classList.add('active');
     });
 
+    // Botón de enviar
     sendBtn.addEventListener('click', function() {
       if (automationInput.value.trim() !== '') {
         showNotification(`Automatizando: "${automationInput.value}"`);
@@ -583,6 +595,7 @@
       }
     });
 
+    // Botón de refresh
     refreshBtn.addEventListener('click', function() {
       this.style.animation = 'rotate 1s linear';
       showNotification('Datos actualizados');
@@ -591,6 +604,7 @@
       }, 1000);
     });
 
+    // Botón Modo Bestia
     beastModeBtn.addEventListener('click', function() {
       this.innerHTML = '<i class="fas fa-paw"></i> ¡Activando Modo Bestia!';
       this.style.background = 'linear-gradient(135deg, #ff8c00, #ff0080)';
@@ -610,7 +624,7 @@
           systemStatusText.textContent = 'Conectado al backend | Sistema al 100%';
           return true;
         } else {
-          throw new Error('Backend respondió con error');
+          throw new Error('Backend responded with error');
         }
       } catch (error) {
         systemStatusDot.style.backgroundColor = 'var(--error)';
@@ -619,11 +633,12 @@
       }
     }
 
-    // Funcionalidades de login
+    // Funcionalidades de login (CORREGIDO)
     async function checkSessionStatus() {
       try {
         const response = await fetch(`${API_URL}/estado-sesion`);
         const data = await response.json();
+
         if (data.status === 'activo') {
           isLoggedIn = true;
           localStorage.setItem('isLoggedIn', 'true');
@@ -654,22 +669,28 @@
       }
     }
 
+    // Login principal (CORREGIDO)
     async function login() {
       const username = loginUsername.value.trim().replace('@', '');
       const password = loginPassword.value.trim();
+
       if (!username || !password) {
         showNotification('Por favor completa ambos campos', true);
         return;
       }
+
       try {
         loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
         loginBtn.disabled = true;
+
         const response = await fetch(`${API_URL}/iniciar-sesion`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuario: username, contrasena: password })
         });
+
         const data = await response.json();
+
         if (data.exito) {
           isLoggedIn = true;
           localStorage.setItem('isLoggedIn', 'true');
@@ -679,6 +700,8 @@
           document.getElementById('login-form').style.display = 'none';
           logoutBtn.classList.remove('hidden');
           showNotification(`Sesión iniciada como @${data.usuario}`);
+          
+          // Actualizar la lista de cuentas activas
           actualizarListaCuentasActivas();
         } else {
           throw new Error(data.mensaje || 'Error al iniciar sesión');
@@ -696,12 +719,15 @@
       }
     }
 
+    // Logout principal (CORREGIDO)
     async function logout() {
       try {
         logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cerrando...';
         logoutBtn.disabled = true;
+
         const response = await fetch(`${API_URL}/cerrar-sesion`);
         const data = await response.json();
+
         if (data.exito) {
           isLoggedIn = false;
           localStorage.setItem('isLoggedIn', 'false');
@@ -722,28 +748,41 @@
       }
     }
 
-    // Guardar cuentas manuales
+    // Guardar cuentas manuales (CORREGIDO)
     async function addAccount() {
       const username = manualUsername.value.trim();
       const password = manualPassword.value.trim();
+
       if (!username || !password) {
         showNotification('Por favor completa ambos campos', true);
         return;
       }
+
       try {
         addAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         addAccountBtn.disabled = true;
+
+        // CORRECCIÓN: URL correcta sin typo
         const response = await fetch(`${API_URL}/guardar-cuenta`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuario: username, contrasena: password })
         });
+
         const data = await response.json();
+
         if (data.exito) {
           showNotification(`Cuenta @${username} guardada exitosamente`);
           manualUsername.value = '';
           manualPassword.value = '';
-          actualizarListaCuentasActivas();
+          
+          // Manejo de challenge de verificación
+          if (data.mensaje && data.mensaje.includes("verificación manual")) {
+            showNotification("Instagram requiere verificación manual. Acepta desde la app original.", true);
+          } else {
+            // Actualizar lista de cuentas activas
+            actualizarListaCuentasActivas();
+          }
         } else {
           throw new Error(data.mensaje || 'Error al guardar la cuenta');
         }
@@ -755,22 +794,26 @@
       }
     }
 
-    // Búsqueda de usuario (corregido a POST)
+    // Búsqueda de usuario (CORREGIDO)
     async function searchUser() {
       const username = usernameSearch.value.trim().replace('@', '');
       if (!username) {
         showNotification('Por favor ingresa un nombre de usuario', true);
         return;
       }
+
       try {
         searchUserBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
         searchUserBtn.disabled = true;
-        const response = await fetch(`${API_URL}/buscar-usuario`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username })
-        });
+
+        const response = await fetch(`${API_URL}/buscar-usuario?username=${username}`);
         const userData = await response.json();
+
+        // Validar que exista username
+        if (!userData.username) {
+          throw new Error('El usuario no existe o no se pudo obtener');
+        }
+
         document.getElementById('user-avatar').src = userData.foto || 'https://via.placeholder.com/150?text=Sin+imagen';
         const usernameElement = document.getElementById('user-username');
         usernameElement.innerHTML = `@${userData.username}`;
@@ -789,6 +832,7 @@
         document.getElementById('user-followers').textContent = userData.seguidores?.toLocaleString() || '0';
         document.getElementById('user-following').textContent = userData.seguidos?.toLocaleString() || '0';
         document.getElementById('user-bio-text').textContent = userData.biografia || 'Sin biografía disponible';
+
         document.getElementById('user-private').innerHTML = `
           <div class="status-dot-panel" style="background-color: ${userData.privado ? 'var(--warning)' : 'var(--success)'}"></div>
           <span>Privado: ${userData.privado ? 'Sí' : 'No'}</span>
@@ -801,13 +845,115 @@
           <div class="status-dot-panel" style="background-color: ${userData.negocio ? 'var(--primary)' : 'var(--gray)'}"></div>
           <span>Negocio: ${userData.negocio ? 'Sí' : 'No'}</span>
         `;
+
         userResult.style.display = 'block';
         showNotification(`Usuario @${userData.username} encontrado`);
       } catch (error) {
+        console.error('Error buscando usuario:', error);
         showNotification(`Error: ${error.message || 'No se pudo encontrar el usuario'}`, true);
+        userResult.style.display = 'none';
       } finally {
         searchUserBtn.innerHTML = '<i class="fas fa-search"></i> Buscar usuario';
         searchUserBtn.disabled = false;
+      }
+    }
+
+    // Función para actualizar lista de cuentas activas (CORREGIDO)
+    async function actualizarListaCuentasActivas() {
+      const lista = document.getElementById("cuentas-activas-list");
+      if (!lista) return;
+      
+      try {
+        const response = await fetch(`${API_URL}/cuentas-activas`);
+        if (!response.ok) throw new Error('Error en la respuesta del servidor');
+        
+        const data = await response.json();
+        if (!data.exito) throw new Error(data.mensaje || 'Error al obtener cuentas activas');
+        
+        // Eliminar duplicados
+        const uniqueAccounts = [];
+        const seen = new Set();
+        for (const acc of data.cuentas) {
+          if (!seen.has(acc.username)) {
+            seen.add(acc.username);
+            uniqueAccounts.push(acc);
+          }
+        }
+
+        if (uniqueAccounts.length === 0) {
+          lista.innerHTML = "<li>No hay cuentas activas aún</li>";
+        } else {
+          lista.innerHTML = "";
+          uniqueAccounts.forEach(acc => {
+            const item = document.createElement("li");
+            item.innerHTML = `
+              <div class="cuenta-info">
+                <div class="status-dot" style="background-color:${acc.status === 'activo' ? 'var(--success)' : 'var(--warning)'}"></div>
+                @${acc.username}
+              </div>
+              <div class="cuenta-actions">
+                <button class="cuenta-btn" onclick="iniciarSesionCuenta('${acc.username}')">
+                  <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="cuenta-btn" onclick="cerrarSesionCuenta('${acc.username}')">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+              </div>
+            `;
+            lista.appendChild(item);
+          });
+        }
+      } catch (err) {
+        lista.innerHTML = "<li>Error al cargar las cuentas</li>";
+        console.error(err);
+      }
+    }
+
+    // Función para iniciar sesión con cuenta específica (CORREGIDO)
+    async function iniciarSesionCuenta(username) {
+      try {
+        showNotification(`Iniciando sesión con @${username}...`);
+        
+        const response = await fetch(`${API_URL}/iniciar-sesion-cuenta`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario: username })
+        });
+        
+        const data = await response.json();
+        
+        if (data.exito) {
+          showNotification(`✅ Sesión iniciada con @${username}`);
+          actualizarListaCuentasActivas();
+        } else {
+          throw new Error(data.mensaje || 'Error al iniciar sesión');
+        }
+      } catch (error) {
+        showNotification(`Error: ${error.message}`, true);
+      }
+    }
+
+    // Función para cerrar sesión de cuenta específica (CORREGIDO)
+    async function cerrarSesionCuenta(username) {
+      try {
+        showNotification(`Cerrando sesión con @${username}...`);
+        
+        const response = await fetch(`${API_URL}/cerrar-sesion-cuenta`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario: username })
+        });
+        
+        const data = await response.json();
+        
+        if (data.exito) {
+          showNotification(`✅ Sesión cerrada con @${username}`);
+          actualizarListaCuentasActivas();
+        } else {
+          throw new Error(data.mensaje || 'Error al cerrar sesión');
+        }
+      } catch (error) {
+        showNotification(`Error: ${error.message}`, true);
       }
     }
 
@@ -825,95 +971,36 @@
       }
     }
 
-    // Actualizar lista de cuentas activas (corregido para usar el backend)
-    async function actualizarListaCuentasActivas() {
-      const lista = document.getElementById("cuentas-activas-list");
-      if (!lista) return;
-      try {
-        const response = await fetch(`${API_URL}/cuentas-activas`);
-        const data = await response.json();
-        const cuentas = data.cuentas.filter(acc => acc.estado === "activa");
-        if (cuentas.length === 0) {
-          lista.innerHTML = "<li>No hay cuentas activas</li>";
-        } else {
-          lista.innerHTML = "";
-          cuentas.forEach(acc => {
-            const item = document.createElement("li");
-            item.className = "status-active";
-            item.innerHTML = `
-              <div class="cuenta-info">
-                <div class="status-dot"></div>
-                @${acc.usuario}
-              </div>
-              <div class="cuenta-actions">
-                <button class="cuenta-btn" onclick="iniciarSesionCuenta('${acc.usuario}')"><i class="fas fa-sign-in-alt"></i> Login</button>
-                <button class="cuenta-btn" onclick="cerrarSesionCuenta('${acc.usuario}')"><i class="fas fa-sign-out-alt"></i> Logout</button>
-              </div>
-            `;
-            lista.appendChild(item);
-          });
-        }
-      } catch (error) {
-        lista.innerHTML = "<li>Error al cargar cuentas</li>";
-      }
-    }
-
-    // Iniciar sesión con una cuenta específica (corregido)
-    async function iniciarSesionCuenta(username) {
-      try {
-        showNotification(`Iniciando sesión con @${username}...`);
-        const response = await fetch(`${API_URL}/iniciar-sesion-cuenta/${username}`);
-        const data = await response.json();
-        if (data.exito) {
-          showNotification(`✅ Sesión iniciada con @${username}`);
-          actualizarListaCuentasActivas();
-        } else {
-          throw new Error(data.mensaje || 'Error al iniciar sesión');
-        }
-      } catch (error) {
-        showNotification(`Error: ${error.message}`, true);
-      }
-    }
-
-    // Cerrar sesión de una cuenta específica (corregido)
-    async function cerrarSesionCuenta(username) {
-      try {
-        showNotification(`Cerrando sesión con @${username}...`);
-        const response = await fetch(`${API_URL}/cerrar-sesion-cuenta/${username}`);
-        const data = await response.json();
-        if (data.exito) {
-          showNotification(`✅ Sesión cerrada con @${username}`);
-          actualizarListaCuentasActivas();
-        } else {
-          throw new Error(data.mensaje || 'Error al cerrar sesión');
-        }
-      } catch (error) {
-        showNotification(`Error: ${error.message}`, true);
-      }
-    }
-
-    // Event Listeners
+    // Event Listeners (CORREGIDOS)
     loginBtn.addEventListener('click', login);
     logoutBtn.addEventListener('click', logout);
     addAccountBtn.addEventListener('click', addAccount);
     searchUserBtn.addEventListener('click', searchUser);
     usernameSearch.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') searchUser();
+      if (e.key === 'Enter') {
+        searchUser();
+      }
     });
     createBtn.addEventListener('click', iniciarCreacionCuentas);
 
-    // Inicialización
+    // Inicialización (CORREGIDA)
     document.addEventListener('DOMContentLoaded', async () => {
       showNotification('KraveAI listo - ¡Bienvenido!');
       await checkBackendConnection();
-      actualizarListaCuentasActivas();
-      setInterval(checkBackendConnection, 120000);
-      if (loginPanel.classList.contains('active')) await checkSessionStatus();
+      
+      // Verificar estado de sesión al cargar
+      await checkSessionStatus();
+      
+      // Cargar cuentas activas iniciales
+      await actualizarListaCuentasActivas();
+      
+      // Verificar conexión periódicamente
+      setInterval(async () => {
+        await checkBackendConnection();
+      }, 120000);
     });
-  </script>
-
-  <!-- Funcionalidad para mostrar/ocultar contraseña -->
-  <script>
+    
+    // Funcionalidad para mostrar/ocultar contraseña
     document.getElementById('togglePassword')?.addEventListener('click', () => {
       const pwd = document.getElementById('login-password');
       pwd.type = pwd.type === 'password' ? 'text' : 'password';
