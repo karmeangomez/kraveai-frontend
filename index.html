@@ -639,12 +639,10 @@
       gap: 10px;
     }
 
-    .verified-tick {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
+    .verified-badge {
+      color: #0095f6;
       margin-left: 5px;
-      vertical-align: middle;
+      font-size: 1.2rem;
     }
 
     /* Cuentas activas */
@@ -1365,40 +1363,22 @@
       }
     }
 
-    // Funcionalidades de login - CORRECCIONES APLICADAS AQUÍ
+    // Funcionalidades de login
     async function checkSessionStatus() {
       try {
-        // Añadimos credentials: 'include' para enviar cookies
         const response = await fetch(`${API_URL}/estado-sesion`, {
-          credentials: 'include'
+          credentials: 'include' // Incluir credenciales (cookies)
         });
         const data = await response.json();
 
         if (data.status === 'activo') {
           isLoggedIn = true;
           localStorage.setItem('isLoggedIn', 'true');
-          
-          // Actualizar UI de sesión
           sessionStatus.className = 'status-indicator-panel status-active';
           sessionStatus.querySelector('.status-dot-panel').style.backgroundColor = 'var(--success)';
           sessionStatusText.textContent = `✅ Sesión activa como @${data.usuario}`;
-          
-          // Ocultar formulario de login
           document.getElementById('login-form').style.display = 'none';
           logoutBtn.classList.remove('hidden');
-          
-          // Actualizar avatar con inicial del usuario
-          const userAvatar = document.querySelector('.user-avatar');
-          if (userAvatar) {
-            userAvatar.textContent = data.usuario.charAt(0).toUpperCase();
-          }
-          
-          // Cerrar automáticamente el panel de login si está abierto
-          if (loginPanel.classList.contains('active')) {
-            loginPanel.classList.remove('active');
-            instagramPanel.classList.add('active');
-          }
-          
           showNotification(`Sesión activa como @${data.usuario}`);
         } else {
           isLoggedIn = false;
@@ -1410,7 +1390,6 @@
           logoutBtn.classList.add('hidden');
         }
       } catch (error) {
-        console.error('Error al verificar sesión:', error);
         isLoggedIn = false;
         localStorage.setItem('isLoggedIn', 'false');
         sessionStatus.className = 'status-indicator-panel status-error';
@@ -1435,11 +1414,10 @@
         loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
         loginBtn.disabled = true;
 
-        // Añadimos credentials: 'include' para establecer la sesión
         const response = await fetch(`${API_URL}/iniciar-sesion`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          credentials: 'include', // Incluir credenciales (cookies)
           body: JSON.stringify({ usuario: username, contrasena: password })
         });
 
@@ -1478,9 +1456,8 @@
         logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cerrando...';
         logoutBtn.disabled = true;
 
-        // Añadimos credentials: 'include' para cerrar sesión correctamente
         const response = await fetch(`${API_URL}/cerrar-sesion`, {
-          credentials: 'include'
+          credentials: 'include' // Incluir credenciales (cookies)
         });
         const data = await response.json();
 
@@ -1504,7 +1481,7 @@
       }
     }
 
-    // Guardar cuentas manuales - CORRECCIONES APLICADAS AQUÍ
+    // Guardar cuentas manuales (MEJORADA)
     async function addAccount() {
       const username = manualUsername.value.trim();
       const password = manualPassword.value.trim();
@@ -1518,41 +1495,29 @@
         addAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         addAccountBtn.disabled = true;
 
-        // Paso 1: Guardar la cuenta en el backend
-        const saveResponse = await fetch(`${API_URL}/guardar-cuenta`, {
+        // Enviar datos al backend
+        const response = await fetch(`${API_URL}/guardar-cuenta`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ usuario: username, contrasena: password })
+          headers: { 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({ 
+            username: username, 
+            password: password 
+          })
         });
 
-        const saveData = await saveResponse.json();
+        const data = await response.json();
 
-        if (!saveData.exito) {
-          throw new Error(saveData.mensaje || 'Error al guardar la cuenta');
-        }
-
-        // Paso 2: Iniciar sesión con la cuenta recién guardada
-        const loginResponse = await fetch(`${API_URL}/iniciar-sesion`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Clave para establecer la sesión
-          body: JSON.stringify({ usuario: username, contrasena: password })
-        });
-
-        const loginData = await loginResponse.json();
-
-        if (loginData.exito) {
-          showNotification(`✅ Cuenta @${username} guardada y sesión iniciada`);
+        if (data.status === "ok") {
+          showNotification(`✅ Cuenta @${username} guardada exitosamente`);
           manualUsername.value = '';
           manualPassword.value = '';
-          
-          // Actualizar estado de sesión
-          await checkSessionStatus();
           
           // Actualizar lista de cuentas activas
           actualizarListaCuentasActivas();
         } else {
-          throw new Error(loginData.mensaje || 'Error al iniciar sesión');
+          throw new Error(data.message || 'Error al guardar la cuenta');
         }
       } catch (error) {
         showNotification(`Error: ${error.message}`, true);
@@ -1562,7 +1527,7 @@
       }
     }
 
-    // Búsqueda de usuario
+    // Búsqueda de usuario (MEJORADA)
     async function searchUser() {
       const username = usernameSearch.value.trim().replace('@', '');
       if (!username) {
@@ -1574,41 +1539,46 @@
         searchUserBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
         searchUserBtn.disabled = true;
 
+        // Obtener datos del usuario
         const response = await fetch(`${API_URL}/buscar-usuario?username=${username}`);
         const userData = await response.json();
 
-        document.getElementById('user-avatar').src = userData.foto || 'https://via.placeholder.com/150?text=Sin+imagen';
+        // Mostrar avatar
+        document.getElementById('user-avatar').src = userData.profile_pic_url_hd || 'https://via.placeholder.com/150?text=Sin+imagen';
+        
+        // Mostrar nombre de usuario con verificación si aplica
         const usernameElement = document.getElementById('user-username');
         usernameElement.innerHTML = `@${userData.username}`;
-        if (userData.verificado) {
-          usernameElement.innerHTML += `
-            <span class="verified-tick">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="12" fill="#0095f6"/>
-                <path d="M9 12.5L11 14.5L15 10.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-          `;
+        if (userData.is_verified) {
+          usernameElement.innerHTML += ' <i class="fas fa-check-circle verified-badge"></i>';
         }
-        document.getElementById('user-fullname').textContent = userData.nombre || 'Sin nombre';
-        document.getElementById('user-posts').textContent = userData.publicaciones?.toLocaleString() || '0';
-        document.getElementById('user-followers').textContent = userData.seguidores?.toLocaleString() || '0';
-        document.getElementById('user-following').textContent = userData.seguidos?.toLocaleString() || '0';
-        document.getElementById('user-bio-text').textContent = userData.biografia || 'Sin biografía disponible';
+        
+        // Mostrar nombre completo
+        document.getElementById('user-fullname').textContent = userData.full_name || 'Sin nombre';
+        
+        // Estadísticas
+        document.getElementById('user-posts').textContent = userData.media_count?.toLocaleString() || '0';
+        document.getElementById('user-followers').textContent = userData.follower_count?.toLocaleString() || '0';
+        document.getElementById('user-following').textContent = userData.following_count?.toLocaleString() || '0';
+        
+        // Biografía
+        document.getElementById('user-bio-text').textContent = userData.biography || 'Sin biografía disponible';
 
+        // Detalles: privado, verificado, negocio
         document.getElementById('user-private').innerHTML = `
-          <div class="status-dot-panel" style="background-color: ${userData.privado ? 'var(--warning)' : 'var(--success)'}"></div>
-          <span>Privado: ${userData.privado ? 'Sí' : 'No'}</span>
+          <div class="status-dot-panel" style="background-color: ${userData.is_private ? 'var(--warning)' : 'var(--success)'}"></div>
+          <span>Privado: ${userData.is_private ? 'Sí' : 'No'}</span>
         `;
         document.getElementById('user-verified').innerHTML = `
-          <div class="status-dot-panel" style="background-color: ${userData.verificado ? 'var(--success)' : 'var(--gray)'}"></div>
-          <span>Verificado: ${userData.verificado ? 'Sí' : 'No'}</span>
+          <div class="status-dot-panel" style="background-color: ${userData.is_verified ? 'var(--success)' : 'var(--gray)'}"></div>
+          <span>Verificado: ${userData.is_verified ? 'Sí' : 'No'}</span>
         `;
         document.getElementById('user-business').innerHTML = `
-          <div class="status-dot-panel" style="background-color: ${userData.negocio ? 'var(--primary)' : 'var(--gray)'}"></div>
-          <span>Negocio: ${userData.negocio ? 'Sí' : 'No'}</span>
+          <div class="status-dot-panel" style="background-color: ${userData.is_business ? 'var(--primary)' : 'var(--gray)'}"></div>
+          <span>Negocio: ${userData.is_business ? 'Sí' : 'No'}</span>
         `;
 
+        // Mostrar el contenedor de resultados
         userResult.style.display = 'block';
         showNotification(`Usuario @${userData.username} encontrado`);
       } catch (error) {
@@ -1640,18 +1610,9 @@
       if (!lista) return;
       
       try {
-        // Simulamos la respuesta del backend
-        const cuentasSimuladas = [
-          { username: 'krave', status: 'activo' },
-          { username: 'cuenta1', status: 'activo' },
-          { username: 'cuenta2', status: 'inactivo' },
-          ...cuentasActivas
-        ];
-        
-        // Filtrar la cuenta 'krave' y las inactivas
-        const cuentas = cuentasSimuladas
-          .filter(acc => acc.username !== 'krave')
-          .filter(acc => acc.status === 'activo');
+        // Obtener cuentas activas del backend
+        const response = await fetch(`${API_URL}/cuentas-activas`);
+        const cuentas = await response.json();
 
         if (cuentas.length === 0) {
             lista.innerHTML = "<li>No hay cuentas activas aún</li>";
@@ -1725,7 +1686,7 @@
         const response = await fetch(`${API_URL}/iniciar-sesion-cuenta`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Asegurar cookies
+          credentials: 'include', // Incluir credenciales (cookies)
           body: JSON.stringify({ usuario: username, contrasena: password })
         });
         
@@ -1762,7 +1723,7 @@
         const response = await fetch(`${API_URL}/cerrar-sesion-cuenta`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Asegurar cookies
+          credentials: 'include', // Incluir credenciales (cookies)
           body: JSON.stringify({ usuario: username })
         });
         
@@ -1797,15 +1758,11 @@
     });
     createBtn.addEventListener('click', iniciarCreacionCuentas);
 
-    // Inicialización - CORRECCIÓN APLICADA AQUÍ
+    // Inicialización
     document.addEventListener('DOMContentLoaded', async () => {
       showNotification('KraveAI listo - ¡Bienvenido!');
       await checkBackendConnection();
-      
-      // Verificar sesión automáticamente al cargar
       await checkSessionStatus();
-      
-      // Actualizar lista de cuentas activas
       actualizarListaCuentasActivas();
       
       setInterval(async () => {
