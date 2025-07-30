@@ -1030,7 +1030,10 @@
           </div>
           <div class="form-group">
             <label class="form-label">Contraseña</label>
-            <input type="password" id="manual-password" class="form-input" placeholder="Ingresa la contraseña" required>
+            <div style="position:relative;">
+              <input type="password" id="manual-password" class="form-input" placeholder="Ingresa la contraseña" required>
+              <span id="toggleManualPassword" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:#8c8ca1;">👁️</span>
+            </div>
           </div>
           <div class="form-actions">
             <button class="form-btn submit-btn" id="add-account-btn">
@@ -1238,11 +1241,7 @@
     // Estado
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     let cuentasActivasInterval;
-    let cuentasActivas = [
-      { username: 'krave', status: 'activo', tipo: 'principal' },
-      { username: 'cuenta1', status: 'activo', tipo: 'secundaria' },
-      { username: 'cuenta2', status: 'activo', tipo: 'secundaria' }
-    ];
+    let cuentasActivas = [];
 
     // Mostrar notificación
     function showNotification(message, isError = false) {
@@ -1348,7 +1347,9 @@
     // Conexión al backend
     async function checkBackendConnection() {
       try {
-        const response = await fetch(`${API_URL}/health`);
+        const response = await fetch(`${API_URL}/health`, {
+          credentials: 'include'
+        });
         if (response.ok) {
           systemStatusDot.style.backgroundColor = 'var(--success)';
           systemStatusText.textContent = 'Conectado al backend | Sistema al 100%';
@@ -1367,7 +1368,7 @@
     async function checkSessionStatus() {
       try {
         const response = await fetch(`${API_URL}/estado-sesion`, {
-          credentials: 'include' // Incluir credenciales (cookies)
+          credentials: 'include'
         });
         const data = await response.json();
 
@@ -1417,7 +1418,7 @@
         const response = await fetch(`${API_URL}/iniciar-sesion`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Incluir credenciales (cookies)
+          credentials: 'include',
           body: JSON.stringify({ usuario: username, contrasena: password })
         });
 
@@ -1457,7 +1458,7 @@
         logoutBtn.disabled = true;
 
         const response = await fetch(`${API_URL}/cerrar-sesion`, {
-          credentials: 'include' // Incluir credenciales (cookies)
+          credentials: 'include'
         });
         const data = await response.json();
 
@@ -1495,21 +1496,31 @@
         addAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         addAccountBtn.disabled = true;
 
-        // Enviar datos al backend
-        const response = await fetch(`${API_URL}/guardar-cuenta`, {
+        // Primero intentamos iniciar sesión para validar las credenciales
+        const loginResponse = await fetch(`${API_URL}/iniciar-sesion`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({ 
-            username: username, 
-            password: password 
-          })
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ usuario: username, contrasena: password })
         });
 
-        const data = await response.json();
+        const loginData = await loginResponse.json();
 
-        if (data.status === "ok") {
+        if (!loginData.exito) {
+          throw new Error(loginData.mensaje || 'Error al iniciar sesión con la cuenta');
+        }
+
+        // Si el login fue exitoso, guardamos la cuenta
+        const saveResponse = await fetch(`${API_URL}/guardar-cuenta`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username: username, password: password })
+        });
+
+        const saveData = await saveResponse.json();
+
+        if (saveData.status === "ok") {
           showNotification(`✅ Cuenta @${username} guardada exitosamente`);
           manualUsername.value = '';
           manualPassword.value = '';
@@ -1517,7 +1528,7 @@
           // Actualizar lista de cuentas activas
           actualizarListaCuentasActivas();
         } else {
-          throw new Error(data.message || 'Error al guardar la cuenta');
+          throw new Error(saveData.message || 'Error al guardar la cuenta');
         }
       } catch (error) {
         showNotification(`Error: ${error.message}`, true);
@@ -1540,7 +1551,9 @@
         searchUserBtn.disabled = true;
 
         // Obtener datos del usuario
-        const response = await fetch(`${API_URL}/buscar-usuario?username=${username}`);
+        const response = await fetch(`${API_URL}/buscar-usuario?username=${username}`, {
+          credentials: 'include'
+        });
         const userData = await response.json();
 
         // Mostrar avatar
@@ -1611,8 +1624,11 @@
       
       try {
         // Obtener cuentas activas del backend
-        const response = await fetch(`${API_URL}/cuentas-activas`);
+        const response = await fetch(`${API_URL}/cuentas-activas`, {
+          credentials: 'include'
+        });
         const cuentas = await response.json();
+        cuentasActivas = cuentas;
 
         if (cuentas.length === 0) {
             lista.innerHTML = "<li>No hay cuentas activas aún</li>";
@@ -1628,6 +1644,7 @@
                 // Punto de estado
                 const statusDot = document.createElement("div");
                 statusDot.className = "status-dot";
+                statusDot.style.backgroundColor = acc.status === 'activo' ? 'var(--success)' : 'var(--error)';
                 infoDiv.appendChild(statusDot);
                 
                 // Nombre de la cuenta
@@ -1640,22 +1657,21 @@
                 const actionsDiv = document.createElement("div");
                 actionsDiv.className = "cuenta-actions";
                 
-                const loginBtn = document.createElement("button");
-                loginBtn.className = "cuenta-btn";
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                loginBtn.onclick = () => iniciarSesionCuenta(acc.username);
-                actionsDiv.appendChild(loginBtn);
-                
-                const logoutBtn = document.createElement("button");
-                logoutBtn.className = "cuenta-btn";
-                logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
-                logoutBtn.onclick = () => cerrarSesionCuenta(acc.username);
-                actionsDiv.appendChild(logoutBtn);
+                if (acc.status === 'activo') {
+                  const logoutBtn = document.createElement("button");
+                  logoutBtn.className = "cuenta-btn";
+                  logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                  logoutBtn.onclick = () => cerrarSesionCuenta(acc.username);
+                  actionsDiv.appendChild(logoutBtn);
+                } else {
+                  const loginBtn = document.createElement("button");
+                  loginBtn.className = "cuenta-btn";
+                  loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                  loginBtn.onclick = () => iniciarSesionCuenta(acc.username);
+                  actionsDiv.appendChild(loginBtn);
+                }
                 
                 item.appendChild(actionsDiv);
-                
-                // Estado visual
-                item.classList.add('status-active');
                 
                 lista.appendChild(item);
             });
@@ -1666,45 +1682,20 @@
     }
     
     // Función para iniciar sesión con una cuenta específica
-    async function iniciarSesionCuenta(username, password = null) {
+    async function iniciarSesionCuenta(username) {
       try {
         showNotification(`Iniciando sesión con @${username}...`);
         
-        // Si no se proporciona contraseña, buscar en las cuentas guardadas
-        if (!password) {
-          const cuenta = cuentasActivas.find(acc => acc.username === username);
-          if (cuenta && cuenta.password) {
-            password = cuenta.password;
-          }
-        }
-        
-        if (!password) {
-          throw new Error('Contraseña no disponible');
-        }
-        
-        // Iniciar sesión con la cuenta
         const response = await fetch(`${API_URL}/iniciar-sesion-cuenta`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Incluir credenciales (cookies)
-          body: JSON.stringify({ usuario: username, contrasena: password })
+          credentials: 'include',
+          body: JSON.stringify({ usuario: username })
         });
         
         const data = await response.json();
         
         if (data.exito) {
-          // Actualizar el estado de la cuenta
-          const cuentaIndex = cuentasActivas.findIndex(acc => acc.username === username);
-          if (cuentaIndex !== -1) {
-            cuentasActivas[cuentaIndex].status = 'activo';
-          } else {
-            cuentasActivas.push({
-              username: username,
-              status: 'activo',
-              tipo: 'secundaria'
-            });
-          }
-          
           showNotification(`✅ Sesión iniciada con @${username}`);
           actualizarListaCuentasActivas();
         } else {
@@ -1723,19 +1714,13 @@
         const response = await fetch(`${API_URL}/cerrar-sesion-cuenta`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Incluir credenciales (cookies)
+          credentials: 'include',
           body: JSON.stringify({ usuario: username })
         });
         
         const data = await response.json();
         
         if (data.exito) {
-          // Actualizar el estado de la cuenta
-          const cuentaIndex = cuentasActivas.findIndex(acc => acc.username === username);
-          if (cuentaIndex !== -1) {
-            cuentasActivas[cuentaIndex].status = 'inactivo';
-          }
-          
           showNotification(`✅ Sesión cerrada con @${username}`);
           actualizarListaCuentasActivas();
         } else {
@@ -1776,6 +1761,11 @@
     // Toggle contraseña
     document.getElementById('togglePassword')?.addEventListener('click', () => {
       const pwd = document.getElementById('login-password');
+      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    });
+    
+    document.getElementById('toggleManualPassword')?.addEventListener('click', () => {
+      const pwd = document.getElementById('manual-password');
       pwd.type = pwd.type === 'password' ? 'text' : 'password';
     });
   </script>
