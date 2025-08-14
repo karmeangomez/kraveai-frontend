@@ -347,4 +347,392 @@
         </div>
       </div>
       <div class="stats">
-        <div class="stat"><div class="muted">Publicaciones</div><div class="value"
+        <div class="stat"><div class="muted">Publicaciones</div><div class="value" id="user-posts" style="font-weight:700;font-size:1.1rem">0</div></div>
+        <div class="stat"><div class="muted">Seguidores</div><div class="value" id="user-followers" style="font-weight:700;font-size:1.1rem">0</div></div>
+        <div class="stat"><div class="muted">Siguiendo</div><div class="value" id="user-following" style="font-weight:700;font-size:1.1rem">0</div></div>
+      </div>
+      <div class="form-row"><div class="label">Bio</div><div id="user-bio-text" class="muted"></div></div>
+      <div class="form-row" style="display:flex;flex-wrap:wrap;gap:8px">
+        <span id="user-private" class="badge"><span class="status-dot-panel"></span><span>Privado: Desconocido</span></span>
+        <span id="user-verified" class="badge"><span class="status-dot-panel"></span><span>Verificado: No</span></span>
+        <span id="user-business" class="badge"><span class="status-dot-panel"></span><span>Negocio: No</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>  <!-- Comments Panel -->  <div id="comments-panel" class="panel">
+    <div class="panel-inner">
+      <a href="#" class="back" id="volver-inicio-comments"><i class="fa-solid fa-arrow-left"></i> Volver</a><div class="form-card">
+    <h3 class="section-title"><i class="fa-solid fa-comments"></i><span>Automatización de Comentarios</span></h3>
+    <p class="muted">Configura y lanza comentarios masivos en Instagram</p>
+    <form id="formComentarios">
+      <div class="form-row">
+        <div class="label">URL del Post</div>
+        <input name="url" class="input" placeholder="https://www.instagram.com/p/CXXXXX/" required />
+      </div>
+      <div class="form-row">
+        <div class="label">Cantidad de Comentarios</div>
+        <input type="number" name="cantidad" class="input" value="30" min="1" max="100" required />
+      </div>
+      <div class="form-row">
+        <div class="label">Modo</div>
+        <select name="modo" id="modo-select" class="select">
+          <option value="auto">Auto (basado en imagen)</option>
+          <option value="personalizado">Personalizado (con estilo)</option>
+          <option value="manual">Manual (pegar comentarios)</option>
+        </select>
+      </div>
+      <div class="form-row" id="manualSection" style="display:none">
+        <div class="label">Comentarios Manuales</div>
+        <textarea name="comentarios" rows="4" placeholder="Pega un comentario por línea"></textarea>
+      </div>
+      <div class="form-row"><div class="label">Apodo (Opcional)</div><input name="apodo" class="input" placeholder="Ej: Gera" /></div>
+      <div class="form-row"><div class="label">Estilo</div><input name="estilo" class="input" placeholder="Ej: fitness, sexy, guapo" /></div>
+      <div class="form-row"><div class="label">Actividad</div><input name="actividad" class="input" placeholder="Ej: entrenador personal" /></div>
+      <div class="form-row"><div class="label">Ejemplos de Comentarios</div><textarea name="ejemplos" rows="4" placeholder="Un comentario por línea"></textarea></div>
+      <div class="form-row" style="display:flex;gap:10px">
+        <button type="submit" class="btn btn-primary">Lanzar Comentarios</button>
+        <button type="button" class="btn btn-ghost" id="cancelComment">Cancelar</button>
+      </div>
+    </form>
+    <div id="commentStatus" class="status-indicator" style="display:none;margin-top:12px">
+      <div class="status-dot"></div>
+      <span id="commentMessage"></span>
+    </div>
+  </div>
+</div>
+
+  </div>  <!-- Ver Cuentas generadas Panel (nuevo, UI) -->  <div id="ver-cuentas-panel" class="panel">
+    <div class="panel-inner">
+      <a href="#" class="back" id="volver-instagram-desde-ver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+      <div class="form-card">
+        <h3 class="section-title"><i class="fa-regular fa-clipboard"></i><span>Cuentas generadas</span></h3>
+        <ul class="list" id="lista-cuentas-generadas">
+          <li>No hay registros aún</li>
+        </ul>
+      </div>
+    </div>
+  </div>  <!-- Snackbar -->  <div class="snack" id="notification"><i class="fa-solid fa-circle-check"></i> <span id="notification-text"></span></div>  <!-- ================== JS (IDs y endpoints intactos) ================== -->  <script>
+    // ---- Referencias DOM ----
+    const instagramLink = document.getElementById('instagram-link');
+    const volverInicio = document.getElementById('volver-inicio');
+    const crearCuentasLink = document.getElementById('crear-cuentas-link');
+    const volverInstagram = document.getElementById('volver-instagram');
+    const loginLink = document.getElementById('login-link');
+    const volverLogin = document.getElementById('volver-login');
+    const commentsLink = document.getElementById('comments-link');
+    const volverInicioComments = document.getElementById('volver-inicio-comments');
+    const verCuentasLink = document.getElementById('ver-cuentas-link');
+    const volverInstagramDesdeVer = document.getElementById('volver-instagram-desde-ver');
+
+    const instagramPanel = document.getElementById('instagram-panel');
+    const createAccountsPanel = document.getElementById('create-accounts-panel');
+    const loginPanel = document.getElementById('login-panel');
+    const commentsPanel = document.getElementById('comments-panel');
+    const verCuentasPanel = document.getElementById('ver-cuentas-panel');
+
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notification-text');
+    const automationInput = document.getElementById('automation-input');
+    const sendBtn = document.getElementById('send-btn');
+    const refreshBtn = document.getElementById('refresh-btn');
+
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginUsername = document.getElementById('login-username');
+    const loginPassword = document.getElementById('login-password');
+    const sessionStatus = document.getElementById('session-status');
+    const sessionStatusText = document.getElementById('session-status-text');
+    const addAccountBtn = document.getElementById('add-account-btn');
+    const manualUsername = document.getElementById('manual-username');
+    const manualPassword = document.getElementById('manual-password');
+    const searchUserBtn = document.getElementById('search-user-btn');
+    const usernameSearch = document.getElementById('username-search');
+    const userResult = document.getElementById('user-result');
+    const systemStatusDot = document.getElementById('system-status-dot');
+    const systemStatusText = document.getElementById('system-status-text');
+    const cuentasActivasList = document.getElementById('cuentas-activas-list');
+
+    const cancelBtn = document.getElementById('cancel-btn');
+    const createBtn = document.getElementById('create-btn');
+    const accountCountInput = document.getElementById('account-count');
+
+    const storiesRow = document.getElementById('stories-row');
+    const statusFeed = document.getElementById('status-feed');
+
+    const API_URL = "https://api.kraveapi.xyz";
+    let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    let cuentasActivasInterval; let cuentasActivas = [];
+
+    // ---------- UI helpers ----------
+    function showNotification(message, isError=false){
+      notificationText.textContent = message;
+      notification.classList.add('show');
+      if(isError){ notification.classList.add('error'); } else { notification.classList.remove('error'); }
+      setTimeout(()=>notification.classList.remove('show'), 2600);
+    }
+
+    function addFeedCard({title, text, icon='fa-bolt'}){
+      const card = document.createElement('article');
+      card.className = 'post';
+      card.innerHTML = `
+        <div class="post-header">
+          <img src="https://i.pravatar.cc/80?u=${encodeURIComponent(title)}" alt="avatar" />
+          <div>
+            <strong>${title}</strong>
+            <div class="muted" style="font-size:.85rem">${new Date().toLocaleString()}</div>
+          </div>
+        </div>
+        <div style="padding:0 14px 14px">${text}</div>
+        <div class="post-actions">
+          <button class="ghost"><i class="fa-regular fa-heart"></i> Like</button>
+          <button class="ghost"><i class="fa-regular fa-comment"></i> Comentar</button>
+          <button class="ghost"><i class="fa-regular fa-bookmark"></i> Guardar</button>
+        </div>`;
+      statusFeed.prepend(card);
+    }
+
+    // ---------- Historias a partir de cuentas activas ----------
+    function renderStories(list){
+      storiesRow.innerHTML = '';
+      list.slice(0,12).forEach(acc=>{
+        const s = document.createElement('div');
+        s.className='story';
+        s.innerHTML = `
+          <div class="ring"><img src="https://api.dicebear.com/7.x/initials/svg?seed=${acc.username}" alt="${acc.username}" /></div>
+          <small>@${acc.username}</small>`;
+        storiesRow.appendChild(s);
+      });
+    }
+
+    // ---------- Navegación de paneles ----------
+    instagramLink?.addEventListener('click', (e)=>{ e.preventDefault(); instagramPanel.classList.add('active'); });
+    volverInicio?.addEventListener('click', (e)=>{ e.preventDefault(); instagramPanel.classList.remove('active'); });
+    crearCuentasLink?.addEventListener('click', (e)=>{ e.preventDefault(); createAccountsPanel.classList.add('active'); instagramPanel.classList.remove('active'); });
+    volverInstagram?.addEventListener('click', (e)=>{ e.preventDefault(); createAccountsPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
+    loginLink?.addEventListener('click', async (e)=>{ e.preventDefault(); loginPanel.classList.add('active'); instagramPanel.classList.remove('active'); await checkSessionStatus(); actualizarListaCuentasActivas(); if(cuentasActivasInterval) clearInterval(cuentasActivasInterval); cuentasActivasInterval = setInterval(actualizarListaCuentasActivas, 30000); });
+    volverLogin?.addEventListener('click', (e)=>{ e.preventDefault(); loginPanel.classList.remove('active'); if(cuentasActivasInterval) clearInterval(cuentasActivasInterval); instagramPanel.classList.add('active'); });
+    commentsLink?.addEventListener('click', (e)=>{ e.preventDefault(); commentsPanel.classList.add('active'); instagramPanel.classList.remove('active'); });
+    volverInicioComments?.addEventListener('click', (e)=>{ e.preventDefault(); commentsPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
+    verCuentasLink?.addEventListener('click', (e)=>{ e.preventDefault(); verCuentasPanel.classList.add('active'); instagramPanel.classList.remove('active'); cargarCuentasGeneradas(); });
+    volverInstagramDesdeVer?.addEventListener('click', (e)=>{ e.preventDefault(); verCuentasPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
+
+    // ---------- Acciones rápidas ----------
+    sendBtn?.addEventListener('click', ()=>{ if(automationInput.value.trim()!==''){ addFeedCard({title:'Automatización', text:`Ejecutando: "${automationInput.value}"`}); showNotification(`Automatizando: "${automationInput.value}"`); automationInput.value=''; } });
+    refreshBtn?.addEventListener('click', ()=>{ refreshBtn.style.transform='rotate(180deg)'; setTimeout(()=>refreshBtn.style.transform='', 250); checkBackendConnection(); });
+
+    // ---------- Backend / Estado ----------
+    async function checkBackendConnection(){
+      try{
+        const r = await fetch(`${API_URL}/health`, { credentials:'include' });
+        if(r.ok){ systemStatusDot.style.background = 'var(--success)'; systemStatusText.textContent='Conectado al backend'; return true; }
+        throw new Error('Backend responded with error');
+      }catch(err){ systemStatusDot.style.background='var(--danger)'; systemStatusText.textContent='Error de conexión'; return false; }
+    }
+
+    async function checkSessionStatus(){
+      try{
+        const r = await fetch(`${API_URL}/estado-sesion`, { credentials:'include' });
+        const data = await r.json();
+        if(data.status==='activo'){
+          isLoggedIn = true; localStorage.setItem('isLoggedIn','true');
+          sessionStatus.className = 'status-indicator-panel status-active';
+          sessionStatus.querySelector('.status-dot-panel').style.background='var(--success)';
+          sessionStatusText.textContent = `✅ Sesión activa como @${data.usuario}`;
+          loginForm.style.display='none'; logoutBtn.classList.remove('hidden');
+          showNotification(`Sesión activa como @${data.usuario}`);
+        }else{
+          isLoggedIn=false; localStorage.setItem('isLoggedIn','false');
+          sessionStatus.className = 'status-indicator-panel status-error';
+          sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
+          sessionStatusText.textContent = '❌ No hay sesión activa';
+          loginForm.style.display='block'; logoutBtn.classList.add('hidden');
+        }
+      }catch(e){
+        isLoggedIn=false; localStorage.setItem('isLoggedIn','false');
+        sessionStatus.className = 'status-indicator-panel status-error';
+        sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
+        sessionStatusText.textContent = '❌ Error al verificar sesión';
+        loginForm.style.display='block'; logoutBtn.classList.add('hidden');
+        showNotification('Error al verificar sesión', true);
+      }
+    }
+
+    async function login(){
+      const username = loginUsername.value.trim().replace('@','');
+      const password = loginPassword.value.trim();
+      if(!username||!password){ return showNotification('Completa usuario y contraseña', true); }
+      try{
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Iniciando…'; loginBtn.disabled=true;
+        const r = await fetch(`${API_URL}/iniciar-sesion`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({usuario:username, contrasena:password}) });
+        const data = await r.json();
+        if(data.exito){
+          isLoggedIn=true; localStorage.setItem('isLoggedIn','true');
+          sessionStatus.className='status-indicator-panel status-active';
+          sessionStatus.querySelector('.status-dot-panel').style.background='var(--success)';
+          sessionStatusText.textContent=`✅ Sesión iniciada como @${data.usuario}`;
+          loginForm.style.display='none'; logoutBtn.classList.remove('hidden');
+          showNotification(`Sesión iniciada como @${data.usuario}`); actualizarListaCuentasActivas();
+        }else{ throw new Error(data.mensaje||'Error al iniciar sesión'); }
+      }catch(err){
+        sessionStatus.className='status-indicator-panel status-error';
+        sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
+        sessionStatusText.textContent=`❌ ${err.message}`;
+        loginForm.style.display='block'; logoutBtn.classList.add('hidden');
+        showNotification(`Error: ${err.message}`, true);
+      }finally{
+        loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión'; loginBtn.disabled=false;
+      }
+    }
+
+    async function logout(){
+      try{
+        logoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cerrando…'; logoutBtn.disabled=true;
+        const r = await fetch(`${API_URL}/cerrar-sesion`, { credentials:'include' });
+        const data = await r.json();
+        if(data.exito){
+          isLoggedIn=false; localStorage.setItem('isLoggedIn','false');
+          sessionStatus.className='status-indicator-panel status-error';
+          sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
+          sessionStatusText.textContent='❌ Sesión cerrada';
+          loginForm.style.display='block'; logoutBtn.classList.add('hidden');
+          showNotification('Sesión cerrada correctamente');
+        }else{ throw new Error(data.mensaje||'Error al cerrar sesión'); }
+      }catch(err){ showNotification(`Error: ${err.message}`, true); }
+      finally{ logoutBtn.innerHTML='<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión'; logoutBtn.disabled=false; }
+    }
+
+    async function addAccount(){
+      const username = manualUsername.value.trim();
+      const password = manualPassword.value.trim();
+      if(!username||!password){ return showNotification('Completa ambos campos', true); }
+      try{
+        addAccountBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; addAccountBtn.disabled=true;
+        const loginRes = await fetch(`${API_URL}/iniciar-sesion`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({usuario:username, contrasena:password}) });
+        const loginData = await loginRes.json();
+        if(!loginData.exito){ throw new Error(loginData.mensaje||'Error al iniciar sesión con la cuenta'); }
+        const saveRes = await fetch(`${API_URL}/guardar-cuenta`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({username, password}) });
+        const saveData = await saveRes.json();
+        if(saveData.status==='ok'){
+          showNotification(`✅ Cuenta @${username} guardada`); manualUsername.value=''; manualPassword.value=''; actualizarListaCuentasActivas();
+        }else{ throw new Error(saveData.message||'Error al guardar la cuenta'); }
+      }catch(err){ showNotification(`Error: ${err.message}`, true); }
+      finally{ addAccountBtn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Guardar Cuenta'; addAccountBtn.disabled=false; }
+    }
+
+    async function searchUser(){
+      const username = usernameSearch.value.trim().replace('@','');
+      if(!username){ return showNotification('Ingresa un usuario', true); }
+      try{
+        searchUserBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Buscando…'; searchUserBtn.disabled=true;
+        const r = await fetch(`${API_URL}/buscar-usuario?username=${username}`, { credentials:'include' });
+        const userData = await r.json();
+        document.getElementById('user-avatar').src = userData.profile_pic_url_hd || 'https://via.placeholder.com/150?text=Sin+imagen';
+        const usernameEl = document.getElementById('user-username');
+        usernameEl.innerHTML = `@${userData.username}` + (userData.is_verified ? ' <i class="fa-solid fa-circle-check" style="color:#0095f6"></i>' : '');
+        document.getElementById('user-fullname').textContent = userData.full_name || 'Sin nombre';
+        document.getElementById('user-posts').textContent = (userData.media_count||0).toLocaleString();
+        document.getElementById('user-followers').textContent = (userData.follower_count||0).toLocaleString();
+        document.getElementById('user-following').textContent = (userData.following_count||0).toLocaleString();
+        document.getElementById('user-bio-text').textContent = userData.biography || 'Sin biografía disponible';
+        document.getElementById('user-private').innerHTML = `<span class="status-dot-panel" style="background:${userData.is_private?'var(--warning)':'var(--success)'}"></span><span>Privado: ${userData.is_private?'Sí':'No'}</span>`;
+        document.getElementById('user-verified').innerHTML = `<span class="status-dot-panel" style="background:${userData.is_verified?'var(--success)':'var(--muted)'}"></span><span>Verificado: ${userData.is_verified?'Sí':'No'}</span>`;
+        document.getElementById('user-business').innerHTML = `<span class="status-dot-panel" style="background:${userData.is_business?'var(--brand)':'var(--muted)'}"></span><span>Negocio: ${userData.is_business?'Sí':'No'}</span>`;
+        userResult.style.display='block';
+        showNotification(`Usuario @${userData.username} encontrado`);
+      }catch(err){ console.error(err); showNotification(`Error: ${err.message||'No se pudo encontrar el usuario'}`, true); }
+      finally{ searchUserBtn.innerHTML='<i class="fa-solid fa-magnifying-glass"></i> Buscar'; searchUserBtn.disabled=false; }
+    }
+
+    // Mostrar/ocultar textarea de comentarios manuales
+    document.getElementById('modo-select')?.addEventListener('change', (e)=>{
+      const show = e.target.value === 'manual';
+      document.getElementById('manualSection').style.display = show ? 'block' : 'none';
+    });
+
+    async function iniciarCreacionCuentas(){
+      const cantidad = parseInt(accountCountInput.value);
+      if(!cantidad || cantidad<=0 || cantidad>100){ return showNotification('⚠️ Ingresa una cantidad válida (1-100)', true); }
+      // UI only: mostramos progreso (la lógica real la maneja el backend)
+      addFeedCard({title:'Creación de cuentas', text:`Iniciando creación de ${cantidad} cuenta(s)…`});
+      showNotification('Creación iniciada');
+    }
+
+    async function actualizarListaCuentasActivas(){
+      const lista = cuentasActivasList; if(!lista) return;
+      try{
+        const r = await fetch(`${API_URL}/cuentas-activas`, { credentials:'include' });
+        const cuentas = await r.json(); cuentasActivas = cuentas;
+        renderStories(cuentas);
+        if(!cuentas.length){ lista.innerHTML='<li>No hay cuentas activas aún</li>'; return; }
+        lista.innerHTML='';
+        cuentas.forEach(acc=>{
+          const li=document.createElement('li');
+          const left=document.createElement('div'); left.className='left';
+          const dot=document.createElement('div'); dot.className='mini-dot'; dot.style.background = acc.status==='activo' ? 'var(--success)' : 'var(--danger)';
+          left.appendChild(dot); left.appendChild(document.createTextNode('@'+acc.username));
+          const actions=document.createElement('div');
+          const btn=document.createElement('button'); btn.className='mini-btn';
+          if(acc.status==='activo'){ btn.innerHTML='<i class="fa-solid fa-right-from-bracket"></i> Logout'; btn.onclick=()=>cerrarSesionCuenta(acc.username); }
+          else{ btn.innerHTML='<i class="fa-solid fa-right-to-bracket"></i> Login'; btn.onclick=()=>iniciarSesionCuenta(acc.username); }
+          actions.appendChild(btn);
+          li.appendChild(left); li.appendChild(actions); lista.appendChild(li);
+        });
+      }catch(err){ lista.innerHTML='<li>Error al cargar las cuentas</li>'; }
+    }
+
+    async function iniciarSesionCuenta(username){
+      try{ showNotification(`Iniciando sesión con @${username}…`);
+        const r = await fetch(`${API_URL}/iniciar-sesion-cuenta`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({usuario:username}) });
+        const data = await r.json(); if(data.exito){ showNotification(`✅ Sesión iniciada con @${username}`); actualizarListaCuentasActivas(); } else { throw new Error(data.mensaje||'Error al iniciar sesión'); }
+      }catch(err){ showNotification(`Error: ${err.message}`, true); }
+    }
+
+    async function cerrarSesionCuenta(username){
+      try{ showNotification(`Cerrando sesión de @${username}…`);
+        const r = await fetch(`${API_URL}/cerrar-sesion-cuenta`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({usuario:username}) });
+        const data = await r.json(); if(data.exito){ showNotification(`✅ Sesión cerrada con @${username}`); actualizarListaCuentasActivas(); } else { throw new Error(data.mensaje||'Error al cerrar sesión'); }
+      }catch(err){ showNotification(`Error: ${err.message}`, true); }
+    }
+
+    async function cargarCuentasGeneradas(){
+      // Si en el futuro hay endpoint dedicado, cámbialo aquí; por ahora usamos cuentas-activas como mock
+      const ul = document.getElementById('lista-cuentas-generadas');
+      try{
+        const r = await fetch(`${API_URL}/cuentas-activas`, { credentials:'include' });
+        const cuentas = await r.json();
+        if(!cuentas.length){ ul.innerHTML = '<li>No hay registros aún</li>'; return; }
+        ul.innerHTML='';
+        cuentas.forEach(c=>{ const li=document.createElement('li'); li.innerHTML=`<div class="left"><div class="mini-dot" style="background:var(--brand)"></div>@${c.username}</div><div class="muted">${c.status}</div>`; ul.appendChild(li); });
+      }catch(e){ ul.innerHTML='<li>Error al cargar</li>'; }
+    }
+
+    // Listeners
+    loginBtn?.addEventListener('click', login);
+    logoutBtn?.addEventListener('click', logout);
+    addAccountBtn?.addEventListener('click', addAccount);
+    searchUserBtn?.addEventListener('click', searchUser);
+    usernameSearch?.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ searchUser(); }});
+    createBtn?.addEventListener('click', iniciarCreacionCuentas);
+
+    // Init
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      showNotification('KraveAI listo – ¡Bienvenido!');
+      await checkBackendConnection();
+      await checkSessionStatus();
+      actualizarListaCuentasActivas();
+      // Feed inicial
+      addFeedCard({title:'Sistema', text:'Bienvenido a tu panel. Todo listo para automatizar.'});
+      setInterval(checkBackendConnection, 120000);
+    });
+  </script>  <!-- Toggles de contraseña -->  <script>
+    document.getElementById('togglePassword')?.addEventListener('click', ()=>{
+      const el = document.getElementById('login-password'); el.type = el.type==='password' ? 'text' : 'password';
+    });
+    document.getElementById('toggleManualPassword')?.addEventListener('click', ()=>{
+      const el = document.getElementById('manual-password'); el.type = el.type==='password' ? 'text' : 'password';
+    });
+  </script></body>
+</html>
