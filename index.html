@@ -3,418 +3,400 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#0B0B0F" />
-  <title>KraveAI – Panel</title>
+  <title>KraveAI – Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
+    /* ========= THEME: iOS-like (Dark/Light) ========= */
     :root{
-      --bg: #0b0b0f;
-      --surface: #111219;
-      --surface-2:#141622;
-      --card:#171a29;
-      --text:#e9e9f1;
-      --muted:#9aa0b4;
-      --brand:#7c5cff;      /* primario */
-      --brand-2:#00dbc0;    /* acento */
-      --danger:#ff4d4f; 
-      --warning:#ffb020;
-      --success:#2ecc71;
-      --ring: rgba(124,92,255,.45);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius-xl: 22px;
-      --radius-lg: 16px;
-      --radius: 12px;
+      --bg:#0b0c10; --surface:rgba(20,22,30,.7); --surface-2:rgba(17,19,26,.55);
+      --card:rgba(25,28,40,.55); --outline:rgba(255,255,255,.14);
+      --text:#eef0f7; --muted:#a6aec1; --title:#ffffff;
+      --brand:#7c5cff; --brand-2:#00dbc0; --danger:#ff4d4f; --warning:#ffb020; --success:#2ecc71;
+      --blur:14px; --radius-xl:22px; --radius-lg:16px; --radius:12px; --shadow:0 10px 40px rgba(0,0,0,.35);
+      --ring:0 0 0 10px rgba(124,92,255,.15);
+      --hit:44px;            /* Target táctil iOS */
+      --tabbar-h:64px;       /* Altura tabbar iOS */
     }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      font-family:ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, Arial;
-      background: radial-gradient(1200px 600px at 90% -10%, rgba(124,92,255,.18), transparent 60%),
-                  radial-gradient(900px 500px at -10% 110%, rgba(0,219,192,.15), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased; 
-      overflow-x:hidden;
-    }/* ---------- App Shell (tipo app móvil) ---------- */
-.app{ display:grid; grid-template-rows:auto 1fr auto; min-height:100dvh; }
-.app-header{ position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background: rgba(17,18,25,.75); backdrop-filter: blur(10px); border-bottom:1px solid rgba(255,255,255,.06); }
-.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.15rem}
-.brand-badge{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 4px 18px rgba(124,92,255,.35)}
-.brand span{background:linear-gradient(90deg,#fff, #c8c8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header-right{display:flex;align-items:center;gap:10px}
-.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.25);font-size:.85rem;color:#d8d5ff}
-.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand-2));font-weight:700}
-.icon-btn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:transform .15s ease}
+    :root.light{
+      --bg:#f5f7fb; --surface:rgba(255,255,255,.66); --surface-2:rgba(255,255,255,.58);
+      --card:rgba(255,255,255,.72); --outline:rgba(0,0,0,.08);
+      --text:#0f1324; --muted:#667085; --title:#0f1324;
+      --brand:#6b4dff; --brand-2:#00c7b0; --danger:#dc2626; --warning:#d97706; --success:#16a34a;
+      --blur:12px; --shadow:0 20px 50px rgba(16,24,40,.10);
+    }*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, Arial;
+  background:
+    radial-gradient(1000px 500px at 85% -10%, rgba(124,92,255,.18), transparent 60%),
+    radial-gradient(800px 450px at -10% 110%, rgba(0,219,192,.12), transparent 60%),
+    var(--bg);
+  color:var(--text); -webkit-font-smoothing:antialiased; overflow-x:hidden; 
+}
+.glass{background:var(--surface); border:1px solid var(--outline); backdrop-filter:blur(var(--blur)); box-shadow:var(--shadow)}
+
+/* ========= App Shell con Sidebar plegable ========= */
+.app{min-height:100dvh; display:grid; grid-template-columns: 260px 1fr}
+@media(max-width: 980px){ .app{ grid-template-columns: 1fr } }
+
+.sidebar{position:sticky; top:0; height:100dvh; display:flex; flex-direction:column; gap:14px; padding:16px; border-right:1px solid var(--outline)}
+.sidebar.glass{background:var(--surface-2)}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.15rem}
+.brand-badge{display:grid; place-items:center; width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 4px 18px rgba(124,92,255,.35); color:#fff}
+.collapse{margin-left:auto}
+
+.nav{display:grid; gap:6px; margin-top:6px}
+.nav a{display:flex; align-items:center; gap:12px; padding:12px; color:var(--text); text-decoration:none; border-radius:14px; border:1px solid transparent}
+.nav a:hover{background:rgba(124,92,255,.10); border-color:rgba(124,92,255,.25)}
+.nav a.active{background:linear-gradient(180deg, rgba(124,92,255,.16), rgba(124,92,255,.08)); border-color:rgba(124,92,255,.35)}
+
+.sidebar.compact{width:86px; overflow:hidden}
+.sidebar.compact .label{display:none}
+
+.sidebar-footer{margin-top:auto; display:grid; gap:10px}
+.theme-toggle, .credit{border-radius:14px; padding:10px; text-align:center}
+.theme-toggle.glass, .credit.glass{padding:10px}
+.credit{font-size:.85rem; color:var(--muted)}
+
+/* ========= Header ========= */
+.app-header{position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between; padding:14px 18px; padding-top: calc(14px + env(safe-area-inset-top));}
+.app-header.glass{}
+.header-right{display:flex; align-items:center; gap:10px}
+.pill{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:rgba(124,92,255,.12); border:1px solid rgba(124,92,255,.25); font-size:.85rem}
+.avatar{width:34px; height:34px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg,var(--brand),var(--brand-2)); font-weight:700; color:#fff}
+.icon-btn{width:36px; height:36px; border-radius:10px; display:grid; place-items:center; background:rgba(255,255,255,.06); border:1px solid var(--outline); cursor:pointer; transition:transform .15s ease}
 .icon-btn:hover{transform:translateY(-1px)}
 
-.app-content{padding:18px;max-width:1100px;margin:0 auto;width:100%}
+/* ========= Contenido ========= */
+.content{display:grid; grid-template-rows:auto 1fr}
+.app-content{padding:18px; max-width:1200px; margin:0 auto; width:100%; padding-bottom: calc(18px + env(safe-area-inset-bottom));}
 
-/* ---------- Historias tipo red social ---------- */
-.stories{display:flex;gap:12px;overflow:auto;padding-bottom:8px;margin-bottom:14px}
-.story{min-width:72px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.ring{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(from 0deg, var(--brand), var(--brand-2)); padding:2px}
-.ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--surface)}
-.story small{color:#cfd2e3;max-width:72px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
-
-/* ---------- Feed tipo tarjetas ---------- */
-.feed{display:grid;gap:14px}
-.post{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-xl);box-shadow:var(--shadow)}
-.post-header{display:flex;gap:10px;align-items:center;padding:12px 14px}
-.post-header img{width:40px;height:40px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,.08)}
-.post-actions{display:flex;gap:10px;padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
-.ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:8px 12px;border-radius:12px;cursor:pointer}
-
-/* ---------- Tarjetas principales Home ---------- */
-.grid{display:grid;gap:14px}
-@media(min-width:680px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.app-card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-xl);padding:16px; box-shadow: var(--shadow);transition: transform .18s ease, border-color .18s ease;}
-.app-card:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.35)}
-.app-card .row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.chip{font-size:.8rem;color:var(--muted);}
-.social-tile{display:flex;flex-direction:column;gap:14px;cursor:pointer}
-.social-icon{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
-.social-title{font-weight:600}
-
-/* ---------- Secciones / títulos ---------- */
-.section-title{display:flex;align-items:center;gap:10px;font-size:1rem;margin:10px 0 6px}
+.section-title{display:flex; align-items:center; gap:10px; font-size:1rem; margin:10px 0 6px; color:var(--title)}
 .muted{color:var(--muted)}
+.grid{display:grid; gap:14px}
+.grid.cols-4{grid-template-columns:repeat(auto-fit, minmax(180px, 1fr))}
+.grid.cols-3{grid-template-columns:repeat(auto-fit, minmax(260px, 1fr))}
 
-/* ---------- Acciones / inputs ---------- */
-.action-box{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px 10px 10px 14px}
-.action-box input{flex:1;background:transparent;border:0;color:var(--text);font-size:1rem;outline:none}
-.btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:0;border-radius:14px;padding:10px 14px;font-weight:600}
-.btn-primary{background:linear-gradient(135deg,var(--brand),#5d3cff);color:white;box-shadow:0 8px 20px rgba(124,92,255,.35)}
-.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid rgba(255,255,255,.1)}
+.card{border-radius:var(--radius-xl); padding:16px}
+.card.glass{background:var(--card)}
+.social-item{display:flex; align-items:center; gap:12px; padding:14px; border-radius:16px; text-decoration:none; color:var(--text); transition:transform .15s ease, border-color .15s; border:1px solid var(--outline)}
+.social-item:hover{transform:translateY(-2px); border-color:rgba(124,92,255,.35)}
+.social-icon{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:rgba(255,255,255,.06); border:1px solid var(--outline)}
 
-/* ---------- Estado del sistema ---------- */
-.status{display:flex;align-items:center;gap:10px;margin-top:10px}
-.dot{width:10px;height:10px;border-radius:50%}
+.action-box{display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; border:1px solid var(--outline)}
+.action-box.glass{background:var(--surface)}
+.action-box input{flex:1; background:transparent; border:0; color:var(--text); font-size:1rem; outline:none}
 
-/* Paneles deslizables tipo app */
-.panel{position:fixed;inset:0;background:var(--surface-2);transform:translateX(100%);transition:transform .35s ease;z-index:100;overflow-y:auto}
+.btn{display:inline-flex; align-items:center; gap:8px; cursor:pointer; border:0; border-radius:14px; padding:10px 14px; font-weight:600}
+.btn-primary{background:linear-gradient(135deg,var(--brand),#5d3cff); color:#fff; box-shadow:0 8px 20px rgba(124,92,255,.35)}
+.btn-ghost{background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--outline)}
+
+/* ========= Panels ========= */
+.panel{position:fixed; inset:0; transform:translateX(100%); transition:transform .35s ease; z-index:100; overflow-y:auto}
 .panel.active{transform:translateX(0)}
-.panel .panel-inner{max-width:1100px;margin:0 auto;padding:18px}
-.back{display:inline-flex;align-items:center;gap:8px;color:#cfcfff;text-decoration:none;margin:6px 0 14px}
+.panel .panel-inner{max-width:1100px; margin:0 auto; padding:18px; padding-bottom: calc(18px + env(safe-area-inset-bottom));}
+.panel .panel-inner .card{margin-bottom:12px}
+.back{display:inline-flex; align-items:center; gap:8px; color:#cfcfff; text-decoration:none; margin:6px 0 14px}
 
-/* Tarjeta de formulario */
-.form-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-xl);padding:18px;box-shadow:var(--shadow)}
-.form-row{display:grid;gap:10px;margin:10px 0}
-.label{font-weight:600;margin-bottom:4px}
-.input, .select, textarea{width:100%;background:#0f111a;border:1px solid rgba(255,255,255,.08);border-radius:12px;color:var(--text);padding:14px;font-size:1rem;outline:none}
-.input:focus, .select:focus, textarea:focus{border-color:var(--ring);box-shadow:0 0 0 4px rgba(124,92,255,.15)}
+/* ========= Listas / Badges ========= */
+.list{list-style:none; display:grid; gap:8px}
+.list li{display:flex; align-items:center; justify-content:space-between; gap:10px; border-radius:12px; padding:10px; border:1px solid var(--outline)}
+.left{display:flex; align-items:center; gap:10px}
+.mini-dot{width:8px; height:8px; border-radius:50%}
+.badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--outline)}
 
-/* Lista de cuentas */
-.list{list-style:none;display:grid;gap:8px}
-.list li{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px}
-.list .left{display:flex;align-items:center;gap:10px}
-.mini-dot{width:8px;height:8px;border-radius:50%}
-.mini-btn{padding:6px 10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:10px;cursor:pointer}
-.mini-btn:hover{border-color:rgba(124,92,255,.4)}
-
-/* Resultados de usuario */
-.user-result{display:none;background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;margin-top:12px;animation:fadeIn .35s ease forwards}
-.user-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.user-avatar{width:70px;height:70px;border-radius:14px;border:2px solid var(--brand);object-fit:cover}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
-.stat{background:#0f111a;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center}
-.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
-
-/* Notificación (snackbar) */
-.snack{position:fixed;left:50%;top:18px;transform:translateX(-50%);opacity:0;background:#121325;border:1px solid rgba(124,92,255,.35);color:#fff;padding:12px 18px;border-radius:999px;z-index:1000;transition:opacity .25s ease}
+/* ========= Snack / Banners ========= */
+.snack{position:fixed; left:50%; top:18px; transform:translateX(-50%); opacity:0; border-radius:999px; z-index:1000; transition:opacity .25s ease}
 .snack.show{opacity:1}
-.snack.error{background:#2a0e12;border-color:#ff6b6b}
+#notification.snack{background:var(--surface); color:var(--text); border:1px solid rgba(124,92,255,.35); padding:12px 18px}
+#notification.error{border-color:#ff6b6b}
 
-/* Barra inferior tipo app */
-.tabbar{position:sticky;bottom:0;z-index:40;background:rgba(17,18,25,.8);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.06)}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr)}
-.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;color:var(--muted);text-decoration:none}
-.tab.active,.tab:hover{color:#dcdcff}
+/* ========= FAB (Acciones rápidas) ========= */
+.fab{position:fixed; right:18px; bottom:calc(18px + env(safe-area-inset-bottom) + var(--tabbar-h)); width:56px; height:56px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:#fff; box-shadow:0 14px 40px rgba(124,92,255,.5); cursor:pointer; z-index:120}
+.fab-menu{position:fixed; right:18px; bottom:calc(86px + env(safe-area-inset-bottom) + var(--tabbar-h)); display:grid; gap:8px; z-index:120; opacity:0; pointer-events:none; transform:translateY(10px); transition:all .2s ease}
+.fab-menu.open{opacity:1; pointer-events:auto; transform:none}
+.fab-item{display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; color:var(--text); text-decoration:none}
+.fab-item.glass{background:var(--surface); border:1px solid var(--outline)}
 
-/* Utilidades extra requeridas por JS existente */
-.status-indicator{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
-.status-indicator-panel{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
-.status-dot{width:10px;height:10px;border-radius:50%}
-.status-dot-panel{width:10px;height:10px;border-radius:50%}
-.status-active .status-dot-panel{background:var(--success)}
-.status-error .status-dot-panel{background:var(--danger)}
-.hidden{display:none !important}
+/* ========= Centro de notificaciones ========= */
+.notif-center{position:fixed; right:18px; top:74px; width:360px; max-width:calc(100% - 36px); border-radius:16px; z-index:150; display:none}
+.notif-center.open{display:block}
 
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* ========= Command Palette (⌘K / Ctrl+K) ========= */
+.cmdk{position:fixed; inset:0; display:none; align-items:flex-start; justify-content:center; padding-top:10vh; z-index:160}
+.cmdk.open{display:flex}
+.cmdk-backdrop{position:absolute; inset:0; background:rgba(0,0,0,.35); backdrop-filter:blur(2px)}
+.cmdk-box{position:relative; width:680px; max-width:90vw; border-radius:16px; padding:12px}
+.cmdk-box.glass{background:var(--surface); border:1px solid var(--outline)}
+.cmdk-input{width:100%; border:0; outline:none; background:transparent; color:var(--text); font-size:1rem; padding:10px 12px; border-radius:12px}
+.cmdk-list{margin-top:10px; display:grid; gap:6px; max-height:40vh; overflow:auto}
+.cmdk-item{padding:10px 12px; border-radius:12px; border:1px solid var(--outline); cursor:pointer}
+.cmdk-item:hover{border-color:rgba(124,92,255,.35)}
+
+/* ========= Tabbar iOS (móvil) ========= */
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); display: none; grid-template-columns: repeat(4, 1fr); align-items: end; gap: 8px; z-index: 130; background: var(--surface); border-top: 1px solid var(--outline); backdrop-filter: blur(var(--blur)); }
+.tab-item { display: grid; justify-items: center; gap: 4px; border: 0; background: transparent; color: var(--muted); padding: 6px; height: var(--hit); border-radius: 12px; font-size: .75rem; line-height: 1; cursor: pointer; }
+.tab-item i { font-size: 1.2rem; }
+.tab-item.active { color: var(--text); background: rgba(124,92,255,.12); border: 1px solid rgba(124,92,255,.25); }
+
+/* ===== Responsive móvil ===== */
+:root { font-size: clamp(14px, 1.8vw, 16px); }
+@media (max-width: 980px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .content { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); }
+  .tabbar { display: grid; }
+}
+@media (max-width: 480px) { :root { --blur: 10px; } }
+
+/* ========= Accesibilidad ========= */
+:focus-visible{outline:none; box-shadow:var(--ring)}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important} }
 
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- Header -->
-    <header class="app-header">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar glass" id="sidebar">
       <div class="brand">
         <div class="brand-badge"><i class="fa-solid fa-bolt"></i></div>
-        <span>KraveAI</span>
+        <span class="label">KraveAI</span>
+        <button class="icon-btn glass collapse" id="collapse-btn" title="Contraer/expandir"><i class="fa-solid fa-chevrons-left"></i></button>
       </div>
-      <div class="header-right">
-        <div class="pill" id="system-pill"><span class="dot" id="system-status-dot" style="background:var(--warning)"></span><span id="system-status-text">Conectando…</span></div>
-        <div class="icon-btn" id="refresh-btn" title="Actualizar"><i class="fa-solid fa-rotate"></i></div>
-        <div class="avatar">KG</div>
-      </div>
-    </header><!-- Content -->
-<main class="app-content">
-  <!-- Historias (avatars = cuentas activas recientes) -->
-  <section class="stories" id="stories-row" aria-label="Historias"></section>
-
-  <!-- Feed de estado (cards sociales) -->
-  <section class="feed" id="status-feed">
-    <!-- Post de sistema (se llena por JS) -->
-  </section>
-
-  <!-- Redes -->
-  <section style="margin-top:6px" aria-label="Redes sociales">
-    <div class="grid">
-      <div class="app-card social-tile" id="instagram-link" role="button">
-        <div class="row">
-          <div class="social-icon" style="background:rgba(225,48,108,.12)"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div>
-          <div>
-            <div class="social-title">Instagram</div>
-            <div class="chip">Automatiza acciones y maneja sesiones</div>
-          </div>
+      <nav class="nav" id="sidebar-nav">
+        <a href="#home" class="active" id="nav-home"><i class="fa-solid fa-house"></i><span class="label">Inicio</span></a>
+        <a href="#accounts" id="nav-accounts"><i class="fa-solid fa-users"></i><span class="label">Cuentas</span></a>
+        <a href="#actions" id="nav-actions"><i class="fa-solid fa-wand-magic-sparkles"></i><span class="label">Acciones</span></a>
+        <a href="#settings" id="nav-settings"><i class="fa-solid fa-gear"></i><span class="label">Ajustes</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="theme-toggle glass">
+          <span class="label"><i class="fa-solid fa-circle-half-stroke"></i> Tema</span>
+          <button class="btn btn-ghost" id="theme-btn">Oscuro</button>
         </div>
+        <div class="credit glass">Created by <strong>Karmean Gómez</strong></div>
       </div>
-
-      <div class="app-card social-tile" id="tiktok-link" role="button">
-        <div class="row">
-          <div class="social-icon" style="background:rgba(105,201,208,.12)"><i class="fa-brands fa-tiktok" style="color:#69C9D0"></i></div>
-          <div>
-            <div class="social-title">TikTok</div>
-            <div class="chip">(Próximamente)</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="app-card social-tile" id="youtube-link" role="button">
-        <div class="row">
-          <div class="social-icon" style="background:rgba(255,0,0,.12)"><i class="fa-brands fa-youtube" style="color:#ff0000"></i></div>
-          <div>
-            <div class="social-title">YouTube</div>
-            <div class="chip">(Próximamente)</div>
-          </div>
-        </div>
-      </div>
+    </aside><!-- ===== Main ===== -->
+<div class="content">
+  <header class="app-header glass">
+    <div class="section-title"><i class="fa-solid fa-hashtag"></i><span>Dashboard</span></div>
+    <div class="header-right">
+      <div class="pill" id="system-pill"><span class="mini-dot" id="system-status-dot" style="background:var(--warning)"></span><span id="system-status-text">Conectando…</span></div>
+      <button class="icon-btn glass" id="notif-btn" title="Notificaciones"><i class="fa-regular fa-bell"></i></button>
+      <button class="icon-btn glass" id="refresh-btn" title="Actualizar"><i class="fa-solid fa-rotate"></i></button>
+      <div class="avatar">KG</div>
     </div>
-  </section>
+  </header>
 
-  <!-- Acción rápida -->
-  <section style="margin-top:16px">
-    <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Automatización</span></div>
-    <div class="action-box">
-      <input id="automation-input" placeholder="¿Qué quieres automatizar hoy?" />
-      <button class="btn btn-primary" id="send-btn"><i class="fa-solid fa-paper-plane"></i> Ejecutar</button>
-    </div>
-    <div class="status" style="margin-top:12px">
-      <div class="status-indicator">
-        <div class="status-dot" id="status-dot" style="background:var(--success)"></div>
-        <span id="active-accounts" class="muted">Listo</span>
+  <main class="app-content">
+    <!-- ===== Redes sociales ===== -->
+    <section id="home-section">
+      <div class="section-title"><i class="fa-solid fa-share-nodes"></i><span>Redes sociales</span></div>
+      <div class="grid cols-4">
+        <a href="#instagram" class="social-item glass" id="instagram-link"><div class="social-icon"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div><span>Instagram</span></a>
+        <a href="#tiktok" class="social-item glass" id="tiktok-link"><div class="social-icon"><i class="fa-brands fa-tiktok" style="color:#69C9D0"></i></div><span>TikTok</span></a>
+        <a href="#youtube" class="social-item glass" id="youtube-link"><div class="social-icon"><i class="fa-brands fa-youtube" style="color:#ff0000"></i></div><span>YouTube</span></a>
+        <a href="#threads" class="social-item glass" id="threads-link"><div class="social-icon"><i class="fa-brands fa-threads" style="color:#fff"></i></div><span>Threads</span></a>
+        <a href="#x" class="social-item glass" id="x-link"><div class="social-icon"><i class="fa-brands fa-x-twitter" style="color:#fff"></i></div><span>X</span></a>
+        <a href="#facebook" class="social-item glass" id="facebook-link"><div class="social-icon"><i class="fa-brands fa-facebook" style="color:#1877F2"></i></div><span>Facebook</span></a>
+        <a href="#linkedin" class="social-item glass" id="linkedin-link"><div class="social-icon"><i class="fa-brands fa-linkedin" style="color:#0A66C2"></i></div><span>LinkedIn</span></a>
+        <a href="#snapchat" class="social-item glass" id="snapchat-link"><div class="social-icon"><i class="fa-brands fa-snapchat" style="color:#FFFC00"></i></div><span>Snapchat</span></a>
+        <a href="#pinterest" class="social-item glass" id="pinterest-link"><div class="social-icon"><i class="fa-brands fa-pinterest" style="color:#BD081C"></i></div><span>Pinterest</span></a>
+        <a href="#discord" class="social-item glass" id="discord-link"><div class="social-icon"><i class="fa-brands fa-discord" style="color:#5865F2"></i></div><span>Discord</span></a>
+        <a href="#telegram" class="social-item glass" id="telegram-link"><div class="social-icon"><i class="fa-brands fa-telegram" style="color:#0088cc"></i></div><span>Telegram</span></a>
+        <a href="#whatsapp" class="social-item glass" id="whatsapp-link"><div class="social-icon"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i></div><span>WhatsApp</span></a>
+        <a href="#twitch" class="social-item glass" id="twitch-link"><div class="social-icon"><i class="fa-brands fa-twitch" style="color:#9146FF"></i></div><span>Twitch</span></a>
+        <a href="#reddit" class="social-item glass" id="reddit-link"><div class="social-icon"><i class="fa-brands fa-reddit" style="color:#FF4500"></i></div><span>Reddit</span></a>
+        <a href="#spotify" class="social-item glass" id="spotify-link"><div class="social-icon"><i class="fa-brands fa-spotify" style="color:#1DB954"></i></div><span>Spotify</span></a>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Clientes recientes -->
-  <section style="margin-top:16px">
-    <div class="section-title"><i class="fa-solid fa-users"></i><span>Clientes recientes</span></div>
-    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
-      <div class="app-card">
-        <div class="row"><div class="social-icon" style="background:rgba(225,48,108,.12)"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div><strong>@arianaoficial</strong></div>
-        <div class="muted">Instagram</div>
+    <!-- ===== Automatización rápida ===== -->
+    <section style="margin-top:16px">
+      <div class="section-title"><i class="fa-solid fa-bolt"></i><span>Automatización</span></div>
+      <div class="action-box glass">
+        <input id="automation-input" placeholder="¿Qué quieres automatizar hoy?" />
+        <button class="btn btn-primary" id="send-btn"><i class="fa-solid fa-paper-plane"></i> Ejecutar</button>
       </div>
-      <div class="app-card">
-        <div class="row"><div class="social-icon" style="background:rgba(255,0,0,.12)"><i class="fa-brands fa-youtube" style="color:#FF0000"></i></div><strong>@plenkay</strong></div>
-        <div class="muted">YouTube</div>
+      <div class="badge glass" style="margin-top:10px"><span class="mini-dot" id="status-dot" style="background:var(--success)"></span><span id="active-accounts" class="muted">Sin acciones en curso</span></div>
+    </section>
+
+    <!-- ===== Clientes recientes ===== -->
+    <section style="margin-top:16px">
+      <div class="section-title"><i class="fa-solid fa-users"></i><span>Clientes recientes</span></div>
+      <div class="grid cols-4">
+        <div class="card glass"><div class="left"><div class="social-icon"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div><strong>@arianaoficial</strong></div><div class="muted" style="margin-top:8px">Instagram</div></div>
+        <div class="card glass"><div class="left"><div class="social-icon"><i class="fa-brands fa-youtube" style="color:#ff0000"></i></div><strong>@plenkay</strong></div><div class="muted" style="margin-top:8px">YouTube</div></div>
       </div>
-    </div>
-  </section>
-</main>
-
-<!-- Tabbar -->
-<nav class="tabbar">
-  <div class="tabs">
-    <a class="tab active" href="#"><i class="fa-solid fa-house"></i><small>Inicio</small></a>
-    <a class="tab" href="#"><i class="fa-solid fa-chart-line"></i><small>Analítica</small></a>
-    <a class="tab" href="#"><i class="fa-solid fa-gear"></i><small>Ajustes</small></a>
-    <a class="tab" href="#"><i class="fa-solid fa-user"></i><small>Perfil</small></a>
-  </div>
-</nav>
-
-  </div>  <!-- ============== PANELS ============== -->  <!-- Instagram Panel -->  <div id="instagram-panel" class="panel">
-    <div class="panel-inner">
-      <a href="#" class="back" id="volver-inicio"><i class="fa-solid fa-arrow-left"></i> Volver</a><h2 class="section-title"><i class="fa-brands fa-instagram" style="color:#E1306C"></i><span>Panel de Instagram</span></h2>
-  <p class="muted" style="margin-bottom:12px">Elige qué deseas automatizar</p>
-
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
-    <div class="app-card social-tile"><div class="row">👥<strong>Clientes</strong></div></div>
-    <div class="app-card social-tile"><div class="row">🔧<strong>Servicios</strong></div></div>
-    <div class="app-card social-tile"><div class="row">❤️<strong>Likes</strong></div></div>
-    <div class="app-card social-tile"><div class="row">➕<strong>Seguidores</strong></div></div>
-    <div class="app-card social-tile"><div class="row">👁️<strong>Vistas</strong></div></div>
-    <div class="app-card social-tile" id="comments-link"><div class="row">💬<strong>Comentarios</strong></div></div>
-    <div class="app-card social-tile"><div class="row">🔁<strong>Compartidos</strong></div></div>
-    <div class="app-card social-tile" id="crear-cuentas-link"><div class="row">➕<strong>Crear cuentas</strong></div></div>
-    <div class="app-card social-tile" id="login-link"><div class="row">🔐<strong>Login</strong></div></div>
-    <div class="app-card social-tile" id="ver-cuentas-link"><div class="row">📋<strong>Ver cuentas generadas</strong></div></div>
-  </div>
+    </section>
+  </main>
 </div>
 
-  </div>  <!-- Create Accounts Panel -->  <div id="create-accounts-panel" class="panel">
-    <div class="panel-inner">
-      <a href="#" class="back" id="volver-instagram"><i class="fa-solid fa-arrow-left"></i> Volver</a><div class="form-card">
-    <h3 class="section-title"><i class="fa-solid fa-user-plus"></i><span>Crear nuevas cuentas</span></h3>
-    <p class="muted">Sistema automatizado para creación de cuentas de Instagram</p>
-    <div class="form-row">
-      <div class="label">Número de cuentas a crear</div>
-      <input type="number" id="account-count" class="input" value="5" min="1" max="100" />
+  </div>  <!-- ===== Notificaciones Center ===== -->  <div class="notif-center glass" id="notif-center">
+    <div class="card glass" style="padding:12px"><strong>Notificaciones</strong></div>
+    <div id="notif-list" class="list" style="padding:10px"></div>
+  </div>  <!-- ===== Command Palette (⌘K / Ctrl+K) ===== -->  <div class="cmdk" id="cmdk">
+    <div class="cmdk-backdrop"></div>
+    <div class="cmdk-box glass">
+      <input class="cmdk-input" id="cmdk-input" placeholder="Buscar comando… (por ejemplo: Buscar usuario, Iniciar sesión, Ver cuentas)" />
+      <div class="cmdk-list" id="cmdk-list"></div>
     </div>
-    <div class="form-row" style="display:flex;gap:10px">
-      <button class="btn btn-ghost" id="cancel-btn"><i class="fa-solid fa-xmark"></i> Cancelar</button>
-      <button class="btn btn-primary" id="create-btn"><i class="fa-solid fa-play"></i> Iniciar creación</button>
+  </div>  <!-- ===== Panels existentes (IDs intactos) ===== -->  <div id="instagram-panel" class="panel"><div class="panel-inner">
+    <a href="#home" class="back" id="volver-inicio"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+    <div class="card glass"><div class="section-title"><i class="fa-brands fa-instagram" style="color:#E1306C"></i><span>Panel de Instagram</span></div><p class="muted">Elige qué deseas automatizar</p></div>
+    <div class="grid cols-4">
+      <div class="card glass"><div class="left">👥<strong>Clientes</strong></div></div>
+      <div class="card glass"><div class="left">🔧<strong>Servicios</strong></div></div>
+      <div class="card glass"><div class="left">❤️<strong>Likes</strong></div></div>
+      <div class="card glass" id="comments-link"><div class="left">💬<strong>Comentarios</strong></div></div>
+      <div class="card glass"><div class="left">🔁<strong>Compartidos</strong></div></div>
+      <div class="card glass"><div class="left">👁️<strong>Vistas</strong></div></div>
+      <div class="card glass" id="crear-cuentas-link"><div class="left">➕<strong>Crear cuentas</strong></div></div>
+      <div class="card glass" id="login-link"><div class="left">🔐<strong>Login</strong></div></div>
+      <div class="card glass" id="ver-cuentas-link"><div class="left">📋<strong>Ver cuentas generadas</strong></div></div>
     </div>
+  </div></div>  <div id="create-accounts-panel" class="panel"><div class="panel-inner">
+    <a href="#instagram" class="back" id="volver-instagram"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+    <div class="card glass">
+      <div class="section-title"><i class="fa-solid fa-user-plus"></i><span>Crear nuevas cuentas</span></div>
+      <p class="muted">Sistema automatizado para creación de cuentas de Instagram</p>
+      <div class="section-title" style="margin-top:10px">Número de cuentas a crear</div>
+      <input type="number" id="account-count" class="action-box glass" style="padding:10px" value="5" min="1" max="100" />
+      <div style="display:flex; gap:10px; margin-top:10px">
+        <button class="btn btn-ghost" id="cancel-btn"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+        <button class="btn btn-primary" id="create-btn"><i class="fa-solid fa-play"></i> Iniciar creación</button>
+      </div>
+    </div>
+  </div></div>  <div id="login-panel" class="panel"><div class="panel-inner">
+    <a href="#instagram" class="back" id="volver-login"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+    <div class="card glass" id="login-form">
+      <div class="section-title"><i class="fa-solid fa-key"></i><span>Gestión de Sesiones</span></div>
+      <p class="muted">Controla tus inicios de sesión en Instagram</p>
+      <div class="section-title">Usuario</div>
+      <input type="text" id="login-username" class="action-box glass" placeholder="Usuario de Instagram" />
+      <div class="section-title">Contraseña</div>
+      <div class="action-box glass" style="position:relative">
+        <input type="password" id="login-password" placeholder="••••••••" style="border:0; flex:1" />
+        <span id="togglePassword" style="cursor:pointer; opacity:.8">👁️</span>
+      </div>
+      <div class="section-title">Estado de sesión</div>
+      <div class="badge glass" id="session-status"><span class="mini-dot status-dot-panel"></span><span id="session-status-text">No hay sesión activa</span></div>
+      <div style="display:flex; gap:10px; margin-top:12px">
+        <button class="btn btn-primary" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</button>
+        <button class="btn btn-ghost" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
+      </div>
+    </div><div class="card glass" style="margin-top:12px">
+  <div class="section-title"><i class="fa-solid fa-user-plus"></i><span>Agregar Cuenta Manual</span></div>
+  <div class="section-title">Usuario</div>
+  <input type="text" id="manual-username" class="action-box glass" placeholder="Ingresa el usuario" />
+  <div class="section-title">Contraseña</div>
+  <div class="action-box glass" style="position:relative">
+    <input type="password" id="manual-password" placeholder="••••••••" style="border:0; flex:1" />
+    <span id="toggleManualPassword" style="cursor:pointer; opacity:.8">👁️</span>
   </div>
+  <button class="btn btn-primary" style="margin-top:10px" id="add-account-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar Cuenta</button>
 </div>
 
-  </div>  <!-- Login Panel -->  <div id="login-panel" class="panel">
-    <div class="panel-inner">
-      <a href="#" class="back" id="volver-login"><i class="fa-solid fa-arrow-left"></i> Volver</a><div class="form-card" id="login-form">
-    <h3 class="section-title"><i class="fa-solid fa-key"></i><span>Gestión de Sesiones</span></h3>
-    <p class="muted">Controla tus inicios de sesión en Instagram</p>
+<div class="card glass" style="margin-top:12px">
+  <div class="section-title"><i class="fa-regular fa-circle-user"></i><span>Cuentas activas</span></div>
+  <ul class="list" id="cuentas-activas-list"><li class="glass" style="padding:10px">Cargando cuentas…</li></ul>
+</div>
 
-    <div class="form-row">
-      <div class="label">Usuario de Instagram</div>
-      <input type="text" id="login-username" class="input" placeholder="Usuario de Instagram" />
-    </div>
-    <div class="form-row">
-      <div class="label">Contraseña</div>
-      <div style="position:relative">
-        <input type="password" id="login-password" class="input" placeholder="••••••••" />
-        <span id="togglePassword" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;opacity:.7">👁️</span>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="label">Estado de sesión</div>
-      <div class="status-indicator-panel" id="session-status">
-        <div class="status-dot-panel"></div>
-        <span id="session-status-text">No hay sesión activa</span>
-      </div>
-    </div>
-    <div class="form-row" style="display:flex;gap:10px">
-      <button class="btn btn-primary" id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</button>
-      <button class="btn btn-ghost" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
-    </div>
+<div class="card glass" style="margin-top:12px">
+  <div class="section-title"><i class="fa-solid fa-magnifying-glass"></i><span>Buscar usuario de Instagram</span></div>
+  <div class="action-box glass" style="gap:10px">
+    <input type="text" id="username-search" placeholder="@usuario" />
+    <button class="btn btn-primary" id="search-user-btn"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
   </div>
-
-  <div class="form-card" style="margin-top:12px">
-    <h3 class="section-title"><i class="fa-solid fa-user-plus"></i><span>Agregar Cuenta Manual</span></h3>
-    <div class="form-row">
-      <div class="label">Usuario</div>
-      <input type="text" id="manual-username" class="input" placeholder="Ingresa el usuario" required />
-    </div>
-    <div class="form-row">
-      <div class="label">Contraseña</div>
-      <div style="position:relative">
-        <input type="password" id="manual-password" class="input" placeholder="Ingresa la contraseña" required />
-        <span id="toggleManualPassword" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;opacity:.7">👁️</span>
+  <div id="user-result" class="card glass" style="display:none; margin-top:12px; padding:12px">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px">
+      <img id="user-avatar" style="width:70px; height:70px; border-radius:14px; border:2px solid var(--brand); object-fit:cover" />
+      <div>
+        <h3 id="user-username" style="display:flex; align-items:center; gap:6px"></h3>
+        <div id="user-fullname" class="muted"></div>
       </div>
     </div>
-    <div class="form-row">
-      <button class="btn btn-primary" id="add-account-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar Cuenta</button>
+    <div class="grid cols-3">
+      <div class="card glass"><div class="muted">Publicaciones</div><div id="user-posts" style="font-weight:700; font-size:1.1rem">0</div></div>
+      <div class="card glass"><div class="muted">Seguidores</div><div id="user-followers" style="font-weight:700; font-size:1.1rem">0</div></div>
+      <div class="card glass"><div class="muted">Siguiendo</div><div id="user-following" style="font-weight:700; font-size:1.1rem">0</div></div>
     </div>
-  </div>
-
-  <div class="form-card" style="margin-top:12px">
-    <div class="label">Cuentas activas</div>
-    <ul id="cuentas-activas-list" class="list">
-      <li>Cargando cuentas…</li>
-    </ul>
-  </div>
-
-  <div class="form-card" style="margin-top:12px">
-    <div class="label">Buscar usuario de Instagram</div>
-    <div class="form-row" style="display:flex;gap:10px">
-      <input type="text" id="username-search" class="input" placeholder="@usuario" />
-      <button class="btn btn-primary" id="search-user-btn"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
-    </div>
-    <div id="user-result" class="user-result">
-      <div class="user-header">
-        <img id="user-avatar" class="user-avatar" src="" alt="Avatar" />
-        <div>
-          <h3 id="user-username" style="display:flex;align-items:center;gap:6px"></h3>
-          <div id="user-fullname" class="muted"></div>
-        </div>
-      </div>
-      <div class="stats">
-        <div class="stat"><div class="muted">Publicaciones</div><div class="value" id="user-posts" style="font-weight:700;font-size:1.1rem">0</div></div>
-        <div class="stat"><div class="muted">Seguidores</div><div class="value" id="user-followers" style="font-weight:700;font-size:1.1rem">0</div></div>
-        <div class="stat"><div class="muted">Siguiendo</div><div class="value" id="user-following" style="font-weight:700;font-size:1.1rem">0</div></div>
-      </div>
-      <div class="form-row"><div class="label">Bio</div><div id="user-bio-text" class="muted"></div></div>
-      <div class="form-row" style="display:flex;flex-wrap:wrap;gap:8px">
-        <span id="user-private" class="badge"><span class="status-dot-panel"></span><span>Privado: Desconocido</span></span>
-        <span id="user-verified" class="badge"><span class="status-dot-panel"></span><span>Verificado: No</span></span>
-        <span id="user-business" class="badge"><span class="status-dot-panel"></span><span>Negocio: No</span></span>
-      </div>
+    <div class="section-title">Bio</div>
+    <div id="user-bio-text" class="muted"></div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px">
+      <span id="user-private" class="badge glass"><span class="mini-dot status-dot-panel"></span><span>Privado: Desconocido</span></span>
+      <span id="user-verified" class="badge glass"><span class="mini-dot status-dot-panel"></span><span>Verificado: No</span></span>
+      <span id="user-business" class="badge glass"><span class="mini-dot status-dot-panel"></span><span>Negocio: No</span></span>
     </div>
   </div>
 </div>
 
-  </div>  <!-- Comments Panel -->  <div id="comments-panel" class="panel">
-    <div class="panel-inner">
-      <a href="#" class="back" id="volver-inicio-comments"><i class="fa-solid fa-arrow-left"></i> Volver</a><div class="form-card">
-    <h3 class="section-title"><i class="fa-solid fa-comments"></i><span>Automatización de Comentarios</span></h3>
-    <p class="muted">Configura y lanza comentarios masivos en Instagram</p>
-    <form id="formComentarios">
-      <div class="form-row">
-        <div class="label">URL del Post</div>
-        <input name="url" class="input" placeholder="https://www.instagram.com/p/CXXXXX/" required />
-      </div>
-      <div class="form-row">
-        <div class="label">Cantidad de Comentarios</div>
-        <input type="number" name="cantidad" class="input" value="30" min="1" max="100" required />
-      </div>
-      <div class="form-row">
-        <div class="label">Modo</div>
-        <select name="modo" id="modo-select" class="select">
+  </div></div>  <div id="comments-panel" class="panel"><div class="panel-inner">
+    <a href="#instagram" class="back" id="volver-inicio-comments"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+    <div class="card glass">
+      <div class="section-title"><i class="fa-solid fa-comments"></i><span>Automatización de Comentarios</span></div>
+      <p class="muted">Configura y lanza comentarios masivos en Instagram</p>
+      <form id="formComentarios">
+        <div class="section-title">URL del Post</div>
+        <input name="url" class="action-box glass" placeholder="https://www.instagram.com/p/CXXXXX/" />
+        <div class="section-title">Cantidad de Comentarios</div>
+        <input type="number" name="cantidad" class="action-box glass" value="30" min="1" max="100" />
+        <div class="section-title">Modo</div>
+        <select name="modo" id="modo-select" class="action-box glass" style="padding:10px">
           <option value="auto">Auto (basado en imagen)</option>
           <option value="personalizado">Personalizado (con estilo)</option>
           <option value="manual">Manual (pegar comentarios)</option>
         </select>
-      </div>
-      <div class="form-row" id="manualSection" style="display:none">
-        <div class="label">Comentarios Manuales</div>
-        <textarea name="comentarios" rows="4" placeholder="Pega un comentario por línea"></textarea>
-      </div>
-      <div class="form-row"><div class="label">Apodo (Opcional)</div><input name="apodo" class="input" placeholder="Ej: Gera" /></div>
-      <div class="form-row"><div class="label">Estilo</div><input name="estilo" class="input" placeholder="Ej: fitness, sexy, guapo" /></div>
-      <div class="form-row"><div class="label">Actividad</div><input name="actividad" class="input" placeholder="Ej: entrenador personal" /></div>
-      <div class="form-row"><div class="label">Ejemplos de Comentarios</div><textarea name="ejemplos" rows="4" placeholder="Un comentario por línea"></textarea></div>
-      <div class="form-row" style="display:flex;gap:10px">
-        <button type="submit" class="btn btn-primary">Lanzar Comentarios</button>
-        <button type="button" class="btn btn-ghost" id="cancelComment">Cancelar</button>
-      </div>
-    </form>
-    <div id="commentStatus" class="status-indicator" style="display:none;margin-top:12px">
-      <div class="status-dot"></div>
-      <span id="commentMessage"></span>
+        <div id="manualSection" style="display:none">
+          <div class="section-title">Comentarios Manuales</div>
+          <textarea name="comentarios" rows="4" class="action-box glass" placeholder="Pega un comentario por línea" style="padding:10px"></textarea>
+        </div>
+        <div class="section-title">Apodo (Opcional)</div>
+        <input name="apodo" class="action-box glass" placeholder="Ej: Gera" />
+        <div class="section-title">Estilo</div>
+        <input name="estilo" class="action-box glass" placeholder="Ej: fitness, sexy, guapo" />
+        <div class="section-title">Actividad</div>
+        <input name="actividad" class="action-box glass" placeholder="Ej: entrenador personal" />
+        <div class="section-title">Ejemplos de Comentarios</div>
+        <textarea name="ejemplos" rows="4" class="action-box glass" placeholder="Un comentario por línea" style="padding:10px"></textarea>
+        <div style="display:flex; gap:10px; margin-top:12px">
+          <button type="submit" class="btn btn-primary">Lanzar Comentarios</button>
+          <button type="button" class="btn btn-ghost" id="cancelComment">Cancelar</button>
+        </div>
+      </form>
+      <div id="commentStatus" class="badge glass" style="display:none; margin-top:12px"><span class="mini-dot"></span><span id="commentMessage"></span></div>
     </div>
-  </div>
-</div>
+  </div></div>  <!-- ===== Snackbar ===== -->  <div class="snack" id="notification"><i class="fa-solid fa-circle-check"></i> <span id="notification-text"></span></div>  <!-- ===== FAB ===== --><button class="fab" id="fab"><i class="fa-solid fa-plus"></i></button>
 
-  </div>  <!-- Ver Cuentas generadas Panel (nuevo, UI) -->  <div id="ver-cuentas-panel" class="panel">
-    <div class="panel-inner">
-      <a href="#" class="back" id="volver-instagram-desde-ver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
-      <div class="form-card">
-        <h3 class="section-title"><i class="fa-regular fa-clipboard"></i><span>Cuentas generadas</span></h3>
-        <ul class="list" id="lista-cuentas-generadas">
-          <li>No hay registros aún</li>
-        </ul>
-      </div>
-    </div>
-  </div>  <!-- Snackbar -->  <div class="snack" id="notification"><i class="fa-solid fa-circle-check"></i> <span id="notification-text"></span></div>  <!-- ================== JS (IDs y endpoints intactos) ================== -->  <script>
-    // ---- Referencias DOM ----
+  <div class="fab-menu" id="fab-menu">
+    <a class="fab-item glass" href="#login" id="fab-login"><i class="fa-solid fa-right-to-bracket"></i> <span>Iniciar sesión</span></a>
+    <a class="fab-item glass" href="#comments" id="fab-comments"><i class="fa-solid fa-comments"></i> <span>Comentarios</span></a>
+    <a class="fab-item glass" href="#accounts" id="fab-accounts"><i class="fa-solid fa-users"></i> <span>Cuentas activas</span></a>
+  </div>  <!-- ===== Tabbar iOS (móvil) ===== -->  <nav class="tabbar" id="tabbar">
+    <button class="tab-item active" data-target="home"><i class="fa-solid fa-house"></i><span>Inicio</span></button>
+    <button class="tab-item" data-target="accounts"><i class="fa-solid fa-users"></i><span>Cuentas</span></button>
+    <button class="tab-item" data-target="actions"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Acciones</span></button>
+    <button class="tab-item" data-target="settings"><i class="fa-solid fa-gear"></i><span>Ajustes</span></button>
+  </nav>  <!-- ===== JS: Tema, Navegación, Lógica (IDs/endpoints intactos) ===== -->  <script>
+    // ====== Theme toggle con persistencia ======
+    const root = document.documentElement;
+    const themeBtn = document.getElementById('theme-btn');
+    const savedTheme = localStorage.getItem('krave_theme') || 'dark';
+    if(savedTheme==='light'){ root.classList.add('light'); themeBtn.textContent='Claro'; } else { themeBtn.textContent='Oscuro'; }
+    themeBtn?.addEventListener('click', ()=>{
+      const light = root.classList.toggle('light');
+      localStorage.setItem('krave_theme', light ? 'light' : 'dark');
+      themeBtn.textContent = light ? 'Claro' : 'Oscuro';
+    });
+
+    // ===== Sidebar compacto =====
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('collapse-btn')?.addEventListener('click', ()=>{
+      sidebar.classList.toggle('compact');
+    });
+  </script>  <script>
+    // ==== Referencias y estados (se conservan nombres e IDs clave) ====
     const instagramLink = document.getElementById('instagram-link');
     const volverInicio = document.getElementById('volver-inicio');
     const crearCuentasLink = document.getElementById('crear-cuentas-link');
@@ -424,13 +406,11 @@
     const commentsLink = document.getElementById('comments-link');
     const volverInicioComments = document.getElementById('volver-inicio-comments');
     const verCuentasLink = document.getElementById('ver-cuentas-link');
-    const volverInstagramDesdeVer = document.getElementById('volver-instagram-desde-ver');
 
     const instagramPanel = document.getElementById('instagram-panel');
     const createAccountsPanel = document.getElementById('create-accounts-panel');
     const loginPanel = document.getElementById('login-panel');
     const commentsPanel = document.getElementById('comments-panel');
-    const verCuentasPanel = document.getElementById('ver-cuentas-panel');
 
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
@@ -459,14 +439,10 @@
     const createBtn = document.getElementById('create-btn');
     const accountCountInput = document.getElementById('account-count');
 
-    const storiesRow = document.getElementById('stories-row');
-    const statusFeed = document.getElementById('status-feed');
-
     const API_URL = "https://api.kraveapi.xyz";
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    let cuentasActivasInterval; let cuentasActivas = [];
+    let cuentasActivasInterval;
 
-    // ---------- UI helpers ----------
     function showNotification(message, isError=false){
       notificationText.textContent = message;
       notification.classList.add('show');
@@ -474,88 +450,45 @@
       setTimeout(()=>notification.classList.remove('show'), 2600);
     }
 
-    function addFeedCard({title, text, icon='fa-bolt'}){
-      const card = document.createElement('article');
-      card.className = 'post';
-      card.innerHTML = `
-        <div class="post-header">
-          <img src="https://i.pravatar.cc/80?u=${encodeURIComponent(title)}" alt="avatar" />
-          <div>
-            <strong>${title}</strong>
-            <div class="muted" style="font-size:.85rem">${new Date().toLocaleString()}</div>
-          </div>
-        </div>
-        <div style="padding:0 14px 14px">${text}</div>
-        <div class="post-actions">
-          <button class="ghost"><i class="fa-regular fa-heart"></i> Like</button>
-          <button class="ghost"><i class="fa-regular fa-comment"></i> Comentar</button>
-          <button class="ghost"><i class="fa-regular fa-bookmark"></i> Guardar</button>
-        </div>`;
-      statusFeed.prepend(card);
-    }
+    // ===== Navegación entre paneles =====
+    instagramLink?.addEventListener('click', e=>{ e.preventDefault(); instagramPanel.classList.add('active'); });
+    volverInicio?.addEventListener('click', e=>{ e.preventDefault(); instagramPanel.classList.remove('active'); });
+    crearCuentasLink?.addEventListener('click', e=>{ e.preventDefault(); createAccountsPanel.classList.add('active'); instagramPanel.classList.remove('active'); });
+    volverInstagram?.addEventListener('click', e=>{ e.preventDefault(); createAccountsPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
+    loginLink?.addEventListener('click', async e=>{ e.preventDefault(); loginPanel.classList.add('active'); instagramPanel.classList.remove('active'); await checkSessionStatus(); actualizarListaCuentasActivas(); if(cuentasActivasInterval) clearInterval(cuentasActivasInterval); cuentasActivasInterval = setInterval(actualizarListaCuentasActivas, 30000); });
+    volverLogin?.addEventListener('click', e=>{ e.preventDefault(); loginPanel.classList.remove('active'); if(cuentasActivasInterval) clearInterval(cuentasActivasInterval); instagramPanel.classList.add('active'); });
+    commentsLink?.addEventListener('click', e=>{ e.preventDefault(); commentsPanel.classList.add('active'); instagramPanel.classList.remove('active'); });
+    volverInicioComments?.addEventListener('click', e=>{ e.preventDefault(); commentsPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
 
-    // ---------- Historias a partir de cuentas activas ----------
-    function renderStories(list){
-      storiesRow.innerHTML = '';
-      list.slice(0,12).forEach(acc=>{
-        const s = document.createElement('div');
-        s.className='story';
-        s.innerHTML = `
-          <div class="ring"><img src="https://api.dicebear.com/7.x/initials/svg?seed=${acc.username}" alt="${acc.username}" /></div>
-          <small>@${acc.username}</small>`;
-        storiesRow.appendChild(s);
-      });
-    }
-
-    // ---------- Navegación de paneles ----------
-    instagramLink?.addEventListener('click', (e)=>{ e.preventDefault(); instagramPanel.classList.add('active'); });
-    volverInicio?.addEventListener('click', (e)=>{ e.preventDefault(); instagramPanel.classList.remove('active'); });
-    crearCuentasLink?.addEventListener('click', (e)=>{ e.preventDefault(); createAccountsPanel.classList.add('active'); instagramPanel.classList.remove('active'); });
-    volverInstagram?.addEventListener('click', (e)=>{ e.preventDefault(); createAccountsPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
-    loginLink?.addEventListener('click', async (e)=>{ e.preventDefault(); loginPanel.classList.add('active'); instagramPanel.classList.remove('active'); await checkSessionStatus(); actualizarListaCuentasActivas(); if(cuentasActivasInterval) clearInterval(cuentasActivasInterval); cuentasActivasInterval = setInterval(actualizarListaCuentasActivas, 30000); });
-    volverLogin?.addEventListener('click', (e)=>{ e.preventDefault(); loginPanel.classList.remove('active'); if(cuentasActivasInterval) clearInterval(cuentasActivasInterval); instagramPanel.classList.add('active'); });
-    commentsLink?.addEventListener('click', (e)=>{ e.preventDefault(); commentsPanel.classList.add('active'); instagramPanel.classList.remove('active'); });
-    volverInicioComments?.addEventListener('click', (e)=>{ e.preventDefault(); commentsPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
-    verCuentasLink?.addEventListener('click', (e)=>{ e.preventDefault(); verCuentasPanel.classList.add('active'); instagramPanel.classList.remove('active'); cargarCuentasGeneradas(); });
-    volverInstagramDesdeVer?.addEventListener('click', (e)=>{ e.preventDefault(); verCuentasPanel.classList.remove('active'); instagramPanel.classList.add('active'); });
-
-    // ---------- Acciones rápidas ----------
-    sendBtn?.addEventListener('click', ()=>{ if(automationInput.value.trim()!==''){ addFeedCard({title:'Automatización', text:`Ejecutando: "${automationInput.value}"`}); showNotification(`Automatizando: "${automationInput.value}"`); automationInput.value=''; } });
+    // ===== Acciones rápidas =====
+    sendBtn?.addEventListener('click', ()=>{ if(automationInput.value.trim()!==''){ showNotification(`Automatizando: "${automationInput.value}"`); automationInput.value=''; }});
     refreshBtn?.addEventListener('click', ()=>{ refreshBtn.style.transform='rotate(180deg)'; setTimeout(()=>refreshBtn.style.transform='', 250); checkBackendConnection(); });
 
-    // ---------- Backend / Estado ----------
+    // ===== Backend =====
     async function checkBackendConnection(){
-      try{
-        const r = await fetch(`${API_URL}/health`, { credentials:'include' });
+      try{ const r = await fetch(`${API_URL}/health`, { credentials:'include' });
         if(r.ok){ systemStatusDot.style.background = 'var(--success)'; systemStatusText.textContent='Conectado al backend'; return true; }
         throw new Error('Backend responded with error');
       }catch(err){ systemStatusDot.style.background='var(--danger)'; systemStatusText.textContent='Error de conexión'; return false; }
     }
 
     async function checkSessionStatus(){
-      try{
-        const r = await fetch(`${API_URL}/estado-sesion`, { credentials:'include' });
-        const data = await r.json();
+      try{ const r = await fetch(`${API_URL}/estado-sesion`, { credentials:'include' }); const data = await r.json();
         if(data.status==='activo'){
           isLoggedIn = true; localStorage.setItem('isLoggedIn','true');
-          sessionStatus.className = 'status-indicator-panel status-active';
-          sessionStatus.querySelector('.status-dot-panel').style.background='var(--success)';
+          sessionStatus.querySelector('.status-dot-panel')?.style?.setProperty('background','var(--success)');
           sessionStatusText.textContent = `✅ Sesión activa como @${data.usuario}`;
-          loginForm.style.display='none'; logoutBtn.classList.remove('hidden');
+          loginForm.style.display='block';
           showNotification(`Sesión activa como @${data.usuario}`);
         }else{
           isLoggedIn=false; localStorage.setItem('isLoggedIn','false');
-          sessionStatus.className = 'status-indicator-panel status-error';
-          sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
+          sessionStatus.querySelector('.status-dot-panel')?.style?.setProperty('background','var(--danger)');
           sessionStatusText.textContent = '❌ No hay sesión activa';
-          loginForm.style.display='block'; logoutBtn.classList.add('hidden');
         }
       }catch(e){
         isLoggedIn=false; localStorage.setItem('isLoggedIn','false');
-        sessionStatus.className = 'status-indicator-panel status-error';
-        sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
+        sessionStatus.querySelector('.status-dot-panel')?.style?.setProperty('background','var(--danger)');
         sessionStatusText.textContent = '❌ Error al verificar sesión';
-        loginForm.style.display='block'; logoutBtn.classList.add('hidden');
         showNotification('Error al verificar sesión', true);
       }
     }
@@ -568,38 +501,17 @@
         loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Iniciando…'; loginBtn.disabled=true;
         const r = await fetch(`${API_URL}/iniciar-sesion`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({usuario:username, contrasena:password}) });
         const data = await r.json();
-        if(data.exito){
-          isLoggedIn=true; localStorage.setItem('isLoggedIn','true');
-          sessionStatus.className='status-indicator-panel status-active';
-          sessionStatus.querySelector('.status-dot-panel').style.background='var(--success)';
-          sessionStatusText.textContent=`✅ Sesión iniciada como @${data.usuario}`;
-          loginForm.style.display='none'; logoutBtn.classList.remove('hidden');
-          showNotification(`Sesión iniciada como @${data.usuario}`); actualizarListaCuentasActivas();
-        }else{ throw new Error(data.mensaje||'Error al iniciar sesión'); }
-      }catch(err){
-        sessionStatus.className='status-indicator-panel status-error';
-        sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
-        sessionStatusText.textContent=`❌ ${err.message}`;
-        loginForm.style.display='block'; logoutBtn.classList.add('hidden');
-        showNotification(`Error: ${err.message}`, true);
-      }finally{
-        loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión'; loginBtn.disabled=false;
-      }
+        if(data.exito){ isLoggedIn=true; localStorage.setItem('isLoggedIn','true'); sessionStatus.querySelector('.status-dot-panel').style.background='var(--success)'; sessionStatusText.textContent=`✅ Sesión iniciada como @${data.usuario}`; showNotification(`Sesión iniciada como @${data.usuario}`); actualizarListaCuentasActivas(); }
+        else{ throw new Error(data.mensaje||'Error al iniciar sesión'); }
+      }catch(err){ sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)'; sessionStatusText.textContent=`❌ ${err.message}`; showNotification(`Error: ${err.message}`, true); }
+      finally{ loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión'; loginBtn.disabled=false; }
     }
 
     async function logout(){
-      try{
-        logoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cerrando…'; logoutBtn.disabled=true;
-        const r = await fetch(`${API_URL}/cerrar-sesion`, { credentials:'include' });
-        const data = await r.json();
-        if(data.exito){
-          isLoggedIn=false; localStorage.setItem('isLoggedIn','false');
-          sessionStatus.className='status-indicator-panel status-error';
-          sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)';
-          sessionStatusText.textContent='❌ Sesión cerrada';
-          loginForm.style.display='block'; logoutBtn.classList.add('hidden');
-          showNotification('Sesión cerrada correctamente');
-        }else{ throw new Error(data.mensaje||'Error al cerrar sesión'); }
+      try{ logoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cerrando…'; logoutBtn.disabled=true;
+        const r = await fetch(`${API_URL}/cerrar-sesion`, { credentials:'include' }); const data = await r.json();
+        if(data.exito){ isLoggedIn=false; localStorage.setItem('isLoggedIn','false'); sessionStatus.querySelector('.status-dot-panel').style.background='var(--danger)'; sessionStatusText.textContent='❌ Sesión cerrada'; showNotification('Sesión cerrada correctamente'); }
+        else{ throw new Error(data.mensaje||'Error al cerrar sesión'); }
       }catch(err){ showNotification(`Error: ${err.message}`, true); }
       finally{ logoutBtn.innerHTML='<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión'; logoutBtn.disabled=false; }
     }
@@ -608,16 +520,12 @@
       const username = manualUsername.value.trim();
       const password = manualPassword.value.trim();
       if(!username||!password){ return showNotification('Completa ambos campos', true); }
-      try{
-        addAccountBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; addAccountBtn.disabled=true;
-        const loginRes = await fetch(`${API_URL}/iniciar-sesion`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({usuario:username, contrasena:password}) });
-        const loginData = await loginRes.json();
-        if(!loginData.exito){ throw new Error(loginData.mensaje||'Error al iniciar sesión con la cuenta'); }
-        const saveRes = await fetch(`${API_URL}/guardar-cuenta`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({username, password}) });
-        const saveData = await saveRes.json();
-        if(saveData.status==='ok'){
-          showNotification(`✅ Cuenta @${username} guardada`); manualUsername.value=''; manualPassword.value=''; actualizarListaCuentasActivas();
-        }else{ throw new Error(saveData.message||'Error al guardar la cuenta'); }
+      try{ addAccountBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; addAccountBtn.disabled=true;
+        const loginRes = await fetch(`${API_URL}/iniciar-sesion`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({usuario:username, contrasena:password}) }); const loginData = await loginRes.json();
+        if(!loginData.exito) throw new Error(loginData.mensaje||'Error al iniciar sesión con la cuenta');
+        const saveRes = await fetch(`${API_URL}/guardar-cuenta`, { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({username, password}) }); const saveData = await saveRes.json();
+        if(saveData.status==='ok'){ showNotification(`✅ Cuenta @${username} guardada`); manualUsername.value=''; manualPassword.value=''; actualizarListaCuentasActivas(); }
+        else throw new Error(saveData.message||'Error al guardar la cuenta');
       }catch(err){ showNotification(`Error: ${err.message}`, true); }
       finally{ addAccountBtn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Guardar Cuenta'; addAccountBtn.disabled=false; }
     }
@@ -625,10 +533,8 @@
     async function searchUser(){
       const username = usernameSearch.value.trim().replace('@','');
       if(!username){ return showNotification('Ingresa un usuario', true); }
-      try{
-        searchUserBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Buscando…'; searchUserBtn.disabled=true;
-        const r = await fetch(`${API_URL}/buscar-usuario?username=${username}`, { credentials:'include' });
-        const userData = await r.json();
+      try{ searchUserBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Buscando…'; searchUserBtn.disabled=true;
+        const r = await fetch(`${API_URL}/buscar-usuario?username=${username}`, { credentials:'include' }); const userData = await r.json();
         document.getElementById('user-avatar').src = userData.profile_pic_url_hd || 'https://via.placeholder.com/150?text=Sin+imagen';
         const usernameEl = document.getElementById('user-username');
         usernameEl.innerHTML = `@${userData.username}` + (userData.is_verified ? ' <i class="fa-solid fa-circle-check" style="color:#0095f6"></i>' : '');
@@ -637,48 +543,37 @@
         document.getElementById('user-followers').textContent = (userData.follower_count||0).toLocaleString();
         document.getElementById('user-following').textContent = (userData.following_count||0).toLocaleString();
         document.getElementById('user-bio-text').textContent = userData.biography || 'Sin biografía disponible';
-        document.getElementById('user-private').innerHTML = `<span class="status-dot-panel" style="background:${userData.is_private?'var(--warning)':'var(--success)'}"></span><span>Privado: ${userData.is_private?'Sí':'No'}</span>`;
-        document.getElementById('user-verified').innerHTML = `<span class="status-dot-panel" style="background:${userData.is_verified?'var(--success)':'var(--muted)'}"></span><span>Verificado: ${userData.is_verified?'Sí':'No'}</span>`;
-        document.getElementById('user-business').innerHTML = `<span class="status-dot-panel" style="background:${userData.is_business?'var(--brand)':'var(--muted)'}"></span><span>Negocio: ${userData.is_business?'Sí':'No'}</span>`;
-        userResult.style.display='block';
+        document.getElementById('user-private').innerHTML = `<span class=\"mini-dot status-dot-panel\" style=\"background:${userData.is_private?'var(--warning)':'var(--success)'}\"></span><span>Privado: ${userData.is_private?'Sí':'No'}</span>`;
+        document.getElementById('user-verified').innerHTML = `<span class=\"mini-dot status-dot-panel\" style=\"background:${userData.is_verified?'var(--success)':'var(--muted)'}\"></span><span>Verificado: ${userData.is_verified?'Sí':'No'}</span>`;
+        document.getElementById('user-business').innerHTML = `<span class=\"mini-dot status-dot-panel\" style=\"background:${userData.is_business?'var(--brand)':'var(--muted)'}\"></span><span>Negocio: ${userData.is_business?'Sí':'No'}</span>`;
+        document.getElementById('user-result').style.display='block';
         showNotification(`Usuario @${userData.username} encontrado`);
-      }catch(err){ console.error(err); showNotification(`Error: ${err.message||'No se pudo encontrar el usuario'}`, true); }
+      }catch(err){ showNotification(`Error: ${err.message||'No se pudo encontrar el usuario'}`, true); }
       finally{ searchUserBtn.innerHTML='<i class="fa-solid fa-magnifying-glass"></i> Buscar'; searchUserBtn.disabled=false; }
     }
 
-    // Mostrar/ocultar textarea de comentarios manuales
-    document.getElementById('modo-select')?.addEventListener('change', (e)=>{
-      const show = e.target.value === 'manual';
-      document.getElementById('manualSection').style.display = show ? 'block' : 'none';
+    document.getElementById('modo-select')?.addEventListener('change', e=>{
+      document.getElementById('manualSection').style.display = e.target.value==='manual' ? 'block' : 'none';
     });
 
     async function iniciarCreacionCuentas(){
       const cantidad = parseInt(accountCountInput.value);
       if(!cantidad || cantidad<=0 || cantidad>100){ return showNotification('⚠️ Ingresa una cantidad válida (1-100)', true); }
-      // UI only: mostramos progreso (la lógica real la maneja el backend)
-      addFeedCard({title:'Creación de cuentas', text:`Iniciando creación de ${cantidad} cuenta(s)…`});
       showNotification('Creación iniciada');
     }
 
     async function actualizarListaCuentasActivas(){
       const lista = cuentasActivasList; if(!lista) return;
-      try{
-        const r = await fetch(`${API_URL}/cuentas-activas`, { credentials:'include' });
-        const cuentas = await r.json(); cuentasActivas = cuentas;
-        renderStories(cuentas);
+      try{ const r = await fetch(`${API_URL}/cuentas-activas`, { credentials:'include' }); const cuentas = await r.json();
         if(!cuentas.length){ lista.innerHTML='<li>No hay cuentas activas aún</li>'; return; }
         lista.innerHTML='';
-        cuentas.forEach(acc=>{
-          const li=document.createElement('li');
-          const left=document.createElement('div'); left.className='left';
-          const dot=document.createElement('div'); dot.className='mini-dot'; dot.style.background = acc.status==='activo' ? 'var(--success)' : 'var(--danger)';
-          left.appendChild(dot); left.appendChild(document.createTextNode('@'+acc.username));
-          const actions=document.createElement('div');
-          const btn=document.createElement('button'); btn.className='mini-btn';
+        cuentas.forEach(acc=>{ const li=document.createElement('li');
+          li.innerHTML = `<div class=\"left\"><div class=\"mini-dot\" style=\"background:${acc.status==='activo'?'var(--success)':'var(--danger)'}\"></div>@${acc.username}</div>`;
+          const btn = document.createElement('button'); btn.className='btn btn-ghost';
           if(acc.status==='activo'){ btn.innerHTML='<i class="fa-solid fa-right-from-bracket"></i> Logout'; btn.onclick=()=>cerrarSesionCuenta(acc.username); }
-          else{ btn.innerHTML='<i class="fa-solid fa-right-to-bracket"></i> Login'; btn.onclick=()=>iniciarSesionCuenta(acc.username); }
-          actions.appendChild(btn);
-          li.appendChild(left); li.appendChild(actions); lista.appendChild(li);
+          else { btn.innerHTML='<i class="fa-solid fa-right-to-bracket"></i> Login'; btn.onclick=()=>iniciarSesionCuenta(acc.username); }
+          const right=document.createElement('div'); right.appendChild(btn); li.appendChild(right);
+          lista.appendChild(li);
         });
       }catch(err){ lista.innerHTML='<li>Error al cargar las cuentas</li>'; }
     }
@@ -697,25 +592,18 @@
       }catch(err){ showNotification(`Error: ${err.message}`, true); }
     }
 
-    async function cargarCuentasGeneradas(){
-      // Si en el futuro hay endpoint dedicado, cámbialo aquí; por ahora usamos cuentas-activas como mock
-      const ul = document.getElementById('lista-cuentas-generadas');
-      try{
-        const r = await fetch(`${API_URL}/cuentas-activas`, { credentials:'include' });
-        const cuentas = await r.json();
-        if(!cuentas.length){ ul.innerHTML = '<li>No hay registros aún</li>'; return; }
-        ul.innerHTML='';
-        cuentas.forEach(c=>{ const li=document.createElement('li'); li.innerHTML=`<div class="left"><div class="mini-dot" style="background:var(--brand)"></div>@${c.username}</div><div class="muted">${c.status}</div>`; ul.appendChild(li); });
-      }catch(e){ ul.innerHTML='<li>Error al cargar</li>'; }
-    }
-
     // Listeners
     loginBtn?.addEventListener('click', login);
     logoutBtn?.addEventListener('click', logout);
     addAccountBtn?.addEventListener('click', addAccount);
     searchUserBtn?.addEventListener('click', searchUser);
-    usernameSearch?.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ searchUser(); }});
+    usernameSearch?.addEventListener('keypress', e=>{ if(e.key==='Enter'){ searchUser(); }});
     createBtn?.addEventListener('click', iniciarCreacionCuentas);
+
+    // Notificaciones (campana)
+    const notifBtn = document.getElementById('notif-btn');
+    const notifCenter = document.getElementById('notif-center');
+    notifBtn?.addEventListener('click', ()=> notifCenter.classList.toggle('open'));
 
     // Init
     document.addEventListener('DOMContentLoaded', async ()=>{
@@ -723,10 +611,74 @@
       await checkBackendConnection();
       await checkSessionStatus();
       actualizarListaCuentasActivas();
-      // Feed inicial
-      addFeedCard({title:'Sistema', text:'Bienvenido a tu panel. Todo listo para automatizar.'});
       setInterval(checkBackendConnection, 120000);
     });
+  </script>  <!-- ===== Tabs iOS + Gestos móviles + Optimizaciones ===== -->  <script>
+    // Tabbar routing
+    const tabbar = document.getElementById('tabbar');
+    const tabItems = [...document.querySelectorAll('.tab-item')];
+    const sections = {
+      home: document.getElementById('home-section'),
+      accounts: document.getElementById('login-panel'), // usamos panel de cuentas/login
+      actions: document.getElementById('instagram-panel'), // acciones de IG
+      settings: null // placeholder
+    };
+
+    function setActiveTab(key) {
+      tabItems.forEach(b => b.classList.toggle('active', b.dataset.target === key));
+      // Mostrar/ocultar
+      if (key === 'home') {
+        sections.accounts?.classList.remove('active');
+        sections.actions?.classList.remove('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      if (key === 'accounts') {
+        sections.actions?.classList.remove('active');
+        sections.accounts?.classList.add('active');
+      }
+      if (key === 'actions') {
+        sections.accounts?.classList.remove('active');
+        sections.actions?.classList.add('active');
+      }
+    }
+
+    tabItems.forEach(btn => btn.addEventListener('click', () => setActiveTab(btn.dataset.target)));
+    window.addEventListener('hashchange', () => {
+      const key = location.hash.replace('#','') || 'home';
+      const exists = tabItems.some(b => b.dataset.target === key);
+      setActiveTab(exists ? key : 'home');
+    });
+    setActiveTab((location.hash || '#home').replace('#',''));
+
+    // Gestos: swipe derecha para cerrar paneles
+    const panels = [document.getElementById('instagram-panel'), document.getElementById('login-panel'), document.getElementById('create-accounts-panel'), document.getElementById('comments-panel')];
+    let touchX = null;
+    function onTouchStart(e){ touchX = e.touches[0].clientX; }
+    function onTouchMove(e){ if (touchX === null) return; const dx = e.touches[0].clientX - touchX; if (dx > 70) { panels.forEach(p => p?.classList.remove('active')); setActiveTab('home'); touchX = null; } }
+    panels.forEach(p => { p?.addEventListener('touchstart', onTouchStart, {passive:true}); p?.addEventListener('touchmove', onTouchMove, {passive:true}); });
+
+    // Teclado móvil: asegurar inputs visibles (iOS Safari)
+    if (window.visualViewport) {
+      const fixers = [document.querySelector('.app-content'), ...panels.map(p=>p?.querySelector('.panel-inner')).filter(Boolean)];
+      const onVV = () => { fixers.forEach(el => { if (!el) return; el.style.scrollMarginBottom = (window.visualViewport.height < window.innerHeight) ? '200px' : '0px'; }); };
+      window.visualViewport.addEventListener('resize', onVV); onVV();
+    }
+
+    // Rendimiento: lazy images & reducción de blur si FPS bajo
+    document.querySelectorAll('img').forEach(img => { img.loading = 'lazy'; img.decoding = 'async'; });
+    let frameCount = 0, t0 = performance.now();
+    requestAnimationFrame(function check(ts){
+      frameCount++;
+      if (ts - t0 > 3000) {
+        const fps = frameCount / ((ts - t0)/1000);
+        if (fps < 30) document.documentElement.style.setProperty('--blur','8px');
+      } else { requestAnimationFrame(check); }
+    });
+
+    // FAB
+    const fab = document.getElementById('fab');
+    const fabMenu = document.getElementById('fab-menu');
+    fab?.addEventListener('click', () => fabMenu.classList.toggle('open'));
   </script>  <!-- Toggles de contraseña -->  <script>
     document.getElementById('togglePassword')?.addEventListener('click', ()=>{
       const el = document.getElementById('login-password'); el.type = el.type==='password' ? 'text' : 'password';
