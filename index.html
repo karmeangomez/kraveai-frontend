@@ -17,6 +17,10 @@
       --accent:#7C5CFF; --accent2:#00DBC1; --success:#34d399; --warn:#ffb454; --err:#ff5f74;
       --glass:rgba(255,255,255,.06); --shadow:0 12px 40px rgba(0,0,0,.35);
       --r:18px; --r-lg:22px;
+
+      /* Device Farm sizing */
+      --device-h: 220px;           /* altura de cada “pantalla de teléfono” */
+      --device-min-col: 180px;     /* ancho mínimo por columna en el grid */
     }
     :root.light{
       --bg:#f6f7fb; --elev:#ffffff; --card:#ffffff; --text:#0B0D13; --muted:#68707b; --line:#e7e9ef;
@@ -32,13 +36,14 @@
       color:var(--text);
       font: 15px/1.4 ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, Roboto;
       -webkit-font-smoothing:antialiased;
+      overscroll-behavior-y: none;
     }
 
     /* =============== APP CHROME =============== */
     .topbar{
       position:sticky; top:0; z-index:50;
       display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center;
-      padding:12px 14px env(safe-area-inset-top);
+      padding: calc(12px + env(safe-area-inset-top)) 14px 12px; /* safe area iOS */
       background: color-mix(in oklab, var(--elev) 90%, transparent);
       backdrop-filter:saturate(1.15) blur(16px);
       border-bottom:1px solid var(--line);
@@ -57,7 +62,10 @@
     .chip:active{ transform:scale(.96) }
     @keyframes pulseGlow{0%{box-shadow:0 0 0 0 rgba(124,92,255,.45)}70%{box-shadow:0 0 0 18px rgba(124,92,255,0)}100%{box-shadow:0 0 0 0 rgba(124,92,255,0)}}
 
-    .screen{ padding:14px 14px 100px; max-width:1100px; margin-inline:auto }
+    .screen{
+      padding: 14px 16px calc(100px + env(safe-area-inset-bottom)); /* nada se tapa con la tabbar */
+      max-width: 1200px; margin-inline:auto;
+    }
     .section{ margin:12px 0 18px }
     .section h3{ margin:0 0 8px; font-size:1.05rem; display:flex; align-items:center; gap:10px; opacity:.95 }
     .muted{ color:var(--muted) }
@@ -97,7 +105,7 @@
     /* Panels deslizables */
     .panel{ position:fixed; inset:0; z-index:60; display:none }
     .panel.active{ display:block }
-    .panel .inner{ height:100%; width:100%; background:var(--bg); animation:slide .25s ease }
+    .panel .inner{ height:100%; width:100%; background:var(--bg); animation:slide .25s ease; overflow:auto; -webkit-overflow-scrolling:touch; }
     @keyframes slide{ from{ transform:translateX(18px); opacity:0 } to{ transform:translateX(0); opacity:1 } }
 
     /* Service Center */
@@ -112,16 +120,21 @@
     textarea.ctrl{ min-height:96px; resize:vertical }
 
     /* Device Farm */
-    .farm-grid{ display:grid; gap:12px; grid-template-columns:repeat(1,minmax(0,1fr)) }
-    @media (min-width:720px){ .farm-grid{ grid-template-columns:repeat(2,minmax(0,1fr)) } }
-    @media (min-width:1020px){ .farm-grid{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
+    .farm-grid{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(var(--device-min-col), 1fr)); }
     .device{ display:grid; gap:10px; padding:12px }
     .device-head{ display:flex; align-items:center; justify-content:space-between; gap:8px }
     .chips{ display:flex; gap:6px; flex-wrap:wrap }
     .chip-b{ padding:6px 10px; border:1px solid var(--line); border-radius:999px; background:var(--glass); font-size:.8rem }
-    .screen{ border:1px solid var(--line); border-radius:16px; overflow:hidden; background:#000; height:260px; position:relative }
-    .screen video,.screen img{ width:100%; height:100%; object-fit:cover; display:block }
-    .overlay{ position:absolute; left:8px; top:8px; display:flex; gap:6px }
+    .device-screen{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background:#000;
+      height: var(--device-h);
+      position:relative;
+    }
+    .device-screen video,.device-screen img{ width:100%; height:100%; object-fit:cover; display:block }
+    .device-screen .overlay{ position:absolute; left:8px; top:8px; display:flex; gap:6px }
     .actions{ display:flex; gap:8px; justify-content:flex-end }
 
     /* Toast + Crédito */
@@ -144,12 +157,11 @@
     <div class="chip" title="Perfil">KG</div>
   </header>
 
-  <!-- HOME SCREEN -->
+  <!-- HOME -->
   <main id="home" class="screen">
     <section class="section">
       <h3><i class="fa-solid fa-hashtag"></i> Redes sociales</h3>
       <div class="grid" id="social-grid">
-        <!-- tiles: al tocar abren el Service Center -->
         <div class="card tile" data-platform="instagram"><div class="icon"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div><div class="label">Instagram</div></div>
         <div class="card tile" data-platform="tiktok"><div class="icon"><i class="fa-brands fa-tiktok" style="color:#69C9D0"></i></div><div class="label">TikTok</div></div>
         <div class="card tile" data-platform="youtube"><div class="icon"><i class="fa-brands fa-youtube" style="color:#FF0000"></i></div><div class="label">YouTube</div></div>
@@ -222,6 +234,14 @@
         <h3><i class="fa-solid fa-mobile-screen-button"></i> Device Farm</h3>
         <button class="btn" id="farm-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
       </div>
+
+      <!-- Toolbar de zoom -->
+      <div class="section" style="display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:-6px">
+        <span class="muted">Zoom</span>
+        <button class="btn" id="zoom-out">–</button>
+        <button class="btn" id="zoom-in">+</button>
+      </div>
+
       <p class="muted">Monitorea múltiples dispositivos en tiempo real.</p>
       <div class="farm-grid" id="farm-grid"></div>
     </div>
@@ -391,6 +411,14 @@
     document.getElementById('farm-back').addEventListener('click',()=>farmPanel.classList.remove('active'));
     let sse=null;
 
+    // Zoom
+    const zoomIn = document.getElementById('zoom-in');
+    const zoomOut = document.getElementById('zoom-out');
+    function setDeviceHeight(px){ document.documentElement.style.setProperty('--device-h', px + 'px'); }
+    function getDeviceHeight(){ return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--device-h')) || 220; }
+    zoomIn?.addEventListener('click', ()=> setDeviceHeight(Math.min(getDeviceHeight()+40, 420)));
+    zoomOut?.addEventListener('click', ()=> setDeviceHeight(Math.max(getDeviceHeight()-40, 140)));
+
     async function loadDevices(){
       try{
         const r=await fetch(`${API_URL}/devices`,{credentials:'include'}); const list=await r.json();
@@ -406,7 +434,7 @@
       chips.innerHTML=`<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`;
       head.appendChild(chips);
 
-      const screen=document.createElement('div'); screen.className='screen';
+      const screen=document.createElement('div'); screen.className='device-screen';
       const overlay=document.createElement('div'); overlay.className='overlay'; overlay.innerHTML=`<span class="chip-b">${d.task||'Idle'}</span>`;
       const vid=document.createElement('video'); vid.autoplay=true; vid.muted=true; vid.playsInline=true; vid.controls=false; vid.style.display='none';
       const img=document.createElement('img'); if(d.mjpeg_url) img.src=d.mjpeg_url; img.alt='stream';
@@ -458,7 +486,7 @@
       if(k==='home'){ svcPanel.classList.remove('active'); farmPanel.classList.remove('active'); window.scrollTo({top:0,behavior:'smooth'}); }
       if(k==='actions'){ openServiceCenter('instagram'); }
       if(k==='farm'){ farmPanel.classList.add('active'); loadDevices(); }
-      // "accounts" y "settings" pueden abrir futuras pantallas si las separas
+      // accounts/settings pueden abrir futuras pantallas si las separas
     }));
 
     /* ===== Automatización rápida ===== */
@@ -468,7 +496,7 @@
       toast(`Automatizando: "${v}"`); document.getElementById('automation-input').value='';
     });
 
-    // Abrir Service Center desde Home
+    // Abrir Farm desde Home
     document.getElementById('open-farm').addEventListener('click',()=>{ farmPanel.classList.add('active'); loadDevices(); });
   </script>
 </body>
