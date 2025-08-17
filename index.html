@@ -11,188 +11,172 @@
   <title>KRAVEAI — Automation OS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* ================= TOKENS ================= */
+    /* ================= Design tokens ================= */
     :root{
-      --bg:#0b0b10; --elev:#111218; --card:#151722; --text:#ECEEF4; --muted:#9aa0a6; --line:#24263a;
+      --bg:#0b0b10; --elev:#111218; --card:#141822; --text:#ECEEF4; --muted:#9aa0a6; --line:#24263a;
       --accent:#7C5CFF; --accent2:#00DBC1; --success:#34d399; --warn:#ffb454; --err:#ff5f74;
       --glass:rgba(255,255,255,.06); --glass-2:rgba(255,255,255,.08);
-      --shadow:0 12px 40px rgba(0,0,0,.35);
-      --r:16px; --r-lg:22px;
-      --device-h: 220px;      /* altura por dispositivo */
-      --device-min-col: 190px;/* ancho mínimo columna */
+      --r:14px; --shadow:0 12px 40px rgba(0,0,0,.35);
       --igBlue:#0095F6;
+      --device-h:230px; --device-min-col:190px;
     }
     :root.light{
-      --bg:#f6f7fb; --elev:#ffffff; --card:#ffffff; --text:#0B0D13; --muted:#68707b; --line:#e7e9ef;
-      --glass:rgba(0,0,0,.04); --glass-2:rgba(0,0,0,.06); --shadow:0 10px 30px rgba(0,0,0,.12);
+      --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0B0D13; --muted:#6b7280; --line:#e6e9f1;
+      --glass:rgba(0,0,0,.04); --glass-2:rgba(0,0,0,.06); --shadow:0 10px 28px rgba(0,0,0,.1);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; background:var(--bg); color:var(--text);
-      font: 14.5px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, Roboto;
+      font:14.5px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, Roboto;
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* app-like */
+      overflow:hidden;  /* app-like */
     }
 
-    /* Aurora sutil */
-    .aurora{position:fixed; inset:-10% -20%; z-index:-1; filter:blur(36px); opacity:.4; pointer-events:none;
+    /* ===== Background aurora */
+    .aurora{position:fixed; inset:-15% -25%; z-index:-1; filter:blur(38px); opacity:.42; pointer-events:none;
       background:
-        radial-gradient(60% 40% at 85% 10%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(45% 35% at 10% 0%, rgba(0,219,193,.25), transparent 70%),
-        radial-gradient(40% 30% at 15% 85%, rgba(255,95,116,.18), transparent 70%);
+       radial-gradient(60% 40% at 85% 10%, rgba(124,92,255,.36), transparent 60%),
+       radial-gradient(45% 35% at 10% 0%, rgba(0,219,193,.26), transparent 70%),
+       radial-gradient(40% 30% at 15% 85%, rgba(255,95,116,.18), transparent 70%);
       animation:aur 18s ease-in-out infinite alternate}
     @keyframes aur{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-2%,1%,0)}}
 
-    /* =============== APP CHROME =============== */
+    /* ===== Top bar ===== */
     .topbar{
       position:fixed; top:0; left:0; right:0; z-index:60;
-      display:grid; grid-template-columns:auto 1fr auto auto; gap:6px; align-items:center;
+      display:grid; grid-template-columns:auto 1fr auto auto; gap:8px; align-items:center;
       padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
       background: color-mix(in oklab, var(--elev) 92%, transparent);
-      backdrop-filter:saturate(1.15) blur(16px);
       border-bottom:1px solid var(--line);
+      backdrop-filter:saturate(1.15) blur(16px);
     }
     .brand-mini{ display:flex; align-items:center; gap:8px }
     .wordmark{ font-weight:900; letter-spacing:.16em; font-size:.98rem }
-
+    .chip{
+      width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+      background:var(--glass);border:1px solid var(--line); color:var(--muted);
+      transition:transform .18s ease;
+    }
+    .chip:active{ transform:scale(.96) }
     .status{
       justify-self:start; display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
       background:var(--glass); border:1px solid var(--line); font-size:.86rem
     }
-    .status i{font-size:.55rem}
-    .chip{
-      width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
-      background:var(--glass);border:1px solid var(--line); color:var(--muted);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-    .chip:active{ transform:scale(.96) }
 
-    /* Pantalla principal compacta (sin scroll global) */
-    .shell{ /* contenedor que descuenta topbar y tabbar */
+    /* ===== App shell (compact) ===== */
+    .shell{
       position:fixed; left:0; right:0;
-      top:calc(48px + env(safe-area-inset-top)); /* altura topbar aprox */
-      bottom:calc(60px + env(safe-area-inset-bottom)); /* altura tabbar aprox */
+      top:calc(48px + env(safe-area-inset-top));
+      bottom:calc(62px + env(safe-area-inset-bottom));
       display:grid; grid-template-rows:auto auto 1fr; gap:8px; padding:10px 12px; overflow:hidden;
       max-width:1200px; margin:0 auto;
     }
-    .section{ margin:0 }
-    .muted{ color:var(--muted) }
-
-    /* Hero */
-    .hero{display:flex;gap:10px;align-items:center;justify-content:space-between}
-    .logo-badge{
-      width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    .hero{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .logo-badge{ width:42px; height:42px; border-radius:12px; display:grid; place-items:center;
       background:linear-gradient(135deg,var(--accent),var(--accent2));
       box-shadow:0 10px 22px rgba(124,92,255,.32), 0 8px 18px rgba(0,219,193,.18);
     }
-    .k-logo{ width:24px;height:24px; filter: drop-shadow(0 2px 8px rgba(124,92,255,.35)); animation: logoPulse 4.2s ease-in-out infinite }
-    @keyframes logoPulse {0%{filter:drop-shadow(0 2px 8px rgba(124,92,255,.35))}50%{filter:drop-shadow(0 6px 18px rgba(124,92,255,.55))}100%{filter:drop-shadow(0 2px 8px rgba(124,92,255,.35))}}
-
-    /* Tabs internas (reducción de scroll) */
-    .tabs{display:flex;gap:6px}
-    .tabmini{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:10px;
-      border:1px solid var(--line); background:var(--glass); color:var(--muted); font-weight:600; font-size:.9rem; cursor:pointer}
-    .tabmini.active{color:var(--text); background:var(--glass-2)}
-    .views{position:relative; overflow:hidden; border-radius:var(--r)}
-    .view{position:absolute; inset:0; overflow:auto; padding:10px; display:none}
-    .view.active{display:block; animation:fade .18s ease}
-    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-    /* Tiles sociales compactos */
-    .grid{ display:grid; gap:8px; grid-template-columns:repeat(3,minmax(0,1fr)) }
-    @media (min-width:700px){ .grid{ grid-template-columns:repeat(5,minmax(0,1fr)) } }
-    .card{background:linear-gradient(180deg, color-mix(in oklab, var(--card) 94%, transparent), color-mix(in oklab, var(--card) 98%, transparent)); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
-    .tile{display:flex;align-items:center;gap:10px;padding:10px;cursor:pointer;position:relative;overflow:hidden; transition:transform .12s ease}
-    .tile:hover{ transform:translateY(-1px) }
-    .tile .icon{ width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--glass-2);border:1px solid var(--line) }
-    .tile .label{ font-weight:700; font-size:.95rem }
-
-    .input-wrap{ display:flex;align-items:center;gap:8px;border:1px solid var(--line); background:var(--glass); border-radius:12px; padding:8px 10px }
-    .input-wrap input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
+    .k-logo{ width:24px; height:24px; filter: drop-shadow(0 2px 8px rgba(124,92,255,.38)); animation:logoPulse 4.2s ease-in-out infinite }
+    @keyframes logoPulse {0%{filter:drop-shadow(0 2px 8px rgba(124,92,255,.38))}50%{filter:drop-shadow(0 6px 18px rgba(124,92,255,.6))}100%{filter:drop-shadow(0 2px 8px rgba(124,92,255,.38))}}
 
     .btn{ border:1px solid var(--line); background:linear-gradient(180deg, color-mix(in oklab, var(--card) 94%, transparent), color-mix(in oklab, var(--card) 100%, transparent));
-      color:var(--text); padding:8px 10px; border-radius:10px; font-weight:700; font-size:.9rem; cursor:pointer; transition:transform .12s ease}
-    .btn:active{ transform:translateY(1px) }
-    .btn-primary{ background:linear-gradient(135deg, var(--accent), var(--accent2)); color:#0b0b10; border:0;
-      box-shadow:0 10px 26px rgba(124,92,255,.35),0 8px 22px rgba(0,219,193,.22) }
+      color:var(--text); padding:8px 12px; border-radius:12px; font-weight:700; font-size:.9rem; cursor:pointer }
+    .btn-primary{ background:linear-gradient(135deg, var(--accent), var(--accent2)); border:0; color:#0b0b10 }
 
-    /* Tab bar */
-    .tabbar{ position:fixed; inset-inline:0; bottom:0; z-index:55; display:grid; grid-template-columns:repeat(5,1fr); gap:6px;
+    .tabs{display:flex; gap:6px}
+    .tabmini{flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+      padding:8px; border-radius:12px; background:var(--glass); border:1px solid var(--line);
+      color:var(--muted); font-weight:700; font-size:.9rem; cursor:pointer}
+    .tabmini.active{color:var(--text); background:var(--glass-2)}
+
+    .views{position:relative; overflow:hidden; border-radius:var(--r)}
+    .view{position:absolute; inset:0; display:none; overflow:auto; padding:10px}
+    .view.active{display:block; animation:fade .18s ease}
+    @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+
+    /* ===== Cards/tiles ===== */
+    .grid{ display:grid; gap:10px; grid-template-columns:repeat(3,minmax(0,1fr)) }
+    @media (min-width:700px){ .grid{ grid-template-columns:repeat(5,minmax(0,1fr)) } }
+    .card{ background:linear-gradient(180deg, color-mix(in oklab, var(--card) 94%, transparent), color-mix(in oklab, var(--card) 98%, transparent));
+      border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow) }
+    .tile{ display:flex; align-items:center; gap:10px; padding:12px; cursor:pointer; transition:transform .12s ease }
+    .tile:hover{ transform:translateY(-1px) }
+    .tile .icon{ width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:var(--glass-2); border:1px solid var(--line) }
+    .tile .label{ font-weight:800; font-size:.98rem }
+    .muted{ color:var(--muted) }
+
+    .input-wrap{ display:flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--glass);
+      border-radius:12px; padding:8px 10px }
+    .input-wrap input{flex:1; background:transparent; border:0; outline:none; color:var(--text); font-size:.95rem}
+
+    /* ===== Tab bar ===== */
+    .tabbar{
+      position:fixed; inset-inline:0; bottom:0; z-index:55; display:grid; grid-template-columns:repeat(5,1fr); gap:8px;
       padding:8px 10px calc(8px + env(safe-area-inset-bottom)); background:color-mix(in oklab, var(--elev) 92%, transparent);
-      border-top:1px solid var(--line); backdrop-filter:saturate(1.15) blur(16px) }
-    .tab{display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;border-radius:10px;padding:6px;color:var(--muted);border:1px solid transparent}
+      border-top:1px solid var(--line); backdrop-filter:saturate(1.15) blur(16px)
+    }
+    .tab{display:flex; flex-direction:column; align-items:center; gap:4px; border-radius:12px; padding:6px; color:var(--muted); border:1px solid transparent}
     .tab.active{color:var(--text); background:var(--glass); border-color:var(--line)}
-    .tab i{font-size:1rem}
-    .tab span{font-size:.72rem}
-    @media (max-width:480px){ .tab span{display:none} .tab{padding:6px} }
+    .tab i{font-size:1rem} .tab span{font-size:.72rem}
+    @media (max-width:480px){ .tab span{display:none} }
 
-    /* Paneles (Acciones, Farm, Cuentas, Ajustes) */
+    /* ===== Panels ===== */
     .panel{ position:fixed; inset:0; z-index:70; display:none }
     .panel.active{ display:block }
-    .panel .inner{ position:absolute; left:0; right:0; top:calc(48px + env(safe-area-inset-top)); bottom:calc(60px + env(safe-area-inset-bottom));
-      background:var(--bg); animation:slide .2s ease; overflow:auto; padding:10px 12px; max-width:1200px; margin:0 auto }
-    @keyframes slide{ from{ transform:translateX(14px); opacity:0 } to{ transform:translateX(0); opacity:1 } }
+    .panel .inner{ position:absolute; left:0; right:0; top:calc(48px + env(safe-area-inset-top)); bottom:calc(62px + env(safe-area-inset-bottom));
+      background:var(--bg); padding:10px 12px; overflow:auto; max-width:1200px; margin:0 auto; animation:slide .2s ease }
+    @keyframes slide{from{transform:translateX(14px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-    /* Service Center */
-    .svc-grid{ display:grid; gap:8px; grid-template-columns:repeat(2,minmax(0,1fr)) }
-    @media (min-width:800px){ .svc-grid{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
-    .svc-card .title{ padding:12px; display:flex; gap:10px; align-items:center; font-weight:800 }
+    /* ===== Service Center ===== */
+    .svc-grid{ display:grid; gap:10px; grid-template-columns:repeat(2,minmax(0,1fr)) }
+    @media (min-width:820px){ .svc-grid{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
+    .svc-card .title{ padding:12px; display:flex; gap:10px; align-items:center; font-weight:900 }
     .svc-card .hint{ padding:0 12px 10px; color:var(--muted); font-size:.85rem }
-    .form{ display:grid; gap:8px }
-    .row{ display:grid; gap:6px }
-    .row label{ color:var(--muted); font-size:.85rem }
-    .ctrl{ border:1px solid var(--line); background:var(--glass); color:var(--text); border-radius:10px; padding:10px; outline:none }
+    .form{ display:grid; gap:8px } .row{ display:grid; gap:6px } .row label{ color:var(--muted); font-size:.85rem }
+    .ctrl{ border:1px solid var(--line); background:var(--glass); color:var(--text); border-radius:12px; padding:10px; outline:none }
     textarea.ctrl{ min-height:90px; resize:vertical }
 
-    /* Device Farm */
-    .farm-grid{ display:grid; gap:8px; grid-template-columns: repeat(auto-fit, minmax(var(--device-min-col), 1fr)); }
+    /* ===== Device Farm ===== */
+    .farm-grid{ display:grid; gap:10px; grid-template-columns: repeat(auto-fit, minmax(var(--device-min-col), 1fr)); }
     .device{ display:grid; gap:8px; padding:10px }
     .device-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:.92rem }
     .chips{ display:flex; gap:6px; flex-wrap:wrap }
     .chip-b{ padding:5px 8px; border:1px solid var(--line); border-radius:999px; background:var(--glass); font-size:.78rem }
-    .device-screen{
-      border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000;
-      height: var(--device-h); position:relative;
-    }
+    .device-screen{ border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000; height:var(--device-h); position:relative }
     .device-screen video,.device-screen img{ width:100%; height:100%; object-fit:cover; display:block }
-    .device-screen .overlay{ position:absolute; left:6px; top:6px; display:flex; gap:6px; align-items:center }
-    .actions{ display:flex; gap:6px; justify-content:flex-end }
+    .device-screen .overlay{ position:absolute; left:6px; top:6px; display:flex; gap:6px }
 
-    /* Cuentas */
-    .list{ display:grid; gap:8px }
-    .list-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--glass) }
+    /* ===== Accounts list ===== */
+    .list{ display:grid; gap:8px } .list-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; border:1px solid var(--line); border-radius:12px; background:var(--glass) }
 
-    /* Toast + Firma */
+    /* ===== Toast & Signature ===== */
     .toast{ position:fixed; top:12px; left:50%; transform:translateX(-50%); background:color-mix(in oklab,var(--elev) 96%, transparent);
-      border:1px solid var(--line); border-radius:999px; padding:8px 12px; z-index:90; display:none; box-shadow:var(--shadow); font-size:.92rem }
-    .toast.show{ display:block; animation:fade .18s ease } @keyframes fade{ from{opacity:0; transform:translate(-50%,-6px)} to{opacity:1; transform:translate(-50%,0)} }
+      border:1px solid var(--line); border-radius:999px; padding:8px 12px; z-index:90; display:none; box-shadow:var(--shadow) }
+    .toast.show{ display:block; animation:fade .18s ease }
 
-    /* Firma “Created by Karmean Gómez” con iluminación y respiración */
     .credit{
-      position:fixed; right:10px; bottom:calc(64px + env(safe-area-inset-bottom));
+      position:fixed; right:10px; bottom:calc(66px + env(safe-area-inset-bottom));
       z-index:80; font-size:.86rem; color:var(--text);
       background:linear-gradient(180deg, color-mix(in oklab, var(--elev) 96%, transparent), color-mix(in oklab, var(--elev) 98%, transparent));
-      border:1px solid var(--line); border-radius:999px; padding:7px 12px;
-      backdrop-filter:blur(6px);
+      border:1px solid var(--line); border-radius:999px; padding:7px 12px; backdrop-filter:blur(6px);
       box-shadow:0 0 12px rgba(124,92,255,.6), 0 0 22px rgba(0,219,193,.35);
-      animation: breathe 4s ease-in-out infinite, glowPulse 2.4s ease-in-out infinite;
+      animation:breathe 4s ease-in-out infinite, glowPulse 2.4s ease-in-out infinite;
     }
-    @keyframes breathe { 0%,100%{ transform:scale(1); opacity:1 } 50%{ transform:scale(1.04); opacity:.97 } }
-    @keyframes glowPulse { 0%{ box-shadow:0 0 10px rgba(124,92,255,.45), 0 0 18px rgba(0,219,193,.28) }
-      50%{ box-shadow:0 0 18px rgba(124,92,255,.75), 0 0 30px rgba(0,219,193,.48) }
-      100%{ box-shadow:0 0 10px rgba(124,92,255,.45), 0 0 18px rgba(0,219,193,.28) } }
-    .credit:hover{ transform:scale(1.07); transition:transform .15s ease }
+    @keyframes breathe{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.04);opacity:.97}}
+    @keyframes glowPulse{0%{box-shadow:0 0 10px rgba(124,92,255,.45), 0 0 18px rgba(0,219,193,.28)}
+      50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,219,193,.48)}
+      100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,219,193,.28)}}
 
-    /* IG verified badge (azul Instagram, no Facebook) */
-    .ig-badge{ display:inline-flex; width:16px; height:16px; margin-left:5px; vertical-align:middle }
-    .clients-grid{ display:grid; gap:8px; grid-template-columns:repeat(2, minmax(0,1fr)); }
-    @media (min-width:680px){ .clients-grid{ grid-template-columns:repeat(4, minmax(0,1fr)); } }
-    .client{ display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--line); border-radius:999px; background:var(--glass); font-weight:700 }
+    /* ===== IG verified badge (REAL IG style) ===== */
+    .ig-badge{ display:inline-flex; width:16px; height:16px; margin-left:6px; vertical-align:middle }
+    .clients-grid{ display:grid; gap:8px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+    @media (min-width:680px){ .clients-grid{ grid-template-columns:repeat(5,minmax(0,1fr)); } }
+    .client{ display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--line); border-radius:999px; background:var(--glass); font-weight:800 }
   </style>
 </head>
 <body>
-  <!-- ===== Sprites: logo KRAVEAI + Insignia IG ===== -->
+  <!-- ===== Sprites: logo + IG verified ===== -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
       <linearGradient id="g-krave" x1="0" y1="0" x2="1" y2="1">
@@ -202,7 +186,7 @@
         <circle cx="32" cy="32" r="30" fill="url(#g-krave)" opacity="0.14"/>
         <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g-krave)"/>
       </symbol>
-      <!-- Insignia verificada de Instagram (círculo azul con check blanco) -->
+      <!-- Insignia verificada de Instagram (azul IG con check blanco) -->
       <symbol id="ig-verified" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="11" fill="#0095F6"/>
         <path d="M10.1 14.7 7.7 12.3a1 1 0 1 1 1.4-1.4l1.0 1.0 4.8-4.8a1 1 0 1 1 1.4 1.4l-6.2 6.2a1 1 0 0 1-1.4 0z" fill="#fff"/>
@@ -212,7 +196,7 @@
 
   <div class="aurora"></div>
 
-  <!-- TOPBAR -->
+  <!-- ===== Topbar ===== -->
   <header class="topbar">
     <div class="brand-mini">
       <svg viewBox="0 0 64 64" class="k-logo"><use href="#logo-krave"/></svg>
@@ -223,10 +207,9 @@
     <button class="chip" id="theme-btn" title="Tema"><i class="fa-solid fa-moon"></i></button>
   </header>
 
-  <!-- SHELL COMPACTA (sin scroll global) -->
+  <!-- ===== Shell (inicio) ===== -->
   <div class="shell" id="home-shell">
-    <!-- HERO -->
-    <section class="section hero">
+    <section class="hero">
       <div style="display:flex;align-items:center;gap:10px">
         <div class="logo-badge"><svg viewBox="0 0 64 64" class="k-logo"><use href="#logo-krave"/></svg></div>
         <div>
@@ -234,21 +217,20 @@
           <div class="muted" style="font-size:.85rem">Automation Operating System</div>
         </div>
       </div>
-      <div class="btn btn-primary" id="open-farm">Device Farm</div>
+      <button class="btn btn-primary" id="open-farm">Device Farm</button>
     </section>
 
-    <!-- TABS INTERNAS -->
     <div class="tabs">
       <button class="tabmini active" data-tview="social"><i class="fa-solid fa-hashtag"></i> Redes</button>
       <button class="tabmini" data-tview="automation"><i class="fa-solid fa-bolt"></i> Automatización</button>
       <button class="tabmini" data-tview="clients"><i class="fa-solid fa-users"></i> Clientes</button>
     </div>
 
-    <!-- VISTAS (área con propio scroll) -->
     <div class="views">
-      <!-- SOCIAL -->
+      <!-- Redes -->
       <div class="view active" id="view-social">
         <div class="grid" id="social-grid">
+          <!-- 15 redes -->
           <div class="card tile" data-platform="instagram"><div class="icon"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div><div><div class="label">Instagram</div><small class="muted">Comentarios · Likes · Views</small></div></div>
           <div class="card tile" data-platform="tiktok"><div class="icon"><i class="fa-brands fa-tiktok" style="color:#69C9D0"></i></div><div><div class="label">TikTok</div><small class="muted">Vistas · Likes · Follows</small></div></div>
           <div class="card tile" data-platform="youtube"><div class="icon"><i class="fa-brands fa-youtube" style="color:#FF0000"></i></div><div><div class="label">YouTube</div><small class="muted">Vistas · Likes · Comentarios</small></div></div>
@@ -263,46 +245,48 @@
           <div class="card tile" data-platform="twitch"><div class="icon"><i class="fa-brands fa-twitch" style="color:#9146FF"></i></div><div><div class="label">Twitch</div></div></div>
           <div class="card tile" data-platform="reddit"><div class="icon"><i class="fa-brands fa-reddit" style="color:#FF4500"></i></div><div><div class="label">Reddit</div></div></div>
           <div class="card tile" data-platform="spotify"><div class="icon"><i class="fa-brands fa-spotify" style="color:#1DB954"></i></div><div><div class="label">Spotify</div></div></div>
+          <div class="card tile" data-platform="pinterest"><div class="icon"><i class="fa-brands fa-pinterest" style="color:#E60023"></i></div><div><div class="label">Pinterest</div></div></div>
         </div>
       </div>
 
-      <!-- AUTOMATION -->
+      <!-- Automatización -->
       <div class="view" id="view-automation">
         <div class="input-wrap">
           <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--muted)"></i>
           <input id="automation-input" placeholder="¿Qué quieres automatizar hoy?">
           <button class="btn btn-primary" id="automation-run"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
-        <div class="card tile" style="margin-top:8px"><div class="icon"><i class="fa-solid fa-circle-info"></i></div><div><div class="label">Estado</div><small class="muted">Sin acciones en curso</small></div></div>
+        <div class="card tile" style="margin-top:10px"><div class="icon"><i class="fa-solid fa-circle-info"></i></div><div><div class="label">Estado</div><small class="muted">Sin acciones en curso</small></div></div>
       </div>
 
-      <!-- CLIENTES -->
+      <!-- Clientes (con insignia IG real) -->
       <div class="view" id="view-clients">
         <div class="clients-grid">
           <div class="client">@aaronmercury <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
           <div class="client">@televisadigital <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
           <div class="client">@joscanela <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
           <div class="client">@jimenagallegotv <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+          <div class="client">@elmalilla_ <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Firma (lumínica y discreta) -->
+  <!-- Firma (glow sutil) -->
   <div class="credit" id="credit">Created by Karmean Gómez</div>
 
-  <!-- SERVICE CENTER -->
+  <!-- ====== Panels ====== -->
+
+  <!-- Service Center -->
   <div class="panel" id="svc-panel">
     <div class="inner">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-weight:900"><i class="fa-solid fa-wand-magic-sparkles"></i> <span id="svc-title">Servicios</span></div>
-        <div style="display:flex;gap:6px">
-          <button class="btn" id="svc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-        </div>
+        <div style="font-weight:900"><i class="fa-solid fa-sparkles"></i> <span id="svc-title">Servicios</span></div>
+        <button class="btn" id="svc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
       </div>
       <div class="svc-grid" id="svc-grid"></div>
 
-      <div class="card" id="svc-form-card" style="display:none;margin-top:8px;padding:12px">
+      <div class="card" id="svc-form-card" style="display:none;margin-top:10px;padding:12px">
         <div style="font-weight:900;margin-bottom:6px" id="svc-form-title"><i class="fa-solid fa-sliders"></i> Configurar</div>
         <form class="form" id="svc-form"></form>
         <div style="display:flex;gap:8px;margin-top:8px">
@@ -314,7 +298,7 @@
     </div>
   </div>
 
-  <!-- DEVICE FARM -->
+  <!-- Device Farm -->
   <div class="panel" id="farm-panel">
     <div class="inner">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -329,7 +313,7 @@
     </div>
   </div>
 
-  <!-- CUENTAS -->
+  <!-- Cuentas -->
   <div class="panel" id="accounts-panel">
     <div class="inner">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -372,9 +356,9 @@
         </div>
         <div id="user-result" style="display:none;margin-top:8px">
           <div style="display:flex;align-items:center;gap:10px">
-            <img id="user-avatar" style="width:58px;height:58px;border-radius:10px;border:1px solid var(--line);object-fit:cover" alt="">
+            <img id="user-avatar" style="width:58px;height:58px;border-radius:12px;border:1px solid var(--line);object-fit:cover" alt="">
             <div>
-              <div style="font-weight:800" id="user-username"></div>
+              <div style="font-weight:900" id="user-username"></div>
               <div class="muted" id="user-fullname"></div>
             </div>
           </div>
@@ -388,7 +372,7 @@
     </div>
   </div>
 
-  <!-- AJUSTES -->
+  <!-- Ajustes -->
   <div class="panel" id="settings-panel">
     <div class="inner">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -407,7 +391,7 @@
     </div>
   </div>
 
-  <!-- TAB BAR -->
+  <!-- ===== Tabbar ===== -->
   <nav class="tabbar">
     <button class="tab active" data-tab="home"><i class="fa-solid fa-house"></i><span>Inicio</span></button>
     <button class="tab" data-tab="accounts"><i class="fa-solid fa-users"></i><span>Cuentas</span></button>
@@ -416,38 +400,32 @@
     <button class="tab" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Ajustes</span></button>
   </nav>
 
-  <!-- TOAST -->
+  <!-- ===== Toast ===== -->
   <div class="toast" id="toast"><span id="toast-text"></span></div>
 
   <script>
-    /* ===== Config ===== */
-    const API_URL = "https://api.kraveapi.xyz";
+    const API_URL="https://api.kraveapi.xyz";
 
-    /* ===== Tema ===== */
+    /* Theme init */
     const themeBtn=document.getElementById('theme-btn');
     (function initTheme(){
       const t=localStorage.getItem('krave.theme');
       if(t==='light') document.documentElement.classList.add('light');
-      themeBtn.querySelector('i').className = document.documentElement.classList.contains('light') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      themeBtn.querySelector('i').className=document.documentElement.classList.contains('light')?'fa-solid fa-sun':'fa-solid fa-moon';
     })();
     function toggleTheme(){
       document.documentElement.classList.toggle('light');
       const light=document.documentElement.classList.contains('light');
-      themeBtn.querySelector('i').className = light ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      localStorage.setItem('krave.theme', light?'light':'dark');
+      themeBtn.querySelector('i').className= light?'fa-solid fa-sun':'fa-solid fa-moon';
+      localStorage.setItem('krave.theme',light?'light':'dark');
     }
     themeBtn.addEventListener('click',toggleTheme);
     document.getElementById('toggle-theme')?.addEventListener('click',toggleTheme);
-
-    // aurora toggle
-    document.getElementById('toggle-aurora')?.addEventListener('click',()=>{
-      const a=document.querySelector('.aurora'); a.style.display = (a.style.display==='none'?'block':'none');
-    });
-    // tiles size
+    document.getElementById('toggle-aurora')?.addEventListener('click',()=>{const a=document.querySelector('.aurora'); a.style.display=(a.style.display==='none'?'block':'none');});
     document.getElementById('bigger-tiles')?.addEventListener('click',()=>document.documentElement.style.setProperty('--r','22px'));
     document.getElementById('smaller-tiles')?.addEventListener('click',()=>document.documentElement.style.setProperty('--r','10px'));
 
-    /* ===== Tabs internas ===== */
+    /* Tabs internas */
     document.querySelectorAll('.tabmini').forEach(b=>{
       b.addEventListener('click',()=>{
         document.querySelectorAll('.tabmini').forEach(x=>x.classList.remove('active'));
@@ -457,25 +435,23 @@
       });
     });
 
-    /* ===== Toast ===== */
-    function toast(msg, err=false){
-      const t=document.getElementById('toast'), s=document.getElementById('toast-text');
-      s.textContent=msg; t.style.borderColor = err?'var(--err)':'var(--line)';
-      t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2100);
+    /* Toast */
+    function toast(msg,err=false){
+      const t=document.getElementById('toast'); const s=document.getElementById('toast-text');
+      s.textContent=msg; t.style.borderColor=err?'var(--err)':'var(--line)'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2100);
       if('vibrate' in navigator) navigator.vibrate(12);
     }
     document.getElementById('credit').addEventListener('click',()=>toast('Created by Karmean Gómez'));
 
-    /* ===== Health badge ===== */
+    /* Health badge */
     async function checkHealth(){
-      try{
-        const r=await fetch(`${API_URL}/health`,{credentials:'include'});
+      try{ const r=await fetch(`${API_URL}/health`,{credentials:'include'});
         document.getElementById('status-text').textContent = r.ok?'Conectado':'Error de conexión';
       }catch{ document.getElementById('status-text').textContent='Error de conexión'; }
     }
     checkHealth(); setInterval(checkHealth,120000);
 
-    /* ===== Service Center (Acciones) ===== */
+    /* ===== Service Center ===== */
     const SERVICES={
       instagram:{label:'Instagram',actions:{
         comentarios:{label:'Comentarios masivos',icon:'fa-regular fa-comment',endpoint:`${API_URL}/instagram/comentarios`,fields:[
@@ -521,16 +497,13 @@
       }}
     };
 
-    const svcPanel=document.getElementById('svc-panel');
-    const svcGrid=document.getElementById('svc-grid');
-    const svcFormCard=document.getElementById('svc-form-card');
-    const svcForm=document.getElementById('svc-form');
-    const svcRun=document.getElementById('svc-run');
-    let CURRENT_ENDPOINT=null;
+    const svcPanel=document.getElementById('svc-panel'), svcGrid=document.getElementById('svc-grid');
+    const svcFormCard=document.getElementById('svc-form-card'), svcForm=document.getElementById('svc-form');
+    const svcRun=document.getElementById('svc-run'); let CURRENT_ENDPOINT=null;
 
     function openServiceCenter(platform){
-      const def=SERVICES[platform]; if(!def){ toast('Plataforma no soportada aún',true); return; }
-      document.getElementById('svc-title').textContent = def.label;
+      const def=SERVICES[platform]; if(!def){ toast('Próximamente',true); return; }
+      document.getElementById('svc-title').textContent=def.label;
       svcPanel.classList.add('active'); svcGrid.innerHTML=''; svcFormCard.style.display='none';
       Object.values(def.actions).forEach(cfg=>{
         const el=document.createElement('div'); el.className='card svc-card';
@@ -543,61 +516,50 @@
       document.getElementById('svc-form-title').innerHTML=`<i class="fa-solid fa-sliders"></i> ${cfg.label}`;
       svcForm.innerHTML='';
       (cfg.fields||[]).forEach(f=>{
-        const row=document.createElement('div'); row.className='row';
-        row.innerHTML=`<label>${f.label}</label>`;
+        const row=document.createElement('div'); row.className='row'; row.innerHTML=`<label>${f.label}</label>`;
         let el;
         if(f.type==='textarea'){ el=document.createElement('textarea'); el.className='ctrl'; el.name=f.key; el.placeholder=f.placeholder||''; el.required=!!f.required; }
-        else if(f.type==='select'){ el=document.createElement('select'); el.className='ctrl'; el.name=f.key; (f.options||[]).forEach(o=>{ const op=document.createElement('option'); op.value=o.v; op.textContent=o.t; el.appendChild(op); }); }
+        else if(f.type==='select'){ el=document.createElement('select'); el.className='ctrl'; el.name=f.key; (f.options||[]).forEach(o=>{const op=document.createElement('option'); op.value=o.v; op.textContent=o.t; el.appendChild(op);});}
         else { el=document.createElement('input'); el.className='ctrl'; el.type=f.type||'text'; el.name=f.key; if(f.value!=null) el.value=f.value; if(f.min!=null) el.min=f.min; if(f.max!=null) el.max=f.max; el.placeholder=f.placeholder||''; el.required=!!f.required; }
         if(f.showIf){ el.dataset.dep=f.showIf.field; el.dataset.depval=f.showIf.equals; }
         row.appendChild(el); svcForm.appendChild(row);
       });
       applyDeps(); svcForm.querySelectorAll('select,input').forEach(i=>i.addEventListener('change',applyDeps));
-      function applyDeps(){
-        const st=Object.fromEntries(new FormData(svcForm).entries());
-        [...svcForm.querySelectorAll('[data-dep]')].forEach(el=>{
-          const row=el.closest('.row'); if(!row) return;
-          row.style.display = (st[el.dataset.dep]===el.dataset.depval) ? 'grid' : 'none';
-        });
+      function applyDeps(){ const st=Object.fromEntries(new FormData(svcForm).entries());
+        [...svcForm.querySelectorAll('[data-dep]')].forEach(el=>{ const row=el.closest('.row'); row.style.display=(st[el.dataset.dep]===el.dataset.depval)?'grid':'none'; });
       }
     }
     document.getElementById('svc-back').addEventListener('click',()=>svcPanel.classList.remove('active'));
     document.getElementById('svc-cancel').addEventListener('click',(e)=>{e.preventDefault();svcFormCard.style.display='none';});
-    document.getElementById('svc-run').addEventListener('click',async (e)=>{
+    svcRun.addEventListener('click',async (e)=>{
       e.preventDefault(); if(!CURRENT_ENDPOINT) return;
       const payload=Object.fromEntries(new FormData(svcForm).entries());
       try{
         svcRun.disabled=true; svcRun.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando…';
         const r=await fetch(CURRENT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
-        const data=await r.json().catch(()=>({status:'ok'}));
-        toast(data.message || 'Tarea lanzada');
+        const data=await r.json().catch(()=>({status:'ok'})); toast(data.message||'Tarea lanzada');
         const k=document.getElementById('svc-kpis'); k.innerHTML='';
-        if(data.kpis) Object.entries(data.kpis).forEach(([key,val])=>{
-          const c=document.createElement('div'); c.className='card'; c.style.padding='10px';
-          c.innerHTML=`<div class="muted">${key}</div><div style="font-weight:800">${val}</div>`; k.appendChild(c);
-        });
+        if(data.kpis) Object.entries(data.kpis).forEach(([key,val])=>{const c=document.createElement('div'); c.className='card'; c.style.padding='10px'; c.innerHTML=`<div class="muted">${key}</div><div style="font-weight:900">${val}</div>`; k.appendChild(c);});
       }catch{ toast('Error al ejecutar servicio',true) }
       finally{ svcRun.disabled=false; svcRun.innerHTML='<i class="fa-solid fa-play"></i> Ejecutar'; }
     });
 
-    // Social tiles → Service Center
+    // Abrir Service Center desde tiles
     document.getElementById('social-grid').addEventListener('click',(e)=>{
       const tile=e.target.closest('.tile[data-platform]'); if(!tile) return; openServiceCenter(tile.dataset.platform);
     });
 
     /* ===== Device Farm ===== */
-    const farmPanel=document.getElementById('farm-panel');
-    const farmGrid=document.getElementById('farm-grid');
+    const farmPanel=document.getElementById('farm-panel'), farmGrid=document.getElementById('farm-grid');
     document.getElementById('open-farm').addEventListener('click',()=>{ farmPanel.classList.add('active'); loadDevices(); });
     document.querySelector('[data-tab="farm"]').addEventListener('click',()=>{ farmPanel.classList.add('active'); loadDevices(); });
     document.getElementById('farm-back').addEventListener('click',()=>farmPanel.classList.remove('active'));
+    document.getElementById('zoom-in').addEventListener('click',()=>setDeviceHeight(Math.min(getDeviceHeight()+30,460)));
+    document.getElementById('zoom-out').addEventListener('click',()=>setDeviceHeight(Math.max(getDeviceHeight()-30,140)));
     let sse=null;
 
-    // Zoom
-    function setDeviceHeight(px){ document.documentElement.style.setProperty('--device-h', px + 'px'); }
-    function getDeviceHeight(){ return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--device-h')) || 220; }
-    document.getElementById('zoom-in').addEventListener('click', ()=> setDeviceHeight(Math.min(getDeviceHeight()+30, 440)));
-    document.getElementById('zoom-out').addEventListener('click', ()=> setDeviceHeight(Math.max(getDeviceHeight()-30, 140)));
+    function setDeviceHeight(px){ document.documentElement.style.setProperty('--device-h',px+'px'); }
+    function getDeviceHeight(){ return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--device-h'))||230; }
 
     async function loadDevices(){
       try{
@@ -605,7 +567,7 @@
         renderDevices(list||[]); attachSSE();
       }catch{ toast('No se pudo cargar la farm',true) }
     }
-    function renderDevices(list){ farmGrid.innerHTML=''; list.forEach(d=> farmGrid.appendChild(deviceCard(d))); }
+    function renderDevices(list){ farmGrid.innerHTML=''; list.forEach(d=>farmGrid.appendChild(deviceCard(d))); }
     function deviceCard(d){
       const card=document.createElement('div'); card.className='card device'; card.dataset.id=d.id;
       const head=document.createElement('div'); head.className='device-head';
@@ -620,7 +582,7 @@
       const img=document.createElement('img'); if(d.mjpeg_url) img.src=d.mjpeg_url; img.alt='stream';
       screen.append(overlay,vid,img);
 
-      const actions=document.createElement('div'); actions.className='actions';
+      const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='6px';
       actions.append(btn('Iniciar',()=>ctrl(d.id,'start')), btn('Detener',()=>ctrl(d.id,'stop')), btn('Fullscreen',()=>screen.requestFullscreen && screen.requestFullscreen(), true));
       card.append(head,screen,actions);
 
@@ -631,12 +593,11 @@
     async function ctrl(id,action){
       try{
         const r=await fetch(`${API_URL}/devices/${id}/control`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({action})});
-        const data=await r.json(); toast(data.message||'OK');
+        const d=await r.json(); toast(d.message||'OK');
       }catch{ toast('Error enviando comando',true) }
     }
     function attachSSE(){
-      try{
-        if(sse) sse.close();
+      try{ if(sse) sse.close();
         sse=new EventSource(`${API_URL}/devices/subscribe`,{withCredentials:true});
         sse.onmessage=(ev)=>{ try{ const m=JSON.parse(ev.data||'{}'); if(m.type==='device.update') updateDevice(m.payload) }catch{} };
       }catch{}
@@ -644,9 +605,9 @@
     function updateDevice(d){
       const card=farmGrid.querySelector(`[data-id="${d.id}"]`);
       if(!card){ farmGrid.appendChild(deviceCard(d)); return; }
-      card.querySelector('.device-head div').innerHTML = `${d.emoji||'📱'} <strong>${d.name||d.model||'Device'}</strong> · ${d.platform||''}`;
-      card.querySelector('.chips').innerHTML = `<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`;
-      card.querySelector('.overlay').innerHTML = `<span class="chip-b">${d.task||'Idle'}</span>`;
+      card.querySelector('.device-head div').innerHTML=`${d.emoji||'📱'} <strong>${d.name||d.model||'Device'}</strong> · ${d.platform||''}`;
+      card.querySelector('.chips').innerHTML=`<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`;
+      card.querySelector('.overlay').innerHTML=`<span class="chip-b">${d.task||'Idle'}</span>`;
       if(d.mjpeg_url){ const im=card.querySelector('img'); if(im && im.src!==d.mjpeg_url) im.src=d.mjpeg_url; }
       if(d.webrtc){ const v=card.querySelector('video'); const im=card.querySelector('img'); openStream(d.id,v,im); }
     }
@@ -656,44 +617,31 @@
         const offer=await pc.createOffer({offerToReceiveVideo:true}); await pc.setLocalDescription(offer);
         const r=await fetch(`${API_URL}/devices/${id}/stream/webrtc`,{method:'POST',headers:{'Content-Type':'application/sdp'},credentials:'include',body:offer.sdp});
         const answer=await r.text(); await pc.setRemoteDescription({type:'answer',sdp:answer});
-      }catch{/* fallback MJPEG */}
+      }catch{/* fallback a MJPEG si no hay WebRTC */}
     }
 
-    /* ===== Cuentas ===== */
+    /* ===== Accounts ===== */
     const accPanel=document.getElementById('accounts-panel');
     document.getElementById('acc-back').addEventListener('click',()=>accPanel.classList.remove('active'));
     const sessText=document.getElementById('session-status-text');
     const loginBtn=document.getElementById('login-btn'); const logoutBtn=document.getElementById('logout-btn');
     const loginUsername=document.getElementById('login-username'); const loginPassword=document.getElementById('login-password');
-    const addAccountBtn=document.getElementById('add-account-btn');
-    const manualUsername=document.getElementById('manual-username'); const manualPassword=document.getElementById('manual-password');
+    const addAccountBtn=document.getElementById('add-account-btn'); const manualUsername=document.getElementById('manual-username'); const manualPassword=document.getElementById('manual-password');
     const activeAccounts=document.getElementById('active-accounts');
-    let cuentasActivasInterval;
 
     async function checkSessionStatus(){
-      try{
-        const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
-        const data=await r.json();
-        if(data.status==='activo'){
-          sessText.textContent=`Sesión activa como @${data.usuario}`;
-          document.getElementById('login-form').style.display='none';
-        }else{
-          sessText.textContent='No hay sesión';
-          document.getElementById('login-form').style.display='block';
-        }
-      }catch{
-        sessText.textContent='Error al verificar sesión';
-        document.getElementById('login-form').style.display='block';
-      }
+      try{ const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'}); const data=await r.json();
+        if(data.status==='activo'){ sessText.textContent=`Sesión activa como @${data.usuario}`; document.getElementById('login-form').style.display='none'; }
+        else{ sessText.textContent='No hay sesión'; document.getElementById('login-form').style.display='block'; }
+      }catch{ sessText.textContent='Error al verificar sesión'; document.getElementById('login-form').style.display='block'; }
     }
     loginBtn.addEventListener('click',async ()=>{
-      const u=loginUsername.value.trim().replace('@',''); const p=loginPassword.value.trim();
-      if(!u||!p) return toast('Completa usuario y contraseña',true);
+      const u=loginUsername.value.trim().replace('@',''); const p=loginPassword.value.trim(); if(!u||!p) return toast('Completa usuario y contraseña',true);
       try{
         loginBtn.disabled=true; loginBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Iniciando…';
         const r=await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error al iniciar sesión');
-        toast(`Sesión iniciada como @${d.usuario}`); checkSessionStatus(); actualizarListaCuentasActivas();
+        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error al iniciar');
+        toast(`Sesión iniciada @${d.usuario}`); checkSessionStatus(); actualizarListaCuentasActivas();
       }catch(e){ toast(e.message||'Error',true) }
       finally{ loginBtn.disabled=false; loginBtn.innerHTML='Iniciar sesión'; }
     });
@@ -701,18 +649,17 @@
       try{
         logoutBtn.disabled=true; logoutBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Cerrando…';
         const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'}); const d=await r.json();
-        if(!d.exito) throw new Error(d.mensaje||'Error al cerrar sesión');
+        if(!d.exito) throw new Error(d.mensaje||'Error');
         toast('Sesión cerrada'); checkSessionStatus(); actualizarListaCuentasActivas();
       }catch(e){ toast(e.message||'Error',true) }
       finally{ logoutBtn.disabled=false; logoutBtn.innerHTML='Cerrar sesión'; }
     });
     addAccountBtn.addEventListener('click',async ()=>{
-      const u=manualUsername.value.trim().replace('@',''); const p=manualPassword.value.trim();
-      if(!u||!p) return toast('Completa usuario y contraseña',true);
+      const u=manualUsername.value.trim().replace('@',''); const p=manualPassword.value.trim(); if(!u||!p) return toast('Completa usuario y contraseña',true);
       try{
         addAccountBtn.disabled=true; addAccountBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…';
         const l=await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
-        const lj=await l.json(); if(!lj.exito) throw new Error(lj.mensaje||'Error al iniciar con la cuenta');
+        const lj=await l.json(); if(!lj.exito) throw new Error(lj.mensaje||'Error de login');
         const s=await fetch(`${API_URL}/guardar-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:u,password:p})});
         const sj=await s.json(); if(sj.status!=='ok') throw new Error(sj.message||'No se pudo guardar');
         toast(`Cuenta @${u} guardada`); manualUsername.value=''; manualPassword.value=''; actualizarListaCuentasActivas();
@@ -722,52 +669,34 @@
     async function actualizarListaCuentasActivas(){
       try{
         const r=await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'}); const cuentas=await r.json();
-        if(!Array.isArray(cuentas) || !cuentas.length){ activeAccounts.textContent='No hay cuentas activas'; return; }
-        const ul=document.createElement('div'); ul.className='list';
+        if(!Array.isArray(cuentas)||!cuentas.length){ activeAccounts.textContent='No hay cuentas activas'; return; }
+        const wrap=document.createElement('div'); wrap.className='list';
         cuentas.forEach(acc=>{
           const item=document.createElement('div'); item.className='list-item';
           item.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><span class="chip-b">${acc.status||'idle'}</span>@${acc.username}</div>`;
           const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='6px';
-          if(acc.status==='activo'){
-            const b=document.createElement('button'); b.className='btn'; b.textContent='Logout';
-            b.onclick=()=>cerrarSesionCuenta(acc.username); actions.appendChild(b);
-          }else{
-            const b=document.createElement('button'); b.className='btn btn-primary'; b.textContent='Login';
-            b.onclick=()=>iniciarSesionCuenta(acc.username); actions.appendChild(b);
-          }
-          item.appendChild(actions); ul.appendChild(item);
+          if(acc.status==='activo'){ const b=document.createElement('button'); b.className='btn'; b.textContent='Logout'; b.onclick=()=>cerrarSesionCuenta(acc.username); actions.appendChild(b); }
+          else { const b=document.createElement('button'); b.className='btn btn-primary'; b.textContent='Login'; b.onclick=()=>iniciarSesionCuenta(acc.username); actions.appendChild(b); }
+          item.appendChild(actions); wrap.appendChild(item);
         });
-        activeAccounts.innerHTML=''; activeAccounts.appendChild(ul);
+        activeAccounts.innerHTML=''; activeAccounts.appendChild(wrap);
       }catch{ activeAccounts.textContent='Error al cargar cuentas'; }
     }
     async function iniciarSesionCuenta(username){
-      try{
-        toast(`Iniciando @${username}…`);
-        const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:username})});
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast(`Sesión iniciada @${username}`); actualizarListaCuentasActivas();
-      }catch(e){ toast(e.message||'Error',true) }
+      try{ toast(`Iniciando @${username}…`); const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:username})}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión iniciada @${username}`); actualizarListaCuentasActivas(); }catch(e){ toast(e.message||'Error',true) }
     }
     async function cerrarSesionCuenta(username){
-      try{
-        toast(`Cerrando @${username}…`);
-        const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:username})});
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast(`Sesión cerrada @${username}`); actualizarListaCuentasActivas();
-      }catch(e){ toast(e.message||'Error',true) }
+      try{ toast(`Cerrando @${username}…`); const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:username})}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión cerrada @${username}`); actualizarListaCuentasActivas(); }catch(e){ toast(e.message||'Error',true) }
     }
 
-    // Buscar usuario
-    const searchUserBtn=document.getElementById('search-user-btn');
-    searchUserBtn?.addEventListener('click',searchUser);
+    /* ===== Search user (IG) ===== */
+    const searchUserBtn=document.getElementById('search-user-btn'); searchUserBtn?.addEventListener('click',searchUser);
     async function searchUser(){
-      const u=document.getElementById('username-search').value.trim().replace('@','');
-      if(!u) return toast('Escribe un usuario',true);
+      const u=document.getElementById('username-search').value.trim().replace('@',''); if(!u) return toast('Escribe un usuario',true);
       try{
         searchUserBtn.disabled=true; searchUserBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Buscando…';
-        const r=await fetch(`${API_URL}/buscar-usuario?username=${u}`,{credentials:'include'});
-        const d=await r.json();
-        document.getElementById('user-avatar').src = d.profile_pic_url_hd || 'https://via.placeholder.com/128?text=No+img';
+        const r=await fetch(`${API_URL}/buscar-usuario?username=${u}`,{credentials:'include'}); const d=await r.json();
+        document.getElementById('user-avatar').src=d.profile_pic_url_hd||'https://via.placeholder.com/128?text=No+img';
         document.getElementById('user-username').textContent='@'+(d.username||u);
         document.getElementById('user-fullname').textContent=d.full_name||'';
         document.getElementById('user-posts').textContent=(d.media_count||0).toLocaleString();
@@ -779,18 +708,18 @@
       finally{ searchUserBtn.disabled=false; searchUserBtn.innerHTML='Buscar'; }
     }
 
-    /* ===== Navegación Tabbar ===== */
+    /* ===== Tabbar navigation ===== */
     document.querySelectorAll('.tabbar .tab').forEach(t=>t.addEventListener('click',()=>{
       document.querySelectorAll('.tabbar .tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
       const k=t.dataset.tab;
-      if(k==='home'){ [document.getElementById('accounts-panel'),document.getElementById('svc-panel'),document.getElementById('farm-panel'),document.getElementById('settings-panel')].forEach(p=>p.classList.remove('active')); }
-      if(k==='accounts'){ document.getElementById('accounts-panel').classList.add('active'); checkSessionStatus(); actualizarListaCuentasActivas(); if(window._accInt) clearInterval(window._accInt); window._accInt=setInterval(actualizarListaCuentasActivas,30000); }
+      if(k==='home'){ ['accounts','actions','farm','settings'].forEach(id=>document.getElementById(id+'-panel').classList.remove('active')); }
+      if(k==='accounts'){ document.getElementById('accounts-panel').classList.add('active'); checkSessionStatus(); actualizarListaCuentasActivas(); }
       if(k==='actions'){ openServiceCenter('instagram'); }
       if(k==='farm'){ document.getElementById('farm-panel').classList.add('active'); loadDevices(); }
       if(k==='settings'){ document.getElementById('settings-panel').classList.add('active'); }
     }));
 
-    /* ===== Automatización rápida ===== */
+    // Quick automation
     document.getElementById('automation-run').addEventListener('click',()=>{
       const v=(document.getElementById('automation-input').value||'').trim();
       if(!v) return toast('Escribe qué automatizar',true);
