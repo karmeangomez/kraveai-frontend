@@ -1,121 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-  <title>KRAVEAI — App</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0b0d12">
-  <style>
-    /* ================== Tokens (iOS26-like) ================== */
-    :root{
-      --bg:#0b0d12; --elev:#0f1219; --card:#12182a; --text:#eef1f7; --muted:#9aa2b2; --line:#202740;
-      --ac:#7c5cff; --ac2:#00d3c2; --ok:#2bd39c; --warn:#ffbf58; --err:#ff5f74;
-      --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.12);
-      --r:16px; --gap:10px; --shadow:0 14px 40px rgba(0,0,0,.28);
-      --tile-size: 102px;
-    }
-    #theme-toggle:checked ~ .app{
-      --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0c0f16; --muted:#6b7280; --line:#e7e9f2;
-      --glass:rgba(0,0,0,.05); --glass2:rgba(0,0,0,.08); --shadow:0 10px 24px rgba(0,0,0,.08);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,Roboto}
-    .app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>KRAVEAI — App</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0d12">
+<style>
+/* ================== Tokens (iOS-like) ================== */
+:root{
+  --bg:#0b0d12; --elev:#0f1219; --card:#12182a; --text:#eef1f7; --muted:#9aa2b2; --line:#202740;
+  --ac:#7c5cff; --ac2:#00d3c2; --ok:#2bd39c; --warn:#ffbf58; --err:#ff5f74;
+  --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.12);
+  --r:16px; --gap:10px; --shadow:0 14px 40px rgba(0,0,0,.28);
+}
+#theme-toggle:checked ~ .app{
+  --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0c0f16; --muted:#6b7280; --line:#e7e9f2;
+  --glass:rgba(0,0,0,.05); --glass2:rgba(0,0,0,.08); --shadow:0 10px 24px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,Roboto}
+.app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
 
-    /* ================== SVG defs ================== */
-    svg{display:inline-block}
-    
-    /* ================== Topbar ================== */
-    .top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px;padding:10px max(12px,env(safe-area-inset-left)) 8px max(12px,env(safe-area-inset-right));background:color-mix(in oklab, var(--elev) 92%, transparent);backdrop-filter:saturate(1.15) blur(16px);border-bottom:1px solid var(--line)}
-    .brand{display:flex;align-items:center;gap:10px}
-    .badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 12px 22px rgba(124,92,255,.28),0 8px 16px rgba(0,211,194,.16)}
-    .word{font-weight:900;letter-spacing:.16em}
-    .chip{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);color:var(--muted);cursor:pointer}
+/* ================== Topbar ================== */
+.top{
+  position:sticky;top:0;z-index:20;
+  display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px;
+  padding:10px max(12px,env(safe-area-inset-left)) 8px max(12px,env(safe-area-inset-right));
+  background:color-mix(in oklab, var(--elev) 92%, transparent);
+  backdrop-filter:saturate(1.15) blur(16px); border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:10px}
+.badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--ac),var(--ac2)); box-shadow:0 12px 22px rgba(124,92,255,.28),0 8px 16px rgba(0,211,194,.16)}
+.word{font-weight:900;letter-spacing:.16em}
+.chip{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);color:var(--muted);cursor:pointer}
 
-    /* ================== Tabs (sin JS para fallback) ================== */
-    .nav{position:sticky;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px max(10px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right));background:color-mix(in oklab,var(--elev) 92%, transparent);border-top:1px solid var(--line);backdrop-filter:saturate(1.15) blur(16px)}
-    .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:12px;color:var(--muted);border:1px solid transparent;user-select:none;cursor:pointer}
-    .tab small{font-size:.72rem}
-    @media (max-width:480px){.tab small{display:none}}
-    input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
-    #tab-home:checked ~ .app .nav label[for="tab-home"],
-    #tab-auto:checked ~ .app .nav label[for="tab-auto"],
-    #tab-clients:checked ~ .app .nav label[for="tab-clients"],
-    #tab-farm:checked ~ .app .nav label[for="tab-farm"],
-    #tab-acc:checked ~ .app .nav label[for="tab-acc"]{color:var(--text);background:var(--glass);border-color:var(--line)}
+/* ================== Tabs (sin JS) ================== */
+.nav{
+  position:sticky;bottom:0;z-index:20;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  padding:8px max(10px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right));
+  background:color-mix(in oklab,var(--elev) 92%, transparent); border-top:1px solid var(--line);
+  backdrop-filter:saturate(1.15) blur(16px);
+}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer;user-select:none}
+.tab small{font-size:.72rem}
+@media (max-width:480px){.tab small{display:none}}
+input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
+#tab-home:checked ~ .app .nav label[for="tab-home"],
+#tab-auto:checked ~ .app .nav label[for="tab-auto"],
+#tab-clients:checked ~ .app .nav label[for="tab-clients"],
+#tab-farm:checked ~ .app .nav label[for="tab-farm"],
+#tab-acc:checked ~ .app .nav label[for="tab-acc"]{color:var(--text);background:var(--glass);border-color:var(--line)}
 
-    /* ================== Vistas ================== */
-    .main{height:calc(100svh - 52px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:10px max(12px,env(safe-area-inset-left)) 10px max(12px,env(safe-area-inset-right));overflow:auto}
-    .view{display:none;animation:fade .16s ease}
-    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    #tab-home:checked ~ .app .view[data-tab="home"],
-    #tab-auto:checked ~ .app .view[data-tab="auto"],
-    #tab-clients:checked ~ .app .view[data-tab="clients"],
-    #tab-farm:checked ~ .app .view[data-tab="farm"],
-    #tab-acc:checked ~ .app .view[data-tab="acc"]{display:block}
+/* ================== Vistas ================== */
+.main{
+  height:calc(100svh - 52px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  padding:10px max(12px,env(safe-area-inset-left)) 10px max(12px,env(safe-area-inset-right));
+  overflow:auto;
+}
+.view{display:none;animation:fade .16s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+#tab-home:checked ~ .app .view[data-tab="home"],
+#tab-auto:checked ~ .app .view[data-tab="auto"],
+#tab-clients:checked ~ .app .view[data-tab="clients"],
+#tab-farm:checked ~ .app .view[data-tab="farm"],
+#tab-acc:checked ~ .app .view[data-tab="acc"]{display:block}
 
-    /* ================== Cards / grids ================== */
-    .card{background:linear-gradient(180deg, color-mix(in oklab, var(--card) 95%, transparent), color-mix(in oklab, var(--card) 100%, transparent));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
-    .grid{display:grid;gap:10px}
-    .grid.social{grid-template-columns:repeat(4,minmax(0,1fr))}
-    @media (min-width:560px){.grid.social{grid-template-columns:repeat(6, minmax(0,1fr))}}
-    @media (min-width:900px){.grid.social{grid-template-columns:repeat(8, minmax(0,1fr))}}
-    .tile{padding:10px 10px 12px}
-    .row{display:flex;align-items:center;gap:10px}
-    .ico{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--line)}
-    .lab{font-weight:900}
-    .muted{color:var(--muted)}
-    .cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-    .cap .c{padding:6px 8px;font-size:.78rem;border:1px solid var(--line);border-radius:999px;background:var(--glass)}
+/* ================== Cards / grids ================== */
+.card{background:linear-gradient(180deg, color-mix(in oklab, var(--card) 95%, transparent), color-mix(in oklab, var(--card) 100%, transparent));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:10px}
+.grid.social{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (min-width:560px){.grid.social{grid-template-columns:repeat(6, minmax(0,1fr))}}
+@media (min-width:900px){.grid.social{grid-template-columns:repeat(8, minmax(0,1fr))}}
+.tile{padding:10px 10px 12px}
+.row{display:flex;align-items:center;gap:10px}
+.ico{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--line)}
+.ico svg{width:20px;height:20px}
+.lab{font-weight:900}
+.muted{color:var(--muted)}
+.cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cap .c{padding:6px 8px;font-size:.78rem;border:1px solid var(--line);border-radius:999px;background:var(--glass)}
 
-    /* ================== Inputs “app” ================== */
-    .input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--glass);border-radius:12px;padding:8px 10px}
-    .input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
-    .btn{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in oklab,var(--card) 96%, transparent),color-mix(in oklab,var(--card) 100%, transparent));color:var(--text);padding:8px 12px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
-    .btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac2));border:0;color:#0b0d13}
+/* ================== Inputs “app” ================== */
+.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--glass);border-radius:12px;padding:8px 10px}
+.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
+.btn{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in oklab,var(--card) 96%, transparent),color-mix(in oklab,var(--card) 100%, transparent));color:var(--text);padding:8px 12px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac2));border:0;color:#0b0d13}
 
-    /* ================== Clients + IG verified real ================== */
-    .clients{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (min-width:680px){.clients{grid-template-columns:repeat(4,minmax(0,1fr))}}
-    .client{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-weight:900}
-    .badge-ig{display:inline-flex;width:18px;height:18px;margin-left:6px;vertical-align:middle}
+/* ================== Clients + IG verified real ================== */
+.clients{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:680px){.clients{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.client{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-weight:900}
+.client .logo{width:18px;height:18px}
+.badge-ig{display:inline-flex;width:18px;height:18px;margin-left:6px;vertical-align:middle}
 
-    /* ================== Device Farm ================== */
-    .farm{display:grid;gap:10px;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
-    .dev{display:grid;gap:8px;padding:10px}
-    .dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
-    .chips{display:flex;gap:6px;flex-wrap:wrap}
-    .chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.78rem}
-    .screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:220px;position:relative}
-    .screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-    .screen .placeholder{position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.25), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000}
-    .screen .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px}
+/* ================== Device Farm ================== */
+.farm{display:grid;gap:10px;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+.dev{display:grid;gap:8px;padding:10px}
+.dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.78rem}
+.screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:220px;position:relative}
+.screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.screen .placeholder{position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.25), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000}
+.screen .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px}
 
-    /* ================== Firma ================== */
-    .credit{position:fixed;right:10px;bottom:70px;z-index:30;font-size:.86rem;color:var(--text);background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px);box-shadow:0 0 12px rgba(124,92,255,.55),0 0 22px rgba(0,211,194,.35);animation:breath 4s ease-in-out infinite,glow 2.4s ease-in-out infinite}
-    @keyframes breath{50%{transform:scale(1.04);opacity:.97}}
-    @keyframes glow{0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}}
+/* ================== Firma ================== */
+.credit{position:fixed;right:10px;bottom:70px;z-index:30;font-size:.86rem;color:var(--text);background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px);box-shadow:0 0 12px rgba(124,92,255,.55),0 0 22px rgba(0,211,194,.35);animation:breath 4s ease-in-out infinite,glow 2.4s ease-in-out infinite}
+@keyframes breath{50%{transform:scale(1.04);opacity:.97}}
+@keyframes glow{0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}}
 
-    /* ================== Utilidades ================== */
-    .section-title{font-weight:900;display:flex;align-items:center;gap:8px;margin:2px 0 6px}
-    .hint{color:var(--muted);font-size:.86rem;margin-bottom:8px}
-    .spacer{height:2px}
-  </style>
+/* ================== Utilidades ================== */
+.section-title{font-weight:900;display:flex;align-items:center;gap:8px;margin:2px 0 6px}
+.hint{color:var(--muted);font-size:.86rem;margin-bottom:8px}
+.spacer{height:2px}
+</style>
 </head>
 <body>
-<!-- Radios de tabs (fallback sin JS) -->
+
+<!-- Radios de tabs (sin JS) -->
 <input type="radio" name="tab" id="tab-home" checked>
 <input type="radio" name="tab" id="tab-auto">
 <input type="radio" name="tab" id="tab-clients">
 <input type="radio" name="tab" id="tab-farm">
 <input type="radio" name="tab" id="tab-acc">
-<!-- Switch de tema -->
+<!-- Switch de tema (sin JS) -->
 <input type="checkbox" id="theme-toggle" hidden>
 
-<!-- Defs: logo y verificación IG real -->
+<!-- ===== SVG sprite: Logo KRAVE + logos oficiales (simplificados) ===== -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
@@ -125,11 +141,37 @@
       <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
       <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
     </symbol>
-    <!-- Badge IG: círculo azul con check blanco -->
-    <symbol id="ig-verified" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" fill="#0095F6"/>
-      <path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- IG verified (real style) -->
+    <symbol id="ig-verified" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0095F6"/><path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+
+    <!-- ===== Brand logos (minimal vector approximations) ===== -->
+    <symbol id="logo-instagram" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+      <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
     </symbol>
+    <symbol id="logo-tiktok" viewBox="0 0 24 24">
+      <path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/>
+      <path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/>
+    </symbol>
+    <symbol id="logo-youtube" viewBox="0 0 24 24">
+      <rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/>
+      <path d="M10 9l6 3-6 3z" fill="#fff"/>
+    </symbol>
+    <symbol id="logo-threads" viewBox="0 0 24 24">
+      <path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2"/>
+    </symbol>
+    <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="logo-facebook" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
+    <symbol id="logo-linkedin" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
+    <symbol id="logo-snapchat" viewBox="0 0 24 24"><path d="M6 10c0-4 3-6 6-6s6 2 6 6c0 2-.8 3.6-2 4.8 1 .6 2 .8 2 1.2 0 .8-3 1-6 1s-6-.2-6-1c0-.4 1-.6 2-1.2C6.8 13.6 6 12 6 10z" fill="#FFFC00" stroke="#000"/></symbol>
+    <symbol id="logo-discord" viewBox="0 0 24 24"><path d="M7 6c3-1 7-1 10 0 1 2 2 4 2 6-1 2-3 3-5 4l-2-1-2 1c-2-1-4-2-5-4 0-2 1-4 2-6z" fill="#5865F2"/></symbol>
+    <symbol id="logo-telegram" viewBox="0 0 24 24"><path d="M21 3L3 11l6 2 2 6 3-4 4-10z" fill="#0088cc"/></symbol>
+    <symbol id="logo-whatsapp" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 1 0 18 9.4 9.4 0 0 1-4-.9L5 21l.9-3.1A9.4 9.4 0 0 1 3 12 9 9 0 0 1 12 3z" fill="#25D366"/><path d="M9 8c0 3 3 6 5 6l1-1" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="logo-twitch" viewBox="0 0 24 24"><path d="M4 4h16v10l-4 4H12l-2 2H8v-2H4z" fill="#9146FF"/></symbol>
+    <symbol id="logo-reddit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FF4500"/><circle cx="9" cy="12" r="1.5" fill="#fff"/><circle cx="15" cy="12" r="1.5" fill="#fff"/><path d="M8 14c1 1 3 2 4 2s3-1 4-2" stroke="#fff" stroke-width="2" fill="none"/></symbol>
+    <symbol id="logo-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" fill="none"/></symbol>
+    <symbol id="logo-pinterest" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#E60023"/><path d="M12 6c3 0 5 2 5 4.5S15 15 12.5 15c-1 0-1.7-.5-2-.8l-.7 2.8-.8-.3 1-3.5c-.2-.6-.3-1.2-.3-1.9C9.7 9 10.6 6 12 6z" fill="#fff"/></symbol>
   </defs>
 </svg>
 
@@ -154,9 +196,7 @@
     <section class="view" data-tab="home">
       <div class="section-title">🏷️ Redes sociales</div>
       <div class="hint">Toca una red para ver sus servicios disponibles</div>
-      <div class="grid social" id="social-grid">
-        <!-- Se llenará vía JS para mantener compacto -->
-      </div>
+      <div class="grid social" id="social-grid"></div>
       <div class="spacer"></div>
       <div class="section-title">⚡ Automatización rápida</div>
       <div class="input">
@@ -169,11 +209,11 @@
     <!-- AUTOMATIZACIÓN -->
     <section class="view" data-tab="auto">
       <div class="section-title">🧰 Servicios por red</div>
-      <div class="hint">Selecciona una red en Inicio para abrir su panel (comentarios IG ya conectado).</div>
+      <div class="hint">Instagram → Comentarios ya conectado. El resto listos para cablear.</div>
       <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px" id="services-panels">
         <!-- Panel Instagram (comentarios) -->
         <div class="card" style="padding:12px">
-          <div class="row"><div class="ico" style="color:#E1306C">📸</div><div><div class="lab">Instagram — Comentarios</div><small class="muted">Masivo / Auto / Personalizado</small></div></div>
+          <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><div class="lab">Instagram — Comentarios</div><small class="muted">Masivo / Auto / Personalizado</small></div></div>
           <div class="spacer"></div>
           <form id="ig-comments" class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
             <div class="input" style="grid-column:1/-1"><span>🔗</span><input name="url" placeholder="URL del post (https://www.instagram.com/p/...)" required></div>
@@ -190,9 +230,9 @@
           <div id="ig-comments-status" class="hint" style="margin-top:6px">—</div>
         </div>
 
-        <!-- Panel TikTok (placeholders de servicios) -->
+        <!-- Panel TikTok (plantilla) -->
         <div class="card" style="padding:12px">
-          <div class="row"><div class="ico" style="color:#69C9D0">🎵</div><div><div class="lab">TikTok — Servicios</div><small class="muted">Vistas, Likes, Seguidores</small></div></div>
+          <div class="row"><div class="ico"><svg><use href="#logo-tiktok"/></svg></div><div><div class="lab">TikTok — Servicios</div><small class="muted">Vistas, Likes, Seguidores</small></div></div>
           <div class="spacer"></div>
           <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
             <div class="input" style="grid-column:1/-1"><span>🔗</span><input placeholder="URL del video"></div>
@@ -207,21 +247,19 @@
     <section class="view" data-tab="clients">
       <div class="section-title">👥 Clientes recientes</div>
       <div class="clients">
-        <div class="client">📸 @aaronmercury <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
-        <div class="client">📸 @televisadigital <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
-        <div class="client">📸 @joscanela <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
-        <div class="client">📸 @jimenagallegotv <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
-        <div class="client">📸 @elmalilla_ <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg> @aaronmercury <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg> @televisadigital <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg> @joscanela <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg> @jimenagallegotv <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg> @elmalilla_ <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
       </div>
     </section>
 
     <!-- DEVICE FARM -->
     <section class="view" data-tab="farm">
-      <div class="section-title">📱 Device Farm (vista en vivo)</div>
-      <div class="hint">Inserta las URLs de stream (WebRTC/HLS/MJPEG) en cada dispositivo. Quedan guardadas en localStorage.</div>
-      <div class="farm" id="farm-grid">
-        <!-- Dispositivos se generan por JS (compacto) -->
-      </div>
+      <div class="section-title">📱 Device Farm (en vivo)</div>
+      <div class="hint">Asigna una URL de stream (HLS .m3u8, MJPEG .mjpg o página/visor). Se guarda en localStorage.</div>
+      <div class="farm" id="farm-grid"></div>
     </section>
 
     <!-- CUENTAS -->
@@ -271,196 +309,129 @@
 
 <script>
 (function(){
-  const API_URL = "https://api.kraveapi.xyz"; // Igual que tu backend
+  const API_URL = "https://api.kraveapi.xyz";
+
+  // ===== Estado backend =====
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
-  const sessionSub = document.getElementById('session-sub');
-
-  // ============== Social grid (compacto, con capacidades) ==============
-  const socials = [
-    {k:'instagram', label:'Instagram', color:'#E1306C', caps:['Comentarios','Likes','Seguidores','Vistas']},
-    {k:'tiktok', label:'TikTok', color:'#69C9D0', caps:['Vistas','Likes','Seguidores']},
-    {k:'youtube', label:'YouTube', color:'#FF0000', caps:['Vistas','Likes','Comentarios']},
-    {k:'threads', label:'Threads', color:'#fff', caps:['Likes','Respuestas']},
-    {k:'x', label:'X', color:'#fff', caps:['Likes','Reposts','Seguidores']},
-    {k:'facebook', label:'Facebook', color:'#1877F2', caps:['Reacciones','Comentarios']},
-    {k:'linkedin', label:'LinkedIn', color:'#0A66C2', caps:['Reacciones','Comentarios','Conexiones']},
-    {k:'snapchat', label:'Snapchat', color:'#FFFC00', caps:['Vistas']},
-    {k:'discord', label:'Discord', color:'#5865F2', caps:['Mensajes','Invitaciones']},
-    {k:'telegram', label:'Telegram', color:'#0088cc', caps:['Mensajes','Miembros']},
-    {k:'whatsapp', label:'WhatsApp', color:'#25D366', caps:['Mensajes']},
-    {k:'twitch', label:'Twitch', color:'#9146FF', caps:['Viewers','Chat']},
-    {k:'reddit', label:'Reddit', color:'#FF4500', caps:['Upvotes','Comentarios']},
-    {k:'spotify', label:'Spotify', color:'#1DB954', caps:['Streams','Saves']},
-    {k:'pinterest', label:'Pinterest', color:'#E60023', caps:['Repins','Saves']},
-  ];
-  const socialGrid = document.getElementById('social-grid');
-  socialGrid.innerHTML = socials.map(s => `
-    <article class="card tile" data-key="${s.k}">
-      <div class="row"><div class="ico" style="color:${s.color}">●</div>
-        <div><div class="lab">${s.label}</div><small class="muted">Automatiza</small></div></div>
-      <div class="cap">${s.caps.map(c=>`<span class="c">${c}</span>`).join('')}</div>
-    </article>`).join('');
-
-  // Al tocar un tile, llevar a Servicios con un hint del panel
-  socialGrid.addEventListener('click', (e)=>{
-    const tile = e.target.closest('.tile');
-    if(!tile) return;
-    document.getElementById('tab-auto').checked = true;
-  });
-
-  // ============== Quick automation (solo feedback UI por ahora) ==========
-  document.getElementById('quick-run').addEventListener('click', ()=>{
-    const v = (document.getElementById('quick-input').value||'').trim();
-    if(!v){toast('Escribe qué automatizar');return}
-    toast('Automatizando: '+v);
-    document.getElementById('quick-input').value='';
-  });
-
-  // ============== Backend health ========================================
   async function checkHealth(){
-    try{
-      const r = await fetch(`${API_URL}/health`, {credentials:'include'});
-      if(r.ok){statusDot.style.background = 'var(--ok)'; statusText.textContent='Conectado'}
-      else{throw new Error('Backend error')}
-    }catch(err){statusDot.style.background = 'var(--err)'; statusText.textContent='Sin conexión'}
+    try{ const r = await fetch(`${API_URL}/health`, {credentials:'include'}); if(r.ok){statusDot.style.background='var(--ok)'; statusText.textContent='Conectado'} else throw new Error(); }
+    catch{ statusDot.style.background='var(--err)'; statusText.textContent='Sin conexión'; }
   }
   checkHealth(); setInterval(checkHealth, 120000);
 
-  // ============== IG Comentarios ========================================
-  const igForm = document.getElementById('ig-comments');
-  const igStatus = document.getElementById('ig-comments-status');
-  igForm.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const fd = new FormData(igForm);
-    const payload = Object.fromEntries(fd.entries());
-    try{
-      igStatus.textContent = 'Enviando…';
-      const r = await fetch(`${API_URL}/instagram/comentarios`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
-      const data = await r.json().catch(()=>({}));
-      if(r.ok){ igStatus.textContent = '✅ Comentarios en proceso'; toast('Comentarios lanzados'); }
-      else{ throw new Error(data.mensaje||'Error en comentarios'); }
-    }catch(err){ igStatus.textContent = '❌ '+err.message; toast('Error: '+err.message,true); }
+  // ===== Dashboard de redes con LOGOS =====
+  const socialMeta = {
+    instagram:{label:'Instagram', color:'#E1306C', logo:'#logo-instagram', caps:['Comentarios','Likes','Seguidores','Vistas']},
+    tiktok:{label:'TikTok', color:'#69C9D0', logo:'#logo-tiktok', caps:['Vistas','Likes','Seguidores']},
+    youtube:{label:'YouTube', color:'#FF0000', logo:'#logo-youtube', caps:['Vistas','Likes','Comentarios']},
+    threads:{label:'Threads', color:'#ffffff', logo:'#logo-threads', caps:['Likes','Respuestas']},
+    x:{label:'X', color:'#ffffff', logo:'#logo-x', caps:['Likes','Reposts','Seguidores']},
+    facebook:{label:'Facebook', color:'#1877F2', logo:'#logo-facebook', caps:['Reacciones','Comentarios']},
+    linkedin:{label:'LinkedIn', color:'#0A66C2', logo:'#logo-linkedin', caps:['Reacciones','Comentarios','Conexiones']},
+    snapchat:{label:'Snapchat', color:'#FFFC00', logo:'#logo-snapchat', caps:['Vistas']},
+    discord:{label:'Discord', color:'#5865F2', logo:'#logo-discord', caps:['Mensajes','Invitaciones']},
+    telegram:{label:'Telegram', color:'#0088cc', logo:'#logo-telegram', caps:['Mensajes','Miembros']},
+    whatsapp:{label:'WhatsApp', color:'#25D366', logo:'#logo-whatsapp', caps:['Mensajes']},
+    twitch:{label:'Twitch', color:'#9146FF', logo:'#logo-twitch', caps:['Viewers','Chat']},
+    reddit:{label:'Reddit', color:'#FF4500', logo:'#logo-reddit', caps:['Upvotes','Comentarios']},
+    spotify:{label:'Spotify', color:'#1DB954', logo:'#logo-spotify', caps:['Streams','Saves']},
+    pinterest:{label:'Pinterest', color:'#E60023', logo:'#logo-pinterest', caps:['Repins','Saves']},
+  };
+  const socialOrder = Object.keys(socialMeta);
+  const socialGrid = document.getElementById('social-grid');
+  socialGrid.innerHTML = socialOrder.map(k=>{ const s=socialMeta[k]; return `
+    <article class="card tile" data-key="${k}">
+      <div class="row">
+        <div class="ico" style="color:${s.color}"><svg><use href="${s.logo}"/></svg></div>
+        <div><div class="lab">${s.label}</div><small class="muted">Automatiza</small></div>
+      </div>
+      <div class="cap">${s.caps.map(c=>`<span class="c">${c}</span>`).join('')}</div>
+    </article>`}).join('');
+  socialGrid.addEventListener('click',(e)=>{ if(e.target.closest('.tile')) document.getElementById('tab-auto').checked=true; });
+
+  // ===== Quick automation =====
+  document.getElementById('quick-run').addEventListener('click',()=>{
+    const v=(document.getElementById('quick-input').value||'').trim(); if(!v){toast('Escribe qué automatizar',true);return} toast('Automatizando: '+v); document.getElementById('quick-input').value='';
   });
 
-  // ============== Sesión / Cuentas ======================================
-  const loginBtn = document.getElementById('login-btn');
-  const logoutBtn = document.getElementById('logout-btn');
-  const addAccountBtn = document.getElementById('add-account-btn');
-  const accountsList = document.getElementById('accounts-list');
+  // ===== Instagram → Comentarios =====
+  const igForm=document.getElementById('ig-comments'); const igStatus=document.getElementById('ig-comments-status');
+  igForm.addEventListener('submit', async (e)=>{
+    e.preventDefault(); const fd=new FormData(igForm); const payload=Object.fromEntries(fd.entries());
+    try{ igStatus.textContent='Enviando…'; const r=await fetch(`${API_URL}/instagram/comentarios`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)}); const data=await r.json().catch(()=>({})); if(r.ok){igStatus.textContent='✅ Comentarios en proceso'; toast('Comentarios lanzados');} else{throw new Error(data.mensaje||'Error en comentarios');} }
+    catch(err){ igStatus.textContent='❌ '+err.message; toast('Error: '+err.message,true); }
+  });
 
-  async function checkSession(){
-    try{
-      const r = await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
-      const d = await r.json();
-      if(d.status==='activo'){sessionSub.textContent = `Sesión activa como @${d.usuario}`}
-      else{sessionSub.textContent = 'No hay sesión activa'}
-    }catch{sessionSub.textContent='Error al verificar sesión'}
-  }
+  // ===== Sesión / Cuentas =====
+  const sessionSub=document.getElementById('session-sub');
+  async function checkSession(){ try{ const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'}); const d=await r.json(); sessionSub.textContent=(d.status==='activo')?`Sesión activa como @${d.usuario}`:'No hay sesión activa'; }catch{ sessionSub.textContent='Error al verificar sesión'; } }
   checkSession();
 
-  loginBtn.addEventListener('click', async ()=>{
-    const u = document.getElementById('login-username').value.trim().replace('@','');
-    const p = document.getElementById('login-password').value.trim();
-    if(!u||!p){return toast('Completa usuario y contraseña',true)}
-    try{
-      loginBtn.textContent='Iniciando…'; loginBtn.disabled=true;
-      const r = await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
-      const d = await r.json();
-      if(d.exito){ toast('Sesión iniciada @'+d.usuario); sessionSub.textContent = `Sesión activa como @${d.usuario}`; }
-      else{ throw new Error(d.mensaje||'Error al iniciar'); }
-    }catch(err){ toast(err.message,true) }
-    finally{ loginBtn.textContent='Iniciar sesión'; loginBtn.disabled=false; }
+  document.getElementById('login-btn').addEventListener('click', async ()=>{
+    const u=document.getElementById('login-username').value.trim().replace('@',''); const p=document.getElementById('login-password').value.trim(); if(!u||!p) return toast('Completa usuario y contraseña',true);
+    try{ const btn=document.getElementById('login-btn'); btn.textContent='Iniciando…'; btn.disabled=true; const r=await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})}); const d=await r.json(); if(d.exito){toast('Sesión iniciada @'+d.usuario); sessionSub.textContent=`Sesión activa como @${d.usuario}`;} else throw new Error(d.mensaje||'Error al iniciar'); }
+    catch(err){ toast(err.message,true) }
+    finally{ const btn=document.getElementById('login-btn'); btn.textContent='Iniciar sesión'; btn.disabled=false; }
   });
 
-  logoutBtn.addEventListener('click', async ()=>{
-    try{
-      logoutBtn.textContent='Cerrando…'; logoutBtn.disabled=true;
-      const r = await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'});
-      const d = await r.json();
-      if(d.exito){ toast('Sesión cerrada'); sessionSub.textContent = 'No hay sesión activa'; }
-      else{ throw new Error(d.mensaje||'Error al cerrar'); }
-    }catch(err){ toast(err.message,true) }
-    finally{ logoutBtn.textContent='Cerrar sesión'; logoutBtn.disabled=false; }
+  document.getElementById('logout-btn').addEventListener('click', async ()=>{
+    try{ const btn=document.getElementById('logout-btn'); btn.textContent='Cerrando…'; btn.disabled=true; const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'}); const d=await r.json(); if(d.exito){ toast('Sesión cerrada'); sessionSub.textContent='No hay sesión activa'; } else throw new Error(d.mensaje||'Error al cerrar'); }
+    catch(err){ toast(err.message,true) }
+    finally{ const btn=document.getElementById('logout-btn'); btn.textContent='Cerrar sesión'; btn.disabled=false; }
   });
 
-  addAccountBtn.addEventListener('click', async ()=>{
-    const u = document.getElementById('manual-username').value.trim().replace('@','');
-    const p = document.getElementById('manual-password').value.trim();
-    if(!u||!p){return toast('Completa ambos campos',true)}
-    try{
-      addAccountBtn.textContent='Guardando…'; addAccountBtn.disabled=true;
-      const loginR = await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
-      const loginD = await loginR.json(); if(!loginD.exito) throw new Error(loginD.mensaje||'Credenciales inválidas');
-      const saveR = await fetch(`${API_URL}/guardar-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:u,password:p})});
-      const saveD = await saveR.json(); if(saveD.status!=="ok") throw new Error(saveD.message||'No se pudo guardar');
-      toast('Cuenta @'+u+' guardada'); document.getElementById('manual-username').value=''; document.getElementById('manual-password').value='';
-      loadAccounts();
-    }catch(err){ toast(err.message,true) }
-    finally{ addAccountBtn.textContent='Guardar cuenta'; addAccountBtn.disabled=false; }
-  });
-
+  const accountsList=document.getElementById('accounts-list');
   async function loadAccounts(){
-    try{
-      const r = await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'});
-      const arr = await r.json();
-      if(!Array.isArray(arr) || arr.length===0){accountsList.innerHTML = '<div class="hint">No hay cuentas activas</div>'; return}
-      accountsList.innerHTML = arr.map(acc=>
-        `<div class="card" style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+    try{ const r=await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'}); const arr=await r.json(); if(!Array.isArray(arr)||arr.length===0){accountsList.innerHTML='<div class="hint">No hay cuentas activas</div>';return}
+      accountsList.innerHTML=arr.map(acc=>`
+        <div class="card" style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:10px;height:10px;border-radius:50%;background:${acc.status==='activo'?'var(--ok)':'var(--err)'}"></span>
             <strong>@${acc.username}</strong>
           </div>
           <div style="display:flex;gap:6px">
-            ${acc.status==='activo' ? `
-              <button class="btn" data-logout="${acc.username}">Logout</button>` : `
-              <button class="btn btn-primary" data-login="${acc.username}">Login</button>`}
+            ${acc.status==='activo' ? `<button class="btn" data-logout="${acc.username}">Logout</button>` : `<button class="btn btn-primary" data-login="${acc.username}">Login</button>`}
           </div>
         </div>`).join('');
-    }catch{accountsList.innerHTML = '<div class="hint">Error al cargar cuentas</div>'}
+    }catch{ accountsList.innerHTML='<div class="hint">Error al cargar cuentas</div>'; }
   }
   loadAccounts(); setInterval(loadAccounts, 30000);
 
   accountsList.addEventListener('click', async (e)=>{
-    const b = e.target.closest('button'); if(!b) return;
+    const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.login){
       toast('Iniciando @'+b.dataset.login+'…');
-      try{
-        const r = await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.login})});
-        const d = await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast('Sesión iniciada @'+b.dataset.login); loadAccounts();
-      }catch(err){toast(err.message,true)}
+      try{ const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.login})}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast('Sesión iniciada @'+b.dataset.login); loadAccounts(); }
+      catch(err){ toast(err.message,true) }
     }
     if(b.dataset.logout){
       toast('Cerrando @'+b.dataset.logout+'…');
-      try{
-        const r = await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})});
-        const d = await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast('Sesión cerrada @'+b.dataset.logout); loadAccounts();
-      }catch(err){toast(err.message,true)}
+      try{ const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast('Sesión cerrada @'+b.dataset.logout); loadAccounts(); }
+      catch(err){ toast(err.message,true) }
     }
   });
 
-  // ============== Device Farm ===========================================
-  const defaultDevices = [
-    {id:'dev1', name:'iPhone 14 Pro', os:'iOS', ip:'10.0.0.8'},
-    {id:'dev2', name:'Galaxy S23', os:'Android', ip:'10.0.0.9'},
-    {id:'dev3', name:'iPhone 13', os:'iOS', ip:'10.0.0.10'},
-    {id:'dev4', name:'Pixel 8', os:'Android', ip:'10.0.0.11'}
+  // ===== Device Farm =====
+  const defaultDevices=[
+    {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
+    {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
+    {id:'dev3',name:'iPhone 13',os:'iOS',ip:'10.0.0.10'},
+    {id:'dev4',name:'Pixel 8',os:'Android',ip:'10.0.0.11'}
   ];
-  const farmGrid = document.getElementById('farm-grid');
+  const farmGrid=document.getElementById('farm-grid');
   function renderFarm(){
     farmGrid.innerHTML = defaultDevices.map(d=>{
-      const src = localStorage.getItem('stream:'+d.id) || '';
+      const src = localStorage.getItem('stream:'+d.id)||'';
       return `
       <div class="card dev">
         <div class="dev-head">
           <div>📱 <strong>${d.name}</strong> · ${d.os}</div>
-          <div class="chips"><span class="chip-b">idle</span><span class="chip-b">${d.ip}</span></div>
+          <div class="chips"><span class="chip-b">${src?'live':'idle'}</span><span class="chip-b">${d.ip}</span></div>
         </div>
         <div class="screen">
           <div class="ov"><span class="chip-b">${src? 'Live' : 'Idle'}</span></div>
-          ${src ? (src.endsWith('.mjpg') || src.endsWith('.mjpeg') ? `<img src="${src}"/>` : src.endsWith('.m3u8') ? `<video src="${src}" autoplay muted playsinline></video>` : `<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`) : '<div class="placeholder"></div>'}
+          ${src ? (src.endsWith('.mjpg')||src.endsWith('.mjpeg')?`<img src="${src}">`: src.endsWith('.m3u8')?`<video src="${src}" autoplay muted playsinline></video>`:`<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`) : '<div class="placeholder"></div>'}
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-primary" data-set="${d.id}">Set stream</button>
@@ -470,23 +441,14 @@
     }).join('');
   }
   renderFarm();
-
-  farmGrid.addEventListener('click', (e)=>{
-    const b = e.target.closest('button'); if(!b) return;
-    if(b.dataset.set){
-      const id = b.dataset.set; const cur = localStorage.getItem('stream:'+id)||'';
-      const url = prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):', cur);
-      if(url!==null){ localStorage.setItem('stream:'+id, url.trim()); renderFarm(); toast('Stream actualizado'); }
-    }
+  farmGrid.addEventListener('click',(e)=>{
+    const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.set){ const id=b.dataset.set; const cur=localStorage.getItem('stream:'+id)||''; const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur); if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); toast('Stream actualizado'); } }
     if(b.dataset.clear){ const id=b.dataset.clear; localStorage.removeItem('stream:'+id); renderFarm(); toast('Stream limpiado'); }
   });
 
-  // ============== Toast mínimo ===========================================
-  function toast(msg, err){
-    const el = document.createElement('div');
-    el.textContent = msg; el.style.cssText = `position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;background:${err?'#ff5f74':'#1f2937'};color:#fff;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.15)`;
-    document.body.appendChild(el); setTimeout(()=>{el.remove()}, 2200);
-  }
+  // ===== Toast =====
+  function toast(msg,err){ const el=document.createElement('div'); el.textContent=msg; el.style.cssText=`position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;background:${err?'#ff5f74':'#1f2937'};color:#fff;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.15)`; document.body.appendChild(el); setTimeout(()=>el.remove(),2200); }
 })();
 </script>
 </body>
