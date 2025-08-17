@@ -1,528 +1,612 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-  <meta name="theme-color" content="#0c0c10" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>KRAVEAI — Automation OS</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    /* ============== TOKENS (tema) ============== */
-    :root{
-      --bg:#0c0c10; --elev:#111319; --card:#141726; --text:#EEF0F6; --muted:#9297a2; --line:#22263a;
-      --ac:#8256ff; --ac2:#00d7c7; --ok:#33d39b; --warn:#ffbf58; --err:#ff5f74;
-      --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.09);
-      --r:16px; --shadow:0 12px 40px rgba(0,0,0,.32);
-      --igBlue:#0095F6;
-      --devH:230px; --devMin:190px;
-    }
-    :root.light{
-      --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0b0d13; --muted:#6b7280; --line:#e7e9f2;
-      --glass:rgba(0,0,0,.05); --glass2:rgba(0,0,0,.08); --shadow:0 12px 26px rgba(0,0,0,.1);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, Roboto;overflow:hidden}
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>KRAVEAI — Automation OS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    /* Fondo “neón” */
-    .bg{position:fixed;inset:-20%;z-index:-1;filter:blur(40px);opacity:.45;pointer-events:none;
-      background:
-        radial-gradient(50% 38% at 90% 8%, rgba(130,86,255,.35), transparent 60%),
-        radial-gradient(38% 26% at 6% 10%, rgba(0,215,199,.26), transparent 70%),
-        radial-gradient(40% 30% at 12% 88%, rgba(255,95,116,.18), transparent 70%);
-      animation:morph 18s ease-in-out infinite alternate}
-    @keyframes morph{from{transform:translate3d(0,0,0)}to{transform:translate3d(-2%,2%,0)}}
+<style>
+/* ===== TOKENS ===== */
+:root{
+  --bg:#0b0d12;--elev:#0f1219;--card:#131827;--text:#eef1f7;--muted:#9aa2b2;--line:#21283b;
+  --ac:#7c5cff;--ac2:#00d3c2;--ok:#29d39a;--warn:#ffbf58;--err:#ff5f74;
+  --glass:rgba(255,255,255,.05);--glass2:rgba(255,255,255,.08);
+  --r:16px;--shadow:0 10px 34px rgba(0,0,0,.28);
+  --ig:#0095F6;
+  --devH:230px;--devMin:190px;
+}
+:root.light{
+  --bg:#f6f7fb;--elev:#ffffff;--card:#ffffff;--text:#0b0d12;--muted:#6b7280;--line:#e7e9f2;
+  --glass:rgba(0,0,0,.05);--glass2:rgba(0,0,0,.08);--shadow:0 10px 24px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,Roboto;overflow:hidden}
 
-    /* ====== Top ====== */
-    .top{position:fixed;left:0;right:0;top:0;z-index:60;display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;
-      padding:calc(8px + env(safe-area-inset-top)) 12px 8px;
-      background:color-mix(in oklab,var(--elev) 92%, transparent);backdrop-filter:saturate(1.15) blur(16px);
-      border-bottom:1px solid var(--line)}
-    .brand{display:flex;align-items:center;gap:10px}
-    .word{font-weight:900;letter-spacing:.16em}
-    .chip{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);color:var(--muted);transition:transform .16s}
-    .chip:active{transform:scale(.96)}
-    .status{justify-self:start;display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-size:.86rem}
+/* fondo dinámico */
+.bg{position:fixed;inset:-20%;z-index:-1;filter:blur(50px);opacity:.45;pointer-events:none;
+  background:
+  radial-gradient(40% 30% at 90% 8%, rgba(124,92,255,.35), transparent 60%),
+  radial-gradient(36% 26% at 8% 12%, rgba(0,211,194,.26), transparent 70%),
+  radial-gradient(42% 30% at 12% 88%, rgba(255,95,116,.18), transparent 70%);
+  animation:morph 18s ease-in-out infinite alternate}
+@keyframes morph{from{transform:translate3d(0,0,0)}to{transform:translate3d(-2%,2%,0)}}
 
-    /* ====== Shell principal (sin scroll general, vistas internas con scroll) ====== */
-    .shell{position:fixed;left:0;right:0;top:calc(48px + env(safe-area-inset-top));bottom:calc(64px + env(safe-area-inset-bottom));
-      max-width:1200px;margin:0 auto;padding:10px 12px;display:grid;grid-template-rows:auto auto 1fr;gap:10px;overflow:hidden}
-    .hero{display:flex;align-items:center;justify-content:space-between}
-    .badge{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 12px 24px rgba(130,86,255,.28),0 10px 20px rgba(0,215,199,.18)}
-    .logo{width:24px;height:24px;filter:drop-shadow(0 2px 8px rgba(130,86,255,.42));animation:pulse 4.2s ease-in-out infinite}
-    @keyframes pulse{50%{filter:drop-shadow(0 6px 18px rgba(130,86,255,.6))}}
+/* topbar */
+.top{position:fixed;left:0;right:0;top:0;z-index:60;display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;
+  padding:calc(8px + env(safe-area-inset-top)) 12px 8px;background:color-mix(in oklab,var(--elev) 92%, transparent);
+  backdrop-filter:saturate(1.15) blur(16px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.word{font-weight:900;letter-spacing:.16em}
+.chip{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);color:var(--muted);transition:transform .16s}
+.chip:active{transform:scale(.96)}
+.status{justify-self:start;display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-size:.86rem}
 
-    .btn{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in oklab,var(--card) 95%, transparent),color-mix(in oklab,var(--card) 100%, transparent));
-      color:var(--text);padding:8px 12px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
-    .btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac2));border:0;color:#0b0d13}
+/* shell app (sin scroll global) */
+.shell{position:fixed;left:0;right:0;top:calc(48px + env(safe-area-inset-top));bottom:calc(68px + env(safe-area-inset-bottom));
+  max-width:1200px;margin:0 auto;padding:10px 12px;display:grid;grid-template-rows:auto auto 1fr;gap:10px;overflow:hidden}
+.hero{display:flex;align-items:center;justify-content:space-between}
+.badge{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 12px 24px rgba(124,92,255,.28),0 10px 20px rgba(0,211,194,.18)}
+.logo{width:24px;height:24px;filter:drop-shadow(0 2px 8px rgba(124,92,255,.42));animation:pulse 4.2s ease-in-out infinite}
+@keyframes pulse{50%{filter:drop-shadow(0 6px 18px rgba(124,92,255,.6))}}
+.btn{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in oklab,var(--card) 95%, transparent),color-mix(in oklab,var(--card) 100%, transparent));
+  color:var(--text);padding:8px 12px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer;transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac2));border:0;color:#0b0d13}
 
-    .tabs{display:flex;gap:8px}
-    .t{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:12px;background:var(--glass);border:1px solid var(--line);color:var(--muted);font-weight:800}
-    .t.active{color:var(--text);background:var(--glass2)}
+/* tabs pequeñas + vistas */
+.tabs{display:flex;gap:8px}
+.t{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:12px;background:var(--glass);border:1px solid var(--line);color:var(--muted);font-weight:800}
+.t.active{color:var(--text);background:var(--glass2)}
+.views{position:relative;border-radius:var(--r);overflow:hidden}
+.view{position:absolute;inset:0;display:none;overflow:auto;padding:8px}
+.view.active{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-    .views{position:relative;border-radius:var(--r);overflow:hidden}
-    .view{position:absolute;inset:0;display:none;overflow:auto;padding:8px}
-    .view.active{display:block;animation:fade .18s ease}
-    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* cards/tiles */
+.grid{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:840px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.card{background:linear-gradient(180deg,color-mix(in oklab,var(--card) 94%, transparent),color-mix(in oklab,var(--card) 98%, transparent));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.tile{padding:10px 10px 12px}
+.tile .row{display:flex;align-items:center;gap:10px}
+.ico{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--line)}
+.lab{font-weight:900}
+.muted{color:var(--muted)}
+.cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cap .c{padding:6px 8px;font-size:.78rem;border:1px solid var(--line);border-radius:999px;background:var(--glass)}
 
-    /* ====== Tiles / cards ====== */
-    .grid{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr))}
-    @media (min-width:720px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
-    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--card) 94%, transparent),color-mix(in oklab,var(--card) 98%, transparent));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
-    .tile{display:flex;align-items:center;gap:10px;padding:12px;cursor:pointer;transition:transform .12s}
-    .tile:hover{transform:translateY(-1px)}
-    .tile .ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--line)}
-    .tile .lab{font-weight:900}
-    .muted{color:var(--muted)}
-    .input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--glass);border-radius:12px;padding:8px 10px}
-    .input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
+/* búsqueda/automatización compacta */
+.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--glass);border-radius:12px;padding:8px 10px}
+.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
 
-    /* ====== Tabbar ====== */
-    .bar{position:fixed;left:0;right:0;bottom:0;z-index:55;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-      background:color-mix(in oklab,var(--elev) 92%, transparent);backdrop-filter:saturate(1.15) blur(16px);border-top:1px solid var(--line)}
-    .tb{display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px;padding:6px;color:var(--muted);border:1px solid transparent}
-    .tb.active{color:var(--text);background:var(--glass);border-color:var(--line)}
-    .tb i{font-size:1rem}.tb span{font-size:.72rem}
-    @media (max-width:480px){.tb span{display:none}}
+/* tabbar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:55;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  background:color-mix(in oklab,var(--elev) 92%, transparent);backdrop-filter:saturate(1.15) blur(16px);border-top:1px solid var(--line)}
+.tb{display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px;padding:6px;color:var(--muted);border:1px solid transparent}
+.tb.active{color:var(--text);background:var(--glass);border-color:var(--line)}
+.tb i{font-size:1rem}.tb span{font-size:.72rem}
+@media (max-width:480px){.tb span{display:none}}
 
-    /* ====== Panels ====== */
-    .panel{position:fixed;inset:0;z-index:70;display:none}
-    .panel.active{display:block}
-    .panel .inner{position:absolute;left:0;right:0;top:calc(48px + env(safe-area-inset-top));bottom:calc(64px + env(safe-area-inset-bottom));
-      background:var(--bg);padding:10px 12px;overflow:auto;max-width:1200px;margin:0 auto;animation:slide .2s ease}
-    @keyframes slide{from{transform:translateX(14px);opacity:0}to{transform:translateX(0);opacity:1}}
+/* panels */
+.panel{position:fixed;inset:0;z-index:70;display:none}
+.panel.active{display:block}
+.panel .inner{position:absolute;left:0;right:0;top:calc(48px + env(safe-area-inset-top));bottom:calc(68px + env(safe-area-inset-bottom));
+  background:var(--bg);padding:10px 12px;overflow:auto;max-width:1200px;margin:0 auto;animation:slide .2s ease}
+@keyframes slide{from{transform:translateX(14px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-    /* ====== Service Center ====== */
-    .svc-grid{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (min-width:820px){.svc-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    .svc-card .title{padding:12px;display:flex;gap:10px;align-items:center;font-weight:900}
-    .svc-card .hint{padding:0 12px 10px;color:var(--muted);font-size:.85rem}
-    .form{display:grid;gap:8px}.row{display:grid;gap:6px}.row label{color:var(--muted);font-size:.85rem}
-    .ctrl{border:1px solid var(--line);background:var(--glass);color:var(--text);border-radius:12px;padding:10px}
-    textarea.ctrl{min-height:90px;resize:vertical}
+/* service center */
+.svc-grid{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:820px){.svc-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.svc-card .title{padding:12px;display:flex;gap:10px;align-items:center;font-weight:900}
+.svc-card .hint{padding:0 12px 10px;color:var(--muted);font-size:.85rem}
+.form{display:grid;gap:8px}.row{display:grid;gap:6px}.row label{color:var(--muted);font-size:.85rem}
+.ctrl{border:1px solid var(--line);background:var(--glass);color:var(--text);border-radius:12px;padding:10px}
+textarea.ctrl{min-height:90px;resize:vertical}
 
-    /* ====== Device Farm ====== */
-    .farm{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(var(--devMin),1fr))}
-    .dev{display:grid;gap:8px;padding:10px}
-    .dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
-    .chips{display:flex;gap:6px;flex-wrap:wrap}
-    .chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.78rem}
-    .screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:var(--devH);position:relative}
-    .screen video,.screen img{width:100%;height:100%;object-fit:cover;display:block}
-    .screen .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px}
+/* device farm */
+.farm{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(var(--devMin),1fr))}
+.dev{display:grid;gap:8px;padding:10px}
+.dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.78rem}
+.screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:var(--devH);position:relative}
+.screen video,.screen img{width:100%;height:100%;object-fit:cover;display:block}
+.screen .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px}
 
-    /* ====== Clients + IG verified real ====== */
-    .clients{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (min-width:680px){.clients{grid-template-columns:repeat(5,minmax(0,1fr))}}
-    .client{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-weight:900}
-    .ig-badge{display:inline-flex;width:16px;height:16px;margin-left:6px;vertical-align:middle}
+/* clientes + insignia IG (roseta oficial) */
+.clients{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:680px){.clients{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.client{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-weight:900}
+.ig-badge{display:inline-flex;width:18px;height:18px;margin-left:6px;vertical-align:middle}
 
-    /* ====== Firma ====== */
-    .credit{position:fixed;right:10px;bottom:calc(66px + env(safe-area-inset-bottom));z-index:80;font-size:.86rem;color:var(--text);
-      background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));
-      border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px);
-      box-shadow:0 0 12px rgba(130,86,255,.55),0 0 22px rgba(0,215,199,.35);
-      animation:breath 4s ease-in-out infinite, glow 2.4s ease-in-out infinite}
-    @keyframes breath{50%{transform:scale(1.04);opacity:.97}}
-    @keyframes glow{0%{box-shadow:0 0 10px rgba(130,86,255,.45),0 0 18px rgba(0,215,199,.28)}50%{box-shadow:0 0 18px rgba(130,86,255,.75),0 0 30px rgba(0,215,199,.48)}100%{box-shadow:0 0 10px rgba(130,86,255,.45),0 0 18px rgba(0,215,199,.28)}}
+/* firma */
+.credit{position:fixed;right:10px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:80;font-size:.86rem;color:var(--text);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));
+  border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px);
+  box-shadow:0 0 12px rgba(124,92,255,.55),0 0 22px rgba(0,211,194,.35);
+  animation:breath 4s ease-in-out infinite,glow 2.4s ease-in-out infinite}
+@keyframes breath{50%{transform:scale(1.04);opacity:.97}}
+@keyframes glow{0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}}
 
-    /* Toast */
-    .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:color-mix(in oklab,var(--elev) 96%, transparent);border:1px solid var(--line);
-      border-radius:999px;padding:8px 12px;z-index:90;display:none;box-shadow:var(--shadow)}
-    .toast.show{display:block;animation:fade .18s ease}
-  </style>
+/* toast */
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:color-mix(in oklab,var(--elev) 96%, transparent);border:1px solid var(--line);
+  border-radius:999px;padding:8px 12px;z-index:90;display:none;box-shadow:var(--shadow)}
+.toast.show{display:block;animation:fade .18s ease}
+</style>
 </head>
 <body>
-  <!-- Sprites: logo + IG verified -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8256ff"/><stop offset="100%" stop-color="#00d7c7"/></linearGradient>
-      <symbol id="klogo" viewBox="0 0 64 64">
-        <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
-        <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
-      </symbol>
-      <!-- Insignia verificada Instagram (círculo azul IG + check blanco) -->
-      <symbol id="ig-verified" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="11" fill="#0095F6"/>
-        <path d="M10.1 14.7 7.7 12.3a1 1 0 1 1 1.4-1.4l1 1 4.8-4.8a1 1 0 1 1 1.4 1.4l-6.2 6.2a1 1 0 0 1-1.4 0z" fill="#fff"/>
-      </symbol>
-    </defs>
-  </svg>
+<!-- Sprites: logo + IG verified (ROSETA real, NO círculo) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
+    </linearGradient>
+    <symbol id="klogo" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
+      <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
+    </symbol>
+    <!-- Roseta IG (12-puntas) con check blanco -->
+    <symbol id="ig-verified" viewBox="0 0 24 24">
+      <path d="M12 2.4 14.1 4l2.7-.5 1.2 2.4 2.6 1-0.3 2.7 1.9 2-1.9 2 .3 2.7-2.6 1-1.2 2.4-2.7-.5L12 21.6 9.9 20l-2.7.5-1.2-2.4-2.6-1 .3-2.7-1.9-2 1.9-2-.3-2.7 2.6-1L7.2 3.5 9.9 4 12 2.4z" fill="url(#igGrad)"/>
+      <defs><linearGradient id="igGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3BA4F3"/><stop offset="1" stop-color="#2A68DC"/></linearGradient></defs>
+      <path d="M10.1 13.6 8.2 11.7a1 1 0 1 1 1.4-1.4l1.1 1.1 4.7-4.7a1 1 0 0 1 1.4 1.4l-6 6a1 1 0 0 1-1.7 0z" fill="#fff"/>
+    </symbol>
+  </defs>
+</svg>
 
-  <div class="bg"></div>
+<div class="bg"></div>
 
-  <!-- Top -->
-  <header class="top">
-    <div class="brand">
+<header class="top">
+  <div class="brand">
+    <div class="badge"><svg class="logo" viewBox="0 0 64 64"><use href="#klogo"/></svg></div>
+    <div class="word">KRAVEAI</div>
+  </div>
+  <div class="status"><i class="fa-solid fa-circle" style="color:#e34d5a"></i><span id="status">Error de conexión</span></div>
+  <button class="chip" id="bell"><i class="fa-regular fa-bell"></i></button>
+  <button class="chip" id="theme"><i class="fa-solid fa-moon"></i></button>
+</header>
+
+<main class="shell">
+  <section class="hero">
+    <div style="display:flex;align-items:center;gap:10px">
       <div class="badge"><svg class="logo" viewBox="0 0 64 64"><use href="#klogo"/></svg></div>
-      <div class="word">KRAVEAI</div>
-    </div>
-    <div class="status"><i class="fa-solid fa-circle" style="color:#e34d5a"></i><span id="status">Error de conexión</span></div>
-    <button class="chip" id="bell"><i class="fa-regular fa-bell"></i></button>
-    <button class="chip" id="theme"><i class="fa-solid fa-moon"></i></button>
-  </header>
-
-  <!-- Shell -->
-  <main class="shell">
-    <section class="hero">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="badge"><svg class="logo" viewBox="0 0 64 64"><use href="#klogo"/></svg></div>
-        <div>
-          <div style="font-weight:900;letter-spacing:.16em">KRAVEAI</div>
-          <div class="muted" style="font-size:.85rem">Automation Operating System</div>
-        </div>
+      <div>
+        <div style="font-weight:900;letter-spacing:.16em">KRAVEAI</div>
+        <div class="muted" style="font-size:.85rem">Automation Operating System</div>
       </div>
-      <button class="btn btn-primary" id="go-farm"><i class="fa-solid fa-mobile-screen-button"></i> Device Farm</button>
+    </div>
+    <button class="btn btn-primary" id="go-farm"><i class="fa-solid fa-mobile-screen-button"></i> Device Farm</button>
+  </section>
+
+  <div class="tabs">
+    <button class="t active" data-v="redes"><i class="fa-solid fa-hashtag"></i> Redes</button>
+    <button class="t" data-v="auto"><i class="fa-solid fa-bolt"></i> Automatización</button>
+    <button class="t" data-v="clientes"><i class="fa-solid fa-users"></i> Clientes</button>
+  </div>
+
+  <div class="views">
+    <!-- REDES (cada tile incluye capacidades) -->
+    <section class="view active" id="v-redes">
+      <div class="grid" id="grid-social">
+        <!-- Instagram -->
+        <article class="card tile" data-p="instagram">
+          <div class="row">
+            <div class="ico"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div>
+            <div><div class="lab">Instagram</div><small class="muted">Automatiza acciones</small></div>
+          </div>
+          <div class="cap">
+            <span class="c">Comentarios</span><span class="c">Likes</span><span class="c">Seguidores</span><span class="c">Vistas</span>
+          </div>
+        </article>
+        <!-- TikTok -->
+        <article class="card tile" data-p="tiktok">
+          <div class="row"><div class="ico"><i class="fa-brands fa-tiktok" style="color:#69C9D0"></i></div>
+            <div><div class="lab">TikTok</div><small class="muted">Crecimiento orgánico</small></div></div>
+          <div class="cap"><span class="c">Vistas</span><span class="c">Likes</span><span class="c">Seguidores</span></div>
+        </article>
+        <!-- YouTube -->
+        <article class="card tile" data-p="youtube">
+          <div class="row"><div class="ico"><i class="fa-brands fa-youtube" style="color:#FF0000"></i></div>
+            <div><div class="lab">YouTube</div><small class="muted">Video & Shorts</small></div></div>
+          <div class="cap"><span class="c">Vistas</span><span class="c">Likes</span><span class="c">Comentarios</span></div>
+        </article>
+        <!-- Threads -->
+        <article class="card tile" data-p="threads">
+          <div class="row"><div class="ico"><i class="fa-brands fa-threads" style="color:#fff"></i></div>
+            <div><div class="lab">Threads</div><small class="muted">Interacciones</small></div></div>
+          <div class="cap"><span class="c">Likes</span><span class="c">Respuestas</span></div>
+        </article>
+        <!-- X -->
+        <article class="card tile" data-p="x">
+          <div class="row"><div class="ico"><i class="fa-brands fa-x-twitter" style="color:#fff"></i></div>
+            <div><div class="lab">X</div><small class="muted">Reposts & Follows</small></div></div>
+          <div class="cap"><span class="c">Likes</span><span class="c">Reposts</span><span class="c">Follow</span></div>
+        </article>
+        <!-- Facebook -->
+        <article class="card tile" data-p="facebook">
+          <div class="row"><div class="ico"><i class="fa-brands fa-facebook" style="color:#1877F2"></i></div>
+            <div><div class="lab">Facebook</div><small class="muted">Páginas/Posts</small></div></div>
+          <div class="cap"><span class="c">Reacciones</span><span class="c">Comentarios</span></div>
+        </article>
+        <!-- LinkedIn -->
+        <article class="card tile" data-p="linkedin">
+          <div class="row"><div class="ico"><i class="fa-brands fa-linkedin" style="color:#0A66C2"></i></div>
+            <div><div class="lab">LinkedIn</div><small class="muted">Engagement</small></div></div>
+          <div class="cap"><span class="c">Reacciones</span><span class="c">Comentarios</span></div>
+        </article>
+        <!-- Snapchat -->
+        <article class="card tile" data-p="snapchat">
+          <div class="row"><div class="ico"><i class="fa-brands fa-snapchat" style="color:#FFFC00"></i></div>
+            <div><div class="lab">Snapchat</div><small class="muted">Stories</small></div></div>
+          <div class="cap"><span class="c">Vistas</span></div>
+        </article>
+        <!-- Discord -->
+        <article class="card tile" data-p="discord">
+          <div class="row"><div class="ico"><i class="fa-brands fa-discord" style="color:#5865F2"></i></div>
+            <div><div class="lab">Discord</div><small class="muted">Comunidades</small></div></div>
+          <div class="cap"><span class="c">Mensajes</span><span class="c">Invitaciones</span></div>
+        </article>
+        <!-- Telegram -->
+        <article class="card tile" data-p="telegram">
+          <div class="row"><div class="ico"><i class="fa-brands fa-telegram" style="color:#0088cc"></i></div>
+            <div><div class="lab">Telegram</div><small class="muted">Canales</small></div></div>
+          <div class="cap"><span class="c">Mensajes</span><span class="c">Miembros</span></div>
+        </article>
+        <!-- WhatsApp -->
+        <article class="card tile" data-p="whatsapp">
+          <div class="row"><div class="ico"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i></div>
+            <div><div class="lab">WhatsApp</div><small class="muted">Difusión</small></div></div>
+          <div class="cap"><span class="c">Mensajes</span></div>
+        </article>
+        <!-- Twitch -->
+        <article class="card tile" data-p="twitch">
+          <div class="row"><div class="ico"><i class="fa-brands fa-twitch" style="color:#9146FF"></i></div>
+            <div><div class="lab">Twitch</div><small class="muted">Streams</small></div></div>
+          <div class="cap"><span class="c">Viewers</span><span class="c">Chat</span></div>
+        </article>
+        <!-- Reddit -->
+        <article class="card tile" data-p="reddit">
+          <div class="row"><div class="ico"><i class="fa-brands fa-reddit" style="color:#FF4500"></i></div>
+            <div><div class="lab">Reddit</div><small class="muted">Subreddits</small></div></div>
+          <div class="cap"><span class="c">Upvotes</span><span class="c">Comentarios</span></div>
+        </article>
+        <!-- Spotify -->
+        <article class="card tile" data-p="spotify">
+          <div class="row"><div class="ico"><i class="fa-brands fa-spotify" style="color:#1DB954"></i></div>
+            <div><div class="lab">Spotify</div><small class="muted">Artists</small></div></div>
+          <div class="cap"><span class="c">Streams</span><span class="c">Saves</span></div>
+        </article>
+        <!-- Pinterest -->
+        <article class="card tile" data-p="pinterest">
+          <div class="row"><div class="ico"><i class="fa-brands fa-pinterest" style="color:#E60023"></i></div>
+            <div><div class="lab">Pinterest</div><small class="muted">Pins</small></div></div>
+          <div class="cap"><span class="c">Repins</span><span class="c">Saves</span></div>
+        </article>
+      </div>
     </section>
 
-    <div class="tabs">
-      <button class="t active" data-v="redes"><i class="fa-solid fa-hashtag"></i> Redes</button>
-      <button class="t" data-v="auto"><i class="fa-solid fa-bolt"></i> Automatización</button>
-      <button class="t" data-v="clientes"><i class="fa-solid fa-users"></i> Clientes</button>
-    </div>
-
-    <div class="views">
-      <!-- Redes -->
-      <section class="view active" id="v-redes">
-        <div class="grid" id="grid-social">
-          <!-- 16 redes -->
-          <div class="card tile" data-p="instagram"><div class="ico"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div><div><div class="lab">Instagram</div><small class="muted">Comentarios · Likes · Views</small></div></div>
-          <div class="card tile" data-p="tiktok"><div class="ico"><i class="fa-brands fa-tiktok" style="color:#69C9D0"></i></div><div><div class="lab">TikTok</div><small class="muted">Vistas · Likes · Follows</small></div></div>
-          <div class="card tile" data-p="youtube"><div class="ico"><i class="fa-brands fa-youtube" style="color:#FF0000"></i></div><div><div class="lab">YouTube</div><small class="muted">Vistas · Likes · Comentarios</small></div></div>
-          <div class="card tile" data-p="threads"><div class="ico"><i class="fa-brands fa-threads" style="color:#fff"></i></div><div><div class="lab">Threads</div><small class="muted">Likes · Respuestas</small></div></div>
-          <div class="card tile" data-p="x"><div class="ico"><i class="fa-brands fa-x-twitter" style="color:#fff"></i></div><div><div class="lab">X</div><small class="muted">Likes · Reposts · Follows</small></div></div>
-          <div class="card tile" data-p="facebook"><div class="ico"><i class="fa-brands fa-facebook" style="color:#1877F2"></i></div><div><div class="lab">Facebook</div><small class="muted">Reacciones · Comentarios</small></div></div>
-          <div class="card tile" data-p="linkedin"><div class="ico"><i class="fa-brands fa-linkedin" style="color:#0A66C2"></i></div><div><div class="lab">LinkedIn</div><small class="muted">Engagement</small></div></div>
-          <div class="card tile" data-p="snapchat"><div class="ico"><i class="fa-brands fa-snapchat" style="color:#FFFC00"></i></div><div><div class="lab">Snapchat</div></div></div>
-          <div class="card tile" data-p="discord"><div class="ico"><i class="fa-brands fa-discord" style="color:#5865F2"></i></div><div><div class="lab">Discord</div></div></div>
-          <div class="card tile" data-p="telegram"><div class="ico"><i class="fa-brands fa-telegram" style="color:#0088cc"></i></div><div><div class="lab">Telegram</div></div></div>
-          <div class="card tile" data-p="whatsapp"><div class="ico"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i></div><div><div class="lab">WhatsApp</div></div></div>
-          <div class="card tile" data-p="twitch"><div class="ico"><i class="fa-brands fa-twitch" style="color:#9146FF"></i></div><div><div class="lab">Twitch</div></div></div>
-          <div class="card tile" data-p="reddit"><div class="ico"><i class="fa-brands fa-reddit" style="color:#FF4500"></i></div><div><div class="lab">Reddit</div></div></div>
-          <div class="card tile" data-p="spotify"><div class="ico"><i class="fa-brands fa-spotify" style="color:#1DB954"></i></div><div><div class="lab">Spotify</div></div></div>
-          <div class="card tile" data-p="pinterest"><div class="ico"><i class="fa-brands fa-pinterest" style="color:#E60023"></i></div><div><div class="lab">Pinterest</div></div></div>
-          <div class="card tile" data-p="snap"><div class="ico"><i class="fa-solid fa-bolt" style="color:#ffb000"></i></div><div><div class="lab">Más</div><small class="muted">Próximamente</small></div></div>
-        </div>
-      </section>
-
-      <!-- Automatización -->
-      <section class="view" id="v-auto">
-        <div class="input">
-          <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--muted)"></i>
-          <input id="auto-text" placeholder="¿Qué quieres automatizar hoy?">
-          <button class="btn btn-primary" id="auto-run"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-        <div class="card tile" style="margin-top:10px"><div class="ico"><i class="fa-solid fa-circle-info"></i></div><div><div class="lab">Estado</div><small class="muted">Sin acciones en curso</small></div></div>
-      </section>
-
-      <!-- Clientes (con insignia IG real + elmalilla_) -->
-      <section class="view" id="v-clientes">
-        <div class="clients">
-          <div class="client">@aaronmercury <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
-          <div class="client">@televisadigital <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
-          <div class="client">@joscanela <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
-          <div class="client">@jimenagallegotv <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
-          <div class="client">@elmalilla_ <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <!-- Firma -->
-  <div class="credit" id="credit">Created by Karmean Gómez</div>
-
-  <!-- Panels: Service Center / Farm / Accounts / Settings -->
-  <section class="panel" id="svc">
-    <div class="inner">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-weight:900"><i class="fa-solid fa-sparkles"></i> <span id="svc-title">Servicios</span></div>
-        <button class="btn" id="svc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+    <!-- AUTOMATIZACIÓN (rápida) -->
+    <section class="view" id="v-auto">
+      <div class="input">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--muted)"></i>
+        <input id="auto-text" placeholder="¿Qué quieres automatizar hoy?">
+        <button class="btn btn-primary" id="auto-run"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
-      <div class="svc-grid" id="svc-grid"></div>
-      <div class="card" id="svc-form-card" style="display:none;margin-top:10px;padding:12px">
-        <div style="font-weight:900;margin-bottom:6px" id="svc-form-title"><i class="fa-solid fa-sliders"></i> Configurar</div>
-        <form class="form" id="svc-form"></form>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-primary" id="svc-run"><i class="fa-solid fa-play"></i> Ejecutar</button>
-          <button class="btn" id="svc-cancel">Cancelar</button>
-        </div>
-        <div id="svc-kpis" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-top:10px"></div>
+      <div class="card tile" style="margin-top:10px"><div class="row">
+        <div class="ico"><i class="fa-solid fa-circle-info"></i></div>
+        <div><div class="lab">Estado</div><small class="muted">Sin acciones en curso</small></div></div>
+      </div>
+    </section>
+
+    <!-- CLIENTES (insignia IG REAL + @elmalilla_) -->
+    <section class="view" id="v-clientes">
+      <div class="clients">
+        <div class="client">@aaronmercury <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+        <div class="client">@televisadigital <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+        <div class="client">@joscanela <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+        <div class="client">@jimenagallegotv <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+        <div class="client">@elmalilla_ <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Firma visible con glow -->
+<div class="credit" id="credit">Created by Karmean Gómez</div>
+
+<!-- Panels (Acciones/Service Center, Farm, Accounts, Settings) -->
+<section class="panel" id="svc">
+  <div class="inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-weight:900"><i class="fa-solid fa-sparkles"></i> <span id="svc-title">Servicios</span></div>
+      <button class="btn" id="svc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+    </div>
+    <div class="svc-grid" id="svc-grid"></div>
+    <div class="card" id="svc-form-card" style="display:none;margin-top:10px;padding:12px">
+      <div style="font-weight:900;margin-bottom:6px" id="svc-form-title"><i class="fa-solid fa-sliders"></i> Configurar</div>
+      <form class="form" id="svc-form"></form>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-primary" id="svc-run"><i class="fa-solid fa-play"></i> Ejecutar</button>
+        <button class="btn" id="svc-cancel">Cancelar</button>
+      </div>
+      <div id="svc-kpis" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-top:10px"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="farm">
+  <div class="inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-weight:900"><i class="fa-solid fa-mobile-screen-button"></i> Device Farm</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn" id="zm-">–</button><button class="btn" id="zm+">+</button>
+        <button class="btn" id="farm-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
       </div>
     </div>
-  </section>
+    <div class="farm" id="farm-grid"></div>
+  </div>
+</section>
 
-  <section class="panel" id="farm">
-    <div class="inner">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-weight:900"><i class="fa-solid fa-mobile-screen-button"></i> Device Farm</div>
-        <div style="display:flex;gap:6px">
-          <button class="btn" id="zm-">–</button><button class="btn" id="zm+">+</button>
-          <button class="btn" id="farm-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-        </div>
-      </div>
-      <div class="farm" id="farm-grid"></div>
+<section class="panel" id="acc">
+  <div class="inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-weight:900"><i class="fa-solid fa-users"></i> Cuentas</div>
+      <button class="btn" id="acc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
     </div>
-  </section>
-
-  <section class="panel" id="acc">
-    <div class="inner">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-weight:900"><i class="fa-solid fa-users"></i> Cuentas</div>
-        <button class="btn" id="acc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-      </div>
-      <div class="card" style="padding:12px">
-        <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-key"></i> Sesión</div>
-        <div class="client" id="sess">No hay sesión</div>
-        <div class="form" id="login-form" style="margin-top:8px">
-          <div class="row"><label>Usuario</label><input id="u" class="ctrl" placeholder="@usuario"></div>
-          <div class="row"><label>Contraseña</label><input id="p" class="ctrl" type="password" placeholder="••••••••"></div>
-          <div style="display:flex;gap:8px"><button class="btn btn-primary" id="login">Iniciar sesión</button><button class="btn" id="logout">Cerrar sesión</button></div>
-        </div>
-      </div>
-      <div class="card" style="padding:12px;margin-top:8px">
-        <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-user-plus"></i> Agregar cuenta manual</div>
-        <div class="form">
-          <div class="row"><label>Usuario</label><input id="mu" class="ctrl" placeholder="@usuario"></div>
-          <div class="row"><label>Contraseña</label><input id="mp" class="ctrl" type="password" placeholder="••••••••"></div>
-          <button class="btn btn-primary" id="add">Guardar Cuenta</button>
-        </div>
-      </div>
-      <div class="card" style="padding:12px;margin-top:8px">
-        <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-list-check"></i> Cuentas activas</div>
-        <div id="act">Cargando…</div>
+    <div class="card" style="padding:12px">
+      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-key"></i> Sesión</div>
+      <div class="client" id="sess">No hay sesión</div>
+      <div class="form" id="login-form" style="margin-top:8px">
+        <div class="row"><label>Usuario</label><input id="u" class="ctrl" placeholder="@usuario"></div>
+        <div class="row"><label>Contraseña</label><input id="p" class="ctrl" type="password" placeholder="••••••••"></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-primary" id="login">Iniciar sesión</button><button class="btn" id="logout">Cerrar sesión</button></div>
       </div>
     </div>
-  </section>
-
-  <section class="panel" id="set">
-    <div class="inner">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-weight:900"><i class="fa-solid fa-gear"></i> Ajustes</div>
-        <button class="btn" id="set-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-      </div>
-      <div class="card" style="padding:12px">
-        <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-wand-magic-sparkles"></i> Apariencia</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" id="t-theme"><i class="fa-solid fa-sun"></i> Alternar tema</button>
-          <button class="btn" id="t-bg"><i class="fa-regular fa-lightbulb"></i> Aurora on/off</button>
-          <button class="btn" id="t-big"><i class="fa-solid fa-maximize"></i> Tiles grandes</button>
-          <button class="btn" id="t-small"><i class="fa-solid fa-minimize"></i> Tiles compactas</button>
-        </div>
+    <div class="card" style="padding:12px;margin-top:8px">
+      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-user-plus"></i> Agregar cuenta manual</div>
+      <div class="form">
+        <div class="row"><label>Usuario</label><input id="mu" class="ctrl" placeholder="@usuario"></div>
+        <div class="row"><label>Contraseña</label><input id="mp" class="ctrl" type="password" placeholder="••••••••"></div>
+        <button class="btn btn-primary" id="add">Guardar Cuenta</button>
       </div>
     </div>
-  </section>
+    <div class="card" style="padding:12px;margin-top:8px">
+      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-list-check"></i> Cuentas activas</div>
+      <div id="act">Cargando…</div>
+    </div>
+  </div>
+</section>
 
-  <!-- Tabbar -->
-  <nav class="bar">
-    <button class="tb active" data-tab="home"><i class="fa-solid fa-house"></i><span>Inicio</span></button>
-    <button class="tb" data-tab="accounts"><i class="fa-solid fa-users"></i><span>Cuentas</span></button>
-    <button class="tb" data-tab="actions"><i class="fa-solid fa-screwdriver-wrench"></i><span>Acciones</span></button>
-    <button class="tb" data-tab="farm"><i class="fa-solid fa-mobile-screen-button"></i><span>Farm</span></button>
-    <button class="tb" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Ajustes</span></button>
-  </nav>
+<section class="panel" id="set">
+  <div class="inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-weight:900"><i class="fa-solid fa-gear"></i> Ajustes</div>
+      <button class="btn" id="set-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+    </div>
+    <div class="card" style="padding:12px">
+      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-wand-magic-sparkles"></i> Apariencia</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="t-theme"><i class="fa-solid fa-sun"></i> Alternar tema</button>
+        <button class="btn" id="t-bg"><i class="fa-regular fa-lightbulb"></i> Aurora on/off</button>
+        <button class="btn" id="t-big"><i class="fa-solid fa-maximize"></i> Tiles grandes</button>
+        <button class="btn" id="t-small"><i class="fa-solid fa-minimize"></i> Tiles compactas</button>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <div class="toast" id="toast"><span id="tt"></span></div>
+<nav class="bar">
+  <button class="tb active" data-tab="home"><i class="fa-solid fa-house"></i><span>Inicio</span></button>
+  <button class="tb" data-tab="accounts"><i class="fa-solid fa-users"></i><span>Cuentas</span></button>
+  <button class="tb" data-tab="actions"><i class="fa-solid fa-screwdriver-wrench"></i><span>Acciones</span></button>
+  <button class="tb" data-tab="farm"><i class="fa-solid fa-mobile-screen-button"></i><span>Farm</span></button>
+  <button class="tb" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Ajustes</span></button>
+</nav>
 
-  <script>
-    const API="https://api.kraveapi.xyz";
+<div class="toast" id="toast"><span id="tt"></span></div>
 
-    // Tema
-    (function initTheme(){
-      const t=localStorage.getItem('kr.theme'); if(t==='light') document.documentElement.classList.add('light');
-      document.getElementById('theme').querySelector('i').className=document.documentElement.classList.contains('light')?'fa-solid fa-sun':'fa-solid fa-moon';
-    })();
-    function toggleTheme(){
-      document.documentElement.classList.toggle('light');
-      const light=document.documentElement.classList.contains('light');
-      document.getElementById('theme').querySelector('i').className=light?'fa-solid fa-sun':'fa-solid fa-moon';
-      localStorage.setItem('kr.theme',light?'light':'dark');
-    }
-    document.getElementById('theme').addEventListener('click',toggleTheme);
-    document.getElementById('t-theme').addEventListener('click',toggleTheme);
-    document.getElementById('t-bg').addEventListener('click',()=>{const b=document.querySelector('.bg');b.style.display=b.style.display==='none'?'block':'none'});
-    document.getElementById('t-big').addEventListener('click',()=>document.documentElement.style.setProperty('--r','22px'));
-    document.getElementById('t-small').addEventListener('click',()=>document.documentElement.style.setProperty('--r','10px'));
+<script>
+const API="https://api.kraveapi.xyz";
 
-    // Tabs internas
-    document.querySelectorAll('.t').forEach(b=>b.addEventListener('click',()=>{
-      document.querySelectorAll('.t').forEach(x=>x.classList.remove('active')); b.classList.add('active');
-      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-      document.getElementById('v-'+b.dataset.v).classList.add('active');
-    }));
+/* Tema */
+(function initTheme(){
+  const t=localStorage.getItem('kr.theme'); if(t==='light') document.documentElement.classList.add('light');
+  document.getElementById('theme').querySelector('i').className=document.documentElement.classList.contains('light')?'fa-solid fa-sun':'fa-solid fa-moon';
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  const light=document.documentElement.classList.contains('light');
+  document.getElementById('theme').querySelector('i').className=light?'fa-solid fa-sun':'fa-solid fa-moon';
+  localStorage.setItem('kr.theme',light?'light':'dark');
+}
+document.getElementById('theme').addEventListener('click',toggleTheme);
+document.getElementById('t-theme').addEventListener('click',toggleTheme);
+document.getElementById('t-bg').addEventListener('click',()=>{const b=document.querySelector('.bg');b.style.display=b.style.display==='none'?'block':'none'});
+document.getElementById('t-big').addEventListener('click',()=>document.documentElement.style.setProperty('--r','22px'));
+document.getElementById('t-small').addEventListener('click',()=>document.documentElement.style.setProperty('--r','10px'));
 
-    // Toast
-    function toast(m,e=false){const t=document.getElementById('toast');document.getElementById('tt').textContent=m;t.style.borderColor=e?'var(--err)':'var(--line)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2100);if('vibrate'in navigator)navigator.vibrate(12)}
-    document.getElementById('credit').addEventListener('click',()=>toast('Created by Karmean Gómez'));
+/* Tabs internas */
+document.querySelectorAll('.t').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.t').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('v-'+b.dataset.v).classList.add('active');
+}));
 
-    // Salud backend
-    async function health(){try{const r=await fetch(`${API}/health`,{credentials:'include'});document.getElementById('status').textContent=r.ok?'Conectado':'Error de conexión';}catch{document.getElementById('status').textContent='Error de conexión';}}
-    health(); setInterval(health,120000);
+/* Toast */
+function toast(m,e=false){const t=document.getElementById('toast');document.getElementById('tt').textContent=m;t.style.borderColor=e?'var(--err)':'var(--line)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2100);if('vibrate'in navigator)navigator.vibrate(12)}
+document.getElementById('credit').addEventListener('click',()=>toast('Created by Karmean Gómez'));
 
-    // Navegación principal
-    const panels={accounts:'acc',actions:'svc',farm:'farm',settings:'set'};
-    document.querySelectorAll('.tb').forEach(t=>t.addEventListener('click',()=>{
-      document.querySelectorAll('.tb').forEach(x=>x.classList.remove('active')); t.classList.add('active');
-      const k=t.dataset.tab;
-      Object.values(panels).forEach(id=>document.getElementById(id).classList.remove('active'));
-      if(k==='home') return;
-      document.getElementById(panels[k]).classList.add('active');
-      if(k==='accounts'){checkSession();loadActive();}
-      if(k==='actions'){openService('instagram');}
-      if(k==='farm'){loadDevices();}
-    }));
-    document.getElementById('go-farm').addEventListener('click',()=>{document.querySelector('[data-tab="farm"]').click()});
+/* Salud backend */
+async function health(){try{const r=await fetch(`${API}/health`,{credentials:'include'});document.getElementById('status').textContent=r.ok?'Conectado':'Error de conexión';}catch{document.getElementById('status').textContent='Error de conexión';}}
+health(); setInterval(health,120000);
 
-    /* ===== Service Center defs ===== */
-    const SERVICES={
-      instagram:{label:'Instagram',actions:{
-        comentarios:{label:'Comentarios masivos',icon:'fa-regular fa-comment',endpoint:`${API}/instagram/comentarios`,fields:[
-          {key:'url',label:'URL del Post',type:'text',required:true,placeholder:'https://www.instagram.com/p/Cxxxxx/'},
-          {key:'cantidad',label:'Cantidad',type:'number',min:1,max:200,value:30},
-          {key:'modo',label:'Modo',type:'select',options:[{v:'auto',t:'Auto (imagen)'},{v:'personalizado',t:'Personalizado'},{v:'manual',t:'Manual'}]},
-          {key:'comentarios',label:'Comentarios (uno por línea)',type:'textarea',showIf:{field:'modo',equals:'manual'}},
-          {key:'apodo',label:'Apodo',type:'text'},{key:'estilo',label:'Estilo',type:'text'},{key:'actividad',label:'Actividad',type:'text'}
-        ]},
-        likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/instagram/likes`,fields:[
-          {key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}
-        ]},
-        seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API}/instagram/seguidores`,fields:[
-          {key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}
-        ]},
-        vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/instagram/vistas`,fields:[
-          {key:'url',label:'URL del Reel/Video',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:50000,value:1000}
-        ]}
-      }},
-      tiktok:{label:'TikTok',actions:{
-        vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/tiktok/vistas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:5000}]},
-        likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/tiktok/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:1000}]},
-        seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API}/tiktok/seguidores`,fields:[{key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:10000,value:300}]}
-      }},
-      youtube:{label:'YouTube',actions:{
-        vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/youtube/vistas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:500000,value:10000}]},
-        likes:{label:'Likes',icon:'fa-regular fa-thumbs-up',endpoint:`${API}/youtube/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:500}]},
-        comentarios:{label:'Comentarios',icon:'fa-regular fa-comment',endpoint:`${API}/youtube/comentarios`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Comentarios',type:'textarea',required:true}]}
-      }},
-      x:{label:'X (Twitter)',actions:{
-        likes:{label:'Me gusta',icon:'fa-regular fa-heart',endpoint:`${API}/x/likes`,fields:[{key:'url',label:'URL del post',type:'text',required:true}]},
-        retweets:{label:'Reposts',icon:'fa-solid fa-retweet',endpoint:`${API}/x/retweets`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}]},
-        follows:{label:'Seguir',icon:'fa-solid fa-user-plus',endpoint:`${API}/x/seguidores`,fields:[{key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]}
-      }},
-      facebook:{label:'Facebook',actions:{
-        reacciones:{label:'Reacciones',icon:'fa-regular fa-thumbs-up',endpoint:`${API}/facebook/reacciones`,fields:[{key:'url',label:'URL del post',type:'text',required:true},{key:'tipo',label:'Tipo',type:'select',options:[{v:'like',t:'👍 Like'},{v:'love',t:'❤️ Love'},{v:'care',t:'🥰 Care'}]}]},
-        comentarios:{label:'Comentarios',icon:'fa-regular fa-comment',endpoint:`${API}/facebook/comentarios`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Comentarios',type:'textarea',required:true}]}
-      }},
-      threads:{label:'Threads',actions:{
-        likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/threads/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]},
-        respuestas:{label:'Respuestas',icon:'fa-regular fa-comment',endpoint:`${API}/threads/respuestas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Respuestas (una por línea)',type:'textarea'}]}
-      }}
-    };
+/* Navegación principal */
+const panels={accounts:'acc',actions:'svc',farm:'farm',settings:'set'};
+document.querySelectorAll('.tb').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tb').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+  const k=t.dataset.tab;
+  Object.values(panels).forEach(id=>document.getElementById(id).classList.remove('active'));
+  if(k==='home') return;
+  document.getElementById(panels[k]).classList.add('active');
+  if(k==='accounts'){checkSession();loadActive();}
+  if(k==='actions'){openService('instagram');}
+  if(k==='farm'){loadDevices();}
+}));
+document.getElementById('go-farm').addEventListener('click',()=>{document.querySelector('[data-tab="farm"]').click()});
 
-    const svc=document.getElementById('svc'), svcGrid=document.getElementById('svc-grid');
-    const svcFormCard=document.getElementById('svc-form-card'), svcForm=document.getElementById('svc-form'); let ENDPOINT=null;
-    function openService(p){
-      const d=SERVICES[p]; if(!d){toast('Próximamente',true);return;}
-      document.getElementById('svc-title').textContent=d.label; svc.classList.add('active'); svcGrid.innerHTML=''; svcFormCard.style.display='none';
-      Object.values(d.actions).forEach(cfg=>{
-        const el=document.createElement('div'); el.className='card svc-card';
-        el.innerHTML=`<div class="title"><i class="${cfg.icon}"></i>${cfg.label}</div><div class="hint">${cfg.endpoint.replace(API,'')}</div>`;
-        el.addEventListener('click',()=>openAction(cfg)); svcGrid.appendChild(el);
-      });
-    }
-    function openAction(cfg){
-      ENDPOINT=cfg.endpoint; svcFormCard.style.display='block';
-      document.getElementById('svc-form-title').innerHTML=`<i class="fa-solid fa-sliders"></i> ${cfg.label}`;
-      svcForm.innerHTML='';
-      (cfg.fields||[]).forEach(f=>{
-        const row=document.createElement('div'); row.className='row'; row.innerHTML=`<label>${f.label}</label>`;
-        let el;
-        if(f.type==='textarea'){el=document.createElement('textarea'); el.className='ctrl'; el.name=f.key; el.placeholder=f.placeholder||''; el.required=!!f.required;}
-        else if(f.type==='select'){el=document.createElement('select'); el.className='ctrl'; el.name=f.key;(f.options||[]).forEach(o=>{const op=document.createElement('option'); op.value=o.v; op.textContent=o.t; el.appendChild(op);});}
-        else{el=document.createElement('input'); el.className='ctrl'; el.type=f.type||'text'; el.name=f.key; if(f.value!=null) el.value=f.value; if(f.min!=null) el.min=f.min; if(f.max!=null) el.max=f.max; el.placeholder=f.placeholder||''; el.required=!!f.required;}
-        if(f.showIf){el.dataset.dep=f.showIf.field; el.dataset.depval=f.showIf.equals;}
-        row.appendChild(el); svcForm.appendChild(row);
-      });
-      applyDeps(); svcForm.querySelectorAll('select,input').forEach(i=>i.addEventListener('change',applyDeps));
-      function applyDeps(){ const st=Object.fromEntries(new FormData(svcForm).entries());
-        [...svcForm.querySelectorAll('[data-dep]')].forEach(el=>{el.closest('.row').style.display=(st[el.dataset.dep]===el.dataset.depval)?'grid':'none';});
-      }
-    }
-    document.getElementById('svc-back').addEventListener('click',()=>svc.classList.remove('active'));
-    document.getElementById('svc-cancel').addEventListener('click',(e)=>{e.preventDefault();svcFormCard.style.display='none';});
-    document.getElementById('svc-run').addEventListener('click',async(e)=>{
-      e.preventDefault(); if(!ENDPOINT) return; const payload=Object.fromEntries(new FormData(svcForm).entries());
-      try{
-        const btn=e.currentTarget; btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando…';
-        const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
-        const d=await r.json().catch(()=>({status:'ok'})); toast(d.message||'Tarea lanzada');
-      }catch{toast('Error al ejecutar servicio',true)} finally{e.currentTarget.disabled=false; e.currentTarget.innerHTML='<i class="fa-solid fa-play"></i> Ejecutar';}
-    });
+/* ===== Service Center ===== */
+const SERVICES={
+  instagram:{label:'Instagram',actions:{
+    comentarios:{label:'Comentarios masivos',icon:'fa-regular fa-comment',endpoint:`${API}/instagram/comentarios`,fields:[
+      {key:'url',label:'URL del Post',type:'text',required:true,placeholder:'https://www.instagram.com/p/Cxxxxx/'},
+      {key:'cantidad',label:'Cantidad',type:'number',min:1,max:200,value:30},
+      {key:'modo',label:'Modo',type:'select',options:[{v:'auto',t:'Auto (imagen)'},{v:'personalizado',t:'Personalizado'},{v:'manual',t:'Manual'}]},
+      {key:'comentarios',label:'Comentarios (uno por línea)',type:'textarea',showIf:{field:'modo',equals:'manual'}},
+      {key:'apodo',label:'Apodo',type:'text'},{key:'estilo',label:'Estilo',type:'text'},{key:'actividad',label:'Actividad',type:'text'}
+    ]},
+    likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/instagram/likes`,fields:[
+      {key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}
+    ]},
+    seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API}/instagram/seguidores`,fields:[
+      {key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}
+    ]},
+    vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/instagram/vistas`,fields:[
+      {key:'url',label:'URL del Reel/Video',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:50000,value:1000}
+    ]}
+  }},
+  tiktok:{label:'TikTok',actions:{
+    vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/tiktok/vistas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:5000}]},
+    likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/tiktok/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:1000}]},
+    seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API}/tiktok/seguidores`,fields:[{key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:10000,value:300}]}
+  }},
+  youtube:{label:'YouTube',actions:{
+    vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/youtube/vistas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:500000,value:10000}]},
+    likes:{label:'Likes',icon:'fa-regular fa-thumbs-up',endpoint:`${API}/youtube/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:500}]},
+    comentarios:{label:'Comentarios',icon:'fa-regular fa-comment',endpoint:`${API}/youtube/comentarios`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Comentarios',type:'textarea',required:true}]}
+  }},
+  x:{label:'X (Twitter)',actions:{
+    likes:{label:'Me gusta',icon:'fa-regular fa-heart',endpoint:`${API}/x/likes`,fields:[{key:'url',label:'URL del post',type:'text',required:true}]},
+    retweets:{label:'Reposts',icon:'fa-solid fa-retweet',endpoint:`${API}/x/retweets`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}]},
+    follows:{label:'Seguir',icon:'fa-solid fa-user-plus',endpoint:`${API}/x/seguidores`,fields:[{key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]}
+  }},
+  facebook:{label:'Facebook',actions:{
+    reacciones:{label:'Reacciones',icon:'fa-regular fa-thumbs-up',endpoint:`${API}/facebook/reacciones`,fields:[{key:'url',label:'URL del post',type:'text',required:true},{key:'tipo',label:'Tipo',type:'select',options:[{v:'like',t:'👍 Like'},{v:'love',t:'❤️ Love'},{v:'care',t:'🥰 Care'}]}]},
+    comentarios:{label:'Comentarios',icon:'fa-regular fa-comment',endpoint:`${API}/facebook/comentarios`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Comentarios',type:'textarea',required:true}]}
+  }},
+  threads:{label:'Threads',actions:{
+    likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/threads/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]},
+    respuestas:{label:'Respuestas',icon:'fa-regular fa-comment',endpoint:`${API}/threads/respuestas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Respuestas (una por línea)',type:'textarea'}]}
+  }}
+};
 
-    // Abrir desde tiles
-    document.getElementById('grid-social').addEventListener('click',(e)=>{const t=e.target.closest('.tile[data-p]'); if(!t) return; openService(t.dataset.p);});
+const svc=document.getElementById('svc'), svcGrid=document.getElementById('svc-grid');
+const svcFormCard=document.getElementById('svc-form-card'), svcForm=document.getElementById('svc-form'); let ENDPOINT=null;
 
-    /* ===== Device Farm ===== */
-    const farm=document.getElementById('farm'), grid=document.getElementById('farm-grid');
-    document.getElementById('farm-back').addEventListener('click',()=>farm.classList.remove('active'));
-    document.getElementById('zm+').addEventListener('click',()=>setH(Math.min(getH()+30,460)));
-    document.getElementById('zm-').addEventListener('click',()=>setH(Math.max(getH()-30,140)));
-    function setH(px){document.documentElement.style.setProperty('--devH',px+'px')}
-    function getH(){return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--devH'))||230}
-    async function loadDevices(){try{const r=await fetch(`${API}/devices`,{credentials:'include'});const list=await r.json();render(list||[]);}catch{toast('No se pudo cargar la farm',true)} farm.classList.add('active');}
-    function render(list){grid.innerHTML=''; list.forEach(d=>grid.appendChild(device(d)));}
-    function device(d){
-      const c=document.createElement('div'); c.className='card dev'; c.dataset.id=d.id;
-      const h=document.createElement('div'); h.className='dev-head'; h.innerHTML=`<div>${d.emoji||'📱'} <strong>${d.name||d.model||'Device'}</strong> · ${d.platform||''}</div>`;
-      const chips=document.createElement('div'); chips.className='chips'; chips.innerHTML=`<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`; h.appendChild(chips);
-      const s=document.createElement('div'); s.className='screen'; const ov=document.createElement('div'); ov.className='ov'; ov.innerHTML=`<span class="chip-b">${d.task||'Idle'}</span>`;
-      const vid=document.createElement('video'); vid.autoplay=true; vid.muted=true; vid.playsInline=true; vid.controls=false; vid.style.display='none';
-      const img=document.createElement('img'); if(d.mjpeg_url) img.src=d.mjpeg_url; s.append(ov,vid,img);
-      const act=document.createElement('div'); act.style.display='flex'; act.style.gap='6px';
-      act.append(btn('Iniciar',()=>ctrl(d.id,'start')),btn('Detener',()=>ctrl(d.id,'stop')),btn('Fullscreen',()=>s.requestFullscreen&&s.requestFullscreen(),true));
-      c.append(h,s,act);
-      if(d.webrtc) openStream(d.id,vid,img);
-      return c;
-    }
-    function btn(t,fn,ghost=false){const b=document.createElement('button'); b.className='btn'+(ghost?'':' btn-primary'); b.textContent=t; b.onclick=fn; return b}
-    async function ctrl(id,action){try{const r=await fetch(`${API}/devices/${id}/control`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({action})});const d=await r.json();toast(d.message||'OK')}catch{toast('Error enviando comando',true)}}
-    async function openStream(id,video,img){
-      try{
-        const pc=new RTCPeerConnection(); pc.ontrack=e=>{video.srcObject=e.streams[0]; video.style.display='block'; if(img) img.style.display='none';};
-        const offer=await pc.createOffer({offerToReceiveVideo:true}); await pc.setLocalDescription(offer);
-        const r=await fetch(`${API}/devices/${id}/stream/webrtc`,{method:'POST',headers:{'Content-Type':'application/sdp'},credentials:'include',body:offer.sdp});
-        const answer=await r.text(); await pc.setRemoteDescription({type:'answer',sdp:answer});
-      }catch{/* fallback a MJPEG */}
-    }
+function openService(p){
+  const d=SERVICES[p]; if(!d){toast('Próximamente',true);return;}
+  document.getElementById('svc-title').textContent=d.label; svc.classList.add('active'); svcGrid.innerHTML=''; svcFormCard.style.display='none';
+  Object.values(d.actions).forEach(cfg=>{
+    const el=document.createElement('div'); el.className='card svc-card';
+    el.innerHTML=`<div class="title"><i class="${cfg.icon}"></i>${cfg.label}</div><div class="hint">${cfg.endpoint.replace(API,'')}</div>`;
+    el.addEventListener('click',()=>openAction(cfg)); svcGrid.appendChild(el);
+  });
+}
+function openAction(cfg){
+  ENDPOINT=cfg.endpoint; svcFormCard.style.display='block';
+  document.getElementById('svc-form-title').innerHTML=`<i class="fa-solid fa-sliders"></i> ${cfg.label}`;
+  svcForm.innerHTML='';
+  (cfg.fields||[]).forEach(f=>{
+    const row=document.createElement('div'); row.className='row'; row.innerHTML=`<label>${f.label}</label>`;
+    let el;
+    if(f.type==='textarea'){el=document.createElement('textarea'); el.className='ctrl'; el.name=f.key; el.placeholder=f.placeholder||''; el.required=!!f.required;}
+    else if(f.type==='select'){el=document.createElement('select'); el.className='ctrl'; el.name=f.key;(f.options||[]).forEach(o=>{const op=document.createElement('option'); op.value=o.v; op.textContent=o.t; el.appendChild(op);});}
+    else{el=document.createElement('input'); el.className='ctrl'; el.type=f.type||'text'; el.name=f.key; if(f.value!=null) el.value=f.value; if(f.min!=null) el.min=f.min; if(f.max!=null) el.max=f.max; el.placeholder=f.placeholder||''; el.required=!!f.required;}
+    if(f.showIf){el.dataset.dep=f.showIf.field; el.dataset.depval=f.showIf.equals;}
+    row.appendChild(el); svcForm.appendChild(row);
+  });
+  applyDeps(); svcForm.querySelectorAll('select,input').forEach(i=>i.addEventListener('change',applyDeps));
+  function applyDeps(){ const st=Object.fromEntries(new FormData(svcForm).entries());
+    [...svcForm.querySelectorAll('[data-dep]')].forEach(el=>{el.closest('.row').style.display=(st[el.dataset.dep]===el.dataset.depval)?'grid':'none';});
+  }
+}
+document.getElementById('svc-back').addEventListener('click',()=>svc.classList.remove('active'));
+document.getElementById('svc-cancel').addEventListener('click',(e)=>{e.preventDefault();svcFormCard.style.display='none';});
+document.getElementById('svc-run').addEventListener('click',async(e)=>{
+  e.preventDefault(); if(!ENDPOINT) return; const payload=Object.fromEntries(new FormData(svcForm).entries());
+  try{
+    const btn=e.currentTarget; btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando…';
+    const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
+    const d=await r.json().catch(()=>({status:'ok'})); toast(d.message||'Tarea lanzada');
+  }catch{toast('Error al ejecutar servicio',true)} finally{e.currentTarget.disabled=false; e.currentTarget.innerHTML='<i class="fa-solid fa-play"></i> Ejecutar';}
+});
 
-    // Botón Device Farm en la home
-    document.getElementById('go-farm').addEventListener('click',()=>loadDevices());
+/* abrir Service Center desde tiles */
+document.getElementById('grid-social').addEventListener('click',(e)=>{const t=e.target.closest('.tile[data-p]'); if(!t) return; openService(t.dataset.p);});
 
-    /* ===== Accounts ===== */
-    const acc=document.getElementById('acc'); document.getElementById('acc-back').addEventListener('click',()=>acc.classList.remove('active'));
-    const sess=document.getElementById('sess'); const u=document.getElementById('u'); const p=document.getElementById('p');
-    const login=document.getElementById('login'); const logout=document.getElementById('logout');
-    const mu=document.getElementById('mu'); const mp=document.getElementById('mp'); const add=document.getElementById('add'); const act=document.getElementById('act');
+/* ===== Device Farm ===== */
+const farm=document.getElementById('farm'), grid=document.getElementById('farm-grid');
+document.getElementById('farm-back').addEventListener('click',()=>farm.classList.remove('active'));
+document.getElementById('zm+').addEventListener('click',()=>setH(Math.min(getH()+30,460)));
+document.getElementById('zm-').addEventListener('click',()=>setH(Math.max(getH()-30,140)));
+function setH(px){document.documentElement.style.setProperty('--devH',px+'px')}
+function getH(){return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--devH'))||230}
+async function loadDevices(){try{const r=await fetch(`${API}/devices`,{credentials:'include'});const list=await r.json();render(list||[]);}catch{toast('No se pudo cargar la farm',true)} farm.classList.add('active');}
+function render(list){grid.innerHTML=''; list.forEach(d=>grid.appendChild(device(d)));}
+function device(d){
+  const c=document.createElement('div'); c.className='card dev'; c.dataset.id=d.id;
+  const h=document.createElement('div'); h.className='dev-head'; h.innerHTML=`<div>${d.emoji||'📱'} <strong>${d.name||d.model||'Device'}</strong> · ${d.platform||''}</div>`;
+  const chips=document.createElement('div'); chips.className='chips'; chips.innerHTML=`<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`; h.appendChild(chips);
+  const s=document.createElement('div'); s.className='screen'; const ov=document.createElement('div'); ov.className='ov'; ov.innerHTML=`<span class="chip-b">${d.task||'Idle'}</span>`;
+  const vid=document.createElement('video'); vid.autoplay=true; vid.muted=true; vid.playsInline=true; vid.controls=false; vid.style.display='none';
+  const img=document.createElement('img'); if(d.mjpeg_url) img.src=d.mjpeg_url; s.append(ov,vid,img);
+  const act=document.createElement('div'); act.style.display='flex'; act.style.gap='6px';
+  act.append(btn('Iniciar',()=>ctrl(d.id,'start')),btn('Detener',()=>ctrl(d.id,'stop')),btn('Fullscreen',()=>s.requestFullscreen&&s.requestFullscreen(),true));
+  c.append(h,s,act);
+  if(d.webrtc) openStream(d.id,vid,img);
+  return c;
+}
+function btn(t,fn,ghost=false){const b=document.createElement('button'); b.className='btn'+(ghost?'':' btn-primary'); b.textContent=t; b.onclick=fn; return b}
+async function ctrl(id,action){try{const r=await fetch(`${API}/devices/${id}/control`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({action})});const d=await r.json();toast(d.message||'OK')}catch{toast('Error enviando comando',true)}}
+async function openStream(id,video,img){
+  try{
+    const pc=new RTCPeerConnection(); pc.ontrack=e=>{video.srcObject=e.streams[0]; video.style.display='block'; if(img) img.style.display='none';};
+    const offer=await pc.createOffer({offerToReceiveVideo:true}); await pc.setLocalDescription(offer);
+    const r=await fetch(`${API}/devices/${id}/stream/webrtc`,{method:'POST',headers:{'Content-Type':'application/sdp'},credentials:'include',body:offer.sdp});
+    const answer=await r.text(); await pc.setRemoteDescription({type:'answer',sdp:answer});
+  }catch{/* fallback a MJPEG */}
+}
 
-    async function checkSession(){try{const r=await fetch(`${API}/estado-sesion`,{credentials:'include'});const d=await r.json(); if(d.status==='activo'){sess.textContent=`Sesión activa como @${d.usuario}`;document.getElementById('login-form').style.display='none';}else{sess.textContent='No hay sesión';document.getElementById('login-form').style.display='block';}}catch{sess.textContent='Error al verificar sesión';document.getElementById('login-form').style.display='block';}}
-    login.addEventListener('click',async()=>{const un=u.value.trim().replace('@',''), pw=p.value.trim(); if(!un||!pw) return toast('Completa usuario y contraseña',true);
-      try{login.disabled=true; login.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Iniciando…'; const r=await fetch(`${API}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:un,contrasena:pw})}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión iniciada @${d.usuario}`); checkSession(); loadActive();}catch(e){toast(e.message||'Error',true)} finally{login.disabled=false; login.innerHTML='Iniciar sesión';}});
-    logout.addEventListener('click',async()=>{try{logout.disabled=true; logout.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Cerrando…'; const r=await fetch(`${API}/cerrar-sesion`,{credentials:'include'}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast('Sesión cerrada'); checkSession(); loadActive();}catch(e){toast(e.message||'Error',true)} finally{logout.disabled=false; logout.innerHTML='Cerrar sesión';}});
-    add.addEventListener('click',async()=>{const un=mu.value.trim().replace('@',''), pw=mp.value.trim(); if(!un||!pw) return toast('Completa usuario y contraseña',true);
-      try{add.disabled=true; add.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; const l=await fetch(`${API}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:un,contrasena:pw})}); const lj=await l.json(); if(!lj.exito) throw new Error(lj.mensaje||'Error de login'); const s=await fetch(`${API}/guardar-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:un,password:pw})}); const sj=await s.json(); if(sj.status!=='ok') throw new Error(sj.message||'No se pudo guardar'); toast(`Cuenta @${un} guardada`); mu.value=''; mp.value=''; loadActive();}catch(e){toast(e.message||'Error',true)} finally{add.disabled=false; add.innerHTML='Guardar Cuenta';}});
-    async function loadActive(){try{const r=await fetch(`${API}/cuentas-activas`,{credentials:'include'});const list=await r.json(); if(!Array.isArray(list)||!list.length){act.textContent='No hay cuentas activas';return;} const wrap=document.createElement('div'); wrap.className='clients'; list.forEach(a=>{const item=document.createElement('div'); item.className='client'; item.innerHTML=`<span class="chip-b">${a.status||'idle'}</span> @${a.username}`; const actions=document.createElement('span'); actions.style.marginLeft='auto'; const b=document.createElement('button'); b.className='btn'; b.textContent=a.status==='activo'?'Logout':'Login'; b.onclick=()=>a.status==='activo'?cerrar(a.username):iniciar(a.username); actions.appendChild(b); item.appendChild(actions); wrap.appendChild(item);}); act.innerHTML=''; act.appendChild(wrap);}catch{act.textContent='Error al cargar cuentas';}}
-    async function iniciar(u){try{toast(`Iniciando @${u}…`);const r=await fetch(`${API}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u})});const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión iniciada @${u}`); loadActive();}catch(e){toast(e.message||'Error',true)}}
-    async function cerrar(u){try{toast(`Cerrando @${u}…`);const r=await fetch(`${API}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u})});const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión cerrada @${u}`); loadActive();}catch(e){toast(e.message||'Error',true)}}
+/* CUENTAS */
+const acc=document.getElementById('acc'); document.getElementById('acc-back').addEventListener('click',()=>acc.classList.remove('active'));
+const sess=document.getElementById('sess'); const u=document.getElementById('u'); const p=document.getElementById('p');
+const login=document.getElementById('login'); const logout=document.getElementById('logout');
+const mu=document.getElementById('mu'); const mp=document.getElementById('mp'); const add=document.getElementById('add'); const act=document.getElementById('act');
 
-    // Acciones rápidas
-    document.getElementById('auto-run').addEventListener('click',()=>{const v=(document.getElementById('auto-text').value||'').trim(); if(!v) return toast('Escribe qué automatizar',true); toast(`Automatizando: "${v}"`); document.getElementById('auto-text').value='';});
+async function checkSession(){try{const r=await fetch(`${API}/estado-sesion`,{credentials:'include'});const d=await r.json(); if(d.status==='activo'){sess.textContent=`Sesión activa como @${d.usuario}`;document.getElementById('login-form').style.display='none';}else{sess.textContent='No hay sesión';document.getElementById('login-form').style.display='block';}}catch{sess.textContent='Error al verificar sesión';document.getElementById('login-form').style.display='block';}}
+login.addEventListener('click',async()=>{const un=u.value.trim().replace('@',''), pw=p.value.trim(); if(!un||!pw) return toast('Completa usuario y contraseña',true);
+  try{login.disabled=true; login.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Iniciando…'; const r=await fetch(`${API}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:un,contrasena:pw})}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión iniciada @${d.usuario}`); checkSession(); loadActive();}catch(e){toast(e.message||'Error',true)} finally{login.disabled=false; login.innerHTML='Iniciar sesión';}});
+logout.addEventListener('click',async()=>{try{logout.disabled=true; logout.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Cerrando…'; const r=await fetch(`${API}/cerrar-sesion`,{credentials:'include'}); const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast('Sesión cerrada'); checkSession(); loadActive();}catch(e){toast(e.message||'Error',true)} finally{logout.disabled=false; logout.innerHTML='Cerrar sesión';}});
+add.addEventListener('click',async()=>{const un=mu.value.trim().replace('@',''), pw=mp.value.trim(); if(!un||!pw) return toast('Completa usuario y contraseña',true);
+  try{add.disabled=true; add.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; const l=await fetch(`${API}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:un,contrasena:pw})}); const lj=await l.json(); if(!lj.exito) throw new Error(lj.mensaje||'Error de login'); const s=await fetch(`${API}/guardar-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:un,password:pw})}); const sj=await s.json(); if(sj.status!=='ok') throw new Error(sj.message||'No se pudo guardar'); toast(`Cuenta @${un} guardada`); mu.value=''; mp.value=''; loadActive();}catch(e){toast(e.message||'Error',true)} finally{add.disabled=false; add.innerHTML='Guardar Cuenta';}});
+async function loadActive(){try{const r=await fetch(`${API}/cuentas-activas`,{credentials:'include'});const list=await r.json(); if(!Array.isArray(list)||!list.length){act.textContent='No hay cuentas activas';return;} const wrap=document.createElement('div'); wrap.className='clients'; list.forEach(a=>{const item=document.createElement('div'); item.className='client'; item.innerHTML=`<span class="chip-b">${a.status||'idle'}</span> @${a.username}`; const actions=document.createElement('span'); actions.style.marginLeft='auto'; const b=document.createElement('button'); b.className='btn'; b.textContent=a.status==='activo'?'Logout':'Login'; b.onclick=()=>a.status==='activo'?cerrar(a.username):iniciar(a.username); actions.appendChild(b); item.appendChild(actions); wrap.appendChild(item);}); act.innerHTML=''; act.appendChild(wrap);}catch{act.textContent='Error al cargar cuentas';}}
+async function iniciar(u){try{toast(`Iniciando @${u}…`);const r=await fetch(`${API}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u})});const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión iniciada @${u}`); loadActive();}catch(e){toast(e.message||'Error',true)}}
+async function cerrar(u){try{toast(`Cerrando @${u}…`);const r=await fetch(`${API}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u})});const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión cerrada @${u}`); loadActive();}catch(e){toast(e.message||'Error',true)}}
 
-    // Barra inferior -> abre panels
-    document.querySelector('[data-tab="actions"]').addEventListener('click',()=>openService('instagram'));
-    document.querySelector('[data-tab="accounts"]').addEventListener('click',()=>{document.getElementById('acc').classList.add('active');checkSession();loadActive();});
-    document.querySelector('[data-tab="farm"]').addEventListener('click',()=>loadDevices());
-    document.querySelector('[data-tab="settings"]').addEventListener('click',()=>document.getElementById('set').classList.add('active'));
-  </script>
+/* Acciones rápidas */
+document.getElementById('auto-run').addEventListener('click',()=>{const v=(document.getElementById('auto-text').value||'').trim(); if(!v) return toast('Escribe qué automatizar',true); toast(`Automatizando: "${v}"`); document.getElementById('auto-text').value='';});
+
+/* Barra inferior -> panels */
+document.querySelector('[data-tab="actions"]').addEventListener('click',()=>openService('instagram'));
+document.querySelector('[data-tab="accounts"]').addEventListener('click',()=>{document.getElementById('acc').classList.add('active');checkSession();loadActive();});
+document.querySelector('[data-tab="farm"]').addEventListener('click',()=>loadDevices());
+document.querySelector('[data-tab="settings"]').addEventListener('click',()=>document.getElementById('set').classList.add('active'));
+</script>
 </body>
 </html>
