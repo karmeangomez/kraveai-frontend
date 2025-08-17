@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#0b0b10" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -9,189 +9,141 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="author" content="Karmean Gómez">
   <title>KRAVEAI — Automation OS</title>
-  <link rel="icon" type="image/svg+xml"
-    href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%237C5CFF"/><stop offset="100%" stop-color="%2300DBC1"/></linearGradient></defs><rect rx="14" width="64" height="64" fill="black"/><path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(%23g)"/></svg>'>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    /* ================= TOKENS ================= */
     :root{
       --bg:#0b0b10; --elev:#111218; --card:#151722; --text:#ECEEF4; --muted:#9aa0a6; --line:#24263a;
       --accent:#7C5CFF; --accent2:#00DBC1; --success:#34d399; --warn:#ffb454; --err:#ff5f74;
       --glass:rgba(255,255,255,.06); --glass-2:rgba(255,255,255,.08);
       --shadow:0 12px 40px rgba(0,0,0,.35);
       --r:18px; --r-lg:22px;
-      /* Device Farm sizing */
-      --device-h: 220px;           /* altura por “pantalla de teléfono” */
-      --device-min-col: 180px;     /* ancho mínimo de columna */
+      --device-h:220px; --device-min-col:180px;
     }
     :root.light{
       --bg:#f6f7fb; --elev:#ffffff; --card:#ffffff; --text:#0B0D13; --muted:#68707b; --line:#e7e9ef;
       --glass:rgba(0,0,0,.04); --glass-2:rgba(0,0,0,.06); --shadow:0 10px 30px rgba(0,0,0,.12);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; background:var(--bg); color:var(--text);
-      font: 15px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, Roboto;
-      -webkit-font-smoothing:antialiased;
-      overscroll-behavior-y: none;
-    }
-    /* Aurora fondo sutil */
-    .aurora{
-      position:fixed; inset:-10% -20%; z-index:-1; filter:saturate(1.1) blur(36px); opacity:.5; pointer-events:none;
-      background:
-        radial-gradient(60% 40% at 85% 10%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(45% 35% at 10% 0%, rgba(0,219,193,.25), transparent 70%),
-        radial-gradient(40% 30% at 15% 85%, rgba(255,95,116,.18), transparent 70%);
-      animation:aur 18s ease-in-out infinite alternate;
-    }
-    @keyframes aur{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(-2%,1%,0) scale(1.05)}}
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Inter,Roboto;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+    .aurora{position:fixed;inset:-10% -20%;z-index:-1;filter:saturate(1.1) blur(36px);opacity:.5;pointer-events:none;background:
+      radial-gradient(60% 40% at 85% 10%, rgba(124,92,255,.35), transparent 60%),
+      radial-gradient(45% 35% at 10% 0%, rgba(0,219,193,.25), transparent 70%),
+      radial-gradient(40% 30% at 15% 85%, rgba(255,95,116,.18), transparent 70%);
+      animation:aur 18s ease-in-out infinite alternate}
+    @keyframes aur{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-2%,1%,0) scale(1.05)}}
 
-    /* =============== APP CHROME =============== */
-    .topbar{
-      position:sticky; top:0; z-index:60;
-      display:grid; grid-template-columns:auto 1fr auto auto; gap:8px; align-items:center;
-      padding: calc(12px + env(safe-area-inset-top)) 14px 12px; /* safe area iOS */
-      background: color-mix(in oklab, var(--elev) 90%, transparent);
-      backdrop-filter:saturate(1.15) blur(16px);
-      border-bottom:1px solid var(--line);
-    }
-    .brand-mini{ display:flex; align-items:center; gap:10px }
-    .wordmark{ font-weight:900; letter-spacing:.16em; font-size:1.02rem }
-    .wordmark.sm{ font-size:.95rem; letter-spacing:.14em }
-
-    .status{
-      justify-self:start; display:inline-flex; align-items:center; gap:10px; padding:8px 12px; border-radius:999px;
-      background:var(--glass); border:1px solid var(--line);
-    }
+    .topbar{position:sticky;top:0;z-index:70;display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;
+      padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:color-mix(in oklab,var(--elev) 90%, transparent);
+      backdrop-filter:saturate(1.15) blur(16px);border-bottom:1px solid var(--line)}
+    .brand-mini{display:flex;align-items:center;gap:10px}
+    .wordmark{font-weight:900;letter-spacing:.16em;font-size:1.02rem}
+    .wordmark.sm{font-size:.95rem;letter-spacing:.14em}
+    .status{justify-self:start;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;background:var(--glass);border:1px solid var(--line)}
     .status i{font-size:.6rem}
-    .chip{
-      width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-      background:var(--glass);border:1px solid var(--line); color:var(--muted);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-    .chip.glow{ box-shadow:0 0 0 0 rgba(124,92,255,.55); animation:pulseGlow 1.8s ease infinite }
-    .chip:active{ transform:scale(.96) }
+    .chip{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);color:var(--muted);transition:transform .18s ease,box-shadow .18s ease}
+    .chip.glow{box-shadow:0 0 0 0 rgba(124,92,255,.55);animation:pulseGlow 1.8s ease infinite}
+    .chip:active{transform:scale(.96)}
     @keyframes pulseGlow{0%{box-shadow:0 0 0 0 rgba(124,92,255,.45)}70%{box-shadow:0 0 0 18px rgba(124,92,255,0)}100%{box-shadow:0 0 0 0 rgba(124,92,255,0)}}
 
-    .screen{
-      padding: 14px 16px calc(100px + env(safe-area-inset-bottom)); /* nada se tapa con la tabbar */
-      max-width: 1200px;
-      margin-inline: auto;
-    }
-    .section{ margin:12px 0 18px }
-    .section h3{ margin:0 0 8px; font-size:1.05rem; display:flex; align-items:center; gap:10px; opacity:.95 }
-    .muted{ color:var(--muted) }
+    .screen{padding:14px 16px calc(102px + env(safe-area-inset-bottom));max-width:1200px;margin-inline:auto}
+    .section{margin:12px 0 18px}
+    .section h3{margin:0 0 8px;font-size:1.05rem;display:flex;align-items:center;gap:10px;opacity:.95}
+    .muted{color:var(--muted)}
 
-    /* Hero */
     .hero{display:flex;gap:12px;align-items:center;justify-content:space-between}
     .hero .brand{display:flex;gap:10px;align-items:center}
-    .logo-badge{
-      width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow:0 12px 26px rgba(124,92,255,.35), 0 10px 22px rgba(0,219,193,.18);
-    }
-    .k-logo{ width:28px;height:28px; filter: drop-shadow(0 2px 8px rgba(124,92,255,.35)); animation: logoPulse 4.2s ease-in-out infinite }
-    .k-logo.sm{ width:22px;height:22px }
-    @keyframes logoPulse {
-      0% { filter: drop-shadow(0 2px 8px rgba(124,92,255,.35)); }
-      50% { filter: drop-shadow(0 6px 18px rgba(124,92,255,.55)); }
-      100% { filter: drop-shadow(0 2px 8px rgba(124,92,255,.35)); }
-    }
+    .logo-badge{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 12px 26px rgba(124,92,255,.35),0 10px 22px rgba(0,219,193,.18)}
+    .k-logo{width:28px;height:28px;filter:drop-shadow(0 2px 8px rgba(124,92,255,.35));animation:logoPulse 4.2s ease-in-out infinite}
+    .k-logo.sm{width:22px;height:22px}
+    @keyframes logoPulse{0%{filter:drop-shadow(0 2px 8px rgba(124,92,255,.35))}50%{filter:drop-shadow(0 6px 18px rgba(124,92,255,.55))}100%{filter:drop-shadow(0 2px 8px rgba(124,92,255,.35))}}
 
-    /* Tiles */
-    .grid{ display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)) }
-    @media (min-width:700px){ .grid{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
-    @media (min-width:980px){ .grid{ grid-template-columns:repeat(4,minmax(0,1fr)) } }
+    .grid{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(min-width:980px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
-    .card{
-      background:linear-gradient(180deg, color-mix(in oklab, var(--card) 92%, transparent), color-mix(in oklab, var(--card) 98%, transparent));
-      border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)
-    }
-    .tile{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;position:relative;overflow:hidden;
-      transition:transform .18s ease, box-shadow .2s ease, border-color .2s ease}
+    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--card) 92%,transparent),color-mix(in oklab,var(--card) 98%,transparent));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+    .tile{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .2s ease,border-color .2s ease}
     .tile::before{content:"";position:absolute;inset:-40%;background:radial-gradient(60% 40% at 50% 10%,rgba(124,92,255,.08),transparent 60%);transform:translateY(30%);transition:opacity .25s ease;opacity:0}
-    .tile:hover{ transform:translateY(-2px) } .tile:hover::before{opacity:1}
-    .tile:active{ transform:translateY(0) scale(.98) }
-    .tile .icon{ width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--glass-2);border:1px solid var(--line) }
-    .tile .label{ font-weight:600 }
+    .tile:hover{transform:translateY(-2px)} .tile:hover::before{opacity:1}
+    .tile:active{transform:translateY(0) scale(.98)}
+    .tile .icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--glass-2);border:1px solid var(--line)}
+    .tile .label{font-weight:600}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.9rem}
 
-    .input-wrap{ display:flex;align-items:center;gap:10px;border:1px solid var(--line); background:var(--glass); border-radius:14px; padding:10px 12px }
+    .input-wrap{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--glass);border-radius:14px;padding:10px 12px}
     .input-wrap input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:1rem}
+    .btn{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in oklab,var(--card) 94%,transparent),color-mix(in oklab,var(--card) 100%,transparent));color:var(--text);padding:12px 14px;border-radius:14px;font-weight:600;cursor:pointer;transition:transform .15s ease,box-shadow .2s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b0b10;border:0;box-shadow:0 12px 36px rgba(124,92,255,.45),0 10px 28px rgba(0,219,193,.25)}
 
-    .btn{ border:1px solid var(--line); background:linear-gradient(180deg, color-mix(in oklab, var(--card) 94%, transparent), color-mix(in oklab, var(--card) 100%, transparent));
-      color:var(--text); padding:12px 14px; border-radius:14px; font-weight:600; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease}
-    .btn:active{ transform:translateY(1px) }
-    .btn-primary{ background:linear-gradient(135deg, var(--accent), var(--accent2)); color:#0b0b10; border:0;
-      box-shadow:0 12px 36px rgba(124,92,255,.45),0 10px 28px rgba(0,219,193,.25) }
-    .pill{ display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.9rem }
-
-    /* Tab bar */
-    .tabbar{ position:fixed; inset-inline:0; bottom:0; z-index:55; display:grid; grid-template-columns:repeat(5,1fr); gap:8px;
-      padding:8px 10px calc(8px + env(safe-area-inset-bottom)); background:color-mix(in oklab, var(--elev) 90%, transparent);
-      border-top:1px solid var(--line); backdrop-filter:saturate(1.15) blur(16px) }
+    .tabbar{position:fixed;inset-inline:0;bottom:0;z-index:65;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+      padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:color-mix(in oklab,var(--elev) 90%,transparent);
+      border-top:1px solid var(--line);backdrop-filter:saturate(1.15) blur(16px)}
     .tab{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;border-radius:12px;padding:8px 6px;color:var(--muted);border:1px solid transparent}
-    .tab.active{color:var(--text); background:var(--glass); border-color:var(--line)}
+    .tab.active{color:var(--text);background:var(--glass);border-color:var(--line)}
     .tab i{font-size:1.1rem}
 
-    /* Panels deslizables */
-    .panel{ position:fixed; inset:0; z-index:70; display:none }
-    .panel.active{ display:block }
-    .panel .inner{ height:100%; width:100%; background:var(--bg); animation:slide .25s ease; overflow:auto; -webkit-overflow-scrolling:touch; }
-    @keyframes slide{ from{ transform:translateX(18px); opacity:0 } to{ transform:translateX(0); opacity:1 } }
+    .panel{position:fixed;inset:0;z-index:80;display:none}
+    .panel.active{display:block}
+    .panel .inner{height:100%;width:100%;background:var(--bg);animation:slide .25s ease;overflow:auto;-webkit-overflow-scrolling:touch}
+    @keyframes slide{from{transform:translateX(18px);opacity:0}to{transform:translateX(0);opacity:1}}
 
     /* Service Center */
-    .svc-grid{ display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)) }
-    @media (min-width:700px){ .svc-grid{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
-    .svc-card .title{ padding:16px; display:flex; gap:12px; align-items:center; font-weight:700 }
-    .svc-card .hint{ padding:0 16px 14px; color:var(--muted); font-size:.9rem }
-    .form{ display:grid; gap:10px }
-    .row{ display:grid; gap:8px }
-    .row label{ color:var(--muted); font-size:.9rem }
-    .ctrl{ border:1px solid var(--line); background:var(--glass); color:var(--text); border-radius:12px; padding:12px; outline:none }
-    textarea.ctrl{ min-height:96px; resize:vertical }
+    .svc-grid{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media(min-width:700px){.svc-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    .svc-card .title{padding:16px;display:flex;gap:12px;align-items:center;font-weight:700}
+    .svc-card .hint{padding:0 16px 14px;color:var(--muted);font-size:.9rem}
+    .form{display:grid;gap:10px}
+    .row{display:grid;gap:8px}
+    .row label{color:var(--muted);font-size:.9rem}
+    .ctrl{border:1px solid var(--line);background:var(--glass);color:var(--text);border-radius:12px;padding:12px;outline:none}
+    textarea.ctrl{min-height:96px;resize:vertical}
 
     /* Device Farm */
-    .farm-grid{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(var(--device-min-col), 1fr)); }
-    .device{ display:grid; gap:10px; padding:12px }
-    .device-head{ display:flex; align-items:center; justify-content:space-between; gap:8px }
-    .chips{ display:flex; gap:6px; flex-wrap:wrap }
-    .chip-b{ padding:6px 10px; border:1px solid var(--line); border-radius:999px; background:var(--glass); font-size:.8rem }
-    .device-screen{
-      border:1px solid var(--line);
-      border-radius:16px;
-      overflow:hidden;
-      background:#000;
-      height: var(--device-h);
-      position:relative;
-    }
-    .device-screen video,.device-screen img{ width:100%; height:100%; object-fit:cover; display:block }
-    .device-screen .overlay{ position:absolute; left:8px; top:8px; display:flex; gap:6px }
-    .actions{ display:flex; gap:8px; justify-content:flex-end }
+    .farm-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(var(--device-min-col),1fr))}
+    .device{display:grid;gap:10px;padding:12px}
+    .device-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}
+    .chip-b{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.8rem}
+    .device-screen{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#000;height:var(--device-h);position:relative}
+    .device-screen video,.device-screen img{width:100%;height:100%;object-fit:cover;display:block}
+    .device-screen .overlay{position:absolute;left:8px;top:8px;display:flex;gap:6px}
+    .actions{display:flex;gap:8px;justify-content:flex-end}
 
-    /* Cuentas */
-    .list{ display:grid; gap:10px }
-    .list-item{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--glass) }
+    /* Clientes recientes (con insignia IG) */
+    .clients-row{display:flex;flex-wrap:wrap;gap:10px}
+    .client-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line)}
+    .ig-badge{width:18px;height:18px;display:inline-block;vertical-align:middle}
+
+    /* Listas y cuentas */
+    .list{display:grid;gap:10px}
+    .list-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--glass)}
 
     /* Toast + Firma */
-    .toast{ position:fixed; top:14px; left:50%; transform:translateX(-50%); background:color-mix(in oklab,var(--elev) 96%, transparent);
-      border:1px solid var(--line); border-radius:999px; padding:10px 14px; z-index:90; display:none; box-shadow:var(--shadow) }
-    .toast.show{ display:block; animation:fade .25s ease } @keyframes fade{ from{opacity:0; transform:translate(-50%,-8px)} to{opacity:1; transform:translate(-50%,0)} }
-    .credit{ position:fixed; right:12px; bottom:calc(58px + env(safe-area-inset-bottom)); z-index:80; font-size:.9rem; color:var(--muted);
-      background:var(--glass); border:1px solid var(--line); border-radius:999px; padding:8px 12px; backdrop-filter:blur(6px); box-shadow:0 8px 18px rgba(0,0,0,.25) }
+    .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:color-mix(in oklab,var(--elev) 96%,transparent);border:1px solid var(--line);border-radius:999px;padding:10px 14px;z-index:95;display:none;box-shadow:var(--shadow)}
+    .toast.show{display:block;animation:fade .25s ease}
+    @keyframes fade{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+    .credit{position:fixed;right:12px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:90;font-size:.9rem;color:var(--muted);background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:8px 12px;backdrop-filter:blur(6px);box-shadow:0 8px 18px rgba(0,0,0,.25)}
     .credit::before{content:"★";margin-right:8px;color:var(--accent)}
   </style>
 </head>
 <body>
-  <!-- ===== Sprite de logo KRAVEAI ===== -->
+  <!-- Sprite de logos / insignias -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
+      <!-- Gradiente de marca -->
       <linearGradient id="g-krave" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#7C5CFF"/><stop offset="100%" stop-color="#00DBC1"/>
       </linearGradient>
+      <!-- Logo KRAVEAI (monograma K) -->
       <symbol id="logo-krave" viewBox="0 0 64 64">
         <circle cx="32" cy="32" r="30" fill="url(#g-krave)" opacity="0.14"/>
         <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g-krave)"/>
+      </symbol>
+      <!-- Insignia real de verificación Instagram (SVG oficial con forma circular + palomita) -->
+      <symbol id="ig-verified" viewBox="0 0 48 48">
+        <path fill="#0095F6" d="M24 2c1.6 0 3 .8 3.9 2.1l1.4 2c.5.7 1.3 1.1 2.1 1.1h2.4c1.9 0 3.5 1.6 3.5 3.5v2.4c0 .8.4 1.6 1.1 2.1l2 1.4c1.3.9 2.1 2.3 2.1 3.9s-.8 3-2.1 3.9l-2 1.4c-.7.5-1.1 1.3-1.1 2.1v2.4c0 1.9-1.6 3.5-3.5 3.5h-2.4c-.8 0-1.6.4-2.1 1.1l-1.4 2c-.9 1.3-2.3 2.1-3.9 2.1s-3-.8-3.9-2.1l-1.4-2c-.5-.7-1.3-1.1-2.1-1.1H14c-1.9 0-3.5-1.6-3.5-3.5v-2.4c0-.8-.4-1.6-1.1-2.1l-2-1.4A4.6 4.6 0 0 1 5.3 24c0-1.6.8-3 2.1-3.9l2-1.4c.7-.5 1.1-1.3 1.1-2.1V14c0-1.9 1.6-3.5 3.5-3.5h2.4c.8 0 1.6-.4 2.1-1.1l1.4-2A4.6 4.6 0 0 1 24 2z"/>
+        <path fill="#fff" d="M21.7 30.7 16 25l2.1-2.1 3.6 3.6L29.9 18l2.1 2.1z"/>
       </symbol>
     </defs>
   </svg>
@@ -224,6 +176,18 @@
       <div class="pill"><i class="fa-regular fa-circle-check" style="color:var(--success)"></i> Listo para ejecutar</div>
     </section>
 
+    <!-- CLIENTES RECIENTES con insignia IG REAL -->
+    <section class="section card" style="padding:16px">
+      <h3><i class="fa-solid fa-users"></i> Clientes recientes</h3>
+      <div class="clients-row">
+        <span class="client-pill">@aaronmercury <svg class="ig-badge" viewBox="0 0 48 48"><use href="#ig-verified"/></svg></span>
+        <span class="client-pill">@televisadigital <svg class="ig-badge" viewBox="0 0 48 48"><use href="#ig-verified"/></svg></span>
+        <span class="client-pill">@joscanela <svg class="ig-badge" viewBox="0 0 48 48"><use href="#ig-verified"/></svg></span>
+        <span class="client-pill">@jimenagallegotv <svg class="ig-badge" viewBox="0 0 48 48"><use href="#ig-verified"/></svg></span>
+      </div>
+    </section>
+
+    <!-- REDES -->
     <section class="section">
       <h3><i class="fa-solid fa-hashtag"></i> Redes sociales</h3>
       <div class="grid" id="social-grid">
@@ -233,7 +197,7 @@
         <div class="card tile" data-platform="threads"><div class="icon"><i class="fa-brands fa-threads" style="color:#fff"></i></div><div><div class="label">Threads</div><small class="muted">Respuestas</small></div></div>
         <div class="card tile" data-platform="x"><div class="icon"><i class="fa-brands fa-x-twitter" style="color:#fff"></i></div><div><div class="label">X</div><small class="muted">Likes · Reposts</small></div></div>
         <div class="card tile" data-platform="facebook"><div class="icon"><i class="fa-brands fa-facebook" style="color:#1877F2"></i></div><div><div class="label">Facebook</div><small class="muted">Reacciones</small></div></div>
-        <div class="card tile" data-platform="linkedin"><div class="icon"><i class="fa-brands fa-linkedin" style="color:#0A66C2"></i></div><div><div class="label">LinkedIn</div></div></div>
+        <div class="card tile" data-platform="linkedin"><div class="icon"><i class="fa-brands fa-linkedin" style="color:#0A66C2"></i></div><div><div class="label">LinkedIn</div><small class="muted">Interacción</small></div></div>
         <div class="card tile" data-platform="snapchat"><div class="icon"><i class="fa-brands fa-snapchat" style="color:#FFFC00"></i></div><div><div class="label">Snapchat</div></div></div>
         <div class="card tile" data-platform="discord"><div class="icon"><i class="fa-brands fa-discord" style="color:#5865F2"></i></div><div><div class="label">Discord</div></div></div>
         <div class="card tile" data-platform="telegram"><div class="icon"><i class="fa-brands fa-telegram" style="color:#0088cc"></i></div><div><div class="label">Telegram</div></div></div>
@@ -244,6 +208,7 @@
       </div>
     </section>
 
+    <!-- AUTOMATIZACIÓN RÁPIDA -->
     <section class="section">
       <h3><i class="fa-solid fa-bolt"></i> Automatización</h3>
       <div class="input-wrap">
@@ -254,20 +219,13 @@
       <div class="pill" style="margin-top:10px"><i class="fa-solid fa-circle" style="color:var(--success);font-size:.65rem"></i> Sin acciones en curso</div>
     </section>
 
+    <!-- ACCESO RÁPIDO A FARM -->
     <section class="section">
       <div class="card tile" id="open-farm"><div class="icon"><i class="fa-solid fa-mobile-screen-button"></i></div><div class="label">Ver Device Farm</div></div>
     </section>
-
-    <section class="section">
-      <h3><i class="fa-solid fa-users"></i> Clientes recientes</h3>
-      <div class="grid">
-        <div class="card tile"><div class="icon"><i class="fa-brands fa-instagram" style="color:#E1306C"></i></div><div class="label">@arianaoficial</div><span class="muted">Instagram</span></div>
-        <div class="card tile"><div class="icon"><i class="fa-brands fa-youtube" style="color:#FF0000"></i></div><div class="label">@plenkay</div><span class="muted">YouTube</span></div>
-      </div>
-    </section>
   </main>
 
-  <!-- Firma siempre visible -->
+  <!-- Firma -->
   <div class="credit">Created by Karmean Gómez</div>
 
   <!-- SERVICE CENTER -->
@@ -278,7 +236,6 @@
         <button class="btn" id="svc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
       </div>
       <div class="svc-grid" id="svc-grid"></div>
-
       <div class="card" id="svc-form-card" style="display:none;margin-top:12px;padding:16px">
         <div class="section"><h3 id="svc-form-title"><i class="fa-solid fa-sliders"></i> Configurar</h3></div>
         <form class="form" id="svc-form"></form>
@@ -298,14 +255,11 @@
         <h3><i class="fa-solid fa-mobile-screen-button"></i> Device Farm</h3>
         <button class="btn" id="farm-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
       </div>
-
-      <!-- Toolbar de zoom -->
       <div class="section" style="display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:-6px">
         <span class="muted">Zoom</span>
         <button class="btn" id="zoom-out">–</button>
         <button class="btn" id="zoom-in">+</button>
       </div>
-
       <p class="muted">Monitorea múltiples dispositivos en tiempo real.</p>
       <div class="farm-grid" id="farm-grid"></div>
     </div>
@@ -332,7 +286,7 @@
         </div>
       </div>
 
-      <div class="card" style="padding:16px; margin-top:12px">
+      <div class="card" style="padding:16px;margin-top:12px">
         <div class="section"><h3><i class="fa-solid fa-user-plus"></i> Agregar cuenta manual</h3></div>
         <div class="form">
           <div class="row"><label>Usuario</label><input id="manual-username" class="ctrl" placeholder="@usuario"></div>
@@ -341,12 +295,12 @@
         </div>
       </div>
 
-      <div class="card" style="padding:16px; margin-top:12px">
+      <div class="card" style="padding:16px;margin-top:12px">
         <div class="section"><h3><i class="fa-solid fa-list-check"></i> Cuentas activas</h3></div>
         <div id="active-accounts">Cargando…</div>
       </div>
 
-      <div class="card" style="padding:16px; margin-top:12px">
+      <div class="card" style="padding:16px;margin-top:12px">
         <div class="section"><h3><i class="fa-solid fa-magnifying-glass"></i> Buscar usuario (Instagram)</h3></div>
         <div class="form">
           <div class="row"><label>@usuario</label><input id="username-search" class="ctrl" placeholder="@username"></div>
@@ -402,49 +356,37 @@
   <div class="toast" id="toast"><span id="toast-text"></span></div>
 
   <script>
-    /* ===== Config ===== */
-    const API_URL = "https://api.kraveapi.xyz";
+    const API_URL="https://api.kraveapi.xyz";
 
-    /* ===== Tema ===== */
+    // Tema
     const themeBtn=document.getElementById('theme-btn');
     (function initTheme(){
       const t=localStorage.getItem('krave.theme');
       if(t==='light') document.documentElement.classList.add('light');
-      themeBtn.querySelector('i').className = document.documentElement.classList.contains('light') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      themeBtn.querySelector('i').className=document.documentElement.classList.contains('light')?'fa-solid fa-sun':'fa-solid fa-moon';
     })();
     themeBtn.addEventListener('click',toggleTheme);
     document.getElementById('toggle-theme')?.addEventListener('click',toggleTheme);
     function toggleTheme(){
       document.documentElement.classList.toggle('light');
       const light=document.documentElement.classList.contains('light');
-      themeBtn.querySelector('i').className = light ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      localStorage.setItem('krave.theme', light?'light':'dark');
+      themeBtn.querySelector('i').className=light?'fa-solid fa-sun':'fa-solid fa-moon';
+      localStorage.setItem('krave.theme',light?'light':'dark');
     }
-    // aurora toggle
     document.getElementById('toggle-aurora')?.addEventListener('click',()=>{
-      const a=document.querySelector('.aurora'); a.style.display = (a.style.display==='none'?'block':'none');
+      const a=document.querySelector('.aurora'); a.style.display=(a.style.display==='none'?'block':'none');
     });
-    // tiles size
     document.getElementById('bigger-tiles')?.addEventListener('click',()=>document.documentElement.style.setProperty('--r','22px'));
     document.getElementById('smaller-tiles')?.addEventListener('click',()=>document.documentElement.style.setProperty('--r','12px'));
 
-    /* ===== Toast ===== */
-    function toast(msg, err=false){
-      const t=document.getElementById('toast'), s=document.getElementById('toast-text');
-      s.textContent=msg; t.style.borderColor = err?'var(--err)':'var(--line)';
-      t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2300);
-    }
+    // Toast
+    function toast(msg,err=false){const t=document.getElementById('toast'),s=document.getElementById('toast-text');s.textContent=msg;t.style.borderColor=err?'var(--err)':'var(--line)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 
-    /* ===== Health badge ===== */
-    async function checkHealth(){
-      try{
-        const r=await fetch(`${API_URL}/health`,{credentials:'include'});
-        document.getElementById('status-text').textContent = r.ok?'Conectado':'Error de conexión';
-      }catch{ document.getElementById('status-text').textContent='Error de conexión'; }
-    }
+    // Salud backend
+    async function checkHealth(){try{const r=await fetch(`${API_URL}/health`,{credentials:'include'});document.getElementById('status-text').textContent=r.ok?'Conectado':'Error de conexión'}catch{document.getElementById('status-text').textContent='Error de conexión'}}
     checkHealth(); setInterval(checkHealth,120000);
 
-    /* ===== Service Center ===== */
+    // Definición de servicios por plataforma
     const SERVICES={
       instagram:{label:'Instagram',actions:{
         comentarios:{label:'Comentarios masivos',icon:'fa-regular fa-comment',endpoint:`${API_URL}/instagram/comentarios`,fields:[
@@ -455,15 +397,9 @@
           {key:'apodo',label:'Apodo',type:'text'},{key:'estilo',label:'Estilo',type:'text',placeholder:'fitness, guapo…'},
           {key:'actividad',label:'Actividad',type:'text',placeholder:'entrenador personal'}
         ]},
-        likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API_URL}/instagram/likes`,fields:[
-          {key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}
-        ]},
-        seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API_URL}/instagram/seguidores`,fields:[
-          {key:'usuario',label:'Usuario objetivo',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}
-        ]},
-        vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API_URL}/instagram/vistas`,fields:[
-          {key:'url',label:'URL del Reel/Video',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:50000,value:1000}
-        ]}
+        likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API_URL}/instagram/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}]},
+        seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API_URL}/instagram/seguidores`,fields:[{key:'usuario',label:'Usuario objetivo',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]},
+        vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API_URL}/instagram/vistas`,fields:[{key:'url',label:'URL del Reel/Video',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:50000,value:1000}]}
       }},
       tiktok:{label:'TikTok',actions:{
         vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API_URL}/tiktok/vistas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:5000}]},
@@ -481,7 +417,10 @@
         follows:{label:'Seguir cuentas',icon:'fa-solid fa-user-plus',endpoint:`${API_URL}/x/seguidores`,fields:[{key:'usuario',label:'Usuario objetivo',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]}
       }},
       facebook:{label:'Facebook',actions:{
-        likes:{label:'Reacciones',icon:'fa-regular fa-thumbs-up',endpoint:`${API_URL}/facebook/reacciones`,fields:[{key:'url',label:'URL del post',type:'text',required:true},{key:'tipo',label:'Tipo',type:'select',options:[{v:'like',t:'👍 Like'},{v:'love',t:'❤️ Love'},{v:'care',t:'🥰 Care'}]}]},
+        likes:{label:'Reacciones',icon:'fa-regular fa-thumbs-up',endpoint:`${API_URL}/facebook/reacciones`,fields:[
+          {key:'url',label:'URL del post',type:'text',required:true},
+          {key:'tipo',label:'Tipo',type:'select',options:[{v:'like',t:'👍 Like'},{v:'love',t:'❤️ Love'},{v:'care',t:'🥰 Care'}]}
+        ]},
         comentarios:{label:'Comentarios',icon:'fa-regular fa-comment',endpoint:`${API_URL}/facebook/comentarios`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Comentarios',type:'textarea',required:true}]}
       }},
       threads:{label:'Threads',actions:{
@@ -498,8 +437,8 @@
     let CURRENT_ENDPOINT=null;
 
     function openServiceCenter(platform){
-      const def=SERVICES[platform]; if(!def){ toast('Plataforma no soportada aún',true); return; }
-      document.getElementById('svc-title').innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> ${def.label}`;
+      const def=SERVICES[platform]; if(!def){toast('Plataforma no soportada aún',true);return;}
+      document.getElementById('svc-title').innerHTML=`<i class="fa-solid fa-wand-magic-sparkles"></i> ${def.label}`;
       svcPanel.classList.add('active'); svcGrid.innerHTML=''; svcFormCard.style.display='none';
       Object.values(def.actions).forEach(cfg=>{
         const el=document.createElement('div'); el.className='card svc-card';
@@ -515,10 +454,10 @@
         const row=document.createElement('div'); row.className='row';
         row.innerHTML=`<label>${f.label}</label>`;
         let el;
-        if(f.type==='textarea'){ el=document.createElement('textarea'); el.className='ctrl'; el.name=f.key; el.placeholder=f.placeholder||''; el.required=!!f.required; }
-        else if(f.type==='select'){ el=document.createElement('select'); el.className='ctrl'; el.name=f.key; (f.options||[]).forEach(o=>{ const op=document.createElement('option'); op.value=o.v; op.textContent=o.t; el.appendChild(op); }); }
-        else { el=document.createElement('input'); el.className='ctrl'; el.type=f.type||'text'; el.name=f.key; if(f.value!=null) el.value=f.value; if(f.min!=null) el.min=f.min; if(f.max!=null) el.max=f.max; el.placeholder=f.placeholder||''; el.required=!!f.required; }
-        if(f.showIf){ el.dataset.dep=f.showIf.field; el.dataset.depval=f.showIf.equals; }
+        if(f.type==='textarea'){el=document.createElement('textarea');el.className='ctrl';el.name=f.key;el.placeholder=f.placeholder||'';el.required=!!f.required;}
+        else if(f.type==='select'){el=document.createElement('select');el.className='ctrl';el.name=f.key;(f.options||[]).forEach(o=>{const op=document.createElement('option');op.value=o.v;op.textContent=o.t;el.appendChild(op);});}
+        else{el=document.createElement('input');el.className='ctrl';el.type=f.type||'text';el.name=f.key;if(f.value!=null)el.value=f.value;if(f.min!=null)el.min=f.min;if(f.max!=null)el.max=f.max;el.placeholder=f.placeholder||'';el.required=!!f.required;}
+        if(f.showIf){el.dataset.dep=f.showIf.field;el.dataset.depval=f.showIf.equals;}
         row.appendChild(el); svcForm.appendChild(row);
       });
       applyDeps(); svcForm.querySelectorAll('select,input').forEach(i=>i.addEventListener('change',applyDeps));
@@ -539,44 +478,43 @@
         svcRun.disabled=true; svcRun.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando…';
         const r=await fetch(CURRENT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
         const data=await r.json().catch(()=>({status:'ok'}));
-        toast(data.message || 'Tarea lanzada');
+        toast(data.message||'Tarea lanzada');
         const k=document.getElementById('svc-kpis'); k.innerHTML='';
         if(data.kpis) Object.entries(data.kpis).forEach(([key,val])=>{
           const c=document.createElement('div'); c.className='card'; c.style.padding='12px';
           c.innerHTML=`<div class="muted">${key}</div><div style="font-weight:700">${val}</div>`; k.appendChild(c);
         });
-      }catch{ toast('Error al ejecutar servicio',true) }
-      finally{ svcRun.disabled=false; svcRun.innerHTML='<i class="fa-solid fa-play"></i> Ejecutar'; }
+      }catch{toast('Error al ejecutar servicio',true)}
+      finally{svcRun.disabled=false; svcRun.innerHTML='<i class="fa-solid fa-play"></i> Ejecutar';}
     });
 
-    // Social tiles → Service Center
+    // Tiles → abrir Service Center
     document.getElementById('social-grid').addEventListener('click',(e)=>{
       const tile=e.target.closest('.tile[data-platform]'); if(!tile) return; openServiceCenter(tile.dataset.platform);
     });
 
-    /* ===== Device Farm ===== */
+    // Device Farm
     const farmPanel=document.getElementById('farm-panel');
     const farmGrid=document.getElementById('farm-grid');
-    document.getElementById('open-farm').addEventListener('click',()=>{ farmPanel.classList.add('active'); loadDevices(); });
-    document.querySelector('[data-tab="farm"]').addEventListener('click',()=>{ farmPanel.classList.add('active'); loadDevices(); });
+    document.getElementById('open-farm').addEventListener('click',()=>{farmPanel.classList.add('active');loadDevices();});
+    document.querySelector('[data-tab="farm"]').addEventListener('click',()=>{farmPanel.classList.add('active');loadDevices();});
     document.getElementById('farm-back').addEventListener('click',()=>farmPanel.classList.remove('active'));
     let sse=null;
 
-    // Zoom
-    const zoomIn = document.getElementById('zoom-in');
-    const zoomOut = document.getElementById('zoom-out');
-    function setDeviceHeight(px){ document.documentElement.style.setProperty('--device-h', px + 'px'); }
-    function getDeviceHeight(){ return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--device-h')) || 220; }
-    zoomIn?.addEventListener('click', ()=> setDeviceHeight(Math.min(getDeviceHeight()+40, 420)));
-    zoomOut?.addEventListener('click', ()=> setDeviceHeight(Math.max(getDeviceHeight()-40, 140)));
+    const zoomIn=document.getElementById('zoom-in');
+    const zoomOut=document.getElementById('zoom-out');
+    function setDeviceHeight(px){document.documentElement.style.setProperty('--device-h',px+'px')}
+    function getDeviceHeight(){return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--device-h'))||220}
+    zoomIn?.addEventListener('click',()=>setDeviceHeight(Math.min(getDeviceHeight()+40,420)));
+    zoomOut?.addEventListener('click',()=>setDeviceHeight(Math.max(getDeviceHeight()-40,140)));
 
     async function loadDevices(){
       try{
         const r=await fetch(`${API_URL}/devices`,{credentials:'include'}); const list=await r.json();
         renderDevices(list||[]); attachSSE();
-      }catch{ toast('No se pudo cargar la farm',true) }
+      }catch{toast('No se pudo cargar la farm',true)}
     }
-    function renderDevices(list){ farmGrid.innerHTML=''; list.forEach(d=> farmGrid.appendChild(deviceCard(d))); }
+    function renderDevices(list){farmGrid.innerHTML=''; list.forEach(d=>farmGrid.appendChild(deviceCard(d)));}
     function deviceCard(d){
       const card=document.createElement('div'); card.className='card device'; card.dataset.id=d.id;
       const head=document.createElement('div'); head.className='device-head';
@@ -592,68 +530,66 @@
       screen.append(overlay,vid,img);
 
       const actions=document.createElement('div'); actions.className='actions';
-      actions.append(btn('Iniciar',()=>ctrl(d.id,'start')), btn('Detener',()=>ctrl(d.id,'stop')), btn('Pantalla completa',()=>screen.requestFullscreen && screen.requestFullscreen(), true));
+      actions.append(btn('Iniciar',()=>ctrl(d.id,'start')), btn('Detener',()=>ctrl(d.id,'stop')), btn('Pantalla completa',()=>screen.requestFullscreen&&screen.requestFullscreen(), true));
       card.append(head,screen,actions);
 
       if(d.webrtc) openStream(d.id,vid,img);
       return card;
     }
-    function btn(t,fn,ghost=false){ const b=document.createElement('button'); b.className='btn'+(ghost?'':' btn-primary'); b.textContent=t; b.onclick=fn; return b }
+    function btn(t,fn,ghost=false){const b=document.createElement('button'); b.className='btn'+(ghost?'':' btn-primary'); b.textContent=t; b.onclick=fn; return b}
     async function ctrl(id,action){
       try{
         const r=await fetch(`${API_URL}/devices/${id}/control`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({action})});
         const data=await r.json(); toast(data.message||'OK');
-      }catch{ toast('Error enviando comando',true) }
+      }catch{toast('Error enviando comando',true)}
     }
     function attachSSE(){
       try{
         if(sse) sse.close();
         sse=new EventSource(`${API_URL}/devices/subscribe`,{withCredentials:true});
-        sse.onmessage=(ev)=>{ try{ const m=JSON.parse(ev.data||'{}'); if(m.type==='device.update') updateDevice(m.payload) }catch{} };
+        sse.onmessage=(ev)=>{try{const m=JSON.parse(ev.data||'{}'); if(m.type==='device.update') updateDevice(m.payload)}catch{}};
       }catch{}
     }
     function updateDevice(d){
       const card=farmGrid.querySelector(`[data-id="${d.id}"]`);
-      if(!card){ farmGrid.appendChild(deviceCard(d)); return; }
-      card.querySelector('.device-head div').innerHTML = `${d.emoji||'📱'} <strong>${d.name||d.model||'Device'}</strong> · ${d.platform||''}`;
-      card.querySelector('.chips').innerHTML = `<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`;
-      card.querySelector('.overlay').innerHTML = `<span class="chip-b">${d.task||'Idle'}</span>`;
-      if(d.mjpeg_url){ const im=card.querySelector('img'); if(im && im.src!==d.mjpeg_url) im.src=d.mjpeg_url; }
-      if(d.webrtc){ const v=card.querySelector('video'); const im=card.querySelector('img'); openStream(d.id,v,im); }
+      if(!card){farmGrid.appendChild(deviceCard(d));return;}
+      card.querySelector('.device-head div').innerHTML=`${d.emoji||'📱'} <strong>${d.name||d.model||'Device'}</strong> · ${d.platform||''}`;
+      card.querySelector('.chips').innerHTML=`<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`;
+      card.querySelector('.overlay').innerHTML=`<span class="chip-b">${d.task||'Idle'}</span>`;
+      if(d.mjpeg_url){const im=card.querySelector('img'); if(im && im.src!==d.mjpeg_url) im.src=d.mjpeg_url;}
+      if(d.webrtc){const v=card.querySelector('video'); const im=card.querySelector('img'); openStream(d.id,v,im);}
     }
     async function openStream(id,video,img){
       try{
-        const pc=new RTCPeerConnection(); pc.ontrack=(e)=>{ video.srcObject=e.streams[0]; video.style.display='block'; if(img) img.style.display='none'; };
+        const pc=new RTCPeerConnection(); pc.ontrack=(e)=>{video.srcObject=e.streams[0]; video.style.display='block'; if(img) img.style.display='none';};
         const offer=await pc.createOffer({offerToReceiveVideo:true}); await pc.setLocalDescription(offer);
         const r=await fetch(`${API_URL}/devices/${id}/stream/webrtc`,{method:'POST',headers:{'Content-Type':'application/sdp'},credentials:'include',body:offer.sdp});
         const answer=await r.text(); await pc.setRemoteDescription({type:'answer',sdp:answer});
       }catch{/* fallback MJPEG */}
     }
 
-    /* ===== Cuentas ===== */
+    // Cuentas
     const accPanel=document.getElementById('accounts-panel');
     document.getElementById('acc-back').addEventListener('click',()=>accPanel.classList.remove('active'));
-    const sessPill=document.getElementById('session-status'); const sessText=document.getElementById('session-status-text');
+    const sessPill=document.getElementById('session-status');
     const loginBtn=document.getElementById('login-btn'); const logoutBtn=document.getElementById('logout-btn');
     const loginUsername=document.getElementById('login-username'); const loginPassword=document.getElementById('login-password');
-    const addAccountBtn=document.getElementById('add-account-btn');
-    const manualUsername=document.getElementById('manual-username'); const manualPassword=document.getElementById('manual-password');
+    const addAccountBtn=document.getElementById('add-account-btn'); const manualUsername=document.getElementById('manual-username'); const manualPassword=document.getElementById('manual-password');
     const activeAccounts=document.getElementById('active-accounts');
     let cuentasActivasInterval;
 
     async function checkSessionStatus(){
       try{
-        const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
-        const data=await r.json();
+        const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'}); const data=await r.json();
         if(data.status==='activo'){
-          sessPill.innerHTML=`<i class="fa-solid fa-circle" style="color:var(--success);font-size:.65rem"></i><span id="session-status-text">Sesión activa como @${data.usuario}</span>`;
+          sessPill.innerHTML=`<i class="fa-solid fa-circle" style="color:var(--success);font-size:.65rem"></i><span>Sesión activa como @${data.usuario}</span>`;
           document.getElementById('login-form').style.display='none';
         }else{
-          sessPill.innerHTML=`<i class="fa-solid fa-circle" style="color:var(--err);font-size:.65rem"></i><span id="session-status-text">No hay sesión</span>`;
+          sessPill.innerHTML=`<i class="fa-solid fa-circle" style="color:var(--err);font-size:.65rem"></i><span>No hay sesión</span>`;
           document.getElementById('login-form').style.display='block';
         }
       }catch{
-        sessPill.innerHTML=`<i class="fa-solid fa-circle" style="color:var(--err);font-size:.65rem"></i><span id="session-status-text">Error al verificar sesión</span>`;
+        sessPill.innerHTML=`<i class="fa-solid fa-circle" style="color:var(--err);font-size:.65rem"></i><span>Error al verificar sesión</span>`;
         document.getElementById('login-form').style.display='block';
       }
     }
@@ -664,9 +600,9 @@
         loginBtn.disabled=true; loginBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Iniciando…';
         const r=await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
         const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error al iniciar sesión');
-        toast(`Sesión iniciada como @${d.usuario}`); checkSessionStatus(); actualizarListaCuentasActivas();
-      }catch(e){ toast(e.message||'Error',true) }
-      finally{ loginBtn.disabled=false; loginBtn.innerHTML='Iniciar sesión'; }
+        toast(`Sesión iniciada @${d.usuario}`); checkSessionStatus(); actualizarListaCuentasActivas();
+      }catch(e){toast(e.message||'Error',true)}
+      finally{loginBtn.disabled=false; loginBtn.innerHTML='Iniciar sesión';}
     });
     logoutBtn.addEventListener('click',async ()=>{
       try{
@@ -674,43 +610,41 @@
         const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'}); const d=await r.json();
         if(!d.exito) throw new Error(d.mensaje||'Error al cerrar sesión');
         toast('Sesión cerrada'); checkSessionStatus(); actualizarListaCuentasActivas();
-      }catch(e){ toast(e.message||'Error',true) }
-      finally{ logoutBtn.disabled=false; logoutBtn.innerHTML='Cerrar sesión'; }
+      }catch(e){toast(e.message||'Error',true)}
+      finally{logoutBtn.disabled=false; logoutBtn.innerHTML='Cerrar sesión';}
     });
     addAccountBtn.addEventListener('click',async ()=>{
       const u=manualUsername.value.trim().replace('@',''); const p=manualPassword.value.trim();
       if(!u||!p) return toast('Completa usuario y contraseña',true);
       try{
         addAccountBtn.disabled=true; addAccountBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…';
-        // Validar login rápido
         const l=await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
         const lj=await l.json(); if(!lj.exito) throw new Error(lj.mensaje||'Error al iniciar con la cuenta');
         const s=await fetch(`${API_URL}/guardar-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:u,password:p})});
         const sj=await s.json(); if(sj.status!=='ok') throw new Error(sj.message||'No se pudo guardar');
-        toast(`Cuenta @${u} guardada`); manualUsername.value=''; manualPassword.value=''; actualizarListaCuentasActivas();
-      }catch(e){ toast(e.message||'Error',true) }
-      finally{ addAccountBtn.disabled=false; addAccountBtn.innerHTML='Guardar Cuenta'; }
+        toast(`Cuenta @${u} guardada`); manualUsername.value=''; manualPassword.value='';
+        actualizarListaCuentasActivas();
+      }catch(e){toast(e.message||'Error',true)}
+      finally{addAccountBtn.disabled=false; addAccountBtn.innerHTML='Guardar Cuenta';}
     });
     async function actualizarListaCuentasActivas(){
       try{
         const r=await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'}); const cuentas=await r.json();
-        if(!Array.isArray(cuentas) || !cuentas.length){ activeAccounts.textContent='No hay cuentas activas'; return; }
+        if(!Array.isArray(cuentas)||!cuentas.length){activeAccounts.textContent='No hay cuentas activas';return;}
         const ul=document.createElement('div'); ul.className='list';
         cuentas.forEach(acc=>{
           const item=document.createElement('div'); item.className='list-item';
           item.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><span class="chip-b" style="padding:4px 8px">${acc.status||'idle'}</span>@${acc.username}</div>`;
           const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px';
           if(acc.status==='activo'){
-            const b=document.createElement('button'); b.className='btn'; b.textContent='Logout';
-            b.onclick=()=>cerrarSesionCuenta(acc.username); actions.appendChild(b);
+            const b=document.createElement('button'); b.className='btn'; b.textContent='Logout'; b.onclick=()=>cerrarSesionCuenta(acc.username); actions.appendChild(b);
           }else{
-            const b=document.createElement('button'); b.className='btn btn-primary'; b.textContent='Login';
-            b.onclick=()=>iniciarSesionCuenta(acc.username); actions.appendChild(b);
+            const b=document.createElement('button'); b.className='btn btn-primary'; b.textContent='Login'; b.onclick=()=>iniciarSesionCuenta(acc.username); actions.appendChild(b);
           }
           item.appendChild(actions); ul.appendChild(item);
         });
         activeAccounts.innerHTML=''; activeAccounts.appendChild(ul);
-      }catch{ activeAccounts.textContent='Error al cargar cuentas'; }
+      }catch{activeAccounts.textContent='Error al cargar cuentas'}
     }
     async function iniciarSesionCuenta(username){
       try{
@@ -718,7 +652,7 @@
         const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:username})});
         const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
         toast(`Sesión iniciada @${username}`); actualizarListaCuentasActivas();
-      }catch(e){ toast(e.message||'Error',true) }
+      }catch(e){toast(e.message||'Error',true)}
     }
     async function cerrarSesionCuenta(username){
       try{
@@ -726,10 +660,10 @@
         const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:username})});
         const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
         toast(`Sesión cerrada @${username}`); actualizarListaCuentasActivas();
-      }catch(e){ toast(e.message||'Error',true) }
+      }catch(e){toast(e.message||'Error',true)}
     }
 
-    // Buscar usuario
+    // Buscar usuario IG
     const searchUserBtn=document.getElementById('search-user-btn');
     searchUserBtn?.addEventListener('click',searchUser);
     async function searchUser(){
@@ -739,7 +673,7 @@
         searchUserBtn.disabled=true; searchUserBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Buscando…';
         const r=await fetch(`${API_URL}/buscar-usuario?username=${u}`,{credentials:'include'});
         const d=await r.json();
-        document.getElementById('user-avatar').src = d.profile_pic_url_hd || 'https://via.placeholder.com/128?text=No+img';
+        document.getElementById('user-avatar').src=d.profile_pic_url_hd||'https://via.placeholder.com/128?text=No+img';
         document.getElementById('user-username').textContent='@'+(d.username||u);
         document.getElementById('user-fullname').textContent=d.full_name||'';
         document.getElementById('user-posts').textContent=(d.media_count||0).toLocaleString();
@@ -747,23 +681,23 @@
         document.getElementById('user-following').textContent=(d.following_count||0).toLocaleString();
         document.getElementById('user-result').style.display='block';
         toast(`Usuario @${d.username||u} encontrado`);
-      }catch(e){ toast(e.message||'No se pudo buscar',true) }
-      finally{ searchUserBtn.disabled=false; searchUserBtn.innerHTML='Buscar'; }
+      }catch(e){toast(e.message||'No se pudo buscar',true)}
+      finally{searchUserBtn.disabled=false; searchUserBtn.innerHTML='Buscar';}
     }
 
-    /* ===== Tabbar ===== */
+    // Tabbar
     document.querySelectorAll('.tabbar .tab').forEach(t=>t.addEventListener('click',()=>{
       document.querySelectorAll('.tabbar .tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
       const k=t.dataset.tab;
-      if(k==='home'){ [accPanel,svcPanel,farmPanel,document.getElementById('settings-panel')].forEach(p=>p.classList.remove('active')); window.scrollTo({top:0,behavior:'smooth'}); }
-      if(k==='accounts'){ accPanel.classList.add('active'); checkSessionStatus(); actualizarListaCuentasActivas(); if(cuentasActivasInterval) clearInterval(cuentasActivasInterval); cuentasActivasInterval=setInterval(actualizarListaCuentasActivas,30000); }
-      if(k==='actions'){ openServiceCenter('instagram'); }
-      if(k==='farm'){ farmPanel.classList.add('active'); loadDevices(); }
-      if(k==='settings'){ document.getElementById('settings-panel').classList.add('active'); }
+      if(k==='home'){[document.getElementById('accounts-panel'),document.getElementById('svc-panel'),document.getElementById('farm-panel'),document.getElementById('settings-panel')].forEach(p=>p.classList.remove('active'));window.scrollTo({top:0,behavior:'smooth'});}
+      if(k==='accounts'){document.getElementById('accounts-panel').classList.add('active');checkSessionStatus();actualizarListaCuentasActivas();if(cuentasActivasInterval)clearInterval(cuentasActivasInterval);cuentasActivasInterval=setInterval(actualizarListaCuentasActivas,30000);}
+      if(k==='actions'){openServiceCenter('instagram');}
+      if(k==='farm'){document.getElementById('farm-panel').classList.add('active');loadDevices();}
+      if(k==='settings'){document.getElementById('settings-panel').classList.add('active');}
     }));
     document.getElementById('set-back').addEventListener('click',()=>document.getElementById('settings-panel').classList.remove('active'));
 
-    /* ===== Automatización rápida ===== */
+    // Automatización rápida
     document.getElementById('automation-run').addEventListener('click',()=>{
       const v=(document.getElementById('automation-input').value||'').trim();
       if(!v) return toast('Escribe qué automatizar',true);
@@ -771,7 +705,7 @@
     });
 
     // Abrir Farm desde Home
-    document.getElementById('open-farm').addEventListener('click',()=>{ farmPanel.classList.add('active'); loadDevices(); });
+    document.getElementById('open-farm').addEventListener('click',()=>{document.getElementById('farm-panel').classList.add('active');loadDevices();});
   </script>
 </body>
 </html>
