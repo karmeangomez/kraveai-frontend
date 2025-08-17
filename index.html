@@ -3,278 +3,221 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>KRAVEAI — Panel</title>
+<title>KRAVEAI — Panel de Clientes</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0d12">
 <style>
-/* ================== Design tokens ================== */
-:root{
-  --bg:#0a0e14; --elev:#0e131b; --card:#111827; --text:#e9eef7; --muted:#93a0b4; --line:#1f2a3a;
-  --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
-  --grad:linear-gradient(135deg,#7c5cff 0%,#00d3c2 100%);
-  --r:14px; --gap:12px; --shadow:0 14px 40px rgba(0,0,0,.28);
-  --card-bg: linear-gradient(135deg, rgba(23, 30, 46, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
+/* ================== RESET & BASE ================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-[data-theme="light"] {
-  --bg: #f8fafc;
-  --elev: #ffffff;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #64748b;
-  --line: #e2e8f0;
-  --shadow: 0 14px 40px rgba(0,0,0,.08);
-  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 247, 250, 0.95) 100%);
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0e14;
+  color: #e9eef7;
+  overflow-x: hidden;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%; margin:0; padding:0;}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto; 
-  transition: background 0.3s ease;
-  background-image: radial-gradient(circle at 15% 50%, rgba(28, 34, 53, 0.15) 0%, transparent 55%),
-                   radial-gradient(circle at 85% 30%, rgba(124, 92, 255, 0.08) 0%, transparent 55%);
-}
-.app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
-
-/* ================== Topbar ================== */
-.top{
-  position:sticky;top:0;z-index:30;
-  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
-  padding:10px max(14px,env(safe-area-inset-left)) 8px max(14px,env(safe-area-inset-right));
-  background:color-mix(in oklab, var(--elev) 92%, transparent);
-  backdrop-filter:saturate(1.1) blur(14px); border-bottom:1px solid var(--line);
-}
-.brand{display:flex;align-items:center;gap:10px}
-.badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--grad);box-shadow:0 10px 22px rgba(124,92,255,.28),0 8px 16px rgba(0,211,194,.16)}
-.word{font-weight:900;letter-spacing:.16em; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
-.status{display:flex;align-items:center;gap:8px;justify-self:center;color:var(--muted)}
-.status .dot{width:8px;height:8px;border-radius:50%;background:#8b8b8b}
-
-.theme-toggle {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  background: rgba(255,255,255,.04);
-  border: 1px solid var(--line);
+/* ================== LAYOUT ================== */
+.container {
+  display: flex;
+  min-height: 100vh;
 }
 
-.icon-moon { display: none; }
-[data-theme="light"] .icon-sun { display: none; }
-[data-theme="light"] .icon-moon { display: block; }
-
-/* ================== Bottom nav (sin emojis) ================== */
-.nav{
-  position:sticky;bottom:0;z-index:25;
-  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
-  padding:8px max(12px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-right));
-  background:color-mix(in oklab,var(--elev) 92%, transparent); border-top:1px solid var(--line);
-  backdrop-filter:saturate(1.1) blur(14px);
-}
-.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer; transition: all 0.2s ease;}
-.tab svg{width:18px;height:18px}
-.tab small{font-size:.72rem}
-input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
-#tab-home:checked ~ .app .nav label[for="tab-home"],
-#tab-services:checked ~ .app .nav label[for="tab-services"],
-#tab-clients:checked ~ .app .nav label[for="tab-clients"],
-#tab-farm:checked ~ .app .nav label[for="tab-farm"],
-#tab-accounts:checked ~ .app .nav label[for="tab-accounts"]{
-  color:var(--text);
-  background:rgba(255,255,255,.04);
-  border-color:var(--line);
-  transform: translateY(-4px);
+/* ================== SIDEBAR ================== */
+.sidebar {
+  width: 260px;
+  background: rgba(14, 19, 27, 0.95);
+  border-right: 1px solid #1f2a3a;
+  padding: 30px 0;
+  backdrop-filter: blur(10px);
 }
 
-/* ================== Views ================== */
-.main{
-  height:calc(100svh - 56px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  padding:12px max(14px,env(safe-area-inset-left)) 12px max(14px,env(safe-area-inset-right));
-  overflow:auto;
+.brand {
+  padding: 0 30px 30px;
+  border-bottom: 1px solid #1f2a3a;
+  margin-bottom: 30px;
 }
-.view{display:none;animation:fade .16s ease}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-#tab-home:checked ~ .app .view[data-tab="home"],
-#tab-services:checked ~ .app .view[data-tab="services"],
-#tab-clients:checked ~ .app .view[data-tab="clients"],
-#tab-farm:checked ~ .app .view[data-tab="farm"],
-#tab-accounts:checked ~ .app .view[data-tab="accounts"]{display:block}
 
-/* ================== Cards / grids ================== */
-.card{
-  background: var(--card-bg);
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  transition: all 0.3s ease;
-}
-.grid{display:grid;gap:12px}
-.section-title{display:flex;align-items:center;gap:8px;font-weight:900;margin:2px 0 6px}
-.hint{color:var(--muted);font-size:.86rem;margin-bottom:8px}
-
-/* Social grid */
-.grid.social{
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.logo {
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
-@media (min-width: 640px) {
-  .grid.social {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1024px) {
-  .grid.social {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c5cff 0%, #00d3c2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.tile{
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.05);
-  transition: all 0.3s ease;
-  transform: translateY(0);
+.logo-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #7c5cff 0%, #00d3c2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav {
+  padding: 0 20px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  color: #93a0b4;
   cursor: pointer;
-}
-.tile:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-  border-color: rgba(124,92,255,0.2);
-}
-
-.tile::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--grad);
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-}
-.tile:hover::before {
-  opacity: 1;
-}
-
-.row{display:flex;align-items:center;gap:10px}
-.ico{
-  width:40px;
-  height:40px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background: rgba(255,255,255,.06);
-  border:1px solid var(--line);
   transition: all 0.3s ease;
 }
-.tile:hover .ico {
-  transform: scale(1.1);
-  background: rgba(255,255,255,.1);
-}
-.ico svg{width:20px;height:20px}
-.lab{font-weight:800; font-size: 1.05rem; margin-bottom: 4px;}
-.cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
-.cap .c{
-  padding:5px 8px;
-  font-size:.75rem;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:rgba(255,255,255,.04);
-  transition: all 0.2s ease;
-}
-.tile:hover .cap .c {
-  background: rgba(255,255,255,.08);
-  border-color: rgba(124,92,255,0.3);
+
+.nav-item.active {
+  background: rgba(124, 92, 255, 0.15);
+  color: #e9eef7;
 }
 
-.stats {
+.nav-item:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ================== MAIN CONTENT ================== */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7c5cff 0%, #00d3c2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.search-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  font-size: 0.8rem;
-  color: var(--muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #1f2a3a;
+  border-radius: 12px;
+  padding: 12px 16px;
+  width: 300px;
 }
 
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.stat-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--ok);
-}
-
-[data-theme="light"] .ico {
-  background: rgba(0,0,0,.03);
-  border-color: #e2e8f0;
-}
-
-/* Inputs/Buttons */
-.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:10px}
-.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
-.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);padding:10px 16px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer; transition: all 0.2s ease;}
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.btn-primary{border:0;background:var(--grad);color:#0b0d13; font-weight: 800;}
-.btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(124,92,255,0.3), 0 4px 12px rgba(0,211,194,0.25);
+.search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e9eef7;
+  font-size: 16px;
+  outline: none;
+  padding: 0 12px;
 }
 
 /* ================== CLIENTS SECTION ================== */
 .clients-section {
+  margin-top: 30px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.section-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.divider {
+  flex: 1;
+  height: 1px;
+  background: #1f2a3a;
+}
+
+.clients-grid {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
 }
 
 .client-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--card-bg);
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow);
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid #1f2a3a;
+  border-radius: 20px;
+  padding: 25px;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
 }
 
-.client-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  border-color: rgba(124,92,255,0.3);
+.client-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, #7c5cff 0%, #00d3c2 100%);
+  opacity: 0.7;
+}
+
+.client-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
 .client-logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, rgba(225, 48, 108, 0.15), rgba(155, 28, 78, 0.2));
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(225, 48, 108, 0.15);
   border: 1px solid rgba(225, 48, 108, 0.3);
 }
 
 .client-logo svg {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
 }
 
 .client-info {
@@ -282,16 +225,17 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 }
 
 .client-name {
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: 8px;
 }
 
 .client-username {
-  font-size: 0.85rem;
-  color: var(--muted);
+  color: #93a0b4;
+  font-size: 14px;
+  margin-top: 4px;
 }
 
 .badge-verified {
@@ -302,701 +246,233 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   justify-content: center;
 }
 
-/* Device farm */
-.farm{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.dev{display:grid;gap:10px;padding:12px}
-.dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:.78rem}
-.chip-b[data-status="active"] {
-  background: rgba(34, 197, 94, 0.1);
-  border-color: var(--ok);
-  color: var(--ok);
-}
-.screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:220px;position:relative}
-.screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.screen .placeholder{position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.25), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000}
-.screen .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px}
-
-/* Créditos */
-.credit{
-  position:fixed;
-  right:12px;
-  bottom:72px;
-  z-index:35;
-  font-size:.86rem;
-  color:var(--text);
-  background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:7px 12px;
-  backdrop-filter:blur(6px);
-}
-
-/* Quick automation section */
-.quick-automation {
-  background: var(--card-bg);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-}
-.quick-automation:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-}
-.quick-title {
+.client-status {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 8px;
+  font-size: 14px;
+  color: #93a0b4;
+  margin-top: 10px;
 }
-.quick-title svg {
-  width: 24px;
-  height: 24px;
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
 }
-.quick-title h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 800;
-  background: var(--grad);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+
+/* ================== SVG STYLES ================== */
+svg {
+  fill: currentColor;
 }
 </style>
 </head>
 <body>
 
-<!-- Tabs (sin JS) -->
-<input type="radio" name="tab" id="tab-home" checked>
-<input type="radio" name="tab" id="tab-services">
-<input type="radio" name="tab" id="tab-clients">
-<input type="radio" name="tab" id="tab-farm">
-<input type="radio" name="tab" id="tab-accounts">
-
-<!-- ===== SVG sprite (logo KRAVE + íconos + marcas oficiales) ===== -->
-<svg width="0" height="0" aria-hidden="true" style="position:absolute">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
-    </linearGradient>
-
-    <!-- Logo KRAVE -->
-    <symbol id="klogo" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
-      <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
-    </symbol>
-
-    <!-- Nav icons (sin emojis) -->
-    <symbol id="ico-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="ico-tools" viewBox="0 0 24 24"><path d="M3 21l6-6M7 3l3 3-2 2 6 6 2-2 3 3M14 7l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-    <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-    <symbol id="ico-devices" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></symbol>
-    <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="ico-rocket" viewBox="0 0 24 24"><path d="M13 10l7-7M13 3l9 9M7.5 7.5L3 14l7 7 6.5-4.5M2 14l6.5 6.5M19 5l-9 9" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-
-    <!-- Toggle icons -->
-    <symbol id="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="ico-moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-
-    <!-- IG verified (badge real) -->
-    <symbol id="ig-verified" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0095F6"/><path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-
-    <!-- Brand logos (minimal vector) -->
-    <symbol id="logo-instagram" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
-    </symbol>
-    <symbol id="logo-tiktok" viewBox="0 0 24 24">
-      <path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/>
-      <path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/>
-    </symbol>
-    <symbol id="logo-youtube" viewBox="0 0 24 24">
-      <rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/>
-    </symbol>
-    <symbol id="logo-threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2"/></symbol>
-    <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
-    <symbol id="logo-facebook" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
-    <symbol id="logo-linkedin" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
-    <symbol id="logo-snapchat" viewBox="0 0 24 24"><path d="M6 10c0-4 3-6 6-6s6 2 6 6c0 2-.8 3.6-2 4.8 1 .6 2 .8 2 1.2 0 .8-3 1-6 1s-6-.2-6-1c0-.4 1-.6 2-1.2C6.8 13.6 6 12 6 10z" fill="#FFFC00" stroke="#000"/></symbol>
-    <symbol id="logo-discord" viewBox="0 0 24 24"><path d="M7 6c3-1 7-1 10 0 1 2 2 4 2 6-1 2-3 3-5 4l-2-1-2 1c-2-1-4-2-5-4 0-2 1-4 2-6z" fill="#5865F2"/></symbol>
-    <symbol id="logo-telegram" viewBox="0 0 24 24"><path d="M21 3L3 11l6 2 2 6 3-4 4-10z" fill="#0088cc"/></symbol>
-    <symbol id="logo-whatsapp" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 1 0 18 9.4 9.4 0 0 1-4-.9L5 21l.9-3.1A9.4 9.4 0 0 1 3 12 9 9 0 0 1 12 3z" fill="#25D366"/><path d="M9 8c0 3 3 6 5 6l1-1" stroke="#fff" stroke-width="2"/></symbol>
-    <symbol id="logo-twitch" viewBox="0 0 24 24"><path d="M4 4h16v10l-4 4H12l-2 2H8v-2H4z" fill="#9146FF"/></symbol>
-    <symbol id="logo-reddit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FF4500"/><circle cx="9" cy="12" r="1.5" fill="#fff"/><circle cx="15" cy="12" r="1.5" fill="#fff"/><path d="M8 14c1 1 3 2 4 2s3-1 4-2" stroke="#fff" stroke-width="2" fill="none"/></symbol>
-    <symbol id="logo-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" fill="none"/></symbol>
-    <symbol id="logo-pinterest" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#E60023"/><path d="M12 6c3 0 5 2 5 4.5S15 15 12.5 15c-1 0-1.7-.5-2-.8l-.7 2.8-.8-.3 1-3.5c-.2-.6-.3-1.2-.3-1.9C9.7 9 10.6 6 12 6z" fill="#fff"/></symbol>
-  </defs>
-</svg>
-
-<div class="app" id="app">
-  <!-- Topbar -->
-  <header class="top">
+<div class="container">
+  <!-- Sidebar -->
+  <div class="sidebar">
     <div class="brand">
-      <div class="badge"><svg viewBox="0 0 64 64" width="20" height="20"><use href="#klogo"/></svg></div>
-      <div class="word">KRAVEAI</div>
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" width="20" height="20">
+            <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
+            <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
+          </svg>
+        </div>
+        <div class="logo-text">KRAVEAI</div>
+      </div>
     </div>
-    <div class="status"><span class="dot" id="status-dot"></span><small id="status-text">Conectado</small></div>
-    <div class="theme-toggle" id="theme-toggle">
-      <svg class="icon-sun" width="20" height="20"><use href="#ico-sun"/></svg>
-      <svg class="icon-moon" width="20" height="20"><use href="#ico-moon"/></svg>
+    
+    <div class="nav">
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Clientes</span>
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M3 21l6-6M7 3l3 3-2 2 6 6 2-2 3 3M14 7l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Servicios</span>
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></svg>
+        <span>Device Farm</span>
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span>Cuentas</span>
+      </div>
     </div>
-  </header>
-
-  <!-- Main -->
-  <main class="main">
-    <!-- HOME - Rediseñada completamente -->
-    <section class="view" data-tab="home">
-      <!-- Automatización rápida integrada en la parte superior -->
-      <div class="quick-automation">
-        <div class="quick-title">
-          <svg width="24" height="24" viewBox="0 0 24 24"><use href="#ico-rocket"/></svg>
-          <h2>Automatización Rápida</h2>
-        </div>
-        <div class="input">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <input id="quick-input" placeholder="¿Qué quieres automatizar hoy? Ej: '1000 seguidores en Instagram'">
-          <button class="btn btn-primary" id="quick-run">Ejecutar</button>
-        </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header">
+      <h1>Panel de Clientes</h1>
+      <div class="search-bar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" placeholder="Buscar clientes...">
+      </div>
+    </div>
+    
+    <div class="clients-section">
+      <div class="section-header">
+        <h2>Clientes Verificados</h2>
+        <div class="divider"></div>
       </div>
       
-      <div class="section-title"><span>Redes Sociales</span></div>
-      <div class="hint">Selecciona una red para ver sus servicios disponibles</div>
-      
-      <div class="grid social" id="social-grid">
-        <!-- Instagram -->
-        <article class="card tile" data-key="instagram">
-          <div class="row">
-            <div class="ico" style="color:#E1306C"><svg><use href="#logo-instagram"/></svg></div>
-            <div><div class="lab">Instagram</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 128 activas</div>
-            <div class="stat-item">92% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Comentarios</span>
-            <span class="c">Likes</span>
-            <span class="c">Seguidores</span>
-            <span class="c">Vistas</span>
-          </div>
-        </article>
-        
-        <!-- TikTok -->
-        <article class="card tile" data-key="tiktok">
-          <div class="row">
-            <div class="ico" style="color:#69C9D0"><svg><use href="#logo-tiktok"/></svg></div>
-            <div><div class="lab">TikTok</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 87 activas</div>
-            <div class="stat-item">89% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Vistas</span>
-            <span class="c">Likes</span>
-            <span class="c">Seguidores</span>
-            <span class="c">Compartidos</span>
-          </div>
-        </article>
-        
-        <!-- YouTube -->
-        <article class="card tile" data-key="youtube">
-          <div class="row">
-            <div class="ico" style="color:#FF0000"><svg><use href="#logo-youtube"/></svg></div>
-            <div><div class="lab">YouTube</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 64 activas</div>
-            <div class="stat-item">85% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Vistas</span>
-            <span class="c">Likes</span>
-            <span class="c">Suscripciones</span>
-            <span class="c">Comentarios</span>
-          </div>
-        </article>
-        
-        <!-- X -->
-        <article class="card tile" data-key="x">
-          <div class="row">
-            <div class="ico" style="color:#ffffff"><svg><use href="#logo-x"/></svg></div>
-            <div><div class="lab">X</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 56 activas</div>
-            <div class="stat-item">82% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Likes</span>
-            <span class="c">Reposts</span>
-            <span class="c">Seguidores</span>
-            <span class="c">Respuestas</span>
-          </div>
-        </article>
-        
-        <!-- Facebook -->
-        <article class="card tile" data-key="facebook">
-          <div class="row">
-            <div class="ico" style="color:#1877F2"><svg><use href="#logo-facebook"/></svg></div>
-            <div><div class="lab">Facebook</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 42 activas</div>
-            <div class="stat-item">78% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Reacciones</span>
-            <span class="c">Comentarios</span>
-            <span class="c">Compartidos</span>
-            <span class="c">Amigos</span>
-          </div>
-        </article>
-        
-        <!-- LinkedIn -->
-        <article class="card tile" data-key="linkedin">
-          <div class="row">
-            <div class="ico" style="color:#0A66C2"><svg><use href="#logo-linkedin"/></svg></div>
-            <div><div class="lab">LinkedIn</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 38 activas</div>
-            <div class="stat-item">75% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Reacciones</span>
-            <span class="c">Comentarios</span>
-            <span class="c">Conexiones</span>
-            <span class="c">Visitas</span>
-          </div>
-        </article>
-        
-        <!-- WhatsApp -->
-        <article class="card tile" data-key="whatsapp">
-          <div class="row">
-            <div class="ico" style="color:#25D366"><svg><use href="#logo-whatsapp"/></svg></div>
-            <div><div class="lab">WhatsApp</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 29 activas</div>
-            <div class="stat-item">91% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Mensajes</span>
-            <span class="c">Grupos</span>
-            <span class="c">Respuestas</span>
-          </div>
-        </article>
-        
-        <!-- Telegram -->
-        <article class="card tile" data-key="telegram">
-          <div class="row">
-            <div class="ico" style="color:#0088cc"><svg><use href="#logo-telegram"/></svg></div>
-            <div><div class="lab">Telegram</div></div>
-          </div>
-          <div class="stats">
-            <div class="stat-item"><span class="stat-dot"></span> 24 activas</div>
-            <div class="stat-item">88% éxito</div>
-          </div>
-          <div class="cap">
-            <span class="c">Mensajes</span>
-            <span class="c">Miembros</span>
-            <span class="c">Reacciones</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- SERVICES -->
-    <section class="view" data-tab="services">
-      <div class="section-title"><span>Servicios</span></div>
-      <div class="hint">Instagram → Comentarios cableado; el resto es plantilla visual.</div>
-      <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px" id="services-panels">
-        <!-- Instagram (Comentarios) -->
-        <div class="card" style="padding:12px">
-          <div class="row">
-            <div class="ico"><svg><use href="#logo-instagram"/></svg></div>
-            <div><div class="lab">Instagram — Comentarios</div><small class="hint" style="margin:0">Masivo / Auto / Personalizado</small></div>
-          </div>
-          <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:10px" id="ig-comments">
-            <div class="input" style="grid-column:1/-1"><span>🔗</span><input name="url" placeholder="URL del post (https://www.instagram.com/p/...)" required></div>
-            <div class="input"><span>#</span><input type="number" name="cantidad" min="1" max="100" value="30" placeholder="Cantidad"></div>
-            <div class="input"><span>🎛️</span><input name="modo" value="auto" list="modos" placeholder="Modo"></div>
-            <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
-            <div class="input" style="grid-column:1/-1"><span>🧑‍💼</span><input name="apodo" placeholder="Apodo (opcional)"></div>
-            <div class="input"><span>🎯</span><input name="estilo" placeholder="Estilo (fitness, sexy, etc)"></div>
-            <div class="input"><span>🏷️</span><input name="actividad" placeholder="Actividad (entrenador, etc)"></div>
-            <div class="input" style="grid-column:1/-1"><span>📝</span><input name="ejemplos" placeholder="Ejemplos (uno por línea)"></div>
-            <button class="btn btn-primary" id="ig-send" style="grid-column:1/2">Lanzar</button>
-            <button class="btn" id="ig-cancel" style="grid-column:2/3">Cancelar</button>
-          </div>
-          <div id="ig-comments-status" class="hint" style="margin-top:8px">—</div>
-        </div>
-
-        <!-- TikTok plantilla -->
-        <div class="card" style="padding:12px">
-          <div class="row"><div class="ico"><svg><use href="#logo-tiktok"/></svg></div><div><div class="lab">TikTok — Servicios</div><small class="hint" style="margin:0">Vistas, Likes, Seguidores</small></div></div>
-          <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-            <div class="input" style="grid-column:1/-1"><span>🔗</span><input placeholder="URL del video"></div>
-            <div class="input"><span>#</span><input type="number" min="100" step="100" placeholder="Vistas"></div>
-            <button class="btn btn-primary">Enviar</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CLIENTS (solo logo de Instagram, sin cámara) -->
-    <section class="view" data-tab="clients">
-      <div class="section-title"><span>Clientes recientes</span></div>
-      <div class="hint">Clientes verificados con cuentas premium</div>
-      
-      <div class="clients-section">
+      <div class="clients-grid">
         <!-- Cliente 1 -->
         <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @aaronmercury
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+          <div class="client-header">
+            <div class="client-logo">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
+              </svg>
             </div>
-            <div class="client-username">Aaron Mercury</div>
+            <div class="client-info">
+              <div class="client-name">
+                @aaronmercury
+                <svg class="badge-verified" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" fill="#0095F6"/>
+                  <path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="client-username">Aaron Mercury</div>
+            </div>
+          </div>
+          <div class="client-status">
+            <span class="status-indicator"></span>
+            <span>Activo ahora</span>
           </div>
         </div>
         
         <!-- Cliente 2 -->
         <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @televisadigital
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+          <div class="client-header">
+            <div class="client-logo">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
+              </svg>
             </div>
-            <div class="client-username">Televisa Digital</div>
+            <div class="client-info">
+              <div class="client-name">
+                @televisadigital
+                <svg class="badge-verified" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" fill="#0095F6"/>
+                  <path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="client-username">Televisa Digital</div>
+            </div>
+          </div>
+          <div class="client-status">
+            <span class="status-indicator"></span>
+            <span>Activo ahora</span>
           </div>
         </div>
         
         <!-- Cliente 3 -->
         <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @joscanela
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+          <div class="client-header">
+            <div class="client-logo">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
+              </svg>
             </div>
-            <div class="client-username">José Canela</div>
+            <div class="client-info">
+              <div class="client-name">
+                @joscanela
+                <svg class="badge-verified" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" fill="#0095F6"/>
+                  <path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="client-username">José Canela</div>
+            </div>
+          </div>
+          <div class="client-status">
+            <span class="status-indicator"></span>
+            <span>Activo ahora</span>
           </div>
         </div>
         
         <!-- Cliente 4 -->
         <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @jimenagallegotv
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+          <div class="client-header">
+            <div class="client-logo">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+                <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
+              </svg>
             </div>
-            <div class="client-username">Jimena Gallegos</div>
-          </div>
-        </div>
-        
-        <!-- Cliente 5 -->
-        <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @marcosgomez
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            <div class="client-info">
+              <div class="client-name">
+                @jimenagallegotv
+                <svg class="badge-verified" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" fill="#0095F6"/>
+                  <path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="client-username">Jimena Gallegos</div>
             </div>
-            <div class="client-username">Marcos Gómez</div>
           </div>
-        </div>
-        
-        <!-- Cliente 6 -->
-        <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @digitalmarketers
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
-            </div>
-            <div class="client-username">Digital Marketers</div>
-          </div>
-        </div>
-        
-        <!-- Cliente 7 -->
-        <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @fitnessworld
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
-            </div>
-            <div class="client-username">Fitness World</div>
-          </div>
-        </div>
-        
-        <!-- Cliente 8 -->
-        <div class="client-card">
-          <div class="client-logo">
-            <svg><use href="#logo-instagram"/></svg>
-          </div>
-          <div class="client-info">
-            <div class="client-name">
-              @luxurylifestyle
-              <svg class="badge-verified"><use href="#ig-verified"/></svg>
-            </div>
-            <div class="client-username">Luxury Lifestyle</div>
+          <div class="client-status">
+            <span class="status-indicator"></span>
+            <span>Activo ahora</span>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- DEVICE FARM -->
-    <section class="view" data-tab="farm">
-      <div class="section-title"><span>Device Farm</span></div>
-      <div class="hint">Asigna una URL de stream (HLS .m3u8, MJPEG .mjpg o página/visor). Se guarda en localStorage.</div>
-      <div class="farm" id="farm-grid"></div>
-    </section>
-
-    <!-- ACCOUNTS -->
-    <section class="view" data-tab="accounts">
-      <div class="section-title"><span>Cuentas</span></div>
-      <div class="grid" style="grid-template-columns:1fr;max-width:880px">
-        <div class="card" style="padding:12px">
-          <div class="row">
-            <div class="ico"><svg><use href="#ico-lock"/></svg></div>
-            <div><div class="lab">Sesión</div><small class="hint" id="session-sub" style="margin:0">Verificando…</small></div>
-          </div>
-          <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-            <div class="input" style="grid-column:1/-1"><span>@</span><input id="login-username" placeholder="Usuario"></div>
-            <div class="input" style="grid-column:1/-1"><span>🔒</span><input id="login-password" type="password" placeholder="Contraseña"></div>
-            <button class="btn btn-primary" id="login-btn">Iniciar sesión</button>
-            <button class="btn" id="logout-btn">Cerrar sesión</button>
-          </div>
-        </div>
-
-        <div class="card" style="padding:12px">
-          <div class="row">
-            <div class="ico"><svg><use href="#logo-instagram"/></svg></div>
-            <div><div class="lab">Agregar cuenta manual</div><small class="hint" style="margin:0">Se valida y se inserta</small></div>
-          </div>
-          <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-            <div class="input" style="grid-column:1/-1"><span>@</span><input id="manual-username" placeholder="@usuario"></div>
-            <div class="input" style="grid-column:1/-1"><span>🔒</span><input id="manual-password" type="password" placeholder="••••••••"></div>
-            <button class="btn btn-primary" id="add-account-btn">Guardar cuenta</button>
-          </div>
-        </div>
-
-        <div class="card" style="padding:12px">
-          <div class="row"><div class="ico"><svg><use href="#ico-users"/></svg></div><div><div class="lab">Cuentas activas</div><small class="hint" style="margin:0">Actualiza cada 30s</small></div></div>
-          <div id="accounts-list" class="grid" style="grid-template-columns:1fr;gap:8px;margin-top:10px"><div class="hint">Cargando…</div></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Bottom nav -->
-  <nav class="nav">
-    <label class="tab" for="tab-home"><svg><use href="#ico-home"/></svg><small>Inicio</small></label>
-    <label class="tab" for="tab-services"><svg><use href="#ico-tools"/></svg><small>Servicios</small></label>
-    <label class="tab" for="tab-clients"><svg><use href="#ico-users"/></svg><small>Clientes</small></label>
-    <label class="tab" for="tab-farm"><svg><use href="#ico-devices"/></svg><small>Farm</small></label>
-    <label class="tab" for="tab-accounts"><svg><use href="#ico-lock"/></svg><small>Cuentas</small></label>
-  </nav>
+    </div>
+  </div>
 </div>
 
-<footer class="credit">Created by Karmean Gómez</footer>
-
 <script>
-(function(){
-  const API_URL = "https://api.kraveapi.xyz";
-
-  // ===== Toggle tema claro/oscuro =====
-  const themeToggle = document.getElementById('theme-toggle');
-  const currentTheme = localStorage.getItem('theme') || 'dark';
-  
-  document.documentElement.setAttribute('data-theme', currentTheme);
-  
-  themeToggle.addEventListener('click', () => {
-    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' 
-      ? 'light' : 'dark';
+document.addEventListener('DOMContentLoaded', function() {
+  // Efecto de hover para las tarjetas de clientes
+  const cards = document.querySelectorAll('.client-card');
+  cards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-5px)';
+      card.style.boxShadow = '0 20px 30px rgba(0,0,0,0.3)';
+      card.style.borderColor = 'rgba(124, 92, 255, 0.5)';
+    });
     
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.boxShadow = 'none';
+      card.style.borderColor = '#1f2a3a';
+    });
   });
-
-  // ===== Estado backend =====
-  const statusDot = document.getElementById('status-dot');
-  const statusText = document.getElementById('status-text');
-  async function checkHealth(){
-    try{
-      const r = await fetch(`${API_URL}/health`, {credentials:'include'});
-      if(r.ok){statusDot.style.background='var(--ok)'; statusText.textContent='Conectado';}
-      else throw new Error();
-    }catch{
-      statusDot.style.background='var(--err)'; statusText.textContent='Sin conexión';
-    }
-  }
-  checkHealth(); setInterval(checkHealth, 120000);
-
-  // ===== Quick automation =====
-  function toast(msg,err){ 
-    const el=document.createElement('div'); 
-    el.textContent=msg; 
-    el.style.cssText=`
-      position:fixed;
-      left:50%;
-      top:12px;
-      transform:translateX(-50%);
-      z-index:9999;
-      background:${err?'#ef4444':'#1f2937'};
-      color:#fff;
-      padding:8px 16px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.15);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-      font-weight: 500;
-    `; 
-    document.body.appendChild(el); 
-    setTimeout(()=>el.remove(),2200); 
-  }
   
-  document.getElementById('quick-run').addEventListener('click',()=>{
-    const v=(document.getElementById('quick-input').value||'').trim();
-    if(!v){toast('Escribe qué automatizar',true);return}
-    toast('Iniciando automatización: '+v);
-    document.getElementById('quick-input').value='';
-  });
-
-  // ===== Instagram → Comentarios =====
-  const igFormRoot=document.getElementById('ig-comments'); 
-  const igStatus=document.getElementById('ig-comments-status');
-  document.getElementById('ig-send').addEventListener('click', async ()=>{
-    const inputs = igFormRoot.querySelectorAll('input');
-    const fd = new FormData();
-    inputs.forEach(i=> fd.append(i.name||i.id, i.value));
-    const payload = Object.fromEntries(fd.entries());
-    if(!payload.url){ toast('Falta URL',true); return; }
-    try{
-      igStatus.textContent='Enviando…';
-      const r=await fetch(`${API_URL}/instagram/comentarios`,{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        credentials:'include',body:JSON.stringify(payload)
-      });
-      const data=await r.json().catch(()=>({}));
-      if(r.ok){
-        igStatus.textContent='✅ Comentarios en proceso'; 
-        toast('Comentarios lanzados con éxito');
+  // Funcionalidad de búsqueda
+  const searchInput = document.querySelector('.search-bar input');
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    cards.forEach(card => {
+      const username = card.querySelector('.client-name').textContent.toLowerCase();
+      if (username.includes(searchTerm)) {
+        card.style.display = 'block';
       } else {
-        throw new Error(data.mensaje||'Error en comentarios');
+        card.style.display = 'none';
       }
-    }catch(err){ 
-      igStatus.textContent='❌ '+err.message; 
-      toast(err.message,true); 
-    }
+    });
   });
-  document.getElementById('ig-cancel').addEventListener('click',()=>{ igStatus.textContent='—'; });
-
-  // ===== Sesión / Cuentas =====
-  const sessionSub=document.getElementById('session-sub');
-  async function checkSession(){
-    try{
-      const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
-      const d=await r.json();
-      sessionSub.textContent=(d.status==='activo')?`Sesión activa como @${d.usuario}`:'No hay sesión activa';
-    }catch{ sessionSub.textContent='Error al verificar sesión'; }
-  }
-  checkSession();
-
-  document.getElementById('login-btn').addEventListener('click', async ()=>{
-    const u=document.getElementById('login-username').value.trim().replace('@','');
-    const p=document.getElementById('login-password').value.trim();
-    if(!u||!p) return toast('Completa usuario y contraseña',true);
-    try{
-      const btn=document.getElementById('login-btn'); btn.textContent='Iniciando…'; btn.disabled=true;
-      const r=await fetch(`${API_URL}/iniciar-sesion`,{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})
-      });
-      const d=await r.json();
-      if(d.exito){
-        toast('Sesión iniciada @'+d.usuario); 
-        sessionSub.textContent=`Sesión activa como @${d.usuario}`;
-      } else {
-        throw new Error(d.mensaje||'Error al iniciar');
-      }
-    }catch(err){ toast(err.message,true) }
-    finally{ const btn=document.getElementById('login-btn'); btn.textContent='Iniciar sesión'; btn.disabled=false; }
-  });
-
-  document.getElementById('logout-btn').addEventListener('click', async ()=>{
-    try{
-      const btn=document.getElementById('logout-btn'); btn.textContent='Cerrando…'; btn.disabled=true;
-      const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'});
-      const d=await r.json();
-      if(d.exito){ 
-        toast('Sesión cerrada'); 
-        sessionSub.textContent='No hay sesión activa'; 
-      } else {
-        throw new Error(d.mensaje||'Error al cerrar');
-      }
-    }catch(err){ toast(err.message,true) }
-    finally{ const btn=document.getElementById('logout-btn'); btn.textContent='Cerrar sesión'; btn.disabled=false; }
-  });
-
-  // ===== Device Farm (localStorage) =====
-  const defaultDevices=[
-    {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
-    {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
-    {id:'dev3',name:'iPhone 13',os:'iOS',ip:'10.0.0.10'},
-    {id:'dev4',name:'Pixel 8',os:'Android',ip:'10.0.0.11'}
-  ];
-  const farmGrid=document.getElementById('farm-grid');
-  function renderFarm(){
-    farmGrid.innerHTML = defaultDevices.map(d=>{
-      const src = localStorage.getItem('stream:'+d.id)||'';
-      return `
-      <div class="card dev">
-        <div class="dev-head">
-          <div><strong>${d.name}</strong> · ${d.os}</div>
-          <div class="chips"><span class="chip-b" data-status="${src ? 'active' : 'inactive'}">${src? 'Live' : 'Idle'}</span><span class="chip-b">${d.ip}</span></div>
-        </div>
-        <div class="screen">
-          <div class="ov"><span class="chip-b">${src? 'Live' : 'Idle'}</span></div>
-          ${src ? (src.endsWith('.mjpg')||src.endsWith('.mjpeg')?`<img src="${src}">`: src.endsWith('.m3u8')?`<video src="${src}" autoplay muted playsinline></video>`:`<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`) : '<div class="placeholder"></div>'}
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-primary" data-set="${d.id}">Asignar stream</button>
-          <button class="btn" data-clear="${d.id}">Limpiar</button>
-        </div>
-      </div>`
-    }).join('');
-  }
-  renderFarm();
-  farmGrid.addEventListener('click',(e)=>{
-    const b=e.target.closest('button'); if(!b) return;
-    if(b.dataset.set){ const id=b.dataset.set; const cur=localStorage.getItem('stream:'+id)||''; const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur); if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); toast('Stream actualizado'); } }
-    if(b.dataset.clear){ const id=b.dataset.clear; localStorage.removeItem('stream:'+id); renderFarm(); toast('Stream limpiado'); }
-  });
-})();
+});
 </script>
 </body>
 </html>
