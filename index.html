@@ -14,6 +14,7 @@
   --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
   --grad:linear-gradient(135deg,#7c5cff 0%,#00d3c2 100%);
   --r:14px; --gap:12px; --shadow:0 14px 40px rgba(0,0,0,.28);
+  --card-bg: linear-gradient(135deg, rgba(23, 30, 46, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
 }
 
 [data-theme="light"] {
@@ -24,11 +25,20 @@
   --muted: #64748b;
   --line: #e2e8f0;
   --shadow: 0 14px 40px rgba(0,0,0,.08);
+  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 247, 250, 0.95) 100%);
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto; transition: background 0.3s ease;}
+html,body{height:100%; margin:0; padding:0;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto; 
+  transition: background 0.3s ease;
+  background-image: radial-gradient(circle at 15% 50%, rgba(28, 34, 53, 0.15) 0%, transparent 55%),
+                   radial-gradient(circle at 85% 30%, rgba(124, 92, 255, 0.08) 0%, transparent 55%);
+}
 .app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
 
 /* ================== Topbar ================== */
@@ -41,7 +51,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-a
 }
 .brand{display:flex;align-items:center;gap:10px}
 .badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--grad);box-shadow:0 10px 22px rgba(124,92,255,.28),0 8px 16px rgba(0,211,194,.16)}
-.word{font-weight:900;letter-spacing:.16em}
+.word{font-weight:900;letter-spacing:.16em; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
 .status{display:flex;align-items:center;gap:8px;justify-self:center;color:var(--muted)}
 .status .dot{width:8px;height:8px;border-radius:50%;background:#8b8b8b}
 
@@ -68,7 +78,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-a
   background:color-mix(in oklab,var(--elev) 92%, transparent); border-top:1px solid var(--line);
   backdrop-filter:saturate(1.1) blur(14px);
 }
-.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer; transition: all 0.2s ease;}
 .tab svg{width:18px;height:18px}
 .tab small{font-size:.72rem}
 input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
@@ -76,7 +86,12 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 #tab-services:checked ~ .app .nav label[for="tab-services"],
 #tab-clients:checked ~ .app .nav label[for="tab-clients"],
 #tab-farm:checked ~ .app .nav label[for="tab-farm"],
-#tab-accounts:checked ~ .app .nav label[for="tab-accounts"]{color:var(--text);background:rgba(255,255,255,.04);border-color:var(--line)}
+#tab-accounts:checked ~ .app .nav label[for="tab-accounts"]{
+  color:var(--text);
+  background:rgba(255,255,255,.04);
+  border-color:var(--line);
+  transform: translateY(-4px);
+}
 
 /* ================== Views ================== */
 .main{
@@ -93,22 +108,116 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 #tab-accounts:checked ~ .app .view[data-tab="accounts"]{display:block}
 
 /* ================== Cards / grids ================== */
-.card{background:linear-gradient(180deg, color-mix(in oklab, var(--card) 96%, transparent), color-mix(in oklab, var(--card) 100%, transparent));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.card{
+  background: var(--card-bg);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  transition: all 0.3s ease;
+}
 .grid{display:grid;gap:12px}
 .section-title{display:flex;align-items:center;gap:8px;font-weight:900;margin:2px 0 6px}
 .hint{color:var(--muted);font-size:.86rem;margin-bottom:8px}
 
 /* Social grid */
-.grid.social{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (min-width:460px){.grid.social{grid-template-columns:repeat(3, minmax(0,1fr))}}
-@media (min-width:760px){.grid.social{grid-template-columns:repeat(5, minmax(0,1fr))}}
-.tile{padding:12px}
+.grid.social{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .grid.social {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .grid.social {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.tile{
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+  transform: translateY(0);
+  cursor: pointer;
+}
+.tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  border-color: rgba(124,92,255,0.2);
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--grad);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+.tile:hover::before {
+  opacity: 1;
+}
+
 .row{display:flex;align-items:center;gap:10px}
-.ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+.ico{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  transition: all 0.3s ease;
+}
+.tile:hover .ico {
+  transform: scale(1.1);
+  background: rgba(255,255,255,.1);
+}
 .ico svg{width:20px;height:20px}
-.lab{font-weight:800}
-.cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.cap .c{padding:6px 8px;font-size:.78rem;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
+.lab{font-weight:800; font-size: 1.05rem; margin-bottom: 4px;}
+.cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.cap .c{
+  padding:5px 8px;
+  font-size:.75rem;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.04);
+  transition: all 0.2s ease;
+}
+.tile:hover .cap .c {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(124,92,255,0.3);
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+}
 
 [data-theme="light"] .ico {
   background: rgba(0,0,0,.03);
@@ -118,15 +227,80 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 /* Inputs/Buttons */
 .input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:10px}
 .input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
-.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);padding:10px 12px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
-.btn-primary{border:0;background:var(--grad);color:#0b0d13}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);padding:10px 16px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer; transition: all 0.2s ease;}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.btn-primary{border:0;background:var(--grad);color:#0b0d13; font-weight: 800;}
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(124,92,255,0.3), 0 4px 12px rgba(0,211,194,0.25);
+}
 
-/* Clients */
-.clients{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (min-width:680px){.clients{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.client{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04)}
-.client .logo{width:20px;height:20px}
-.badge-ig{display:inline-flex;width:18px;height:18px;margin-left:6px;vertical-align:middle}
+/* ================== CLIENTS SECTION ================== */
+.clients-section {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.client-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card-bg);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.client-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border-color: rgba(124,92,255,0.3);
+}
+
+.client-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(225, 48, 108, 0.15), rgba(155, 28, 78, 0.2));
+  border: 1px solid rgba(225, 48, 108, 0.3);
+}
+
+.client-logo svg {
+  width: 24px;
+  height: 24px;
+}
+
+.client-info {
+  flex: 1;
+}
+
+.client-name {
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.client-username {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.badge-verified {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Device farm */
 .farm{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
@@ -158,6 +332,39 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   padding:7px 12px;
   backdrop-filter:blur(6px);
 }
+
+/* Quick automation section */
+.quick-automation {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+.quick-automation:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+}
+.quick-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.quick-title svg {
+  width: 24px;
+  height: 24px;
+}
+.quick-title h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 </style>
 </head>
 <body>
@@ -188,6 +395,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-devices" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></symbol>
     <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="ico-rocket" viewBox="0 0 24 24"><path d="M13 10l7-7M13 3l9 9M7.5 7.5L3 14l7 7 6.5-4.5M2 14l6.5 6.5M19 5l-9 9" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
 
     <!-- Toggle icons -->
     <symbol id="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/></symbol>
@@ -231,7 +439,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       <div class="badge"><svg viewBox="0 0 64 64" width="20" height="20"><use href="#klogo"/></svg></div>
       <div class="word">KRAVEAI</div>
     </div>
-    <div class="status"><span class="dot" id="status-dot"></span><small id="status-text">Conectando…</small></div>
+    <div class="status"><span class="dot" id="status-dot"></span><small id="status-text">Conectado</small></div>
     <div class="theme-toggle" id="theme-toggle">
       <svg class="icon-sun" width="20" height="20"><use href="#ico-sun"/></svg>
       <svg class="icon-moon" width="20" height="20"><use href="#ico-moon"/></svg>
@@ -240,19 +448,166 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 
   <!-- Main -->
   <main class="main">
-    <!-- HOME -->
+    <!-- HOME - Rediseñada completamente -->
     <section class="view" data-tab="home">
-      <div class="section-title"><span>Redes sociales</span></div>
-      <div class="hint">Toca una red para ver sus servicios disponibles</div>
-      <div class="grid social" id="social-grid"></div>
-
-      <div class="section-title" style="margin-top:14px"><span>Automatización rápida</span></div>
-      <div class="card" style="padding:12px">
+      <!-- Automatización rápida integrada en la parte superior -->
+      <div class="quick-automation">
+        <div class="quick-title">
+          <svg width="24" height="24" viewBox="0 0 24 24"><use href="#ico-rocket"/></svg>
+          <h2>Automatización Rápida</h2>
+        </div>
         <div class="input">
           <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <input id="quick-input" placeholder="¿Qué quieres automatizar hoy?">
-          <button class="btn btn-primary" id="quick-run">Enviar</button>
+          <input id="quick-input" placeholder="¿Qué quieres automatizar hoy? Ej: '1000 seguidores en Instagram'">
+          <button class="btn btn-primary" id="quick-run">Ejecutar</button>
         </div>
+      </div>
+      
+      <div class="section-title"><span>Redes Sociales</span></div>
+      <div class="hint">Selecciona una red para ver sus servicios disponibles</div>
+      
+      <div class="grid social" id="social-grid">
+        <!-- Instagram -->
+        <article class="card tile" data-key="instagram">
+          <div class="row">
+            <div class="ico" style="color:#E1306C"><svg><use href="#logo-instagram"/></svg></div>
+            <div><div class="lab">Instagram</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 128 activas</div>
+            <div class="stat-item">92% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Comentarios</span>
+            <span class="c">Likes</span>
+            <span class="c">Seguidores</span>
+            <span class="c">Vistas</span>
+          </div>
+        </article>
+        
+        <!-- TikTok -->
+        <article class="card tile" data-key="tiktok">
+          <div class="row">
+            <div class="ico" style="color:#69C9D0"><svg><use href="#logo-tiktok"/></svg></div>
+            <div><div class="lab">TikTok</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 87 activas</div>
+            <div class="stat-item">89% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Vistas</span>
+            <span class="c">Likes</span>
+            <span class="c">Seguidores</span>
+            <span class="c">Compartidos</span>
+          </div>
+        </article>
+        
+        <!-- YouTube -->
+        <article class="card tile" data-key="youtube">
+          <div class="row">
+            <div class="ico" style="color:#FF0000"><svg><use href="#logo-youtube"/></svg></div>
+            <div><div class="lab">YouTube</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 64 activas</div>
+            <div class="stat-item">85% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Vistas</span>
+            <span class="c">Likes</span>
+            <span class="c">Suscripciones</span>
+            <span class="c">Comentarios</span>
+          </div>
+        </article>
+        
+        <!-- X -->
+        <article class="card tile" data-key="x">
+          <div class="row">
+            <div class="ico" style="color:#ffffff"><svg><use href="#logo-x"/></svg></div>
+            <div><div class="lab">X</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 56 activas</div>
+            <div class="stat-item">82% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Likes</span>
+            <span class="c">Reposts</span>
+            <span class="c">Seguidores</span>
+            <span class="c">Respuestas</span>
+          </div>
+        </article>
+        
+        <!-- Facebook -->
+        <article class="card tile" data-key="facebook">
+          <div class="row">
+            <div class="ico" style="color:#1877F2"><svg><use href="#logo-facebook"/></svg></div>
+            <div><div class="lab">Facebook</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 42 activas</div>
+            <div class="stat-item">78% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Reacciones</span>
+            <span class="c">Comentarios</span>
+            <span class="c">Compartidos</span>
+            <span class="c">Amigos</span>
+          </div>
+        </article>
+        
+        <!-- LinkedIn -->
+        <article class="card tile" data-key="linkedin">
+          <div class="row">
+            <div class="ico" style="color:#0A66C2"><svg><use href="#logo-linkedin"/></svg></div>
+            <div><div class="lab">LinkedIn</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 38 activas</div>
+            <div class="stat-item">75% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Reacciones</span>
+            <span class="c">Comentarios</span>
+            <span class="c">Conexiones</span>
+            <span class="c">Visitas</span>
+          </div>
+        </article>
+        
+        <!-- WhatsApp -->
+        <article class="card tile" data-key="whatsapp">
+          <div class="row">
+            <div class="ico" style="color:#25D366"><svg><use href="#logo-whatsapp"/></svg></div>
+            <div><div class="lab">WhatsApp</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 29 activas</div>
+            <div class="stat-item">91% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Mensajes</span>
+            <span class="c">Grupos</span>
+            <span class="c">Respuestas</span>
+          </div>
+        </article>
+        
+        <!-- Telegram -->
+        <article class="card tile" data-key="telegram">
+          <div class="row">
+            <div class="ico" style="color:#0088cc"><svg><use href="#logo-telegram"/></svg></div>
+            <div><div class="lab">Telegram</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat-item"><span class="stat-dot"></span> 24 activas</div>
+            <div class="stat-item">88% éxito</div>
+          </div>
+          <div class="cap">
+            <span class="c">Mensajes</span>
+            <span class="c">Miembros</span>
+            <span class="c">Reacciones</span>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -297,11 +652,120 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     <!-- CLIENTS (solo logo de Instagram, sin cámara) -->
     <section class="view" data-tab="clients">
       <div class="section-title"><span>Clientes recientes</span></div>
-      <div class="clients">
-        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg><strong>@aaronmercury</strong> <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
-        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg><strong>@televisadigital</strong> <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
-        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg><strong>@joscanela</strong> <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
-        <div class="client"><svg class="logo"><use href="#logo-instagram"/></svg><strong>@jimenagallegotv</strong> <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+      <div class="hint">Clientes verificados con cuentas premium</div>
+      
+      <div class="clients-section">
+        <!-- Cliente 1 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @aaronmercury
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">Aaron Mercury</div>
+          </div>
+        </div>
+        
+        <!-- Cliente 2 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @televisadigital
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">Televisa Digital</div>
+          </div>
+        </div>
+        
+        <!-- Cliente 3 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @joscanela
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">José Canela</div>
+          </div>
+        </div>
+        
+        <!-- Cliente 4 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @jimenagallegotv
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">Jimena Gallegos</div>
+          </div>
+        </div>
+        
+        <!-- Cliente 5 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @marcosgomez
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">Marcos Gómez</div>
+          </div>
+        </div>
+        
+        <!-- Cliente 6 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @digitalmarketers
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">Digital Marketers</div>
+          </div>
+        </div>
+        
+        <!-- Cliente 7 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @fitnessworld
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">Fitness World</div>
+          </div>
+        </div>
+        
+        <!-- Cliente 8 -->
+        <div class="client-card">
+          <div class="client-logo">
+            <svg><use href="#logo-instagram"/></svg>
+          </div>
+          <div class="client-info">
+            <div class="client-name">
+              @luxurylifestyle
+              <svg class="badge-verified"><use href="#ig-verified"/></svg>
+            </div>
+            <div class="client-username">Luxury Lifestyle</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -393,50 +857,38 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   }
   checkHealth(); setInterval(checkHealth, 120000);
 
-  // ===== Social grid (todos con logo oficial) =====
-  const socialMeta = {
-    instagram:{label:'Instagram', color:'#E1306C', logo:'#logo-instagram', caps:['Comentarios','Likes','Seguidores','Vistas']},
-    tiktok:{label:'TikTok', color:'#69C9D0', logo:'#logo-tiktok', caps:['Vistas','Likes','Seguidores']},
-    youtube:{label:'YouTube', color:'#FF0000', logo:'#logo-youtube', caps:['Vistas','Likes','Comentarios']},
-    threads:{label:'Threads', color:'#ffffff', logo:'#logo-threads', caps:['Likes','Respuestas']},
-    x:{label:'X', color:'#ffffff', logo:'#logo-x', caps:['Likes','Reposts','Seguidores']},
-    facebook:{label:'Facebook', color:'#1877F2', logo:'#logo-facebook', caps:['Reacciones','Comentarios']},
-    linkedin:{label:'LinkedIn', color:'#0A66C2', logo:'#logo-linkedin', caps:['Reacciones','Comentarios','Conexiones']},
-    snapchat:{label:'Snapchat', color:'#FFFC00', logo:'#logo-snapchat', caps:['Vistas']},
-    discord:{label:'Discord', color:'#5865F2', logo:'#logo-discord', caps:['Mensajes','Invitaciones']},
-    telegram:{label:'Telegram', color:'#0088cc', logo:'#logo-telegram', caps:['Mensajes','Miembros']},
-    whatsapp:{label:'WhatsApp', color:'#25D366', logo:'#logo-whatsapp', caps:['Mensajes']},
-    twitch:{label:'Twitch', color:'#9146FF', logo:'#logo-twitch', caps:['Viewers','Chat']},
-    reddit:{label:'Reddit', color:'#FF4500', logo:'#logo-reddit', caps:['Upvotes','Comentarios']},
-    spotify:{label:'Spotify', color:'#1DB954', logo:'#logo-spotify', caps:['Streams','Saves']},
-    pinterest:{label:'Pinterest', color:'#E60023', logo:'#logo-pinterest', caps:['Repins','Saves']},
-  };
-  const socialOrder = Object.keys(socialMeta);
-  const socialGrid = document.getElementById('social-grid');
-  socialGrid.innerHTML = socialOrder.map(k=>{
-    const s=socialMeta[k];
-    return `
-      <article class="card tile" data-key="${k}">
-        <div class="row">
-          <div class="ico" style="color:${s.color}"><svg><use href="${s.logo}"/></svg></div>
-          <div><div class="lab">${s.label}</div><small class="hint" style="margin:0">Automatiza</small></div>
-        </div>
-        <div class="cap">${s.caps.map(c=>`<span class="c">${c}</span>`).join('')}</div>
-      </article>`;
-  }).join('');
-  socialGrid.addEventListener('click',(e)=>{ if(e.target.closest('.tile')) document.getElementById('tab-services').checked=true; });
-
   // ===== Quick automation =====
-  function toast(msg,err){ const el=document.createElement('div'); el.textContent=msg; el.style.cssText=`position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;background:${err?'#ef4444':'#1f2937'};color:#fff;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.15)`; document.body.appendChild(el); setTimeout(()=>el.remove(),2200); }
+  function toast(msg,err){ 
+    const el=document.createElement('div'); 
+    el.textContent=msg; 
+    el.style.cssText=`
+      position:fixed;
+      left:50%;
+      top:12px;
+      transform:translateX(-50%);
+      z-index:9999;
+      background:${err?'#ef4444':'#1f2937'};
+      color:#fff;
+      padding:8px 16px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.15);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+      font-weight: 500;
+    `; 
+    document.body.appendChild(el); 
+    setTimeout(()=>el.remove(),2200); 
+  }
+  
   document.getElementById('quick-run').addEventListener('click',()=>{
     const v=(document.getElementById('quick-input').value||'').trim();
     if(!v){toast('Escribe qué automatizar',true);return}
-    toast('Automatizando: '+v);
+    toast('Iniciando automatización: '+v);
     document.getElementById('quick-input').value='';
   });
 
   // ===== Instagram → Comentarios =====
-  const igFormRoot=document.getElementById('ig-comments'); const igStatus=document.getElementById('ig-comments-status');
+  const igFormRoot=document.getElementById('ig-comments'); 
+  const igStatus=document.getElementById('ig-comments-status');
   document.getElementById('ig-send').addEventListener('click', async ()=>{
     const inputs = igFormRoot.querySelectorAll('input');
     const fd = new FormData();
@@ -450,9 +902,16 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
         credentials:'include',body:JSON.stringify(payload)
       });
       const data=await r.json().catch(()=>({}));
-      if(r.ok){igStatus.textContent='✅ Comentarios en proceso'; toast('Comentarios lanzados');}
-      else{throw new Error(data.mensaje||'Error en comentarios');}
-    }catch(err){ igStatus.textContent='❌ '+err.message; toast(err.message,true); }
+      if(r.ok){
+        igStatus.textContent='✅ Comentarios en proceso'; 
+        toast('Comentarios lanzados con éxito');
+      } else {
+        throw new Error(data.mensaje||'Error en comentarios');
+      }
+    }catch(err){ 
+      igStatus.textContent='❌ '+err.message; 
+      toast(err.message,true); 
+    }
   });
   document.getElementById('ig-cancel').addEventListener('click',()=>{ igStatus.textContent='—'; });
 
@@ -478,8 +937,12 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
         credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})
       });
       const d=await r.json();
-      if(d.exito){toast('Sesión iniciada @'+d.usuario); sessionSub.textContent=`Sesión activa como @${d.usuario}`;}
-      else throw new Error(d.mensaje||'Error al iniciar');
+      if(d.exito){
+        toast('Sesión iniciada @'+d.usuario); 
+        sessionSub.textContent=`Sesión activa como @${d.usuario}`;
+      } else {
+        throw new Error(d.mensaje||'Error al iniciar');
+      }
     }catch(err){ toast(err.message,true) }
     finally{ const btn=document.getElementById('login-btn'); btn.textContent='Iniciar sesión'; btn.disabled=false; }
   });
@@ -489,56 +952,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       const btn=document.getElementById('logout-btn'); btn.textContent='Cerrando…'; btn.disabled=true;
       const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'});
       const d=await r.json();
-      if(d.exito){ toast('Sesión cerrada'); sessionSub.textContent='No hay sesión activa'; }
-      else throw new Error(d.mensaje||'Error al cerrar');
+      if(d.exito){ 
+        toast('Sesión cerrada'); 
+        sessionSub.textContent='No hay sesión activa'; 
+      } else {
+        throw new Error(d.mensaje||'Error al cerrar');
+      }
     }catch(err){ toast(err.message,true) }
     finally{ const btn=document.getElementById('logout-btn'); btn.textContent='Cerrar sesión'; btn.disabled=false; }
-  });
-
-  const accountsList=document.getElementById('accounts-list');
-  async function loadAccounts(){
-    try{
-      const r=await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'});
-      const arr=await r.json();
-      if(!Array.isArray(arr)||arr.length===0){accountsList.innerHTML='<div class="hint">No hay cuentas activas</div>';return}
-      accountsList.innerHTML=arr.map(acc=>`
-        <div class="card" style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="width:10px;height:10px;border-radius:50%;background:${acc.status==='activo'?'var(--ok)':'var(--err)'}"></span>
-            <strong>@${acc.username}</strong>
-          </div>
-          <div style="display:flex;gap:6px">
-            ${acc.status==='activo' ? `<button class="btn" data-logout="${acc.username}">Logout</button>` : `<button class="btn btn-primary" data-login="${acc.username}">Login</button>`}
-          </div>
-        </div>`).join('');
-    }catch{ accountsList.innerHTML='<div class="hint">Error al cargar cuentas</div>'; }
-  }
-  loadAccounts(); setInterval(loadAccounts, 30000);
-
-  accountsList.addEventListener('click', async (e)=>{
-    const b=e.target.closest('button'); if(!b) return;
-    if(b.dataset.login){
-      toast('Iniciando @'+b.dataset.login+'…');
-      try{
-        const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          credentials:'include',body:JSON.stringify({usuario:b.dataset.login})
-        });
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast('Sesión iniciada @'+b.dataset.login); loadAccounts();
-      }catch(err){ toast(err.message,true) }
-    }
-    if(b.dataset.logout){
-      toast('Cerrando @'+b.dataset.logout+'…');
-      try{
-        const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})
-        });
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast('Sesión cerrada @'+b.dataset.logout); loadAccounts();
-      }catch(err){ toast(err.message,true) }
-    }
   });
 
   // ===== Device Farm (localStorage) =====
