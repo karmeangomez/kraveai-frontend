@@ -1,190 +1,122 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>KRAVEAI — Dashboard</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <title>KRAVEAI — App</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0b0d12">
+  <style>
+    /* ================== Tokens (iOS26-like) ================== */
+    :root{
+      --bg:#0b0d12; --elev:#0f1219; --card:#12182a; --text:#eef1f7; --muted:#9aa2b2; --line:#202740;
+      --ac:#7c5cff; --ac2:#00d3c2; --ok:#2bd39c; --warn:#ffbf58; --err:#ff5f74;
+      --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.12);
+      --r:16px; --gap:10px; --shadow:0 14px 40px rgba(0,0,0,.28);
+      --tile-size: 102px;
+    }
+    #theme-toggle:checked ~ .app{
+      --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0c0f16; --muted:#6b7280; --line:#e7e9f2;
+      --glass:rgba(0,0,0,.05); --glass2:rgba(0,0,0,.08); --shadow:0 10px 24px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,Roboto}
+    .app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
 
-<style>
-/* ========================= TOKENS / THEME ========================= */
-:root{
-  --bg:#0b0d12;--elev:#0f1219;--card:#131827;--text:#eef1f7;--muted:#9aa2b2;--line:#21283b;
-  --ac:#7c5cff;--ac2:#00d3c2;--ok:#29d39a;--warn:#ffbf58;--err:#ff5f74;
-  --glass:rgba(255,255,255,.06);--glass2:rgba(255,255,255,.1);
-  --shadow:0 10px 34px rgba(0,0,0,.28);
-  --r:16px;--gap:10px;
-  --ig:#0095F6;
-  --devH:220px;--devMin:190px;
-}
-:root.light{
-  --bg:#f6f7fb;--elev:#ffffff;--card:#ffffff;--text:#0b0d12;--muted:#6b7280;--line:#e7e9f2;
-  --glass:rgba(0,0,0,.05);--glass2:rgba(0,0,0,.08);
-  --shadow:0 10px 22px rgba(0,0,0,.08);
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,Roboto;overflow:hidden}
-@media (prefers-reduced-motion:reduce){
-  *{animation:none !important;transition:none !important}
-}
+    /* ================== SVG defs ================== */
+    svg{display:inline-block}
+    
+    /* ================== Topbar ================== */
+    .top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px;padding:10px max(12px,env(safe-area-inset-left)) 8px max(12px,env(safe-area-inset-right));background:color-mix(in oklab, var(--elev) 92%, transparent);backdrop-filter:saturate(1.15) blur(16px);border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:10px}
+    .badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 12px 22px rgba(124,92,255,.28),0 8px 16px rgba(0,211,194,.16)}
+    .word{font-weight:900;letter-spacing:.16em}
+    .chip{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);color:var(--muted);cursor:pointer}
 
-/* ========================= BACKGROUND ========================= */
-.bg{
-  position:fixed;inset:-20%;z-index:-1;filter:blur(55px);opacity:.45;pointer-events:none;
-  background:
-    radial-gradient(40% 30% at 90% 8%, rgba(124,92,255,.34), transparent 60%),
-    radial-gradient(36% 26% at 8% 12%, rgba(0,211,194,.26), transparent 70%),
-    radial-gradient(42% 30% at 12% 88%, rgba(255,95,116,.16), transparent 70%);
-  animation:aurora 18s ease-in-out infinite alternate;
-}
-@keyframes aurora{from{transform:translate3d(0,0,0)}to{transform:translate3d(-2%,2%,0)}}
+    /* ================== Tabs (sin JS para fallback) ================== */
+    .nav{position:sticky;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px max(10px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right));background:color-mix(in oklab,var(--elev) 92%, transparent);border-top:1px solid var(--line);backdrop-filter:saturate(1.15) blur(16px)}
+    .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:12px;color:var(--muted);border:1px solid transparent;user-select:none;cursor:pointer}
+    .tab small{font-size:.72rem}
+    @media (max-width:480px){.tab small{display:none}}
+    input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
+    #tab-home:checked ~ .app .nav label[for="tab-home"],
+    #tab-auto:checked ~ .app .nav label[for="tab-auto"],
+    #tab-clients:checked ~ .app .nav label[for="tab-clients"],
+    #tab-farm:checked ~ .app .nav label[for="tab-farm"],
+    #tab-acc:checked ~ .app .nav label[for="tab-acc"]{color:var(--text);background:var(--glass);border-color:var(--line)}
 
-/* ========================= TOPBAR ========================= */
-.top{
-  position:fixed;left:0;right:0;top:0;z-index:60;
-  display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;
-  padding:calc(8px + env(safe-area-inset-top)) 12px 8px;
-  background:color-mix(in oklab,var(--elev) 92%, transparent);
-  backdrop-filter:saturate(1.15) blur(16px);
-  border-bottom:1px solid var(--line)
-}
-.brand{display:flex;align-items:center;gap:10px}
-.badge{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--ac),var(--ac2));
-  box-shadow:0 12px 22px rgba(124,92,255,.28),0 10px 20px rgba(0,211,194,.16)}
-.word{font-weight:900;letter-spacing:.16em}
-.chip{
-  width:34px;height:34px;border-radius:12px;display:grid;place-items:center;
-  background:var(--glass);border:1px solid var(--line);color:var(--muted);
-  transition:transform .12s
-}
-.chip:active{transform:scale(.96)}
-.status{
-  justify-self:start;display:inline-flex;gap:8px;align-items:center;
-  padding:6px 10px;border-radius:999px;background:var(--glass);
-  border:1px solid var(--line);font-size:.86rem
-}
+    /* ================== Vistas ================== */
+    .main{height:calc(100svh - 52px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:10px max(12px,env(safe-area-inset-left)) 10px max(12px,env(safe-area-inset-right));overflow:auto}
+    .view{display:none;animation:fade .16s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    #tab-home:checked ~ .app .view[data-tab="home"],
+    #tab-auto:checked ~ .app .view[data-tab="auto"],
+    #tab-clients:checked ~ .app .view[data-tab="clients"],
+    #tab-farm:checked ~ .app .view[data-tab="farm"],
+    #tab-acc:checked ~ .app .view[data-tab="acc"]{display:block}
 
-/* ========================= LAYOUT (SIN SCROLL GLOBAL) ========================= */
-.shell{
-  position:fixed;left:0;right:0;top:calc(48px + env(safe-area-inset-top));bottom:calc(66px + env(safe-area-inset-bottom));
-  max-width:1200px;margin:0 auto;padding:10px 12px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap);overflow:hidden
-}
+    /* ================== Cards / grids ================== */
+    .card{background:linear-gradient(180deg, color-mix(in oklab, var(--card) 95%, transparent), color-mix(in oklab, var(--card) 100%, transparent));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+    .grid{display:grid;gap:10px}
+    .grid.social{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media (min-width:560px){.grid.social{grid-template-columns:repeat(6, minmax(0,1fr))}}
+    @media (min-width:900px){.grid.social{grid-template-columns:repeat(8, minmax(0,1fr))}}
+    .tile{padding:10px 10px 12px}
+    .row{display:flex;align-items:center;gap:10px}
+    .ico{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--line)}
+    .lab{font-weight:900}
+    .muted{color:var(--muted)}
+    .cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .cap .c{padding:6px 8px;font-size:.78rem;border:1px solid var(--line);border-radius:999px;background:var(--glass)}
 
-/* Tabs + vistas compactas */
-.tabs{display:flex;gap:8px}
-.t{
-  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:12px;
-  background:var(--glass);border:1px solid var(--line);color:var(--muted);font-weight:800
-}
-.t i{font-size:.95rem}
-.t.active{color:var(--text);background:var(--glass2)}
-.views{position:relative;border-radius:var(--r);overflow:hidden}
-.view{position:absolute;inset:0;display:none;overflow:auto;padding:10px}
-.view.active{display:block;animation:fade .16s ease}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    /* ================== Inputs “app” ================== */
+    .input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--glass);border-radius:12px;padding:8px 10px}
+    .input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
+    .btn{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in oklab,var(--card) 96%, transparent),color-mix(in oklab,var(--card) 100%, transparent));color:var(--text);padding:8px 12px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
+    .btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac2));border:0;color:#0b0d13}
 
-/* ========================= WIDGETS ========================= */
-.card{
-  background:linear-gradient(180deg,color-mix(in oklab,var(--card) 95%, transparent),color-mix(in oklab,var(--card) 100%, transparent));
-  border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)
-}
-.grid{display:grid;gap:10px}
-.grid.social{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (min-width:560px){.grid.social{grid-template-columns:repeat(5,minmax(0,1fr))}}
-@media (min-width:900px){.grid.social{grid-template-columns:repeat(7,minmax(0,1fr))}}
+    /* ================== Clients + IG verified real ================== */
+    .clients{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (min-width:680px){.clients{grid-template-columns:repeat(4,minmax(0,1fr))}}
+    .client{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-weight:900}
+    .badge-ig{display:inline-flex;width:18px;height:18px;margin-left:6px;vertical-align:middle}
 
-.tile{padding:10px 10px 12px;cursor:pointer}
-.row{display:flex;align-items:center;gap:10px}
-.ico{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--line)}
-.lab{font-weight:900}
-.muted{color:var(--muted)}
-.cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.cap .c{padding:6px 8px;font-size:.78rem;border:1px solid var(--line);border-radius:999px;background:var(--glass)}
+    /* ================== Device Farm ================== */
+    .farm{display:grid;gap:10px;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+    .dev{display:grid;gap:8px;padding:10px}
+    .dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}
+    .chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.78rem}
+    .screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:220px;position:relative}
+    .screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .screen .placeholder{position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.25), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000}
+    .screen .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px}
 
-/* Buscador / Automatización */
-.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--glass);border-radius:12px;padding:8px 10px}
-.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
-.btn{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in oklab,var(--card) 96%, transparent),color-mix(in oklab,var(--card) 100%, transparent));color:var(--text);
-  padding:8px 12px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer;transition:transform .12s}
-.btn:active{transform:scale(.98)}
-.btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac2));border:0;color:#0b0d13}
+    /* ================== Firma ================== */
+    .credit{position:fixed;right:10px;bottom:70px;z-index:30;font-size:.86rem;color:var(--text);background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px);box-shadow:0 0 12px rgba(124,92,255,.55),0 0 22px rgba(0,211,194,.35);animation:breath 4s ease-in-out infinite,glow 2.4s ease-in-out infinite}
+    @keyframes breath{50%{transform:scale(1.04);opacity:.97}}
+    @keyframes glow{0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}}
 
-/* Clientes + insignia IG (roseta oficial) */
-.clients{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (min-width:680px){.clients{grid-template-columns:repeat(5,minmax(0,1fr))}}
-.client{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-weight:900}
-.ig-badge{display:inline-flex;width:18px;height:18px;margin-left:6px;vertical-align:middle}
-
-/* ========================= BOTTOM BAR ========================= */
-.bar{
-  position:fixed;left:0;right:0;bottom:0;z-index:55;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
-  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-  background:color-mix(in oklab,var(--elev) 92%, transparent);
-  backdrop-filter:saturate(1.15) blur(16px);border-top:1px solid var(--line)
-}
-.tb{display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px;padding:6px;color:var(--muted);border:1px solid transparent}
-.tb.active{color:var(--text);background:var(--glass);border-color:var(--line)}
-.tb i{font-size:1rem}.tb span{font-size:.72rem}
-@media (max-width:480px){.tb span{display:none}}
-
-/* ========================= PANELS (modales a pantalla completa) ========================= */
-.panel{position:fixed;inset:0;z-index:70;display:none}
-.panel.active{display:block}
-.panel .inner{
-  position:absolute;left:0;right:0;top:calc(48px + env(safe-area-inset-top));bottom:calc(66px + env(safe-area-inset-bottom));
-  background:var(--bg);padding:10px 12px;overflow:auto;max-width:1200px;margin:0 auto;animation:slide .18s ease
-}
-@keyframes slide{from{transform:translateX(14px);opacity:0}to{transform:translateX(0);opacity:1}}
-
-/* ========================= SERVICE CENTER ========================= */
-.svc-grid{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (min-width:840px){.svc-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.svc-card .title{padding:12px;display:flex;gap:10px;align-items:center;font-weight:900}
-.svc-card .hint{padding:0 12px 10px;color:var(--muted);font-size:.85rem}
-.form{display:grid;gap:8px}.row{display:grid;gap:6px}.row label{color:var(--muted);font-size:.85rem}
-.ctrl{border:1px solid var(--line);background:var(--glass);color:var(--text);border-radius:12px;padding:10px}
-textarea.ctrl{min-height:90px;resize:vertical}
-
-/* ========================= DEVICE FARM ========================= */
-.farm{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(var(--devMin),1fr))}
-.dev{display:grid;gap:8px;padding:10px}
-.dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--glass);font-size:.78rem}
-.screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:var(--devH);position:relative}
-.screen video,.screen img{width:100%;height:100%;object-fit:cover;display:block}
-.screen .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px}
-
-/* ========================= FIRMA ========================= */
-.credit{
-  position:fixed;right:10px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:80;font-size:.86rem;color:var(--text);
-  background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));
-  border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px);
-  box-shadow:0 0 12px rgba(124,92,255,.55),0 0 22px rgba(0,211,194,.35);
-  animation:breath 4s ease-in-out infinite,glow 2.4s ease-in-out infinite
-}
-@keyframes breath{50%{transform:scale(1.04);opacity:.97}}
-@keyframes glow{
-  0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}
-  50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}
-  100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}
-}
-
-/* ========================= TOAST ========================= */
-.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:color-mix(in oklab,var(--elev) 96%, transparent);border:1px solid var(--line);
-  border-radius:999px;padding:8px 12px;z-index:90;display:none;box-shadow:var(--shadow)}
-.toast.show{display:block;animation:fade .16s ease}
-</style>
+    /* ================== Utilidades ================== */
+    .section-title{font-weight:900;display:flex;align-items:center;gap:8px;margin:2px 0 6px}
+    .hint{color:var(--muted);font-size:.86rem;margin-bottom:8px}
+    .spacer{height:2px}
+  </style>
 </head>
 <body>
-<!-- SVGs: logo + ROSETA IG REAL -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<!-- Radios de tabs (fallback sin JS) -->
+<input type="radio" name="tab" id="tab-home" checked>
+<input type="radio" name="tab" id="tab-auto">
+<input type="radio" name="tab" id="tab-clients">
+<input type="radio" name="tab" id="tab-farm">
+<input type="radio" name="tab" id="tab-acc">
+<!-- Switch de tema -->
+<input type="checkbox" id="theme-toggle" hidden>
+
+<!-- Defs: logo y verificación IG real -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
@@ -193,513 +125,369 @@ textarea.ctrl{min-height:90px;resize:vertical}
       <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
       <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
     </symbol>
-    <!-- Roseta Instagram: estrella 12 puntas + check blanco (no logo de Facebook) -->
+    <!-- Badge IG: círculo azul con check blanco -->
     <symbol id="ig-verified" viewBox="0 0 24 24">
-      <path d="M12 2.3 14.1 4l2.7-.5 1.2 2.4 2.6 1-0.3 2.7 1.9 2-1.9 2 .3 2.7-2.6 1-1.2 2.4-2.7-.5L12 21.7 9.9 20l-2.7.5-1.2-2.4-2.6-1 .3-2.7-1.9-2 1.9-2-.3-2.7 2.6-1L7.2 3.5 9.9 4 12 2.3z" fill="#2A68DC"/>
-      <path d="M10.1 13.6 8.2 11.7a1 1 0 1 1 1.4-1.4l1.1 1.1 4.7-4.7a1 1 0 0 1 1.4 1.4l-6 6a1 1 0 0 1-1.7 0z" fill="#fff"/>
+      <circle cx="12" cy="12" r="10" fill="#0095F6"/>
+      <path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
   </defs>
 </svg>
 
-<div class="bg"></div>
+<div class="app" id="app">
+  <!-- Topbar -->
+  <header class="top">
+    <div class="brand">
+      <div class="badge"><svg viewBox="0 0 64 64" width="20" height="20"><use href="#klogo"/></svg></div>
+      <div class="word">KRAVEAI</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;color:var(--muted)">
+      <span id="status-dot" style="width:8px;height:8px;background:#999;border-radius:50%;display:inline-block"></span>
+      <small id="status-text">Conectando…</small>
+    </div>
+    <label class="chip" for="theme-toggle" title="Tema">🌓</label>
+    <div class="chip" title="Notificaciones">🔔</div>
+  </header>
 
-<!-- ========================= TOPBAR ========================= -->
-<header class="top">
-  <div class="brand">
-    <div class="badge"><svg viewBox="0 0 64 64" style="width:22px;height:22px;filter:drop-shadow(0 2px 8px rgba(124,92,255,.42))"><use href="#klogo"/></svg></div>
-    <div class="word">KRAVEAI</div>
-  </div>
-  <div class="status"><i class="fa-solid fa-circle" style="color:#e34d5a"></i><span id="status">Conectando…</span></div>
-  <button class="chip" id="bell" title="Notificaciones"><i class="fa-regular fa-bell"></i></button>
-  <button class="chip" id="theme" title="Tema"><i class="fa-solid fa-moon"></i></button>
-</header>
-
-<!-- ========================= SHELL / VISTAS PRINCIPALES ========================= -->
-<main class="shell">
-  <div class="tabs">
-    <button class="t active" data-v="dash"><i class="fa-solid fa-layer-group"></i> Inicio</button>
-    <button class="t" data-v="auto"><i class="fa-solid fa-bolt"></i> Automatización</button>
-    <button class="t" data-v="clients"><i class="fa-solid fa-users"></i> Clientes</button>
-  </div>
-
-  <div class="views">
-    <!-- ===== DASHBOARD ===== -->
-    <section class="view active" id="v-dash">
-      <div class="grid social" id="grid-social"></div>
-    </section>
-
-    <!-- ===== AUTOMATIZACIÓN RÁPIDA ===== -->
-    <section class="view" id="v-auto">
+  <!-- Contenido -->
+  <main class="main">
+    <!-- HOME -->
+    <section class="view" data-tab="home">
+      <div class="section-title">🏷️ Redes sociales</div>
+      <div class="hint">Toca una red para ver sus servicios disponibles</div>
+      <div class="grid social" id="social-grid">
+        <!-- Se llenará vía JS para mantener compacto -->
+      </div>
+      <div class="spacer"></div>
+      <div class="section-title">⚡ Automatización rápida</div>
       <div class="input">
-        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--muted)"></i>
-        <input id="auto-text" placeholder="¿Qué quieres automatizar hoy?">
-        <button class="btn btn-primary" id="auto-run"><i class="fa-solid fa-paper-plane"></i></button>
+        <span>✨</span>
+        <input id="quick-input" placeholder="¿Qué quieres automatizar hoy?">
+        <button class="btn btn-primary" id="quick-run">Enviar</button>
       </div>
-      <div class="card" style="margin-top:10px;padding:12px">
-        <div class="row"><div class="ico"><i class="fa-solid fa-circle-info"></i></div>
-          <div><div class="lab">Estado</div><small class="muted" id="auto-state">Sin acciones en curso</small></div>
+    </section>
+
+    <!-- AUTOMATIZACIÓN -->
+    <section class="view" data-tab="auto">
+      <div class="section-title">🧰 Servicios por red</div>
+      <div class="hint">Selecciona una red en Inicio para abrir su panel (comentarios IG ya conectado).</div>
+      <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px" id="services-panels">
+        <!-- Panel Instagram (comentarios) -->
+        <div class="card" style="padding:12px">
+          <div class="row"><div class="ico" style="color:#E1306C">📸</div><div><div class="lab">Instagram — Comentarios</div><small class="muted">Masivo / Auto / Personalizado</small></div></div>
+          <div class="spacer"></div>
+          <form id="ig-comments" class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
+            <div class="input" style="grid-column:1/-1"><span>🔗</span><input name="url" placeholder="URL del post (https://www.instagram.com/p/...)" required></div>
+            <div class="input"><span>#</span><input type="number" name="cantidad" min="1" max="100" value="30" placeholder="Cantidad"></div>
+            <div class="input"><span>🎛️</span><input name="modo" value="auto" list="modos" placeholder="Modo"></div>
+            <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
+            <div class="input" style="grid-column:1/-1"><span>🧑‍💼</span><input name="apodo" placeholder="Apodo (opcional)"></div>
+            <div class="input"><span>🎯</span><input name="estilo" placeholder="Estilo (fitness, sexy, etc)"></div>
+            <div class="input"><span>🏷️</span><input name="actividad" placeholder="Actividad (entrenador, etc)"></div>
+            <div class="input" style="grid-column:1/-1"><span>📝</span><input name="ejemplos" placeholder="Ejemplos (uno por línea)"></div>
+            <button class="btn btn-primary" style="grid-column:1/2" type="submit">Lanzar</button>
+            <button class="btn" style="grid-column:2/3" type="reset">Cancelar</button>
+          </form>
+          <div id="ig-comments-status" class="hint" style="margin-top:6px">—</div>
+        </div>
+
+        <!-- Panel TikTok (placeholders de servicios) -->
+        <div class="card" style="padding:12px">
+          <div class="row"><div class="ico" style="color:#69C9D0">🎵</div><div><div class="lab">TikTok — Servicios</div><small class="muted">Vistas, Likes, Seguidores</small></div></div>
+          <div class="spacer"></div>
+          <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
+            <div class="input" style="grid-column:1/-1"><span>🔗</span><input placeholder="URL del video"></div>
+            <div class="input"><span>#</span><input type="number" min="100" step="100" placeholder="Vistas"></div>
+            <button class="btn btn-primary">Enviar</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ===== CLIENTES (con roseta IG) ===== -->
-    <section class="view" id="v-clients">
-      <div class="clients" id="clients-list"></div>
+    <!-- CLIENTES -->
+    <section class="view" data-tab="clients">
+      <div class="section-title">👥 Clientes recientes</div>
+      <div class="clients">
+        <div class="client">📸 @aaronmercury <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client">📸 @televisadigital <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client">📸 @joscanela <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client">📸 @jimenagallegotv <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+        <div class="client">📸 @elmalilla_ <svg class="badge-ig"><use href="#ig-verified"/></svg></div>
+      </div>
     </section>
-  </div>
-</main>
 
-<!-- Firma luminosa (no intrusiva) -->
-<div class="credit" id="credit">Created by Karmean Gómez</div>
-
-<!-- ========================= PANELS (ACCESO RÁPIDO) ========================= -->
-<section class="panel" id="svc">
-  <div class="inner">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div style="font-weight:900"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="svc-title">Servicios</span></div>
-      <button class="btn" id="svc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-    </div>
-    <div class="svc-grid" id="svc-grid"></div>
-    <div class="card" id="svc-form-card" style="display:none;margin-top:10px;padding:12px">
-      <div style="font-weight:900;margin-bottom:6px" id="svc-form-title"><i class="fa-solid fa-sliders"></i> Configurar</div>
-      <form class="form" id="svc-form"></form>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn btn-primary" id="svc-run"><i class="fa-solid fa-play"></i> Ejecutar</button>
-        <button class="btn" id="svc-cancel">Cancelar</button>
+    <!-- DEVICE FARM -->
+    <section class="view" data-tab="farm">
+      <div class="section-title">📱 Device Farm (vista en vivo)</div>
+      <div class="hint">Inserta las URLs de stream (WebRTC/HLS/MJPEG) en cada dispositivo. Quedan guardadas en localStorage.</div>
+      <div class="farm" id="farm-grid">
+        <!-- Dispositivos se generan por JS (compacto) -->
       </div>
-      <div id="svc-kpis" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-top:10px"></div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="panel" id="farm">
-  <div class="inner">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div style="font-weight:900"><i class="fa-solid fa-mobile-screen-button"></i> Device Farm</div>
-      <div style="display:flex;gap:6px">
-        <button class="btn" id="zm-">–</button><button class="btn" id="zm+">+</button>
-        <button class="btn" id="farm-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-      </div>
-    </div>
-    <div class="farm" id="farm-grid"></div>
-  </div>
-</section>
-
-<section class="panel" id="acc">
-  <div class="inner">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div style="font-weight:900"><i class="fa-solid fa-users"></i> Cuentas</div>
-      <button class="btn" id="acc-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-    </div>
-
-    <div class="card" style="padding:12px">
-      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-key"></i> Sesión</div>
-      <div class="client" id="sess">No hay sesión</div>
-      <div class="form" id="login-form" style="margin-top:8px">
-        <div class="row"><label>Usuario</label><input id="u" class="ctrl" placeholder="@usuario"></div>
-        <div class="row"><label>Contraseña</label><input id="p" class="ctrl" type="password" placeholder="••••••••"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-primary" id="login">Iniciar sesión</button>
-          <button class="btn" id="logout">Cerrar sesión</button>
+    <!-- CUENTAS -->
+    <section class="view" data-tab="acc">
+      <div class="section-title">🔐 Cuentas</div>
+      <div class="grid" style="grid-template-columns:1fr;max-width:820px">
+        <div class="card" style="padding:12px">
+          <div class="row"><div class="ico">👤</div><div><div class="lab">Sesión</div><small class="muted" id="session-sub">Verificando…</small></div></div>
+          <div class="spacer"></div>
+          <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
+            <div class="input" style="grid-column:1/-1"><span>@</span><input id="login-username" placeholder="Usuario"></div>
+            <div class="input" style="grid-column:1/-1"><span>🔒</span><input id="login-password" type="password" placeholder="Contraseña"></div>
+            <button class="btn btn-primary" id="login-btn">Iniciar sesión</button>
+            <button class="btn" id="logout-btn">Cerrar sesión</button>
+          </div>
+        </div>
+        <div class="card" style="padding:12px">
+          <div class="row"><div class="ico">➕</div><div><div class="lab">Agregar cuenta manual</div><small class="muted">Valida e inserta</small></div></div>
+          <div class="spacer"></div>
+          <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
+            <div class="input" style="grid-column:1/-1"><span>@</span><input id="manual-username" placeholder="@usuario"></div>
+            <div class="input" style="grid-column:1/-1"><span>🔒</span><input id="manual-password" type="password" placeholder="••••••••"></div>
+            <button class="btn btn-primary" id="add-account-btn">Guardar cuenta</button>
+          </div>
+        </div>
+        <div class="card" style="padding:12px">
+          <div class="row"><div class="ico">📋</div><div><div class="lab">Cuentas activas</div><small class="muted">Actualiza cada 30s</small></div></div>
+          <div class="spacer"></div>
+          <div id="accounts-list" class="grid" style="grid-template-columns:1fr;gap:6px"><div class="hint">Cargando…</div></div>
         </div>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <div class="card" style="padding:12px;margin-top:8px">
-      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-user-plus"></i> Agregar cuenta manual</div>
-      <div class="form">
-        <div class="row"><label>Usuario</label><input id="mu" class="ctrl" placeholder="@usuario"></div>
-        <div class="row"><label>Contraseña</label><input id="mp" class="ctrl" type="password" placeholder="••••••••"></div>
-        <button class="btn btn-primary" id="add">Guardar Cuenta</button>
-      </div>
-    </div>
+  <!-- Firma -->
+  <div class="credit" id="credit">Created by Karmean Gómez</div>
 
-    <div class="card" style="padding:12px;margin-top:8px">
-      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-list-check"></i> Cuentas activas</div>
-      <div id="act">Cargando…</div>
-    </div>
-  </div>
-</section>
-
-<section class="panel" id="set">
-  <div class="inner">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div style="font-weight:900"><i class="fa-solid fa-gear"></i> Ajustes</div>
-      <button class="btn" id="set-back"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-    </div>
-    <div class="card" style="padding:12px">
-      <div style="font-weight:900;margin-bottom:6px"><i class="fa-solid fa-wand-magic-sparkles"></i> Apariencia</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn" id="t-theme"><i class="fa-solid fa-sun"></i> Alternar tema</button>
-        <button class="btn" id="t-bg"><i class="fa-regular fa-lightbulb"></i> Aurora on/off</button>
-        <button class="btn" id="t-big"><i class="fa-solid fa-maximize"></i> Tiles grandes</button>
-        <button class="btn" id="t-small"><i class="fa-solid fa-minimize"></i> Tiles compactas</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= NAV INFERIOR ========================= -->
-<nav class="bar">
-  <button class="tb active" data-tab="home"><i class="fa-solid fa-house"></i><span>Inicio</span></button>
-  <button class="tb" data-tab="accounts"><i class="fa-solid fa-users"></i><span>Cuentas</span></button>
-  <button class="tb" data-tab="actions"><i class="fa-solid fa-screwdriver-wrench"></i><span>Acciones</span></button>
-  <button class="tb" data-tab="farm"><i class="fa-solid fa-mobile-screen-button"></i><span>Farm</span></button>
-  <button class="tb" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Ajustes</span></button>
-</nav>
-
-<!-- ========================= TOAST ========================= -->
-<div class="toast" id="toast"><span id="tt"></span></div>
+  <!-- Bottom nav -->
+  <nav class="nav">
+    <label class="tab" for="tab-home">🏠<small>Inicio</small></label>
+    <label class="tab" for="tab-auto">🛠️<small>Servicios</small></label>
+    <label class="tab" for="tab-clients">👥<small>Clientes</small></label>
+    <label class="tab" for="tab-farm">📱<small>Farm</small></label>
+    <label class="tab" for="tab-acc">🔐<small>Cuentas</small></label>
+  </nav>
+</div>
 
 <script>
-/* ========================= CONFIG ========================= */
-const API="https://api.kraveapi.xyz";
+(function(){
+  const API_URL = "https://api.kraveapi.xyz"; // Igual que tu backend
+  const statusDot = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+  const sessionSub = document.getElementById('session-sub');
 
-/* ========================= TEMA ========================= */
-(function initTheme(){
-  const t=localStorage.getItem('kr.theme');
-  if(t==='light') document.documentElement.classList.add('light');
-  document.getElementById('theme').querySelector('i').className =
-    document.documentElement.classList.contains('light')?'fa-solid fa-sun':'fa-solid fa-moon';
-})();
-function toggleTheme(){
-  document.documentElement.classList.toggle('light');
-  const light=document.documentElement.classList.contains('light');
-  document.getElementById('theme').querySelector('i').className=light?'fa-solid fa-sun':'fa-solid fa-moon';
-  localStorage.setItem('kr.theme',light?'light':'dark');
-}
-document.getElementById('theme').addEventListener('click',toggleTheme);
-document.getElementById('t-theme').addEventListener('click',toggleTheme);
-document.getElementById('t-bg').addEventListener('click',()=>{const b=document.querySelector('.bg');b.style.display=b.style.display==='none'?'block':'none'});
-document.getElementById('t-big').addEventListener('click',()=>document.documentElement.style.setProperty('--r','22px'));
-document.getElementById('t-small').addEventListener('click',()=>document.documentElement.style.setProperty('--r','10px'));
-
-/* ========================= TOAST ========================= */
-function toast(m,e=false){
-  const t=document.getElementById('toast');
-  document.getElementById('tt').textContent=m;
-  t.style.borderColor=e?'var(--err)':'var(--line)';
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
-  if('vibrate'in navigator) navigator.vibrate(12);
-}
-document.getElementById('credit').addEventListener('click',()=>toast('Created by Karmean Gómez'));
-
-/* ========================= SALUD BACKEND ========================= */
-async function health(){
-  try{const r=await fetch(`${API}/health`,{credentials:'include'});
-    document.getElementById('status').textContent=r.ok?'Conectado':'Error de conexión';
-    document.querySelector('.status i').style.color=r.ok?'#29d39a':'#e34d5a';
-  }catch{
-    document.getElementById('status').textContent='Error de conexión';
-    document.querySelector('.status i').style.color='#e34d5a';
-  }
-}
-health(); setInterval(health,120000);
-
-/* ========================= DATOS DASHBOARD ========================= */
-const SOCIALS=[
-  {key:'instagram', name:'Instagram', icon:'fa-brands fa-instagram', color:'#E1306C', caps:['Comentarios','Likes','Seguidores','Vistas']},
-  {key:'tiktok', name:'TikTok', icon:'fa-brands fa-tiktok', color:'#69C9D0', caps:['Vistas','Likes','Seguidores']},
-  {key:'youtube', name:'YouTube', icon:'fa-brands fa-youtube', color:'#FF0000', caps:['Vistas','Likes','Comentarios']},
-  {key:'threads', name:'Threads', icon:'fa-brands fa-threads', color:'#ffffff', caps:['Likes','Respuestas']},
-  {key:'x', name:'X', icon:'fa-brands fa-x-twitter', color:'#ffffff', caps:['Likes','Reposts','Follow']},
-  {key:'facebook', name:'Facebook', icon:'fa-brands fa-facebook', color:'#1877F2', caps:['Reacciones','Comentarios']},
-  {key:'linkedin', name:'LinkedIn', icon:'fa-brands fa-linkedin', color:'#0A66C2', caps:['Reacciones','Comentarios']},
-  {key:'snapchat', name:'Snapchat', icon:'fa-brands fa-snapchat', color:'#FFFC00', caps:['Vistas']},
-  {key:'discord', name:'Discord', icon:'fa-brands fa-discord', color:'#5865F2', caps:['Mensajes','Invitaciones']},
-  {key:'telegram', name:'Telegram', icon:'fa-brands fa-telegram', color:'#0088cc', caps:['Mensajes','Miembros']},
-  {key:'whatsapp', name:'WhatsApp', icon:'fa-brands fa-whatsapp', color:'#25D366', caps:['Mensajes']},
-  {key:'twitch', name:'Twitch', icon:'fa-brands fa-twitch', color:'#9146FF', caps:['Viewers','Chat']},
-  {key:'reddit', name:'Reddit', icon:'fa-brands fa-reddit', color:'#FF4500', caps:['Upvotes','Comentarios']},
-  {key:'spotify', name:'Spotify', icon:'fa-brands fa-spotify', color:'#1DB954', caps:['Streams','Saves']},
-  {key:'pinterest', name:'Pinterest', icon:'fa-brands fa-pinterest', color:'#E60023', caps:['Repins','Saves']}
-];
-const CLIENTS=[
-  '@aaronmercury','@televisadigital','@joscanela','@jimenagallegotv','@elmalilla_'
-];
-
-function drawSocialGrid(){
-  const g=document.getElementById('grid-social'); g.innerHTML='';
-  SOCIALS.forEach(s=>{
-    const el=document.createElement('article'); el.className='card tile'; el.dataset.p=s.key;
-    el.innerHTML=`
-      <div class="row">
-        <div class="ico" style="color:${s.color}"><i class="${s.icon}"></i></div>
-        <div><div class="lab">${s.name}</div><small class="muted">Automatiza acciones</small></div>
-      </div>
+  // ============== Social grid (compacto, con capacidades) ==============
+  const socials = [
+    {k:'instagram', label:'Instagram', color:'#E1306C', caps:['Comentarios','Likes','Seguidores','Vistas']},
+    {k:'tiktok', label:'TikTok', color:'#69C9D0', caps:['Vistas','Likes','Seguidores']},
+    {k:'youtube', label:'YouTube', color:'#FF0000', caps:['Vistas','Likes','Comentarios']},
+    {k:'threads', label:'Threads', color:'#fff', caps:['Likes','Respuestas']},
+    {k:'x', label:'X', color:'#fff', caps:['Likes','Reposts','Seguidores']},
+    {k:'facebook', label:'Facebook', color:'#1877F2', caps:['Reacciones','Comentarios']},
+    {k:'linkedin', label:'LinkedIn', color:'#0A66C2', caps:['Reacciones','Comentarios','Conexiones']},
+    {k:'snapchat', label:'Snapchat', color:'#FFFC00', caps:['Vistas']},
+    {k:'discord', label:'Discord', color:'#5865F2', caps:['Mensajes','Invitaciones']},
+    {k:'telegram', label:'Telegram', color:'#0088cc', caps:['Mensajes','Miembros']},
+    {k:'whatsapp', label:'WhatsApp', color:'#25D366', caps:['Mensajes']},
+    {k:'twitch', label:'Twitch', color:'#9146FF', caps:['Viewers','Chat']},
+    {k:'reddit', label:'Reddit', color:'#FF4500', caps:['Upvotes','Comentarios']},
+    {k:'spotify', label:'Spotify', color:'#1DB954', caps:['Streams','Saves']},
+    {k:'pinterest', label:'Pinterest', color:'#E60023', caps:['Repins','Saves']},
+  ];
+  const socialGrid = document.getElementById('social-grid');
+  socialGrid.innerHTML = socials.map(s => `
+    <article class="card tile" data-key="${s.k}">
+      <div class="row"><div class="ico" style="color:${s.color}">●</div>
+        <div><div class="lab">${s.label}</div><small class="muted">Automatiza</small></div></div>
       <div class="cap">${s.caps.map(c=>`<span class="c">${c}</span>`).join('')}</div>
-    `;
-    el.addEventListener('click',()=>openService(s.key));
-    g.appendChild(el);
+    </article>`).join('');
+
+  // Al tocar un tile, llevar a Servicios con un hint del panel
+  socialGrid.addEventListener('click', (e)=>{
+    const tile = e.target.closest('.tile');
+    if(!tile) return;
+    document.getElementById('tab-auto').checked = true;
   });
-}
-function drawClients(){
-  const c=document.getElementById('clients-list'); c.innerHTML='';
-  CLIENTS.forEach(u=>{
-    const item=document.createElement('div'); item.className='client';
-    item.innerHTML=`<i class="fa-brands fa-instagram" style="color:#E1306C"></i> ${u} <svg class="ig-badge"><use href="#ig-verified"/></svg>`;
-    c.appendChild(item);
+
+  // ============== Quick automation (solo feedback UI por ahora) ==========
+  document.getElementById('quick-run').addEventListener('click', ()=>{
+    const v = (document.getElementById('quick-input').value||'').trim();
+    if(!v){toast('Escribe qué automatizar');return}
+    toast('Automatizando: '+v);
+    document.getElementById('quick-input').value='';
   });
-}
-drawSocialGrid(); drawClients();
 
-/* ========================= VISTAS (tabs superiores) ========================= */
-document.querySelectorAll('.t').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.t').forEach(x=>x.classList.remove('active')); b.classList.add('active');
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('v-'+b.dataset.v).classList.add('active');
-}));
-
-/* ========================= NAV INFERIOR -> PANELS ========================= */
-const panels={accounts:'acc',actions:'svc',farm:'farm',settings:'set'};
-document.querySelectorAll('.tb').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tb').forEach(x=>x.classList.remove('active')); t.classList.add('active');
-  const k=t.dataset.tab;
-  Object.values(panels).forEach(id=>document.getElementById(id).classList.remove('active'));
-  if(k==='home') return;
-  const id=panels[k]; const p=document.getElementById(id); p.classList.add('active');
-  if(id==='acc'){checkSession();loadActive();}
-  if(id==='svc'){openService('instagram');}
-  if(id==='farm'){loadDevices();}
-}));
-
-/* ========================= AUTOMATIZACIÓN RÁPIDA ========================= */
-document.getElementById('auto-run').addEventListener('click',()=>{
-  const v=(document.getElementById('auto-text').value||'').trim();
-  if(!v) return toast('Escribe qué automatizar',true);
-  document.getElementById('auto-state').textContent=`Lanzado: ${v}`;
-  toast(`Automatizando: "${v}"`);
-  document.getElementById('auto-text').value='';
-});
-
-/* ========================= SERVICE CENTER ========================= */
-const SERVICES={
-  instagram:{label:'Instagram',actions:{
-    comentarios:{label:'Comentarios masivos',icon:'fa-regular fa-comment',endpoint:`${API}/instagram/comentarios`,fields:[
-      {key:'url',label:'URL del Post',type:'text',required:true,placeholder:'https://www.instagram.com/p/Cxxxxx/'},
-      {key:'cantidad',label:'Cantidad',type:'number',min:1,max:200,value:30},
-      {key:'modo',label:'Modo',type:'select',options:[{v:'auto',t:'Auto (imagen)'},{v:'personalizado',t:'Personalizado'},{v:'manual',t:'Manual'}]},
-      {key:'comentarios',label:'Comentarios (uno por línea)',type:'textarea',showIf:{field:'modo',equals:'manual'}},
-      {key:'apodo',label:'Apodo',type:'text'},{key:'estilo',label:'Estilo',type:'text'},{key:'actividad',label:'Actividad',type:'text'}
-    ]},
-    likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/instagram/likes`,fields:[
-      {key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}
-    ]},
-    seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API}/instagram/seguidores`,fields:[
-      {key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}
-    ]},
-    vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/instagram/vistas`,fields:[
-      {key:'url',label:'URL del Reel/Video',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:50000,value:1000}
-    ]}
-  }},
-  tiktok:{label:'TikTok',actions:{
-    vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/tiktok/vistas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:5000}]},
-    likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/tiktok/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:1000}]},
-    seguidores:{label:'Seguidores',icon:'fa-solid fa-user-plus',endpoint:`${API}/tiktok/seguidores`,fields:[{key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:10000,value:300}]}
-  }},
-  youtube:{label:'YouTube',actions:{
-    vistas:{label:'Vistas',icon:'fa-regular fa-eye',endpoint:`${API}/youtube/vistas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:500000,value:10000}]},
-    likes:{label:'Likes',icon:'fa-regular fa-thumbs-up',endpoint:`${API}/youtube/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:10,max:100000,value:500}]},
-    comentarios:{label:'Comentarios',icon:'fa-regular fa-comment',endpoint:`${API}/youtube/comentarios`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Comentarios',type:'textarea',required:true}]}
-  }},
-  x:{label:'X (Twitter)',actions:{
-    likes:{label:'Me gusta',icon:'fa-regular fa-heart',endpoint:`${API}/x/likes`,fields:[{key:'url',label:'URL del post',type:'text',required:true}]},
-    retweets:{label:'Reposts',icon:'fa-solid fa-retweet',endpoint:`${API}/x/retweets`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:500,value:50}]},
-    follows:{label:'Seguir',icon:'fa-solid fa-user-plus',endpoint:`${API}/x/seguidores`,fields:[{key:'usuario',label:'Usuario',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]}
-  }},
-  facebook:{label:'Facebook',actions:{
-    reacciones:{label:'Reacciones',icon:'fa-regular fa-thumbs-up',endpoint:`${API}/facebook/reacciones`,fields:[{key:'url',label:'URL del post',type:'text',required:true},{key:'tipo',label:'Tipo',type:'select',options:[{v:'like',t:'👍 Like'},{v:'love',t:'❤️ Love'},{v:'care',t:'🥰 Care'}]}]},
-    comentarios:{label:'Comentarios',icon:'fa-regular fa-comment',endpoint:`${API}/facebook/comentarios`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Comentarios',type:'textarea',required:true}]}
-  }},
-  threads:{label:'Threads',actions:{
-    likes:{label:'Likes',icon:'fa-regular fa-heart',endpoint:`${API}/threads/likes`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'cantidad',label:'Cantidad',type:'number',min:1,max:1000,value:100}]},
-    respuestas:{label:'Respuestas',icon:'fa-regular fa-comment',endpoint:`${API}/threads/respuestas`,fields:[{key:'url',label:'URL',type:'text',required:true},{key:'comentarios',label:'Respuestas (una por línea)',type:'textarea'}]}
-  }}
-};
-const svc=document.getElementById('svc'), svcGrid=document.getElementById('svc-grid');
-const svcFormCard=document.getElementById('svc-form-card'), svcForm=document.getElementById('svc-form'); let ENDPOINT=null;
-
-function openService(key){
-  const d=SERVICES[key]; if(!d){toast('Próximamente',true);return;}
-  document.querySelector('[data-tab="actions"]').classList.add('active');
-  document.getElementById('svc-title').textContent=d.label; svc.classList.add('active'); svcGrid.innerHTML=''; svcFormCard.style.display='none';
-  Object.values(d.actions).forEach(cfg=>{
-    const el=document.createElement('div'); el.className='card svc-card';
-    el.innerHTML=`<div class="title"><i class="${cfg.icon}"></i>${cfg.label}</div><div class="hint">${cfg.endpoint.replace(API,'')}</div>`;
-    el.addEventListener('click',()=>openAction(cfg)); svcGrid.appendChild(el);
-  });
-}
-function openAction(cfg){
-  ENDPOINT=cfg.endpoint; svcFormCard.style.display='block';
-  document.getElementById('svc-form-title').innerHTML=`<i class="fa-solid fa-sliders"></i> ${cfg.label}`;
-  svcForm.innerHTML='';
-  (cfg.fields||[]).forEach(f=>{
-    const row=document.createElement('div'); row.className='row'; row.innerHTML=`<label>${f.label}</label>`;
-    let el;
-    if(f.type==='textarea'){el=document.createElement('textarea'); el.className='ctrl'; el.name=f.key; el.placeholder=f.placeholder||''; el.required=!!f.required;}
-    else if(f.type==='select'){el=document.createElement('select'); el.className='ctrl'; el.name=f.key; (f.options||[]).forEach(o=>{const op=document.createElement('option'); op.value=o.v; op.textContent=o.t; el.appendChild(op);});}
-    else{el=document.createElement('input'); el.className='ctrl'; el.type=f.type||'text'; el.name=f.key; if(f.value!=null) el.value=f.value; if(f.min!=null) el.min=f.min; if(f.max!=null) el.max=f.max; el.placeholder=f.placeholder||''; el.required=!!f.required;}
-    if(f.showIf){el.dataset.dep=f.showIf.field; el.dataset.depval=f.showIf.equals;}
-    row.appendChild(el); svcForm.appendChild(row);
-  });
-  applyDeps(); svcForm.querySelectorAll('select,input').forEach(i=>i.addEventListener('change',applyDeps));
-  function applyDeps(){
-    const st=Object.fromEntries(new FormData(svcForm).entries());
-    [...svcForm.querySelectorAll('[data-dep]')].forEach(el=>{
-      el.closest('.row').style.display=(st[el.dataset.dep]===el.dataset.depval)?'grid':'none';
-    });
+  // ============== Backend health ========================================
+  async function checkHealth(){
+    try{
+      const r = await fetch(`${API_URL}/health`, {credentials:'include'});
+      if(r.ok){statusDot.style.background = 'var(--ok)'; statusText.textContent='Conectado'}
+      else{throw new Error('Backend error')}
+    }catch(err){statusDot.style.background = 'var(--err)'; statusText.textContent='Sin conexión'}
   }
-}
-document.getElementById('svc-back').addEventListener('click',()=>svc.classList.remove('active'));
-document.getElementById('svc-cancel').addEventListener('click',(e)=>{e.preventDefault();svcFormCard.style.display='none';});
-document.getElementById('svc-run').addEventListener('click',async(e)=>{
-  e.preventDefault(); if(!ENDPOINT) return; const payload=Object.fromEntries(new FormData(svcForm).entries());
-  try{
-    const btn=e.currentTarget; btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando…';
-    const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
-    const d=await r.json().catch(()=>({status:'ok'})); toast(d.message||'Tarea lanzada');
-  }catch{toast('Error al ejecutar servicio',true)}
-  finally{e.currentTarget.disabled=false; e.currentTarget.innerHTML='<i class="fa-solid fa-play"></i> Ejecutar';}
-});
+  checkHealth(); setInterval(checkHealth, 120000);
 
-/* Clic en un tile del Dashboard -> abrir Service Center de esa red */
-document.getElementById('grid-social').addEventListener('click',(e)=>{
-  const t=e.target.closest('.tile[data-p]'); if(!t) return; openService(t.dataset.p);
-});
+  // ============== IG Comentarios ========================================
+  const igForm = document.getElementById('ig-comments');
+  const igStatus = document.getElementById('ig-comments-status');
+  igForm.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(igForm);
+    const payload = Object.fromEntries(fd.entries());
+    try{
+      igStatus.textContent = 'Enviando…';
+      const r = await fetch(`${API_URL}/instagram/comentarios`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
+      const data = await r.json().catch(()=>({}));
+      if(r.ok){ igStatus.textContent = '✅ Comentarios en proceso'; toast('Comentarios lanzados'); }
+      else{ throw new Error(data.mensaje||'Error en comentarios'); }
+    }catch(err){ igStatus.textContent = '❌ '+err.message; toast('Error: '+err.message,true); }
+  });
 
-/* ========================= DEVICE FARM (EN VIVO) ========================= */
-const farm=document.getElementById('farm'), gridFarm=document.getElementById('farm-grid');
-document.getElementById('farm-back').addEventListener('click',()=>farm.classList.remove('active'));
-document.getElementById('zm+').addEventListener('click',()=>setH(Math.min(getH()+30,460)));
-document.getElementById('zm-').addEventListener('click',()=>setH(Math.max(getH()-30,140)));
-function setH(px){document.documentElement.style.setProperty('--devH',px+'px')}
-function getH(){return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--devH'))||220}
-async function loadDevices(){
-  try{
-    const r=await fetch(`${API}/devices`,{credentials:'include'});
-    const list=await r.json();
-    renderDevices(list||[]);
-  }catch{toast('No se pudo cargar la farm',true)}
-  farm.classList.add('active');
-}
-function renderDevices(list){
-  gridFarm.innerHTML='';
-  list.forEach(d=>gridFarm.appendChild(deviceCard(d)));
-}
-function deviceCard(d){
-  const c=document.createElement('div'); c.className='card dev'; c.dataset.id=d.id;
-  const h=document.createElement('div'); h.className='dev-head';
-  h.innerHTML=`<div>${d.emoji||'📱'} <strong>${d.name||d.model||'Device'}</strong> · ${d.platform||''}</div>`;
-  const chips=document.createElement('div'); chips.className='chips';
-  chips.innerHTML=`<span class="chip-b">${d.status||'idle'}</span>${d.ip?`<span class="chip-b">${d.ip}</span>`:''}`;
-  h.appendChild(chips);
+  // ============== Sesión / Cuentas ======================================
+  const loginBtn = document.getElementById('login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const addAccountBtn = document.getElementById('add-account-btn');
+  const accountsList = document.getElementById('accounts-list');
 
-  const s=document.createElement('div'); s.className='screen';
-  const ov=document.createElement('div'); ov.className='ov'; ov.innerHTML=`<span class="chip-b">${d.task||'Idle'}</span>`;
-  const vid=document.createElement('video'); vid.autoplay=true; vid.muted=true; vid.playsInline=true; vid.controls=false; vid.style.display='none';
-  const img=document.createElement('img'); if(d.mjpeg_url) img.src=d.mjpeg_url;
-  s.append(ov,vid,img);
-
-  const act=document.createElement('div'); act.style.display='flex'; act.style.gap='6px';
-  act.append(btn('Iniciar',()=>ctrl(d.id,'start')),btn('Detener',()=>ctrl(d.id,'stop')),btn('Fullscreen',()=>s.requestFullscreen&&s.requestFullscreen(),true));
-
-  c.append(h,s,act);
-
-  if(d.webrtc) openStream(d.id,vid,img);
-  return c;
-}
-function btn(t,fn,ghost=false){const b=document.createElement('button'); b.className='btn'+(ghost?'':' btn-primary'); b.textContent=t; b.onclick=fn; return b}
-async function ctrl(id,action){
-  try{
-    const r=await fetch(`${API}/devices/${id}/control`,{
-      method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({action})
-    });
-    const d=await r.json(); toast(d.message||'OK');
-  }catch{toast('Error enviando comando',true)}
-}
-async function openStream(id,video,img){
-  try{
-    const pc=new RTCPeerConnection();
-    pc.ontrack=e=>{video.srcObject=e.streams[0]; video.style.display='block'; if(img) img.style.display='none';};
-    const offer=await pc.createOffer({offerToReceiveVideo:true}); await pc.setLocalDescription(offer);
-    const r=await fetch(`${API}/devices/${id}/stream/webrtc`,{
-      method:'POST',headers:{'Content-Type':'application/sdp'},credentials:'include',body:offer.sdp
-    });
-    const answer=await r.text(); await pc.setRemoteDescription({type:'answer',sdp:answer});
-  }catch{/* fallback a MJPEG */}
-}
-
-/* ========================= CUENTAS ========================= */
-const acc=document.getElementById('acc'); document.getElementById('acc-back').addEventListener('click',()=>acc.classList.remove('active'));
-const sess=document.getElementById('sess'); const u=document.getElementById('u'); const p=document.getElementById('p');
-const loginBtn=document.getElementById('login'); const logoutBtn=document.getElementById('logout');
-const mu=document.getElementById('mu'); const mp=document.getElementById('mp'); const addBtn=document.getElementById('add'); const act=document.getElementById('act');
-
-async function checkSession(){
-  try{
-    const r=await fetch(`${API}/estado-sesion`,{credentials:'include'});
-    const d=await r.json();
-    if(d.status==='activo'){sess.textContent=`Sesión activa como @${d.usuario}`;document.getElementById('login-form').style.display='none';}
-    else{sess.textContent='No hay sesión';document.getElementById('login-form').style.display='block';}
-  }catch{
-    sess.textContent='Error al verificar sesión';document.getElementById('login-form').style.display='block';
+  async function checkSession(){
+    try{
+      const r = await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
+      const d = await r.json();
+      if(d.status==='activo'){sessionSub.textContent = `Sesión activa como @${d.usuario}`}
+      else{sessionSub.textContent = 'No hay sesión activa'}
+    }catch{sessionSub.textContent='Error al verificar sesión'}
   }
-}
-loginBtn.addEventListener('click',async()=>{
-  const un=u.value.trim().replace('@',''), pw=p.value.trim(); if(!un||!pw) return toast('Completa usuario y contraseña',true);
-  try{
-    loginBtn.disabled=true; loginBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Iniciando…';
-    const r=await fetch(`${API}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:un,contrasena:pw})});
-    const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión iniciada @${d.usuario}`); checkSession(); loadActive();
-  }catch(e){toast(e.message||'Error',true)} finally{loginBtn.disabled=false; loginBtn.innerHTML='Iniciar sesión';}
-});
-logoutBtn.addEventListener('click',async()=>{
-  try{
-    logoutBtn.disabled=true; logoutBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Cerrando…';
-    const r=await fetch(`${API}/cerrar-sesion`,{credentials:'include'});
-    const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast('Sesión cerrada'); checkSession(); loadActive();
-  }catch(e){toast(e.message||'Error',true)} finally{logoutBtn.disabled=false; logoutBtn.innerHTML='Cerrar sesión';}
-});
-addBtn.addEventListener('click',async()=>{
-  const un=mu.value.trim().replace('@',''), pw=mp.value.trim(); if(!un||!pw) return toast('Completa usuario y contraseña',true);
-  try{
-    addBtn.disabled=true; addBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando…';
-    const l=await fetch(`${API}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:un,contrasena:pw})});
-    const lj=await l.json(); if(!lj.exito) throw new Error(lj.mensaje||'Error de login');
-    const s=await fetch(`${API}/guardar-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:un,password:pw})});
-    const sj=await s.json(); if(sj.status!=='ok') throw new Error(sj.message||'No se pudo guardar');
-    toast(`Cuenta @${un} guardada`); mu.value=''; mp.value=''; loadActive();
-  }catch(e){toast(e.message||'Error',true)} finally{addBtn.disabled=false; addBtn.innerHTML='Guardar Cuenta';}
-});
-async function loadActive(){
-  try{
-    const r=await fetch(`${API}/cuentas-activas`,{credentials:'include'});
-    const list=await r.json();
-    if(!Array.isArray(list)||!list.length){act.textContent='No hay cuentas activas';return;}
-    const wrap=document.createElement('div'); wrap.className='clients';
-    list.forEach(a=>{
-      const item=document.createElement('div'); item.className='client';
-      item.innerHTML=`<span class="chip-b">${a.status||'idle'}</span> @${a.username}`;
-      const actions=document.createElement('span'); actions.style.margin-left='auto';
-      const b=document.createElement('button'); b.className='btn'; b.textContent=a.status==='activo'?'Logout':'Login';
-      b.onclick=()=>a.status==='activo'?cerrar(a.username):iniciar(a.username);
-      actions.appendChild(b); item.appendChild(actions); wrap.appendChild(item);
-    });
-    act.innerHTML=''; act.appendChild(wrap);
-  }catch{act.textContent='Error al cargar cuentas';}
-}
-async function iniciar(u){try{toast(`Iniciando @${u}…`);const r=await fetch(`${API}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u})});const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión iniciada @${u}`); loadActive();}catch(e){toast(e.message||'Error',true)}}
-async function cerrar(u){try{toast(`Cerrando @${u}…`);const r=await fetch(`${API}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u})});const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); toast(`Sesión cerrada @${u}`); loadActive();}catch(e){toast(e.message||'Error',true)}}
+  checkSession();
 
-/* ========================= BARRA INFERIOR: ABRIR PANELS ========================= */
-document.querySelector('[data-tab="actions"]').addEventListener('click',()=>openService('instagram'));
-document.querySelector('[data-tab="accounts"]').addEventListener('click',()=>{document.getElementById('acc').classList.add('active');checkSession();loadActive();});
-document.querySelector('[data-tab="farm"]').addEventListener('click',()=>loadDevices());
-document.querySelector('[data-tab="settings"]').addEventListener('click',()=>document.getElementById('set').classList.add('active'));
+  loginBtn.addEventListener('click', async ()=>{
+    const u = document.getElementById('login-username').value.trim().replace('@','');
+    const p = document.getElementById('login-password').value.trim();
+    if(!u||!p){return toast('Completa usuario y contraseña',true)}
+    try{
+      loginBtn.textContent='Iniciando…'; loginBtn.disabled=true;
+      const r = await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
+      const d = await r.json();
+      if(d.exito){ toast('Sesión iniciada @'+d.usuario); sessionSub.textContent = `Sesión activa como @${d.usuario}`; }
+      else{ throw new Error(d.mensaje||'Error al iniciar'); }
+    }catch(err){ toast(err.message,true) }
+    finally{ loginBtn.textContent='Iniciar sesión'; loginBtn.disabled=false; }
+  });
 
-/* ========================= INICIO ========================= */
-document.addEventListener('DOMContentLoaded',()=>{drawSocialGrid();drawClients();health();});
+  logoutBtn.addEventListener('click', async ()=>{
+    try{
+      logoutBtn.textContent='Cerrando…'; logoutBtn.disabled=true;
+      const r = await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'});
+      const d = await r.json();
+      if(d.exito){ toast('Sesión cerrada'); sessionSub.textContent = 'No hay sesión activa'; }
+      else{ throw new Error(d.mensaje||'Error al cerrar'); }
+    }catch(err){ toast(err.message,true) }
+    finally{ logoutBtn.textContent='Cerrar sesión'; logoutBtn.disabled=false; }
+  });
+
+  addAccountBtn.addEventListener('click', async ()=>{
+    const u = document.getElementById('manual-username').value.trim().replace('@','');
+    const p = document.getElementById('manual-password').value.trim();
+    if(!u||!p){return toast('Completa ambos campos',true)}
+    try{
+      addAccountBtn.textContent='Guardando…'; addAccountBtn.disabled=true;
+      const loginR = await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
+      const loginD = await loginR.json(); if(!loginD.exito) throw new Error(loginD.mensaje||'Credenciales inválidas');
+      const saveR = await fetch(`${API_URL}/guardar-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:u,password:p})});
+      const saveD = await saveR.json(); if(saveD.status!=="ok") throw new Error(saveD.message||'No se pudo guardar');
+      toast('Cuenta @'+u+' guardada'); document.getElementById('manual-username').value=''; document.getElementById('manual-password').value='';
+      loadAccounts();
+    }catch(err){ toast(err.message,true) }
+    finally{ addAccountBtn.textContent='Guardar cuenta'; addAccountBtn.disabled=false; }
+  });
+
+  async function loadAccounts(){
+    try{
+      const r = await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'});
+      const arr = await r.json();
+      if(!Array.isArray(arr) || arr.length===0){accountsList.innerHTML = '<div class="hint">No hay cuentas activas</div>'; return}
+      accountsList.innerHTML = arr.map(acc=>
+        `<div class="card" style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:10px;height:10px;border-radius:50%;background:${acc.status==='activo'?'var(--ok)':'var(--err)'}"></span>
+            <strong>@${acc.username}</strong>
+          </div>
+          <div style="display:flex;gap:6px">
+            ${acc.status==='activo' ? `
+              <button class="btn" data-logout="${acc.username}">Logout</button>` : `
+              <button class="btn btn-primary" data-login="${acc.username}">Login</button>`}
+          </div>
+        </div>`).join('');
+    }catch{accountsList.innerHTML = '<div class="hint">Error al cargar cuentas</div>'}
+  }
+  loadAccounts(); setInterval(loadAccounts, 30000);
+
+  accountsList.addEventListener('click', async (e)=>{
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.login){
+      toast('Iniciando @'+b.dataset.login+'…');
+      try{
+        const r = await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.login})});
+        const d = await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
+        toast('Sesión iniciada @'+b.dataset.login); loadAccounts();
+      }catch(err){toast(err.message,true)}
+    }
+    if(b.dataset.logout){
+      toast('Cerrando @'+b.dataset.logout+'…');
+      try{
+        const r = await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})});
+        const d = await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
+        toast('Sesión cerrada @'+b.dataset.logout); loadAccounts();
+      }catch(err){toast(err.message,true)}
+    }
+  });
+
+  // ============== Device Farm ===========================================
+  const defaultDevices = [
+    {id:'dev1', name:'iPhone 14 Pro', os:'iOS', ip:'10.0.0.8'},
+    {id:'dev2', name:'Galaxy S23', os:'Android', ip:'10.0.0.9'},
+    {id:'dev3', name:'iPhone 13', os:'iOS', ip:'10.0.0.10'},
+    {id:'dev4', name:'Pixel 8', os:'Android', ip:'10.0.0.11'}
+  ];
+  const farmGrid = document.getElementById('farm-grid');
+  function renderFarm(){
+    farmGrid.innerHTML = defaultDevices.map(d=>{
+      const src = localStorage.getItem('stream:'+d.id) || '';
+      return `
+      <div class="card dev">
+        <div class="dev-head">
+          <div>📱 <strong>${d.name}</strong> · ${d.os}</div>
+          <div class="chips"><span class="chip-b">idle</span><span class="chip-b">${d.ip}</span></div>
+        </div>
+        <div class="screen">
+          <div class="ov"><span class="chip-b">${src? 'Live' : 'Idle'}</span></div>
+          ${src ? (src.endsWith('.mjpg') || src.endsWith('.mjpeg') ? `<img src="${src}"/>` : src.endsWith('.m3u8') ? `<video src="${src}" autoplay muted playsinline></video>` : `<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`) : '<div class="placeholder"></div>'}
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-primary" data-set="${d.id}">Set stream</button>
+          <button class="btn" data-clear="${d.id}">Clear</button>
+        </div>
+      </div>`
+    }).join('');
+  }
+  renderFarm();
+
+  farmGrid.addEventListener('click', (e)=>{
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.set){
+      const id = b.dataset.set; const cur = localStorage.getItem('stream:'+id)||'';
+      const url = prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):', cur);
+      if(url!==null){ localStorage.setItem('stream:'+id, url.trim()); renderFarm(); toast('Stream actualizado'); }
+    }
+    if(b.dataset.clear){ const id=b.dataset.clear; localStorage.removeItem('stream:'+id); renderFarm(); toast('Stream limpiado'); }
+  });
+
+  // ============== Toast mínimo ===========================================
+  function toast(msg, err){
+    const el = document.createElement('div');
+    el.textContent = msg; el.style.cssText = `position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;background:${err?'#ff5f74':'#1f2937'};color:#fff;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.15)`;
+    document.body.appendChild(el); setTimeout(()=>{el.remove()}, 2200);
+  }
+})();
 </script>
 </body>
 </html>
