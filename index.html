@@ -4,542 +4,796 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>KraveAI — Panel</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0d12">
+
 <style>
-/* ========================= TOKENS ========================= */
+/* =========================================================
+   TOKENS
+   ========================================================= */
 :root{
-  --bg:#0b0d12; --elev:#0e131b; --card:#121826; --text:#eef2f8; --muted:#9aa6bb; --line:#1f2a3a;
-  --ac1:#7c5cff; --ac2:#00d3c2; --ok:#22c55e; --err:#ef4444;
-  --r:16px; --gap:12px; --shadow:0 18px 40px rgba(0,0,0,.35);
-  --orb-a: rgba(124,92,255,.25); --orb-b: rgba(0,211,194,.25);
+  --bg:#0a0e14; --elev:#0e131b; --card:#121826; --text:#ecf2f9; --muted:#96a2b7; --line:#1f2a3a;
+  --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
+  --brand1:#7c5cff; --brand2:#00d3c2; --gradient:linear-gradient(135deg,var(--brand1),var(--brand2));
+  --r:16px; --gap:12px; --shadow:0 18px 44px rgba(0,0,0,.28);
+  --navH:64px;
 }
-:root[data-theme="light"]{
-  --bg:#f6f8fc; --elev:#ffffff; --card:#ffffff; --text:#0c111b; --muted:#667389; --line:#e5e9f2;
-  --shadow:0 12px 26px rgba(0,0,0,.08);
-  --orb-a: rgba(124,92,255,.18); --orb-b: rgba(0,211,194,.18);
+[data-theme="light"]{
+  --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#6b7280; --line:#e6eaf2;
+  --shadow:0 10px 26px rgba(0,0,0,.08);
 }
 *{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto,Segoe UI;
-}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto}
 
-/* ====== Layout general sin scroll ====== */
-.app{height:100svh;display:grid;grid-template-rows:auto 1fr auto}
+/* =========================================================
+   APP LAYOUT (sin scroll en Home)
+   ========================================================= */
+.app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+
+/* Top bar */
 .top{
-  position:sticky;top:0;z-index:20;
+  position:sticky;top:0;z-index:40;
   display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
   padding:10px max(14px,env(safe-area-inset-left)) 8px max(14px,env(safe-area-inset-right));
-  background:color-mix(in oklab,var(--elev) 92%, transparent);border-bottom:1px solid var(--line);
-  backdrop-filter:saturate(1.05) blur(10px);
+  background:color-mix(in oklab, var(--elev) 92%, transparent);
+  backdrop-filter:saturate(1.05) blur(12px); border-bottom:1px solid var(--line);
 }
 .brand{display:flex;align-items:center;gap:10px}
-.badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--ac1),var(--ac2));box-shadow:0 10px 22px rgba(124,92,255,.28),0 8px 16px rgba(0,211,194,.16)}
-.word{font-weight:900;letter-spacing:.16em}
-.status{display:flex;align-items:center;gap:8px;color:var(--muted);justify-self:center}
-.status .dot{width:8px;height:8px;border-radius:50%;background:var(--err)}
-.theme{width:34px;height:34px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;background:rgba(255,255,255,.04)}
+.badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--gradient)}
+.badge svg{filter:drop-shadow(0 6px 14px rgba(124,92,255,.35))}
+.word{font-weight:900;letter-spacing:.14em}
+.status{justify-self:center;color:var(--muted);display:flex;align-items:center;gap:8px}
+.status .dot{width:8px;height:8px;border-radius:50%;background:#b5bcc9}
+.theme-toggle{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(255,255,255,.04);cursor:pointer}
+.icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:block}
 
-.main{
-  position:relative;
-  height:calc(100svh - 56px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  overflow:hidden; /* sin scroll */
-}
-
-/* ====== Contenedor escalable (fit-to-viewport) ====== */
-.fit{
-  position:absolute; inset:10px max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left));
-  display:grid; grid-template-rows:auto 1fr auto; gap:14px;
-  transform-origin: top center;
-}
-
-/* ====== Orb cabecera ====== */
-.hero{
-  position:relative; display:flex; align-items:center; justify-content:center; min-height:110px;
-}
-.orb-wrap{position:absolute; top:-10px; left:50%; transform:translateX(-50%);}
-.orb{
-  width:160px; height:160px; border-radius:50%;
-  background:
-    radial-gradient(60% 60% at 35% 35%, rgba(255,255,255,.65), transparent 60%),
-    radial-gradient(120% 120% at 70% 30%, var(--ac2), transparent 60%),
-    radial-gradient(120% 120% at 30% 70%, var(--ac1), transparent 60%),
-    radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,.25), transparent 70%);
-  box-shadow:
-    0 0 0 6px color-mix(in oklab, var(--ac2) 30%, transparent),
-    0 0 42px 8px color-mix(in oklab, var(--ac1) 26%, transparent);
-  animation: orbfloat 6s ease-in-out infinite;
-}
-@keyframes orbfloat{
-  0%,100%{transform:translate(-50%,0) scale(1)}
-  50%{transform:translate(-50%,-6px) scale(1.03)}
-}
-
-/* ====== Home grid ====== */
-.home{
-  display:grid; grid-template-columns:1.15fr .85fr; gap:14px; align-items:stretch;
-}
-@media (max-width:700px){ .home{ grid-template-columns:1fr } }
-
-.card{
-  background:linear-gradient(180deg, color-mix(in oklab, var(--card) 96%, transparent), color-mix(in oklab, var(--card) 100%, transparent));
-  border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow);
-}
-.section{padding:14px}
-.h1{font-size:clamp(20px, 3.8vh, 28px); font-weight:900; margin:0}
-.p{color:var(--muted); margin:4px 0 0}
-
-.grid-social{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:10px}
-@media (min-width:780px){ .grid-social{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
-.btn-net{
-  display:flex; align-items:center; gap:10px;
-  padding:12px 12px; border-radius:14px; border:1px solid var(--line);
-  background:rgba(255,255,255,.03); cursor:pointer; font-weight:800;
-}
-.btn-net .ico{width:22px;height:22px;display:grid;place-items:center}
-.btn-net:hover{background:rgba(255,255,255,.06)}
-
-/* Acciones rápidas */
-.actions .row{display:flex; gap:10px}
-.input{flex:1; display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.04)}
-.input input{flex:1; background:transparent; border:0; outline:none; color:var(--text)}
-.btn{
-  border:0; border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer;
-  background:linear-gradient(135deg,var(--ac1),var(--ac2)); color:#081018;
-}
-
-/* ====== Clientes ====== */
-.clients-bar{display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:start}
-@media (max-width:700px){ .clients-bar{ grid-template-columns:1fr } }
-.client{
-  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:14px;
-  border:1px solid var(--line); background:rgba(255,255,255,.03);
-}
-.avatar{width:30px;height:30px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line)}
-.avatar svg{width:18px;height:18px}
-.handle{font-weight:800}
-.sub{color:var(--muted); font-size:.86rem}
-.ig-verify{width:18px;height:18px;margin-left:6px}
-
-/* ====== Tabs ====== */
+/* Bottom nav */
 .nav{
-  position:sticky; bottom:0; z-index:30;
-  display:grid; grid-template-columns:repeat(5,1fr); gap:8px;
+  position:sticky;bottom:0;z-index:30;height:var(--navH);
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
   padding:8px max(14px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-right));
   background:color-mix(in oklab,var(--elev) 92%, transparent); border-top:1px solid var(--line);
-  backdrop-filter:saturate(1.05) blur(10px);
+  backdrop-filter:saturate(1.05) blur(12px);
 }
-.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid transparent;border-radius:12px;color:var(--muted);cursor:pointer}
 .tab svg{width:18px;height:18px}
+.tab small{font-size:.72rem}
 input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
-#t-home:checked ~ .app .nav label[for="t-home"],
-#t-services:checked ~ .app .nav label[for="t-services"],
-#t-clients:checked ~ .app .nav label[for="t-clients"],
-#t-farm:checked ~ .app .nav label[for="t-farm"],
-#t-acc:checked ~ .app .nav label[for="t-acc"]{color:var(--text);background:rgba(255,255,255,.04);border-color:var(--line)}
-.view{display:none;height:100%;overflow:hidden}
-#t-home:checked ~ .app .view[data-v="home"],
-#t-services:checked ~ .app .view[data-v="services"],
-#t-clients:checked ~ .app .view[data-v="clients"],
-#t-farm:checked ~ .app .view[data-v="farm"],
-#t-acc:checked ~ .app .view[data-v="acc"]{display:block}
+#tab-home:checked ~ .app .nav label[for="tab-home"],
+#tab-services:checked ~ .app .nav label[for="tab-services"],
+#tab-clients:checked ~ .app .nav label[for="tab-clients"],
+#tab-farm:checked ~ .app .nav label[for="tab-farm"],
+#tab-acc:checked ~ .app .nav label[for="tab-acc"]{color:var(--text);background:rgba(255,255,255,.05);border-color:var(--line)}
 
-/* ====== Servicios (pane contenido) ====== */
-.svc-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.svc-title{display:flex;align-items:center;gap:10px;font-weight:900}
-.svc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.svc-btn{padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);cursor:pointer;font-weight:800}
-.svc-btn:hover{background:rgba(255,255,255,.06)}
+/* Views */
+.main{
+  height:calc(100svh - var(--navH) - 54px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow:hidden; /* ← Home sin scroll; otras vistas controlan interno */
+  padding:12px max(14px,env(safe-area-inset-left)) 12px max(14px,env(safe-area-inset-right));
+}
+.view{display:none;height:100%;animation:fade .16s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+#tab-home:checked ~ .app .view[data-tab="home"],
+#tab-services:checked ~ .app .view[data-tab="services"],
+#tab-clients:checked ~ .app .view[data-tab="clients"],
+#tab-farm:checked ~ .app .view[data-tab="farm"],
+#tab-acc:checked ~ .app .view[data-tab="acc"]{display:block}
 
+/* =========================================================
+   HOME (hero + grid redes + clientes + quick box)
+   ========================================================= */
+.home-wrap{
+  height:100%;display:grid;
+  grid-template-rows:auto 1fr auto auto; /* título, contenido, clientes, quick */
+  gap:12px;overflow:hidden;
+}
+.h1{font-weight:900;font-size:clamp(22px,4.6vw,28px)}
+.sub{color:var(--muted)}
+.hero{
+  position:relative;display:flex;align-items:center;justify-content:space-between;
+  padding:10px 6px 0 6px;
+}
+.hero-ball{
+  position:absolute;right:min(8px,2vw);top:-8px;width:120px;height:120px;border-radius:999px;
+  background:radial-gradient(60% 60% at 40% 40%, #37e4d8 0%, #7c5cff 35%, #111 100%);
+  box-shadow:0 10px 40px rgba(0,0,0,.45), 0 0 42px rgba(124,92,255,.35);
+  animation:float 6s ease-in-out infinite;
+  overflow:visible;
+}
+.hero-ball::after{
+  content:"";position:absolute;inset:-6px;border-radius:inherit;
+  border:2px solid rgba(255,255,255,.8);filter:blur(0.4px);opacity:.85;
+  animation:pulse 3.8s ease-in-out infinite;
+}
+@keyframes float{50%{transform:translateY(8px) scale(1.02)}}
+@keyframes pulse{50%{transform:scale(1.06);opacity:.55}}
+
+.section-title{font-weight:800;margin:2px 0 4px}
+
+/* redes: solo botones (sin servicios ni métricas) */
+.networks{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-content:start;
+  padding-right:2px; /* para que quepa el glow */
+}
+.net-btn{
+  display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;
+  border:1px solid var(--line);background:color-mix(in oklab,var(--card) 96%, transparent);
+  cursor:pointer;user-select:none;transition:.2s;min-height:44px
+}
+.net-btn:hover{transform:translateY(-2px)}
+.net-ico{width:22px;height:22px;display:grid;place-items:center}
+.net-name{font-weight:700}
+
+/* clientes (con verificación real y fallback de avatar) */
+.clients-box{
+  border:1px solid var(--line);border-radius:16px;background:color-mix(in oklab,var(--card) 96%, transparent);
+  padding:8px;display:grid;gap:8px;max-height:170px;overflow:auto;
+}
+.cl-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;border:1px solid transparent;background:rgba(255,255,255,.02)}
+.cl-item:hover{background:rgba(255,255,255,.04)}
+.cl-ava{width:34px;height:34px;border-radius:50%;overflow:hidden;display:grid;place-items:center;border:1px solid var(--line);background:#111}
+.cl-ava img{width:100%;height:100%;object-fit:cover}
+.cl-body{flex:1}
+.cl-user{font-weight:800;display:flex;align-items:center;gap:6px}
+.ig-badge{width:18px;height:18px}
+.cl-net{color:var(--muted);font-size:.86rem}
+.cl-right{opacity:.9}
+
+/* quick automation */
+.quick{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;background:color-mix(in oklab,var(--card) 96%, transparent);padding:10px}
+.quick input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
+.btn{border:1px solid var(--line);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.04);color:var(--text)}
+.btn-primary{border:0;background:var(--gradient);color:#0b0d13}
+
+/* =========================================================
+   SERVICES (con sub-vistas + volver)
+   ========================================================= */
+.sv-wrap{height:100%;display:grid;grid-template-rows:auto auto 1fr;gap:10px}
+.sv-nav{display:grid;grid-auto-flow:column;gap:8px;overflow:auto;padding-bottom:2px}
+.sv-chip{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);white-space:nowrap;cursor:pointer}
+.sv-chip.active{background:var(--gradient);color:#081018;border:0}
+.sv-head{display:flex;align-items:center;justify-content:space-between}
+.back-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:8px 10px;cursor:pointer}
+.sv-grid{height:100%;overflow:auto;display:grid;gap:12px;grid-template-columns:1fr}
+
+/* panel de servicio (ejemplo completo: Instagram → Comentarios) */
+.panel{border:1px solid var(--line);border-radius:16px;background:color-mix(in oklab,var(--card) 96%, transparent);padding:12px}
+.row{display:flex;align-items:center;gap:10px}
+.ico{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line)}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.form .input{background:rgba(255,255,255,.04)}
-.form .wide{grid-column:1/-1}
-.form .actions{display:flex;gap:10px}
+.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:10px}
+.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text)}
+.form .input.big{grid-column:1/-1}
 
-/* ====== Farm ====== */
-.farm{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-@media (max-width:900px){ .farm{grid-template-columns:repeat(2,1fr)} }
-@media (max-width:600px){ .farm{grid-template-columns:1fr} }
-.dev{display:grid;gap:8px;padding:10px}
-.dev-head{display:flex;justify-content:space-between;align-items:center}
-.screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:180px;position:relative}
-.screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.screen .placeholder{position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, var(--orb-a), transparent 60%), radial-gradient(120% 80% at 90% 80%, var(--orb-b), transparent 60%), #000}
+/* =========================================================
+   CLIENTS (pantalla)
+   ========================================================= */
+.clients-wrap{height:100%;display:grid;grid-template-rows:auto 1fr;gap:10px}
+.clients-list{overflow:auto;display:grid;gap:10px}
 
-/* ====== Firma (glow + breathing) ====== */
-.footer{
-  position:relative; display:grid; place-items:center; padding:6px 0 8px; pointer-events:none;
+/* =========================================================
+   DEVICE FARM
+   ========================================================= */
+.farm-wrap{height:100%;display:grid;grid-template-rows:auto 1fr;gap:10px}
+.farm-grid{height:100%;overflow:auto;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.dev{display:grid;gap:10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:color-mix(in oklab,var(--card) 96%, transparent)}
+.dev-head{display:flex;align-items:center;justify-content:space-between}
+.screen{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;height:180px;position:relative}
+.screen img,.screen video,.screen iframe{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:.78rem}
+
+/* =========================================================
+   ACCOUNTS
+   ========================================================= */
+.acc-wrap{height:100%;display:grid;grid-template-rows:auto 1fr;gap:10px}
+.acc-grid{overflow:auto;display:grid;gap:12px;grid-template-columns:1fr;max-width:840px}
+
+/* =========================================================
+   CREDIT “breathing”
+   ========================================================= */
+.credit{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--navH) + env(safe-area-inset-bottom) + 12px);z-index:25;
+  padding:8px 14px;border-radius:999px;border:1px solid color-mix(in oklab,var(--line),transparent 20%);
+  background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));
+  color:var(--text);font-weight:700;box-shadow:0 0 0 0 rgba(124,92,255,.35),0 0 0 0 rgba(0,211,194,.28);
+  animation:breath 4s ease-in-out infinite, glow 2.8s ease-in-out infinite;
 }
-.sig{
-  pointer-events:auto;
-  font-weight:800;
-  padding:8px 16px; border-radius:999px; color:#0b0d12;
-  background:linear-gradient(135deg,var(--ac1),var(--ac2));
-  box-shadow:0 0 12px rgba(124,92,255,.55), 0 0 22px rgba(0,211,194,.45);
-  animation:breath 3.2s ease-in-out infinite;
-}
-:root[data-theme="dark"] .sig{color:#0a0e14}
-@keyframes breath{
-  0%,100%{box-shadow:0 0 10px rgba(124,92,255,.5), 0 0 18px rgba(0,211,194,.38); transform:translateY(0) scale(1)}
-  50%{box-shadow:0 0 18px rgba(124,92,255,.8), 0 0 30px rgba(0,211,194,.6); transform:translateY(-1px) scale(1.03)}
+@keyframes breath{50%{transform:translateX(-50%) scale(1.035)}}
+@keyframes glow{
+  0%{box-shadow:0 0 10px rgba(124,92,255,.35),0 0 18px rgba(0,211,194,.22)}
+  50%{box-shadow:0 0 22px rgba(124,92,255,.65),0 0 34px rgba(0,211,194,.38)}
+  100%{box-shadow:0 0 10px rgba(124,92,255,.35),0 0 18px rgba(0,211,194,.22)}
 }
 
-/* util */
+/* helpers */
+.mono{font-variant-numeric:tabular-nums}
 .hint{color:var(--muted);font-size:.86rem}
-.sep{height:2px}
+.hide{display:none!important}
 </style>
 </head>
 <body>
 
-<!-- Tabs (sin JS) -->
-<input type="radio" name="tab" id="t-home" checked>
-<input type="radio" name="tab" id="t-services">
-<input type="radio" name="tab" id="t-clients">
-<input type="radio" name="tab" id="t-farm">
-<input type="radio" name="tab" id="t-acc">
+<!-- Tabs principales -->
+<input type="radio" name="tab" id="tab-home" checked>
+<input type="radio" name="tab" id="tab-services">
+<input type="radio" name="tab" id="tab-clients">
+<input type="radio" name="tab" id="tab-farm">
+<input type="radio" name="tab" id="tab-acc">
 
-<!-- ====== Sprite de íconos/brands ====== -->
+<!-- =========================================
+     SVG SPRITE (logos e íconos)
+     ========================================= -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
-    </linearGradient>
-    <symbol id="klogo" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
-      <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
-    </symbol>
+<defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
+  </linearGradient>
 
-    <!-- Nav icons -->
-    <symbol id="ico-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="ico-tools" viewBox="0 0 24 24"><path d="M3 21l6-6M7 3l3 3-2 2 6 6 2-2 3 3M14 7l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-    <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-    <symbol id="ico-devices" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></symbol>
-    <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <!-- Krave mark -->
+  <symbol id="klogo" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".16"/>
+    <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
+  </symbol>
 
-    <!-- IG verified (real badge simple) -->
-    <symbol id="ig-verified" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" fill="#0095F6"/>
-      <path d="M8.8 12.2l2.3 2.3 4.7-4.7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
+  <!-- UI -->
+  <symbol id="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="ico-moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="ico-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="ico-tools" viewBox="0 0 24 24"><path d="M3 21l6-6M7 3l3 3-2 2 6 6 2-2 3 3M14 7l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="ico-devices" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></symbol>
+  <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
 
-    <!-- Brands (minimal vector) -->
-    <symbol id="logo-instagram" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="17" cy="7" r="1.2" fill="#E1306C"/>
-    </symbol>
-    <symbol id="logo-tiktok" viewBox="0 0 24 24">
-      <path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/>
-      <path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/>
-    </symbol>
-    <symbol id="logo-youtube" viewBox="0 0 24 24">
-      <rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/>
-      <path d="M10 9l6 3-6 3z" fill="#fff"/>
-    </symbol>
-    <symbol id="logo-threads" viewBox="0 0 24 24">
-      <path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2"/>
-    </symbol>
-    <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
-    <symbol id="logo-facebook" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
-    <symbol id="logo-linkedin" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
-    <symbol id="logo-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" fill="none"/></symbol>
-    <symbol id="logo-telegram" viewBox="0 0 24 24"><path d="M21 3L3 11l6 2 2 6 3-4 4-10z" fill="#0088cc"/></symbol>
-    <symbol id="logo-whatsapp" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 1 0 18 9.4 9.4 0 0 1-4-.9L5 21l.9-3.1A9.4 9.4 0 0 1 3 12 9 9 0 0 1 12 3z" fill="#25D366"/><path d="M9 8c0 3 3 6 5 6l1-1" stroke="#fff" stroke-width="2"/></symbol>
-  </defs>
+  <!-- Verified (estilo Instagram) -->
+  <symbol id="ig-verified" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0095F6"/><path d="M8.8 12.2l2.2 2.2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+
+  <!-- Logos oficiales (vector simple y nítido) -->
+  <symbol id="logo-instagram" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+    <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
+  </symbol>
+  <symbol id="logo-tiktok" viewBox="0 0 24 24">
+    <path d="M10 4v9.6a3.6 3.6 0 1 1-3 5.4" fill="none" stroke="#69C9D0" stroke-width="2"/>
+    <path d="M14 4c.4 2.2 2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/>
+  </symbol>
+  <symbol id="logo-youtube" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/></symbol>
+  <symbol id="logo-threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2"/></symbol>
+  <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
+  <symbol id="logo-facebook" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
+  <symbol id="logo-linkedin" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
+  <symbol id="logo-telegram" viewBox="0 0 24 24"><path d="M21 3L3 11l6 2 2 6 3-4 4-10z" fill="#0088cc"/></symbol>
+  <symbol id="logo-whatsapp" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 1 0 18 9.4 9.4 0 0 1-4-.9L5 21l.9-3.1A9.4 9.4 0 0 1 3 12 9 9 0 0 1 12 3z" fill="#25D366"/><path d="M9 8c0 3 3 6 5 6l1-1" stroke="#fff" stroke-width="2"/></symbol>
+  <symbol id="logo-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" fill="none"/></symbol>
+</defs>
 </svg>
 
 <div class="app" id="app">
+  <!-- Top -->
   <header class="top">
     <div class="brand">
-      <div class="badge"><svg viewBox="0 0 64 64" width="20" height="20"><use href="#klogo"/></svg></div>
+      <div class="badge"><svg width="20" height="20" viewBox="0 0 64 64"><use href="#klogo"/></svg></div>
       <div class="word">KraveAI</div>
     </div>
-    <div class="status"><span class="dot"></span><small id="status-text">Sin conexión</small></div>
-    <button class="theme" id="themeBtn" title="Tema">🌓</button>
+    <div class="status"><span class="dot" id="status-dot"></span><small id="status-text">Conectando…</small></div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+      <svg class="icon-sun" width="18" height="18"><use href="#ico-sun"/></svg>
+      <svg class="icon-moon" width="18" height="18"><use href="#ico-moon"/></svg>
+    </button>
   </header>
 
+  <!-- Main -->
   <main class="main">
-    <div class="fit" id="fitRoot">
-      <!-- ===== HERO ORB ===== -->
-      <div class="hero section card">
-        <div>
-          <h1 class="h1">Redes sociales</h1>
-          <p class="p">Domina todas tus redes con IA</p>
-        </div>
-        <div class="orb-wrap"><div class="orb" id="orb"></div></div>
-      </div>
-
-      <!-- ===== HOME ===== -->
-      <section class="view section card" data-v="home">
-        <div class="home">
-          <!-- Lista de redes -->
+    <!-- =============== HOME (sin scroll) =============== -->
+    <section class="view" data-tab="home">
+      <div class="home-wrap">
+        <div class="hero">
           <div>
-            <div class="hint" style="margin-bottom:6px;font-weight:800">Redes sociales</div>
-            <div class="grid-social" id="socialGrid"></div>
+            <div class="h1">Redes sociales</div>
+            <div class="sub">Domina todas tus redes con IA</div>
           </div>
+          <div class="hero-ball" aria-hidden="true"></div>
+        </div>
 
-          <!-- Acciones rápidas -->
-          <div class="actions">
-            <div class="hint" style="margin-bottom:6px;font-weight:800">Acciones rápidas</div>
-            <div class="row">
-              <div class="input"><span>➕</span><input id="quick" placeholder="Pega una URL o escribe una acción"></div>
-              <button class="btn" id="quickGo">Enviar</button>
+        <div>
+          <div class="section-title">Redes sociales</div>
+          <div class="networks" id="networks">
+            <button class="net-btn" data-net="instagram"><span class="net-ico"><svg><use href="#logo-instagram"/></svg></span><span class="net-name">Instagram</span></button>
+            <button class="net-btn" data-net="tiktok"><span class="net-ico"><svg><use href="#logo-tiktok"/></svg></span><span class="net-name">TikTok</span></button>
+            <button class="net-btn" data-net="youtube"><span class="net-ico"><svg><use href="#logo-youtube"/></svg></span><span class="net-name">YouTube</span></button>
+            <button class="net-btn" data-net="spotify"><span class="net-ico"><svg><use href="#logo-spotify"/></svg></span><span class="net-name">Spotify</span></button>
+            <button class="net-btn" data-net="threads"><span class="net-ico"><svg><use href="#logo-threads"/></svg></span><span class="net-name">Threads</span></button>
+            <button class="net-btn" data-net="x"><span class="net-ico"><svg><use href="#logo-x"/></svg></span><span class="net-name">X</span></button>
+            <button class="net-btn" data-net="facebook"><span class="net-ico"><svg><use href="#logo-facebook"/></svg></span><span class="net-name">Facebook</span></button>
+            <button class="net-btn" data-net="linkedin"><span class="net-ico"><svg><use href="#logo-linkedin"/></svg></span><span class="net-name">LinkedIn</span></button>
+            <button class="net-btn" data-net="telegram"><span class="net-ico"><svg><use href="#logo-telegram"/></svg></span><span class="net-name">Telegram</span></button>
+            <button class="net-btn" data-net="whatsapp"><span class="net-ico"><svg><use href="#logo-whatsapp"/></svg></span><span class="net-name">WhatsApp</span></button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title">Clientes recientes</div>
+          <div class="clients-box" id="home-clients">
+            <!-- Límite corto en Home (lista completa en Clientes) -->
+            <div class="cl-item">
+              <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=67" alt="aaron" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+              <div class="cl-body">
+                <div class="cl-user">@aaronmercury <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+                <div class="cl-net">Instagram</div>
+              </div>
+              <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
             </div>
-            <div class="sep"></div>
-            <div class="clients-bar" id="clientsBar">
-              <!-- Clientes (2 columnas) -->
+            <div class="cl-item">
+              <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=21" alt="televisa" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+              <div class="cl-body">
+                <div class="cl-user">@televisadigital <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+                <div class="cl-net">Instagram</div>
+              </div>
+              <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
+            </div>
+            <div class="cl-item">
+              <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=5" alt="joscanela" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+              <div class="cl-body">
+                <div class="cl-user">@joscanela <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+                <div class="cl-net">Instagram</div>
+              </div>
+              <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
+            </div>
+            <div class="cl-item">
+              <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=36" alt="jimena" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+              <div class="cl-body">
+                <div class="cl-user">@jimenagallegotv <svg class="ig-badge"><use href="#ig-verified"/></svg></div>
+                <div class="cl-net">Instagram</div>
+              </div>
+              <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
             </div>
           </div>
         </div>
-      </section>
 
-      <!-- ===== SERVICES ===== -->
-      <section class="view section card" data-v="services">
-        <div class="svc-head">
-          <div class="svc-title">
-            <div class="avatar"><svg id="svcLogo"><use href="#logo-instagram"/></svg></div>
-            <div id="svcTitle">Instagram</div>
+        <div class="quick">
+          <span>➕</span>
+          <input id="quick-input" placeholder="¿Qué quieres automatizar hoy?">
+          <button class="btn-primary" id="quick-run">Enviar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== SERVICES =============== -->
+    <section class="view" data-tab="services">
+      <div class="sv-wrap">
+        <div class="sv-head">
+          <div class="section-title" id="sv-title">Servicios</div>
+          <button class="back-btn hide" id="sv-back">← Volver</button>
+        </div>
+
+        <!-- Chips de redes para filtrar -->
+        <div class="sv-nav" id="sv-nets">
+          <button class="sv-chip" data-net="instagram"><svg width="18" height="18"><use href="#logo-instagram"/></svg>Instagram</button>
+          <button class="sv-chip" data-net="tiktok"><svg width="18" height="18"><use href="#logo-tiktok"/></svg>TikTok</button>
+          <button class="sv-chip" data-net="youtube"><svg width="18" height="18"><use href="#logo-youtube"/></svg>YouTube</button>
+          <button class="sv-chip" data-net="spotify"><svg width="18" height="18"><use href="#logo-spotify"/></svg>Spotify</button>
+          <button class="sv-chip" data-net="threads"><svg width="18" height="18"><use href="#logo-threads"/></svg>Threads</button>
+          <button class="sv-chip" data-net="x"><svg width="18" height="18"><use href="#logo-x"/></svg>X</button>
+          <button class="sv-chip" data-net="facebook"><svg width="18" height="18"><use href="#logo-facebook"/></svg>Facebook</button>
+          <button class="sv-chip" data-net="linkedin"><svg width="18" height="18"><use href="#logo-linkedin"/></svg>LinkedIn</button>
+          <button class="sv-chip" data-net="telegram"><svg width="18" height="18"><use href="#logo-telegram"/></svg>Telegram</button>
+          <button class="sv-chip" data-net="whatsapp"><svg width="18" height="18"><use href="#logo-whatsapp"/></svg>WhatsApp</button>
+        </div>
+
+        <!-- Contenido de servicios (lista por red o panel detallado) -->
+        <div class="sv-grid">
+          <!-- LISTA DE SERVICIOS DE UNA RED -->
+          <div id="sv-list">
+
+            <!-- Instagram -->
+            <div class="panel sv-section" data-net="instagram">
+              <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><strong>Instagram</strong><div class="hint">Elige un servicio</div></div></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+                <button class="sv-chip" data-service="ig-comments">Comentarios</button>
+                <button class="sv-chip" data-service="ig-likes">Likes</button>
+                <button class="sv-chip" data-service="ig-follows">Seguidores</button>
+                <button class="sv-chip" data-service="ig-views">Vistas</button>
+              </div>
+            </div>
+
+            <!-- Otras redes: solo placeholders visuales para navegar al panel (sin inventar métricas) -->
+            <div class="panel sv-section" data-net="tiktok">
+              <div class="row"><div class="ico"><svg><use href="#logo-tiktok"/></svg></div><div><strong>TikTok</strong><div class="hint">Servicios: Vistas, Likes, Seguidores</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="youtube">
+              <div class="row"><div class="ico"><svg><use href="#logo-youtube"/></svg></div><div><strong>YouTube</strong><div class="hint">Servicios: Vistas, Likes, Comentarios, Suscripciones</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="spotify">
+              <div class="row"><div class="ico"><svg><use href="#logo-spotify"/></svg></div><div><strong>Spotify</strong><div class="hint">Servicios: Streams, Saves</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="threads">
+              <div class="row"><div class="ico"><svg><use href="#logo-threads"/></svg></div><div><strong>Threads</strong><div class="hint">Servicios: Likes, Respuestas</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="x">
+              <div class="row"><div class="ico"><svg><use href="#logo-x"/></svg></div><div><strong>X</strong><div class="hint">Servicios: Likes, Reposts, Respuestas</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="facebook">
+              <div class="row"><div class="ico"><svg><use href="#logo-facebook"/></svg></div><div><strong>Facebook</strong><div class="hint">Servicios: Reacciones, Comentarios</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="linkedin">
+              <div class="row"><div class="ico"><svg><use href="#logo-linkedin"/></svg></div><div><strong>LinkedIn</strong><div class="hint">Servicios: Reacciones, Comentarios, Conexiones</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="telegram">
+              <div class="row"><div class="ico"><svg><use href="#logo-telegram"/></svg></div><div><strong>Telegram</strong><div class="hint">Servicios: Mensajes, Miembros</div></div></div>
+            </div>
+            <div class="panel sv-section" data-net="whatsapp">
+              <div class="row"><div class="ico"><svg><use href="#logo-whatsapp"/></svg></div><div><strong>WhatsApp</strong><div class="hint">Servicios: Mensajes</div></div></div>
+            </div>
           </div>
-          <button class="btn" id="backHome">Volver</button>
+
+          <!-- PANEL DETALLADO DE UN SERVICIO -->
+          <div id="sv-panel" class="hide">
+            <!-- IG → Comentarios (cableado real) -->
+            <div class="panel" data-panel="ig-comments">
+              <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><strong>Instagram — Comentarios</strong><div class="hint">Masivo / Auto / Personalizado</div></div></div>
+              <form class="form" id="form-ig-comments" autocomplete="off">
+                <div class="input big"><span>🔗</span><input name="url" placeholder="URL del post (https://www.instagram.com/p/...)" required></div>
+                <div class="input"><span>#</span><input type="number" name="cantidad" min="1" max="100" value="30" placeholder="Cantidad"></div>
+                <div class="input"><span>🎛️</span><input name="modo" value="auto" list="modos"></div>
+                <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
+                <div class="input big"><span>🧑‍💼</span><input name="apodo" placeholder="Apodo (opcional)"></div>
+                <div class="input"><span>🎯</span><input name="estilo" placeholder="Estilo (fitness, sexy, etc)"></div>
+                <div class="input"><span>🏷️</span><input name="actividad" placeholder="Actividad (entrenador, etc)"></div>
+                <div class="input big"><span>📝</span><input name="ejemplos" placeholder="Ejemplos (uno por línea)"></div>
+                <button class="btn-primary" type="submit">Lanzar</button>
+                <button class="btn" type="reset">Cancelar</button>
+              </form>
+              <div id="ig-comments-status" class="hint" style="margin-top:8px">—</div>
+            </div>
+
+            <!-- IG → Likes (placeholder de flujo) -->
+            <div class="panel" data-panel="ig-likes">
+              <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><strong>Instagram — Likes</strong><div class="hint">En cola de integración</div></div></div>
+              <div class="input big" style="margin-top:10px"><span>🔗</span><input placeholder="URL del post"></div>
+              <button class="btn-primary" style="margin-top:6px">Programar</button>
+            </div>
+
+            <!-- IG → Seguidores -->
+            <div class="panel" data-panel="ig-follows">
+              <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><strong>Instagram — Seguidores</strong><div class="hint">En cola de integración</div></div></div>
+              <div class="input big" style="margin-top:10px"><span>@</span><input placeholder="@usuario"></div>
+              <button class="btn-primary" style="margin-top:6px">Programar</button>
+            </div>
+
+            <!-- IG → Vistas -->
+            <div class="panel" data-panel="ig-views">
+              <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><strong>Instagram — Vistas</strong><div class="hint">En cola de integración</div></div></div>
+              <div class="input big" style="margin-top:10px"><span>🔗</span><input placeholder="URL del Reel"></div>
+              <button class="btn-primary" style="margin-top:6px">Programar</button>
+            </div>
+          </div>
         </div>
-        <div class="svc-grid" id="svcGrid"></div>
+      </div>
+    </section>
 
-        <!-- Subvistas (ej. Instagram → Comentarios) -->
-        <div id="svcView"></div>
-      </section>
-
-      <!-- ===== CLIENTS ===== -->
-      <section class="view section card" data-v="clients">
-        <div class="hint" style="margin-bottom:6px;font-weight:800">Clientes recientes</div>
-        <div class="clients-bar" id="clientsFull"></div>
-      </section>
-
-      <!-- ===== FARM ===== -->
-      <section class="view section card" data-v="farm">
-        <div class="svc-head"><div class="svc-title">Device Farm</div></div>
-        <div class="farm" id="farmGrid"></div>
-      </section>
-
-      <!-- ===== ACCOUNTS ===== -->
-      <section class="view section card" data-v="acc">
-        <div class="svc-head"><div class="svc-title">Cuentas</div></div>
-        <div class="hint">Login simulado. Integra tu backend cuando quieras.</div>
-        <div class="form" style="margin-top:8px">
-          <div class="input wide"><span>@</span><input id="accUser" placeholder="Usuario"></div>
-          <div class="input wide"><span>🔒</span><input id="accPass" type="password" placeholder="Contraseña"></div>
-          <div class="actions"><button class="btn" id="loginBtn">Iniciar sesión</button></div>
+    <!-- =============== CLIENTS =============== -->
+    <section class="view" data-tab="clients">
+      <div class="clients-wrap">
+        <div class="section-title">Clientes</div>
+        <div class="clients-list">
+          <!-- mismos que Home + espacio para más -->
+          <div class="cl-item">
+            <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=67" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+            <div class="cl-body"><div class="cl-user">@aaronmercury <svg class="ig-badge"><use href="#ig-verified"/></svg></div><div class="cl-net">Instagram</div></div>
+            <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
+          </div>
+          <div class="cl-item">
+            <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=21" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+            <div class="cl-body"><div class="cl-user">@televisadigital <svg class="ig-badge"><use href="#ig-verified"/></svg></div><div class="cl-net">Instagram</div></div>
+            <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
+          </div>
+          <div class="cl-item">
+            <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=5" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+            <div class="cl-body"><div class="cl-user">@joscanela <svg class="ig-badge"><use href="#ig-verified"/></svg></div><div class="cl-net">Instagram</div></div>
+            <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
+          </div>
+          <div class="cl-item">
+            <div class="cl-ava"><img src="https://i.pravatar.cc/80?img=36" onerror="this.src='';this.closest('.cl-ava').innerHTML='<svg width=22 height=22><use href=#logo-instagram/></svg>'"></div>
+            <div class="cl-body"><div class="cl-user">@jimenagallegotv <svg class="ig-badge"><use href="#ig-verified"/></svg></div><div class="cl-net">Instagram</div></div>
+            <div class="cl-right"><svg width="18" height="18"><use href="#logo-instagram"/></svg></div>
+          </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+
+    <!-- =============== FARM =============== -->
+    <section class="view" data-tab="farm">
+      <div class="farm-wrap">
+        <div class="section-title">Device Farm</div>
+        <div class="farm-grid" id="farm-grid"></div>
+      </div>
+    </section>
+
+    <!-- =============== ACCOUNTS =============== -->
+    <section class="view" data-tab="acc">
+      <div class="acc-wrap">
+        <div class="section-title">Cuentas</div>
+        <div class="acc-grid">
+          <div class="panel">
+            <div class="row"><div class="ico"><svg><use href="#ico-lock"/></svg></div><div><strong>Sesión</strong><div class="hint mono" id="session-sub">Verificando…</div></div></div>
+            <div class="form" style="margin-top:10px">
+              <div class="input big"><span>@</span><input id="login-username" placeholder="Usuario"></div>
+              <div class="input big"><span>🔒</span><input id="login-password" type="password" placeholder="Contraseña"></div>
+              <button class="btn-primary" id="login-btn">Iniciar sesión</button>
+              <button class="btn" id="logout-btn">Cerrar sesión</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><strong>Agregar cuenta manual</strong><div class="hint">Se valida y se inserta</div></div></div>
+            <div class="form" style="margin-top:10px">
+              <div class="input big"><span>@</span><input id="manual-username" placeholder="@usuario"></div>
+              <div class="input big"><span>🔒</span><input id="manual-password" type="password" placeholder="••••••••"></div>
+              <button class="btn-primary" id="add-account-btn">Guardar cuenta</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="row"><div class="ico"><svg><use href="#ico-users"/></svg></div><div><strong>Cuentas activas</strong><div class="hint">Actualiza cada 30s</div></div></div>
+            <div id="accounts-list" style="display:grid;gap:8px;margin-top:10px"><div class="hint">Cargando…</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
-
-  <!-- Firma -->
-  <footer class="footer"><div class="sig" id="sig">Created by Karmean Gómez</div></footer>
 
   <!-- Bottom nav -->
   <nav class="nav">
-    <label class="tab" for="t-home"><svg><use href="#ico-home"/></svg><small>Inicio</small></label>
-    <label class="tab" for="t-services"><svg><use href="#ico-tools"/></svg><small>Servicios</small></label>
-    <label class="tab" for="t-clients"><svg><use href="#ico-users"/></svg><small>Clientes</small></label>
-    <label class="tab" for="t-farm"><svg><use href="#ico-devices"/></svg><small>Farm</small></label>
-    <label class="tab" for="t-acc"><svg><use href="#ico-lock"/></svg><small>Cuentas</small></label>
+    <label class="tab" for="tab-home"><svg><use href="#ico-home"/></svg><small>Inicio</small></label>
+    <label class="tab" for="tab-services"><svg><use href="#ico-tools"/></svg><small>Servicios</small></label>
+    <label class="tab" for="tab-clients"><svg><use href="#ico-users"/></svg><small>Clientes</small></label>
+    <label class="tab" for="tab-farm"><svg><use href="#ico-devices"/></svg><small>Farm</small></label>
+    <label class="tab" for="tab-acc"><svg><use href="#ico-lock"/></svg><small>Cuentas</small></label>
   </nav>
 </div>
 
+<!-- Credit breathing -->
+<div class="credit">Created by Karmean Gómez</div>
+
 <script>
-/* ============= Tema persistente ============= */
-const root = document.documentElement;
-const themeBtn = document.getElementById('themeBtn');
-root.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
-themeBtn.onclick = () => {
-  const t = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  root.setAttribute('data-theme', t); localStorage.setItem('theme', t);
-};
+(function(){
+  const API_URL = "https://api.kraveapi.xyz";
 
-/* ============= Health (solo indicador visual) ============= */
-const statusText = document.getElementById('status-text');
-statusText.textContent = 'Sin conexión';
+  /* ================= THEME ================= */
+  const themeToggle = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  themeToggle.addEventListener('click', ()=>{
+    const t = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('theme', t);
+  });
 
-/* ============= Fit-to-viewport (sin scroll) ============= */
-const fitRoot = document.getElementById('fitRoot');
-function fit(){
-  // Escala el contenido si no cabe verticalmente
-  const maxH = document.querySelector('.main').clientHeight - 6;
-  const rect = fitRoot.getBoundingClientRect();
-  const scale = Math.min(1, (maxH) / rect.height);
-  fitRoot.style.transform = `scale(${scale}) translateZ(0)`;
-}
-new ResizeObserver(fit).observe(document.querySelector('.main'));
-window.addEventListener('load', fit);
-window.addEventListener('orientationchange', () => setTimeout(fit, 300));
+  /* ================= BACKEND STATUS ================= */
+  const statusDot = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+  async function checkHealth(){
+    try{
+      const r = await fetch(`${API_URL}/health`,{credentials:'include'});
+      if(r.ok){statusDot.style.background='var(--ok)';statusText.textContent='Conectado';}
+      else throw new Error();
+    }catch{statusDot.style.background='var(--err)';statusText.textContent='Sin conexión';}
+  }
+  checkHealth(); setInterval(checkHealth, 120000);
 
-/* ============= Redes (Home) ============= */
-const networks = [
-  {key:'instagram', label:'Instagram', logo:'#logo-instagram', services:['Comentarios','Likes','Seguidores','Vistas']},
-  {key:'tiktok', label:'TikTok', logo:'#logo-tiktok', services:['Vistas','Likes','Seguidores']},
-  {key:'youtube', label:'YouTube', logo:'#logo-youtube', services:['Vistas','Likes','Suscripciones','Comentarios']},
-  {key:'threads', label:'Threads', logo:'#logo-threads', services:['Respuestas','Likes']},
-  {key:'x', label:'X', logo:'#logo-x', services:['Likes','Reposts','Seguidores','Respuestas']},
-  {key:'facebook', label:'Facebook', logo:'#logo-facebook', services:['Reacciones','Comentarios','Compartidos']},
-  {key:'linkedin', label:'LinkedIn', logo:'#logo-linkedin', services:['Reacciones','Comentarios','Conexiones','Visitas']},
-  {key:'spotify', label:'Spotify', logo:'#logo-spotify', services:['Streams','Saves']},
-  {key:'telegram', label:'Telegram', logo:'#logo-telegram', services:['Mensajes','Miembros']},
-  {key:'whatsapp', label:'WhatsApp', logo:'#logo-whatsapp', services:['Mensajes','Grupos','Respuestas']},
-];
-const socialGrid = document.getElementById('socialGrid');
-socialGrid.innerHTML = networks.map(n => `
-  <button class="btn-net" data-net="${n.key}">
-    <span class="ico"><svg><use href="${n.logo}"></use></svg></span>${n.label}
-  </button>`).join('');
+  /* ================= HOME → redes abren Servicios ================= */
+  const netsHome = document.getElementById('networks');
+  const svNets = document.getElementById('sv-nets');
+  const svTitle = document.getElementById('sv-title');
+  const svList = document.getElementById('sv-list');
+  const svPanel = document.getElementById('sv-panel');
+  const svBack = document.getElementById('sv-back');
 
-/* Navega a Servicios con red seleccionada */
-const svcTitle = document.getElementById('svcTitle');
-const svcLogo  = document.getElementById('svcLogo');
-const svcGrid  = document.getElementById('svcGrid');
-const svcView  = document.getElementById('svcView');
+  function selectServicesNet(net){
+    document.getElementById('tab-services').checked = true;
+    [...svNets.children].forEach(ch=>{
+      ch.classList.toggle('active', ch.dataset.net===net);
+    });
+    svTitle.textContent = 'Servicios — ' + net.charAt(0).toUpperCase()+net.slice(1);
+    // mostrar solo la sección de esa red
+    [...svList.querySelectorAll('.sv-section')].forEach(sec=>{
+      sec.style.display = (sec.dataset.net===net)?'block':'none';
+    });
+    svList.classList.remove('hide');
+    svPanel.classList.add('hide');
+    svBack.classList.add('hide');
+  }
 
-function openServices(netKey){
-  const n = networks.find(x=>x.key===netKey) || networks[0];
-  document.getElementById('t-services').checked = true;
-  svcTitle.textContent = n.label;
-  svcLogo.setAttribute('href', n.logo);
-  svcGrid.innerHTML = n.services.map(s=>`<button class="svc-btn" data-svc="${s}" data-net="${n.key}">${s}</button>`).join('');
-  svcView.innerHTML = ''; // limpia subvista
-  fit();
-}
-socialGrid.addEventListener('click', e=>{
-  const b = e.target.closest('.btn-net'); if(!b) return;
-  openServices(b.dataset.net);
-});
-document.getElementById('backHome').onclick = ()=>{ document.getElementById('t-home').checked = true; fit(); };
+  netsHome.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.net-btn');
+    if(btn) selectServicesNet(btn.dataset.net);
+  });
+  svNets.addEventListener('click',(e)=>{
+    const chip=e.target.closest('.sv-chip'); if(!chip) return;
+    selectServicesNet(chip.dataset.net);
+  });
 
-/* Subvistas de servicio (ejemplo completo: Instagram → Comentarios) */
-svcGrid.addEventListener('click', e=>{
-  const b = e.target.closest('.svc-btn'); if(!b) return;
-  const {svc, net} = b.dataset;
-  if(net==='instagram' && svc==='Comentarios'){
-    svcView.innerHTML = `
-      <div class="form">
-        <div class="input wide"><span>🔗</span><input id="ig_url" placeholder="URL del post (https://www.instagram.com/p/...)" required></div>
-        <div class="input"><span>#</span><input id="ig_qty" type="number" min="1" max="100" value="30" placeholder="Cantidad"></div>
-        <div class="input"><span>🎛️</span><input id="ig_mode" value="auto" list="modos" placeholder="Modo"></div>
-        <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
-        <div class="input wide"><span>🧑‍💼</span><input id="ig_apodo" placeholder="Apodo (opcional)"></div>
-        <div class="input"><span>🎯</span><input id="ig_estilo" placeholder="Estilo (fitness, sexy, etc)"></div>
-        <div class="input"><span>🏷️</span><input id="ig_act" placeholder="Actividad (entrenador, etc)"></div>
-        <div class="input wide"><span>📝</span><input id="ig_ej" placeholder="Ejemplos (uno por línea)"></div>
-        <div class="actions"><button class="btn" id="ig_send">Lanzar</button></div>
-      </div>
-      <div class="hint" id="ig_status" style="margin-top:4px">—</div>
-    `;
-    // wire
-    document.getElementById('ig_send').onclick = async ()=>{
-      const API_URL = "https://api.kraveapi.xyz";
-      const payload = {
-        url: document.getElementById('ig_url').value.trim(),
-        cantidad: document.getElementById('ig_qty').value,
-        modo: document.getElementById('ig_mode').value,
-        apodo: document.getElementById('ig_apodo').value,
-        estilo: document.getElementById('ig_estilo').value,
-        actividad: document.getElementById('ig_act').value,
-        ejemplos: document.getElementById('ig_ej').value
-      };
-      const st = document.getElementById('ig_status');
-      if(!payload.url){ st.textContent='❌ Falta URL'; return; }
+  /* ===== abrir panel de un servicio específico ===== */
+  svList.addEventListener('click',(e)=>{
+    const chip=e.target.closest('.sv-chip'); if(!chip) return;
+    const id = chip.dataset.service;
+    // mostrar panel
+    [...svPanel.children].forEach(p=> p.style.display = (p.dataset.panel===id)?'block':'none');
+    svList.classList.add('hide');
+    svPanel.classList.remove('hide');
+    svBack.classList.remove('hide');
+  });
+  svBack.addEventListener('click',()=>{
+    svPanel.classList.add('hide');
+    svList.classList.remove('hide');
+    svBack.classList.add('hide');
+  });
+
+  /* ================= Quick automation ================= */
+  function toast(msg,err){
+    const el=document.createElement('div');
+    el.textContent=msg;
+    el.style.cssText=`position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;
+      background:${err?'#ef4444':'#1f2937'};color:#fff;padding:8px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.15)`;
+    document.body.appendChild(el); setTimeout(()=>el.remove(),2200);
+  }
+  document.getElementById('quick-run').addEventListener('click',()=>{
+    const v=(document.getElementById('quick-input').value||'').trim();
+    if(!v){toast('Escribe qué automatizar',true);return}
+    toast('OK: '+v);
+    document.getElementById('quick-input').value='';
+  });
+
+  /* ================= IG → Comentarios (cableado) ================= */
+  const igStatus = document.getElementById('ig-comments-status');
+  const igForm = document.getElementById('form-ig-comments');
+  igForm.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(igForm);
+    const payload = Object.fromEntries(fd.entries());
+    if(!payload.url){ toast('Falta URL', true); return;}
+    try{
+      igStatus.textContent='Enviando…';
+      const r=await fetch(`${API_URL}/instagram/comentarios`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        credentials:'include',body:JSON.stringify(payload)
+      });
+      const d=await r.json().catch(()=>({}));
+      if(r.ok){ igStatus.textContent='✅ Comentarios en proceso'; toast('Comentarios lanzados'); }
+      else{ throw new Error(d.mensaje||'Error en comentarios'); }
+    }catch(err){ igStatus.textContent='❌ '+err.message; toast(err.message,true); }
+  });
+
+  /* ================= Accounts ================= */
+  const sessionSub=document.getElementById('session-sub');
+  async function checkSession(){
+    try{
+      const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
+      const d=await r.json();
+      sessionSub.textContent=(d.status==='activo')?`Sesión activa como @${d.usuario}`:'No hay sesión activa';
+    }catch{ sessionSub.textContent='Error al verificar sesión'; }
+  }
+  checkSession();
+
+  document.getElementById('login-btn').addEventListener('click', async ()=>{
+    const u=document.getElementById('login-username').value.trim().replace('@','');
+    const p=document.getElementById('login-password').value.trim();
+    if(!u||!p) return toast('Completa usuario y contraseña',true);
+    try{
+      const btn=document.getElementById('login-btn'); btn.textContent='Iniciando…'; btn.disabled=true;
+      const r=await fetch(`${API_URL}/iniciar-sesion`,{
+        method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})
+      });
+      const d=await r.json();
+      if(d.exito){toast('Sesión iniciada @'+d.usuario); sessionSub.textContent=`Sesión activa como @${d.usuario}`;}
+      else throw new Error(d.mensaje||'Error al iniciar');
+    }catch(err){ toast(err.message,true) }
+    finally{ const btn=document.getElementById('login-btn'); btn.textContent='Iniciar sesión'; btn.disabled=false; }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async ()=>{
+    try{
+      const btn=document.getElementById('logout-btn'); btn.textContent='Cerrando…'; btn.disabled=true;
+      const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'});
+      const d=await r.json();
+      if(d.exito){ toast('Sesión cerrada'); sessionSub.textContent='No hay sesión activa'; }
+      else throw new Error(d.mensaje||'Error al cerrar');
+    }catch(err){ toast(err.message,true) }
+    finally{ const btn=document.getElementById('logout-btn'); btn.textContent='Cerrar sesión'; btn.disabled=false; }
+  });
+
+  const accountsList=document.getElementById('accounts-list');
+  async function loadAccounts(){
+    try{
+      const r=await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'});
+      const arr=await r.json();
+      if(!Array.isArray(arr)||arr.length===0){accountsList.innerHTML='<div class="hint">No hay cuentas activas</div>';return}
+      accountsList.innerHTML=arr.map(acc=>`
+        <div class="panel" style="padding:8px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:10px;height:10px;border-radius:50%;background:${acc.status==='activo'?'var(--ok)':'var(--err)'}"></span>
+            <strong>@${acc.username}</strong>
+          </div>
+          <div style="display:flex;gap:6px">
+            ${acc.status==='activo' ? `<button class="btn" data-logout="${acc.username}">Logout</button>` : `<button class="btn-primary" data-login="${acc.username}">Login</button>`}
+          </div>
+        </div>`).join('');
+    }catch{ accountsList.innerHTML='<div class="hint">Error al cargar cuentas</div>'; }
+  }
+  loadAccounts(); setInterval(loadAccounts, 30000);
+
+  accountsList.addEventListener('click', async (e)=>{
+    const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.login){
+      toast('Iniciando @'+b.dataset.login+'…');
       try{
-        st.textContent='Enviando…';
-        const r=await fetch(`${API_URL}/instagram/comentarios`,{
-          method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
-          body:JSON.stringify(payload)
+        const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{
+          method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.login})
         });
-        const d=await r.json().catch(()=>({}));
-        if(r.ok){ st.textContent='✅ Comentarios en proceso'; } else { throw new Error(d.mensaje||'Error en comentarios'); }
-      }catch(err){ st.textContent='❌ '+err.message; }
-    };
-  } else {
-    // placeholder limpio sin datos falsos
-    svcView.innerHTML = `<div class="hint" style="margin-top:8px">Seleccionaste <b>${svc}</b> de <b>${net}</b>. Integra aquí tu flujo.</div>`;
+        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
+        toast('Sesión iniciada @'+b.dataset.login); loadAccounts();
+      }catch(err){ toast(err.message,true) }
+    }
+    if(b.dataset.logout){
+      toast('Cerrando @'+b.dataset.logout+'…');
+      try{
+        const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{
+          method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})
+        });
+        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
+        toast('Sesión cerrada @'+b.dataset.logout); loadAccounts();
+      }catch(err){ toast(err.message,true) }
+    }
+  });
+
+  /* ================= Device Farm ================= */
+  const farmGrid=document.getElementById('farm-grid');
+  const devices=[
+    {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
+    {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
+    {id:'dev3',name:'iPhone 13',os:'iOS',ip:'10.0.0.10'},
+    {id:'dev4',name:'Pixel 8',os:'Android',ip:'10.0.0.11'}
+  ];
+  function renderFarm(){
+    farmGrid.innerHTML = devices.map(d=>{
+      const src = localStorage.getItem('stream:'+d.id)||'';
+      return `
+        <div class="dev">
+          <div class="dev-head">
+            <div><strong>${d.name}</strong> · ${d.os}</div>
+            <div class="chips"><span class="chip">${src? 'Live':'Idle'}</span><span class="chip">${d.ip}</span></div>
+          </div>
+          <div class="screen">
+            ${src ? (src.endsWith('.mjpg')||src.endsWith('.mjpeg')?`<img src="${src}">`: src.endsWith('.m3u8')?`<video src="${src}" autoplay muted playsinline></video>`:`<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`) : '<img alt="" src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 600 300%27%3E%3Cdefs%3E%3CradialGradient id=%27g%27 cx=%270%27 cy=%270%27 r=%271%27 gradientUnits=%27userSpaceOnUse%27 gradientTransform=%27translate(120,80) scale(320)%27%3E%3Cstop stop-color=%27%237c5cff%27/%3E%3Cstop offset=%270.6%27 stop-color=%27%2300d3c2%27 stop-opacity=%270.35%27/%3E%3Cstop offset=%271%27 stop-color=%27%23000000%27/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width=%27600%27 height=%27300%27 fill=%27%23000%27/%3E%3Crect width=%27600%27 height=%27300%27 fill=%27url(%23g)%27 opacity=%270.5%27/%3E%3C/svg%3E">'}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-primary" data-set="${d.id}">Asignar stream</button>
+            <button class="btn" data-clear="${d.id}">Limpiar</button>
+          </div>
+        </div>`;
+    }).join('');
   }
-  fit();
-});
+  renderFarm();
+  farmGrid.addEventListener('click',(e)=>{
+    const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.set){
+      const id=b.dataset.set; const cur=localStorage.getItem('stream:'+id)||'';
+      const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur);
+      if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); toast('Stream actualizado'); }
+    }
+    if(b.dataset.clear){ const id=b.dataset.clear; localStorage.removeItem('stream:'+id); renderFarm(); toast('Stream limpiado'); }
+  });
 
-/* ============= Quick ============= */
-document.getElementById('quickGo').onclick = ()=>{
-  const v = (document.getElementById('quick').value||'').trim();
-  if(!v) return;
-  alert('Automatizando: '+v);
-  document.getElementById('quick').value='';
-};
-
-/* ============= Clientes ============= */
-const clients = [
-  {handle:'@aaronmercury',  network:'Instagram', avatar:'' , verified:true},
-  {handle:'@televisadigital', network:'Instagram', avatar:'', verified:true},
-  {handle:'@joscanela',     network:'Instagram', avatar:'' , verified:true},
-  {handle:'@jimenagallegotv', network:'Instagram', avatar:'', verified:true},
-];
-function clientHTML(c){
-  return `<div class="client">
-    <div class="avatar">
-      ${c.avatar ? `<img src="${c.avatar}" alt="" style="width:100%;height:100%;object-fit:cover">`
-                  : `<svg><use href="#logo-instagram"/></svg>`}
-    </div>
-    <div style="display:flex;flex-direction:column">
-      <div style="display:flex;align-items:center;gap:6px">
-        <span class="handle">${c.handle}</span>
-        ${c.verified ? `<svg class="ig-verify"><use href="#ig-verified"/></svg>`:''}
-      </div>
-      <div class="sub">${c.network}</div>
-    </div>
-  </div>`;
-}
-document.getElementById('clientsBar').innerHTML = clients.slice(0,2).map(clientHTML).join('');
-document.getElementById('clientsFull').innerHTML = clients.map(clientHTML).join('');
-
-/* ============= Farm ============= */
-const farmDefault=[
-  {id:'d1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
-  {id:'d2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
-  {id:'d3',name:'iPhone 13',os:'iOS',ip:'10.0.0.10'},
-  {id:'d4',name:'Pixel 8',os:'Android',ip:'10.0.0.11'},
-];
-const farmGrid=document.getElementById('farmGrid');
-function renderFarm(){
-  farmGrid.innerHTML = farmDefault.map(d=>{
-    const src = localStorage.getItem('stream:'+d.id)||'';
-    const media = src ? (src.endsWith('.mjpg')||src.endsWith('.mjpeg')?`<img src="${src}">`: src.endsWith('.m3u8')?`<video src="${src}" autoplay muted playsinline></video>`:`<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`) : '<div class="placeholder"></div>';
-    return `<div class="card dev">
-      <div class="dev-head"><div><strong>${d.name}</strong> · ${d.os}</div><div class="hint">${d.ip}</div></div>
-      <div class="screen">${media}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn" data-set="${d.id}">Asignar stream</button>
-        <button class="btn" style="background:transparent;border:1px solid var(--line);color:var(--text)" data-clear="${d.id}">Limpiar</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-renderFarm();
-farmGrid.addEventListener('click',(e)=>{
-  const b=e.target.closest('button'); if(!b) return;
-  if(b.dataset.set){
-    const id=b.dataset.set;
-    const cur=localStorage.getItem('stream:'+id)||'';
-    const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur);
-    if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); }
+  /* Accesos directos: Home → abrir servicios Instagram al cargar si viene hash (#instagram) */
+  if(location.hash && location.hash.replace('#','')){
+    selectServicesNet(location.hash.replace('#','').toLowerCase());
   }
-  if(b.dataset.clear){ localStorage.removeItem('stream:'+b.dataset.clear); renderFarm(); }
-});
-
-/* ============= Navegación directa a servicios desde barra inferior ============= */
-document.querySelector('label[for="t-services"]').addEventListener('click', ()=>{
-  // Si vienes desde Home sin seleccionar red, abre Instagram por defecto
-  if(!svcGrid.children.length) openServices('instagram');
-});
-
-/* Primera carga: orb centrado y ajuste */
-fit();
+})();
 </script>
 </body>
 </html>
