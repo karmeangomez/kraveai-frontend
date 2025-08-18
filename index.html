@@ -10,23 +10,22 @@
 <style>
 /* ========================= TOKENS ========================= */
 :root{
-  /* Dark */
   --bg:#0a0e14; --elev:#0e131b; --card:#111827; --text:#e9eef7; --muted:#93a0b4; --line:#1f2a3a;
   --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
   --grad:linear-gradient(135deg,#7c5cff 0%,#00d3c2 100%);
   --r:14px; --gap:12px; --shadow:0 18px 40px rgba(0,0,0,.35);
   --safe-b: env(safe-area-inset-bottom, 0px);
+  --brand-x:#111; --brand-threads:#111; --brand-ig:#E1306C; --brand-tt:#000; --brand-yt:#FF0000;
+  --brand-fb:#1877F2; --brand-in:#0A66C2; --brand-tg:#0088cc; --brand-wa:#25D366; --brand-spot:#1DB954;
 }
 [data-theme="light"]{
   --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
   --shadow:0 12px 28px rgba(0,0,0,.08);
+  --brand-x:#111; --brand-threads:#111; --brand-tt:#000;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto;
-}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto}
 
 /* ========================= LAYOUT ========================= */
 .app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
@@ -34,8 +33,8 @@ body{
   position:sticky;top:0;z-index:30;
   display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
   padding:10px max(14px,env(safe-area-inset-left)) 8px max(14px,env(safe-area-inset-right));
-  background:color-mix(in oklab,var(--elev) 92%, transparent);
-  border-bottom:1px solid var(--line); backdrop-filter:saturate(1.1) blur(14px);
+  background:color-mix(in oklab,var(--elev) 92%, transparent); border-bottom:1px solid var(--line);
+  backdrop-filter:saturate(1.1) blur(14px);
 }
 .brand{display:flex;align-items:center;gap:10px}
 .badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--grad)}
@@ -45,7 +44,7 @@ body{
 .theme-toggle{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(255,255,255,.04);cursor:pointer}
 
 .main{
-  height:calc(100svh - 58px - 70px - var(--safe-b)); /* sin scroll vertical global */
+  height:calc(100svh - 58px - 70px - var(--safe-b));
   overflow:hidden; padding:12px 14px;
 }
 
@@ -69,81 +68,60 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 }
 
 /* ========================= VIEWS ========================= */
-.view{display:none; height:100%; }
+.view{display:none;height:100%}
 #t-home:checked ~ .app .view[data-tab="home"],
 #t-serv:checked ~ .app .view[data-tab="serv"],
 #t-clients:checked ~ .app .view[data-tab="clients"],
 #t-farm:checked ~ .app .view[data-tab="farm"],
 #t-acc:checked ~ .app .view[data-tab="acc"]{display:grid}
 
-/* ====== HOME (sin scroll, auto-fit) ====== */
-.home{
-  grid-template-rows:auto 1fr auto;
-  gap:12px; max-width:980px; margin-inline:auto;
-}
+/* ====== HOME ====== */
+.home{grid-template-rows:auto auto 1fr auto;gap:12px;max-width:980px;margin-inline:auto}
 .h-hero{display:flex;align-items:center;justify-content:space-between;padding:6px 2px}
 .h-hero h1{margin:0 0 2px;font-size:clamp(22px,4.6vw,28px)}
 .h-hero p{margin:0;color:var(--muted)}
-/* Grid de redes: botones compactos (solo logo+nombre) */
-.s-grid{
-  display:grid;gap:10px;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-}
+.s-grid{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
 @media (min-width:540px){.s-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:820px){.s-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.s-btn{
-  display:flex;align-items:center;gap:10px;
-  padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);
-  cursor:pointer; user-select:none;
-}
-.s-btn:hover{outline:2px solid color-mix(in oklab,var(--text) 16%, transparent)}
-.s-ico{width:22px;height:22px;display:grid;place-items:center}
-
-/* Clientes (lista fija, sin overflow global) */
-.clients{
-  display:grid;gap:8px;
-  grid-template-columns:1fr;
-}
-.c-item{
-  display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card)
-}
-.c-ava{width:28px;height:28px;border-radius:50%;overflow:hidden;background:#0a0}
-.c-u{font-weight:800}
+.s-btn{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer}
+.s-ico svg{width:22px;height:22px;display:block}
+.clientsBrief{display:grid;gap:8px;grid-template-columns:1fr;max-height:160px;overflow:auto}
+.c-item{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.c-ava{width:28px;height:28px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.06);display:grid;place-items:center}
+.c-u{font-weight:800;display:flex;align-items:center;gap:6px}
 .c-net{font-size:.86rem;color:var(--muted)}
 .c-r{margin-left:auto;opacity:.9}
-
-/* Quick box */
 .quick{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .quick input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
 .btn{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer}
 .btn-primary{border:0;background:var(--grad);color:#0b0d13}
 
-/* ====== SERVICES (por red) ====== */
+/* ====== SERVICES ====== */
 .serv{grid-template-rows:auto auto 1fr; gap:12px; max-width:980px; margin-inline:auto}
 .s-head{display:flex;align-items:center;gap:10px}
 .back{display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.05);cursor:pointer}
 .s-title{font-weight:900;font-size:1.1rem}
 .s-chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);cursor:pointer}
-.panel{display:none;height:100%;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px;overflow:auto}
-.panel.active{display:block}
-/* IG Comentarios form */
+.panel{display:block;height:100%;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px;overflow:auto}
 .form-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
 .input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:10px}
 .input input{flex:1;background:transparent;border:0;outline:none;color:var(--text)}
 @media (max-width:520px){.form-grid{grid-template-columns:1fr}}
 
-/* ====== CLIENTES ====== */
+/* ====== CLIENTES PAGE ====== */
 .clients-page{grid-template-rows:auto 1fr;gap:12px;max-width:980px;margin-inline:auto}
 .c-list{display:grid;gap:10px;grid-auto-rows:min-content;overflow:auto}
-.c-verified{width:16px;height:16px}
+.c-verified{width:18px;height:18px}
 
 /* ====== DEVICE FARM ====== */
 .farm{grid-template-rows:auto 1fr;gap:12px;max-width:1100px;margin-inline:auto}
-.fgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));overflow:auto}
+.fgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));overflow:auto}
 .dev{display:grid;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .d-head{display:flex;align-items:center;justify-content:space-between;font-weight:800}
-.screen{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;height:180px;position:relative}
+.phone{position:relative;background:#000;border-radius:28px;padding:10px;border:1px solid var(--line)}
+.phone::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:38%;height:10px;background:#111;border-radius:0 0 10px 10px;opacity:.85}
+.screen{aspect-ratio:19.5/9;border-radius:22px;overflow:hidden;position:relative}
 .screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .d-actions{display:flex;gap:8px;flex-wrap:wrap}
 
@@ -161,6 +139,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   color:var(--text); background:color-mix(in oklab,var(--elev) 96%, transparent);
   border:1px solid var(--line); pointer-events:none; z-index:40;
   animation:breath 4s ease-in-out infinite, glow 2.6s ease-in-out infinite;
+  white-space:nowrap; /* una sola línea */
 }
 @keyframes breath{50%{transform:translateX(-50%) scale(1.04)}}
 @keyframes glow{
@@ -172,43 +151,62 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 /* Helpers */
 .section-title{font-weight:900;margin:2px 0 4px}
 .hint{color:var(--muted);font-size:.86rem;margin:0 0 8px}
-.hide{display:none}
 </style>
 </head>
 <body>
 
-<!-- TABS (sin JS) -->
+<!-- TABS -->
 <input type="radio" name="tab" id="t-home" checked>
 <input type="radio" name="tab" id="t-serv">
 <input type="radio" name="tab" id="t-clients">
 <input type="radio" name="tab" id="t-farm">
 <input type="radio" name="tab" id="t-acc">
 
-<!-- ========== SPRITE (LOGOS) ========== -->
+<!-- ========== SPRITE (LOGOS + VERIFIED REAL) ========== -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/></linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
+    </linearGradient>
     <symbol id="klogo" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/><path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
+      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
+      <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
     </symbol>
 
-    <!-- Nav icons -->
+    <!-- back -->
+    <symbol id="ico-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+
+    <!-- VERIFIED IG (círculo azul, aro blanco fino, check blanco) -->
+    <symbol id="ig-verified" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="#0095F6"/>
+      <circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="1.6"/>
+      <path d="M8.8 12.3l2.1 2.1 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- NAV icons -->
     <symbol id="ico-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-tools" viewBox="0 0 24 24"><path d="M3 21l6-6M7 3l3 3-2 2 6 6 2-2 3 3M14 7l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-devices" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></symbol>
     <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="ico-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 
-    <!-- Verified IG (real style) -->
-    <symbol id="ig-verified" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1095F6"/><path d="M8.7 12.3l2.1 2.1 4.5-4.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-
-    <!-- Brand logos (simplificados, proporciones correctas) -->
-    <symbol id="logo-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/></symbol>
-    <symbol id="logo-tiktok" viewBox="0 0 24 24"><path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/><path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/></symbol>
+    <!-- Brand logos (monos precisos y visibles en ambos temas) -->
+    <symbol id="logo-instagram" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+      <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
+    </symbol>
+    <!-- TikTok marca monocolor oficial (negro) con nota/redoble -->
+    <symbol id="logo-tiktok" viewBox="0 0 24 24">
+      <path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="var(--brand-tt)" stroke-width="2"/>
+      <path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="var(--brand-tt)" stroke-width="2"/>
+    </symbol>
+    <!-- YouTube -->
     <symbol id="logo-youtube" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/></symbol>
-    <symbol id="logo-threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2"/></symbol>
-    <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
+    <!-- Threads monocolor negro -->
+    <symbol id="logo-threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="var(--brand-threads)" stroke-width="2"/></symbol>
+    <!-- X monocolor negro (currentColor controlado vía brand-x) -->
+    <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="var(--brand-x)" stroke-width="2"/></symbol>
     <symbol id="logo-facebook" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
     <symbol id="logo-linkedin" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
     <symbol id="logo-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" fill="none"/></symbol>
@@ -242,16 +240,12 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 
       <div>
         <div class="section-title">Redes sociales</div>
-        <div class="s-grid" id="socialGrid">
-          <!-- tiles generados por JS para mantener orden y logos -->
-        </div>
+        <div class="s-grid" id="socialGrid"></div>
       </div>
 
       <div>
         <div class="section-title">Clientes recientes</div>
-        <div class="clients" id="clientsBrief">
-          <!-- clientes compactos (máx. 4) -->
-        </div>
+        <div class="clientsBrief" id="clientsBrief"></div>
       </div>
 
       <div class="quick">
@@ -261,16 +255,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       </div>
     </section>
 
-    <!-- SERVICES (por red) -->
+    <!-- SERVICES -->
     <section class="view serv" data-tab="serv">
       <div class="s-head">
         <div class="back" id="backHome"><svg width="18" height="18"><use href="#ico-left"/></svg> Atrás</div>
         <div class="s-title" id="servTitle">Servicios</div>
       </div>
       <div class="s-chips" id="servChips"></div>
-      <div class="panel active" id="servPanel">
-        <!-- Paneles de cada servicio se renderizan aquí -->
-      </div>
+      <div class="panel" id="servPanel"></div>
     </section>
 
     <!-- CLIENTES -->
@@ -279,14 +271,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       <div class="c-list" id="clientsFull"></div>
     </section>
 
-    <!-- DEVICE FARM -->
+    <!-- FARM -->
     <section class="view farm" data-tab="farm">
       <div class="section-title">Device Farm</div>
-      <div class="hint">Asigna una URL de stream (HLS .m3u8, MJPEG .mjpg o visor https). Se guarda en localStorage.</div>
+      <div class="hint">Streams: HLS .m3u8, MJPEG .mjpg o visor https (se guarda en localStorage).</div>
       <div class="fgrid" id="farmGrid"></div>
     </section>
 
-    <!-- CUENTAS -->
+    <!-- ACCOUNTS -->
     <section class="view acc" data-tab="acc">
       <div class="box">
         <div style="display:flex;align-items:center;gap:10px"><svg width="20" height="20"><use href="#ico-lock"/></svg><strong>Sesión</strong></div>
@@ -326,7 +318,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   </nav>
 </div>
 
-<!-- Firma (respira y no tapa) -->
+<!-- Firma -->
 <div class="credit">Created by Karmean Gómez</div>
 
 <script>
@@ -346,7 +338,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     themeEmoji.textContent = t==='dark' ? '🌙' : '☀️';
   });
 
-  /* ========= Estado backend ========= */
+  /* ========= Salud backend ========= */
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
   async function checkHealth(){
@@ -358,7 +350,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   }
   checkHealth(); setInterval(checkHealth, 120000);
 
-  /* ========= GRID redes ========= */
+  /* ========= Redes ========= */
   const networks = [
     {key:'instagram', name:'Instagram', icon:'#logo-instagram'},
     {key:'tiktok', name:'TikTok', icon:'#logo-tiktok'},
@@ -374,7 +366,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   const socialGrid = document.getElementById('socialGrid');
   socialGrid.innerHTML = networks.map(n => `
     <button class="s-btn" data-net="${n.key}">
-      <span class="s-ico"><svg width="22" height="22"><use href="${n.icon}"/></svg></span>
+      <span class="s-ico"><svg><use href="${n.icon}"/></svg></span>
       <span>${n.name}</span>
     </button>`).join('');
 
@@ -388,12 +380,9 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   ];
   function avatarFor(c){
     if(c.avatar) return `<img class="c-ava" src="${c.avatar}" alt="">`;
-    // si no hay foto, usa logo según red
     const map = {Instagram:'#logo-instagram', YouTube:'#logo-youtube', TikTok:'#logo-tiktok'};
     const use = map[c.net] || '#logo-instagram';
-    return `<div class="c-ava" style="display:grid;place-items:center;background:rgba(255,255,255,.06)">
-              <svg width="18" height="18"><use href="${use}"/></svg>
-            </div>`;
+    return `<div class="c-ava"><svg width="18" height="18"><use href="${use}"/></svg></div>`;
   }
   const brief = document.getElementById('clientsBrief');
   brief.innerHTML = CLIENTS.slice(0,4).map(c=>`
@@ -433,7 +422,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     document.getElementById('quickInput').value='';
   });
 
-  /* ========= Navegación a Servicios por red ========= */
+  /* ========= Navegación Servicios ========= */
   const servTitle = document.getElementById('servTitle');
   const servChips = document.getElementById('servChips');
   const servPanel = document.getElementById('servPanel');
@@ -453,22 +442,18 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 
   socialGrid.addEventListener('click',(e)=>{
     const b=e.target.closest('.s-btn'); if(!b) return;
-    const key=b.dataset.net;
-    document.getElementById('t-serv').checked=true;
-    openNetwork(key);
+    const key=b.dataset.net; document.getElementById('t-serv').checked=true; openNetwork(key);
   });
 
   function openNetwork(key){
     const n = networks.find(n=>n.key===key); if(!n) return;
     servTitle.textContent = `Servicios · ${n.name}`;
     renderServiceChips(key);
-    // por defecto muestra el primer servicio
     openService(key, SERVICES_BY_NET[key][0]);
   }
 
   function renderServiceChips(key){
-    const items = SERVICES_BY_NET[key]||[];
-    servChips.innerHTML = items.map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('');
+    servChips.innerHTML = (SERVICES_BY_NET[key]||[]).map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('');
   }
 
   servChips.addEventListener('click',(e)=>{
@@ -478,8 +463,20 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     if(netKey) openService(netKey, c.dataset.s);
   });
 
+  function simpleServiceForm({placeholder='URL', min=10, step=10, action='Enviar', id='generic', note=''}) {
+    return `
+      <div class="form-grid">
+        <div class="input" style="grid-column:1/-1"><span>🔗</span><input id="${id}-url" placeholder="${placeholder}"></div>
+        <div class="input"><span>#</span><input id="${id}-cant" type="number" min="${min}" step="${step}" placeholder="Cantidad"></div>
+        <div class="input"><span>⚙️</span><input id="${id}-preset" list="${id}-presets" placeholder="Preset (rápido, seguro)"></div>
+        <datalist id="${id}-presets"><option value="rápido"><option value="equilibrado"><option value="seguro"></datalist>
+        <button class="btn btn-primary" id="${id}-go">${action}</button>
+        <button class="btn" id="${id}-cancel">Cancelar</button>
+      </div>
+      <div class="hint">${note||'—'}</div>`;
+  }
+
   function openService(netKey, serviceName){
-    // Render panes: Instagram Comentarios cableado; el resto placeholder breve
     if(netKey==='instagram' && serviceName==='Comentarios'){
       servPanel.innerHTML = `
         <div class="section-title">Instagram — Comentarios</div>
@@ -496,8 +493,6 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
           <button class="btn" id="ig-cancel">Cancelar</button>
         </div>
         <div id="ig-status" class="hint" style="margin-top:8px">—</div>`;
-      servPanel.classList.add('active');
-
       document.getElementById('ig-launch').onclick = async ()=>{
         const payload = {
           url: document.getElementById('ig-url').value.trim(),
@@ -523,12 +518,33 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       document.getElementById('ig-cancel').onclick = ()=>{ document.getElementById('ig-status').textContent='—'; };
       return;
     }
-    // Otros servicios (placeholder cortísimo y claro)
-    servPanel.innerHTML = `<div class="hint">Servicio <strong>${serviceName}</strong> para <strong>${netKey.charAt(0).toUpperCase()+netKey.slice(1)}</strong> — interfaz lista para cablear.</div>`;
-    servPanel.classList.add('active');
+
+    // Formularios lógicos por red/servicio (plantillas listas para cablear)
+    const map = {
+      tiktok: {placeholder:'URL del video de TikTok', min:100, step:100},
+      youtube:{placeholder:'URL del video de YouTube', min:100, step:100},
+      threads:{placeholder:'URL del post de Threads', min:20, step:10},
+      x:{placeholder:'URL del post en X', min:20, step:10},
+      facebook:{placeholder:'URL del post de Facebook', min:50, step:25},
+      linkedin:{placeholder:'URL del post de LinkedIn', min:50, step:25},
+      spotify:{placeholder:'URL del track/playlist', min:100, step:100},
+      telegram:{placeholder:'URL del canal/mensaje', min:20, step:10},
+      whatsapp:{placeholder:'Mensaje o URL de grupo', min:10, step:10},
+      instagram:{placeholder:'URL del post de Instagram', min:50, step:25}
+    };
+    const opt = map[netKey] || {placeholder:'URL', min:10, step:10};
+    servPanel.innerHTML = `
+      <div class="section-title">${netKey[0].toUpperCase()+netKey.slice(1)} — ${serviceName}</div>
+      ${simpleServiceForm({placeholder:opt.placeholder, min:opt.min, step:opt.step, id:`${netKey}-${serviceName.toLowerCase()}`, action:'Enviar', note:'Interfaz lista para conectar a tu endpoint.'})}
+    `;
+    const id = `${netKey}-${serviceName.toLowerCase()}`;
+    const go = document.getElementById(`${id}-go`);
+    const cancel = document.getElementById(`${id}-cancel`);
+    go.onclick = ()=> toast(`${serviceName} enviado (${netKey})`);
+    cancel.onclick = ()=> toast('Cancelado');
   }
 
-  // Botón y gesto atrás
+  // Atrás (y gesto)
   document.getElementById('backHome').addEventListener('click', ()=>{ document.getElementById('t-home').checked=true; });
   let touchX = null;
   document.addEventListener('touchstart', (e)=>{ touchX = e.touches[0].clientX; }, {passive:true});
@@ -547,6 +563,8 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
     {id:'dev3',name:'iPhone 13',os:'iOS',ip:'10.0.0.10'},
     {id:'dev4',name:'Pixel 8',os:'Android',ip:'10.0.0.11'},
+    {id:'dev5',name:'iPhone 12 mini',os:'iOS',ip:'10.0.0.12'},
+    {id:'dev6',name:'Galaxy A54',os:'Android',ip:'10.0.0.13'},
   ];
   const farmGrid = document.getElementById('farmGrid');
   function renderFarm(){
@@ -555,12 +573,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       return `
       <div class="dev">
         <div class="d-head"><div>${d.name} · ${d.os}</div><div style="opacity:.7">${d.ip}</div></div>
-        <div class="screen">
-          ${src ? (
-            (src.endsWith('.mjpg')||src.endsWith('.mjpeg'))?`<img src="${src}">`:
-            (src.endsWith('.m3u8'))?`<video src="${src}" autoplay muted playsinline></video>`:
-            `<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
-          ) : '<div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.22), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000"></div>'}
+        <div class="phone">
+          <div class="screen">
+            ${src ? (
+              (src.endsWith('.mjpg')||src.endsWith('.mjpeg'))?`<img src="${src}">`:
+              (src.endsWith('.m3u8'))?`<video src="${src}" autoplay muted playsinline></video>`:
+              `<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
+            ) : '<div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.22), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000"></div>'}
+          </div>
         </div>
         <div class="d-actions">
           <button class="btn btn-primary" data-set="${d.id}">Asignar stream</button>
@@ -623,7 +643,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       if(!Array.isArray(arr)||arr.length===0){ accList.innerHTML='<div class="hint">No hay cuentas activas</div>'; return; }
       accList.innerHTML = arr.map(acc=>`
         <div class="c-item">
-          <div class="c-ava" style="display:grid;place-items:center;background:rgba(255,255,255,.06)"><svg width="16" height="16"><use href="#logo-instagram"/></svg></div>
+          <div class="c-ava"><svg width="16" height="16"><use href="#logo-instagram"/></svg></div>
           <div><div class="c-u">@${acc.username}</div><div class="c-net">${acc.status==='activo'?'Activa':'Inactiva'}</div></div>
           <div class="c-r">
             ${acc.status==='activo' ? `<button class="btn" data-logout="${acc.username}">Logout</button>` : `<button class="btn btn-primary" data-login="${acc.username}">Login</button>`}
