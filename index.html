@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es" data-theme="auto">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
@@ -8,19 +8,21 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0d12">
 <style>
-/* ========= Tokens ========= */
+/* ===================== KRAVE UI v1 — Tokens ===================== */
 :root{
-  --bg:#0a0e14; --elev:#0e131b; --card:#111827; --text:#e9eef7; --muted:#93a0b4; --line:#1f2a3a;
+  --bg:#0a0e14; --elev:#0e131b; --card:#101827; --text:#eaf0f8; --muted:#90a0b8; --line:#1e2a3d;
   --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
-  --grad:linear-gradient(135deg,#7c5cff 0%,#00d3c2 100%);
-  --r:14px; --gap:12px; --shadow:0 14px 40px rgba(0,0,0,.28);
-  --card-bg: linear-gradient(135deg, rgba(23, 30, 46, 0.85) 0%, rgba(17, 24, 39, 0.95) 100%);
+  --brand-g:linear-gradient(135deg,#7c5cff 0%,#00d3c2 100%);
+  --r:14px; --gap:12px; --shadow:0 16px 44px rgba(0,0,0,.28);
+  --card-bg:linear-gradient(135deg, rgba(18,24,39,.85) 0%, rgba(11,17,28,.95) 100%);
 }
 @media (prefers-color-scheme: light){
-  :root{ --bg:#f8fafc; --elev:#fff; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --shadow:0 14px 40px rgba(0,0,0,.08); --card-bg:linear-gradient(135deg, rgba(255,255,255,.95), rgba(246,248,251,.98));}
+  :root{ --bg:#f6f8fb; --elev:#ffffff; --card:#ffffff; --text:#0e1422; --muted:#66758e; --line:#e4e9f2;
+         --shadow:0 12px 30px rgba(0,0,0,.08); --card-bg:linear-gradient(135deg,rgba(255,255,255,.96),rgba(246,248,251,.98));}
 }
 [data-theme="light"]{
-  --bg:#f8fafc; --elev:#fff; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --shadow:0 14px 40px rgba(0,0,0,.08); --card-bg:linear-gradient(135deg, rgba(255,255,255,.95), rgba(246,248,251,.98));
+  --bg:#f6f8fb; --elev:#ffffff; --card:#ffffff; --text:#0e1422; --muted:#66758e; --line:#e4e9f2;
+  --shadow:0 12px 30px rgba(0,0,0,.08); --card-bg:linear-gradient(135deg,rgba(255,255,255,.96),rgba(246,248,251,.98));
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -29,13 +31,13 @@ body{
   font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto;
   transition: background .25s ease,color .25s ease;
   background-image:
-    radial-gradient(32rem 24rem at 15% 50%, rgba(28,34,53,.16), transparent 60%),
-    radial-gradient(28rem 20rem at 85% 30%, rgba(124,92,255,.10), transparent 60%);
+    radial-gradient(30rem 22rem at 12% 50%, rgba(28,34,53,.16), transparent 60%),
+    radial-gradient(26rem 18rem at 86% 28%, rgba(124,92,255,.10), transparent 60%);
 }
 @media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important} }
 .app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
 
-/* ========= Topbar ========= */
+/* ===================== Topbar ===================== */
 .top{
   position:sticky;top:0;z-index:30;
   display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
@@ -44,18 +46,18 @@ body{
   backdrop-filter:saturate(1.1) blur(14px); border-bottom:1px solid var(--line);
 }
 .brand{display:flex;align-items:center;gap:10px}
-.badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--grad);box-shadow:0 10px 22px rgba(124,92,255,.28),0 8px 16px rgba(0,211,194,.16)}
-.word{font-weight:900;letter-spacing:.16em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--brand-g);box-shadow:0 14px 30px rgba(124,92,255,.28),0 10px 18px rgba(0,211,194,.16)}
+.word{font-weight:900;letter-spacing:.16em;background:var(--brand-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .status{display:flex;align-items:center;gap:8px;justify-self:center;color:var(--muted)}
-.status .dot{width:8px;height:8px;border-radius:50%;background:#8b8b8b;box-shadow:0 0 0 0 rgba(34,197,94,.0)}
+.status .dot{width:8px;height:8px;border-radius:50%;background:#8b94a8;box-shadow:0 0 0 0 rgba(34,197,94,0)}
 .status[data-online="true"] .dot{background:var(--ok);animation:pulse 2s ease-out infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 12px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-.theme-toggle{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.theme-toggle{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;cursor:pointer;background:rgba(255,255,255,.05);border:1px solid var(--line)}
 .icon-moon{display:none}
 [data-theme="light"] .icon-sun{display:none}
 [data-theme="light"] .icon-moon{display:block}
 
-/* ========= Bottom nav ========= */
+/* ===================== Bottom nav (sin emojis) ===================== */
 .nav{
   position:sticky;bottom:0;z-index:25;
   display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
@@ -66,7 +68,7 @@ body{
 .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer;position:relative;overflow:hidden}
 .tab svg{width:18px;height:18px}
 .tab small{font-size:.72rem}
-.tab::after{content:"";position:absolute;inset:0;background:radial-gradient(24rem 12rem at var(--x,50%) var(--y,50%), rgba(124,92,255,.12), transparent 40%);opacity:0;transition:opacity .25s}
+.tab::after{content:"";position:absolute;inset:0;background:radial-gradient(22rem 11rem at var(--x,50%) var(--y,50%), rgba(124,92,255,.12), transparent 40%);opacity:0;transition:opacity .25s}
 .tab:hover::after{opacity:1}
 input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 #tab-home:checked ~ .app .nav label[for="tab-home"],
@@ -74,10 +76,10 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 #tab-clients:checked ~ .app .nav label[for="tab-clients"],
 #tab-farm:checked ~ .app .nav label[for="tab-farm"],
 #tab-accounts:checked ~ .app .nav label[for="tab-accounts"]{
-  color:var(--text);background:rgba(255,255,255,.05);border-color:var(--line);
+  color:var(--text);background:rgba(255,255,255,.06);border-color:var(--line);
 }
 
-/* ========= Views ========= */
+/* ===================== Views ===================== */
 .main{
   height:calc(100svh - 56px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   padding:12px max(14px,env(safe-area-inset-left)) 12px max(14px,env(safe-area-inset-right));
@@ -91,28 +93,28 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 #tab-farm:checked ~ .app .view[data-tab="farm"],
 #tab-accounts:checked ~ .app .view[data-tab="accounts"]{display:block}
 
-/* ========= Cards / grids ========= */
+/* ===================== Cards / grids ===================== */
 .card{background:var(--card-bg);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 .grid{display:grid;gap:12px}
 .section-title{display:flex;align-items:center;gap:8px;font-weight:900;margin:2px 0 6px}
 .hint{color:var(--muted);font-size:.86rem;margin-bottom:8px}
 
-/* Home → Quick automation */
+/* Quick automation */
 .quick-automation{background:var(--card-bg);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
 .quick-title{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.quick-title h2{margin:0;font-size:1.18rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:10px}
+.quick-title h2{margin:0;font-size:1.18rem;font-weight:900;background:var(--brand-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:12px;padding:10px}
 .input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
-.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);padding:10px 16px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
-.btn-primary{border:0;background:var(--grad);color:#0b0d13;font-weight:800}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);padding:10px 16px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
+.btn-primary{border:0;background:var(--brand-g);color:#0b0d13;font-weight:800}
 
 /* Social grid */
 .grid.social{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media (min-width:640px){.grid.social{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:1024px){.grid.social{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.tile{padding:16px;position:relative;overflow:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.05);cursor:pointer;transform:translateY(0);transition:transform .25s, box-shadow .25s, border-color .25s}
+.tile{padding:16px;position:relative;overflow:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:transform .25s, box-shadow .25s, border-color .25s}
 .tile:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.25);border-color:rgba(124,92,255,.22)}
-.tile::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad);opacity:.7;transition:opacity .25s}
+.tile::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--brand-g);opacity:.7;transition:opacity .25s}
 .tile:hover::before{opacity:1}
 .row{display:flex;align-items:center;gap:10px}
 .ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line);transition:transform .25s}
@@ -120,33 +122,33 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 .ico svg{width:20px;height:20px}
 .lab{font-weight:800;font-size:1.05rem;margin-bottom:4px}
 .cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.cap .c{padding:5px 8px;font-size:.75rem;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
+.cap .c{padding:5px 8px;font-size:.75rem;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.05)}
 .stats{display:flex;gap:8px;margin-top:10px;font-size:.8rem;color:var(--muted)}
 .stat-item{display:flex;align-items:center;gap:6px}
 .stat-dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
 
-/* Clients */
+/* Clientes (solo Instagram) */
 .clients-section{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
 .client-card{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--card-bg);box-shadow:var(--shadow)}
-.client-logo{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(225,48,108,.15),rgba(155,28,78,.2));border:1px solid rgba(225,48,108,.3)}
+.client-logo{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(225,48,108,.15),rgba(155,28,78,.2));border:1px solid rgba(225,48,108,.32)}
 .client-name{font-weight:800;display:flex;align-items:center;gap:6px;margin-bottom:4px}
 .client-username{font-size:.85rem;color:var(--muted)}
 .badge-verified{width:20px;height:20px}
 
-/* Device farm */
+/* Device Farm */
 .farm{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .dev{display:grid;gap:10px;padding:12px}
 .dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:.78rem}
+.chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.05);font-size:.78rem}
 .chip-b[data-status="active"]{background:rgba(34,197,94,.1);border-color:var(--ok);color:var(--ok)}
 .screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:220px;position:relative}
 .screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .screen .placeholder{position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.25), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000}
 .ov{position:absolute;left:6px;top:6px;display:flex;gap:6px;z-index:2}
 .toolbar{position:absolute;right:6px;bottom:6px;display:flex;gap:6px;z-index:2}
-.tool{border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);color:#fff;padding:6px 8px;border-radius:10px;font-size:.78rem;cursor:pointer}
-.metric{position:absolute;left:6px;bottom:6px;font-size:.75rem;background:rgba(0,0,0,.35);color:#fff;border:1px solid rgba(255,255,255,.2);padding:4px 6px;border-radius:8px}
+.tool{border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.38);color:#fff;padding:6px 8px;border-radius:10px;font-size:.78rem;cursor:pointer}
+.metric{position:absolute;left:6px;bottom:6px;font-size:.75rem;background:rgba(0,0,0,.38);color:#fff;border:1px solid rgba(255,255,255,.22);padding:4px 6px;border-radius:8px}
 
 /* Créditos */
 .credit{position:fixed;right:12px;bottom:72px;z-index:35;font-size:.86rem;color:var(--text);background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px)}
@@ -161,27 +163,43 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 <input type="radio" name="tab" id="tab-farm">
 <input type="radio" name="tab" id="tab-accounts">
 
-<!-- ===== SVG sprite ===== -->
+<!-- ============ SVG sprite (logo + nav + redes + verified) ============ -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/></linearGradient>
-    <symbol id="klogo" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/><path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/></symbol>
-    <!-- nav icons -->
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
+    </linearGradient>
+    <!-- Logo KRAVE -->
+    <symbol id="klogo" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
+      <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
+    </symbol>
+
+    <!-- Nav icons -->
     <symbol id="ico-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-tools" viewBox="0 0 24 24"><path d="M3 21l6-6M7 3l3 3-2 2 6 6 2-2 3 3M14 7l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-devices" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></symbol>
     <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="ico-rocket" viewBox="0 0 24 24"><path d="M13 10l7-7M13 3l9 9M7.5 7.5L3 14l7 7 6.5-4.5M2 14l6.5 6.5M19 5l-9 9" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <!-- IG verified -->
+
+    <!-- IG verified (real) -->
     <symbol id="ig-verified" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0095F6"/><path d="M9.2 12.5l2 2 4.6-4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <!-- Brand logos -->
-    <symbol id="logo-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/></symbol>
-    <symbol id="logo-tiktok" viewBox="0 0 24 24"><path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/><path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/></symbol>
-    <symbol id="logo-youtube" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/></symbol>
-    <symbol id="logo-threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2"/></symbol>
+
+    <!-- Logos oficiales de redes -->
+    <symbol id="logo-instagram" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
+      <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
+    </symbol>
+    <symbol id="logo-tiktok" viewBox="0 0 24 24">
+      <path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/>
+      <path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/>
+    </symbol>
+    <symbol id="logo-youtube" viewBox="0 0 24 24">
+      <rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/>
+    </symbol>
     <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
     <symbol id="logo-facebook" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
     <symbol id="logo-linkedin" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
@@ -191,25 +209,27 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 </svg>
 
 <div class="app" id="app">
+  <!-- Topbar -->
   <header class="top">
     <div class="brand">
       <div class="badge"><svg viewBox="0 0 64 64" width="20" height="20"><use href="#klogo"/></svg></div>
       <div class="word">KRAVEAI</div>
     </div>
     <div class="status" id="status"><span class="dot"></span><small id="status-text">Conectando…</small></div>
-    <div class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
       <svg class="icon-sun" width="20" height="20"><use href="#ico-sun"/></svg>
       <svg class="icon-moon" width="20" height="20"><use href="#ico-moon"/></svg>
-    </div>
+    </button>
   </header>
 
+  <!-- Main -->
   <main class="main">
     <!-- HOME -->
     <section class="view" data-tab="home" aria-label="Inicio">
       <div class="quick-automation">
         <div class="quick-title">
-          <svg width="24" height="24" viewBox="0 0 24 24"><use href="#ico-rocket"/></svg>
-          <h2>Automatización Rápida</h2>
+          <svg width="22" height="22" viewBox="0 0 24 24"><use href="#ico-tools"/></svg>
+          <h2>Automatización rápida</h2>
         </div>
         <div class="input">
           <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -218,30 +238,57 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
         </div>
       </div>
 
-      <div class="section-title">Redes Sociales</div>
-      <div class="hint">Selecciona una red para ver sus servicios disponibles</div>
+      <div class="section-title">Redes sociales</div>
+      <div class="hint">Cada red muestra capacidades; toca para ir a Servicios.</div>
 
       <div class="grid social" id="social-grid">
-        <!-- Tiles estáticas de ejemplo; puedes generar por JS si lo prefieres -->
+        <!-- Instagram -->
         <article class="card tile" data-key="instagram">
           <div class="row"><div class="ico" style="color:#E1306C"><svg><use href="#logo-instagram"/></svg></div><div><div class="lab">Instagram</div></div></div>
           <div class="stats"><div class="stat-item"><span class="stat-dot"></span>128 activas</div><div class="stat-item">92% éxito</div></div>
           <div class="cap"><span class="c">Comentarios</span><span class="c">Likes</span><span class="c">Seguidores</span><span class="c">Vistas</span></div>
         </article>
+        <!-- TikTok -->
         <article class="card tile" data-key="tiktok">
           <div class="row"><div class="ico" style="color:#69C9D0"><svg><use href="#logo-tiktok"/></svg></div><div><div class="lab">TikTok</div></div></div>
           <div class="stats"><div class="stat-item"><span class="stat-dot"></span>87 activas</div><div class="stat-item">89% éxito</div></div>
           <div class="cap"><span class="c">Vistas</span><span class="c">Likes</span><span class="c">Seguidores</span><span class="c">Compartidos</span></div>
         </article>
+        <!-- YouTube -->
         <article class="card tile" data-key="youtube">
           <div class="row"><div class="ico" style="color:#FF0000"><svg><use href="#logo-youtube"/></svg></div><div><div class="lab">YouTube</div></div></div>
           <div class="stats"><div class="stat-item"><span class="stat-dot"></span>64 activas</div><div class="stat-item">85% éxito</div></div>
           <div class="cap"><span class="c">Vistas</span><span class="c">Likes</span><span class="c">Suscripciones</span><span class="c">Comentarios</span></div>
         </article>
+        <!-- X -->
         <article class="card tile" data-key="x">
-          <div class="row"><div class="ico" style="color:#fff"><svg><use href="#logo-x"/></svg></div><div><div class="lab">X</div></div></div>
+          <div class="row"><div class="ico" style="color:#ffffff"><svg><use href="#logo-x"/></svg></div><div><div class="lab">X</div></div></div>
           <div class="stats"><div class="stat-item"><span class="stat-dot"></span>56 activas</div><div class="stat-item">82% éxito</div></div>
           <div class="cap"><span class="c">Likes</span><span class="c">Reposts</span><span class="c">Seguidores</span><span class="c">Respuestas</span></div>
+        </article>
+        <!-- Facebook -->
+        <article class="card tile" data-key="facebook">
+          <div class="row"><div class="ico" style="color:#1877F2"><svg><use href="#logo-facebook"/></svg></div><div><div class="lab">Facebook</div></div></div>
+          <div class="stats"><div class="stat-item"><span class="stat-dot"></span>42 activas</div><div class="stat-item">78% éxito</div></div>
+          <div class="cap"><span class="c">Reacciones</span><span class="c">Comentarios</span><span class="c">Compartidos</span><span class="c">Amigos</span></div>
+        </article>
+        <!-- LinkedIn -->
+        <article class="card tile" data-key="linkedin">
+          <div class="row"><div class="ico" style="color:#0A66C2"><svg><use href="#logo-linkedin"/></svg></div><div><div class="lab">LinkedIn</div></div></div>
+          <div class="stats"><div class="stat-item"><span class="stat-dot"></span>38 activas</div><div class="stat-item">75% éxito</div></div>
+          <div class="cap"><span class="c">Reacciones</span><span class="c">Comentarios</span><span class="c">Conexiones</span><span class="c">Visitas</span></div>
+        </article>
+        <!-- WhatsApp -->
+        <article class="card tile" data-key="whatsapp">
+          <div class="row"><div class="ico" style="color:#25D366"><svg><use href="#logo-whatsapp"/></svg></div><div><div class="lab">WhatsApp</div></div></div>
+          <div class="stats"><div class="stat-item"><span class="stat-dot"></span>29 activas</div><div class="stat-item">91% éxito</div></div>
+          <div class="cap"><span class="c">Mensajes</span><span class="c">Grupos</span><span class="c">Respuestas</span></div>
+        </article>
+        <!-- Telegram -->
+        <article class="card tile" data-key="telegram">
+          <div class="row"><div class="ico" style="color:#0088cc"><svg><use href="#logo-telegram"/></svg></div><div><div class="lab">Telegram</div></div></div>
+          <div class="stats"><div class="stat-item"><span class="stat-dot"></span>24 activas</div><div class="stat-item">88% éxito</div></div>
+          <div class="cap"><span class="c">Mensajes</span><span class="c">Miembros</span><span class="c">Reacciones</span></div>
         </article>
       </div>
     </section>
@@ -249,9 +296,10 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     <!-- SERVICES -->
     <section class="view" data-tab="services" aria-label="Servicios">
       <div class="section-title">Servicios</div>
-      <div class="hint">Instagram → Comentarios cableado; el resto es plantilla visual.</div>
+      <div class="hint">Instagram → Comentarios cableado; el resto como plantilla para conectar.</div>
 
       <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
+        <!-- Instagram (Comentarios) -->
         <div class="card" style="padding:12px">
           <div class="row"><div class="ico"><svg><use href="#logo-instagram"/></svg></div><div><div class="lab">Instagram — Comentarios</div><small class="hint" style="margin:0">Masivo / Auto / Personalizado</small></div></div>
           <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:10px" id="ig-comments">
@@ -269,6 +317,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
           <div id="ig-comments-status" class="hint" style="margin-top:8px">—</div>
         </div>
 
+        <!-- TikTok plantilla -->
         <div class="card" style="padding:12px">
           <div class="row"><div class="ico"><svg><use href="#logo-tiktok"/></svg></div><div><div class="lab">TikTok — Servicios</div><small class="hint" style="margin:0">Vistas, Likes, Seguidores</small></div></div>
           <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
@@ -280,11 +329,10 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       </div>
     </section>
 
-    <!-- CLIENTS -->
+    <!-- CLIENTS (solo logo Instagram, sin cámara) -->
     <section class="view" data-tab="clients" aria-label="Clientes">
       <div class="section-title">Clientes recientes</div>
-      <div class="hint">Clientes verificados con cuentas premium</div>
-
+      <div class="hint">Todos verificados en Instagram</div>
       <div class="clients-section">
         <div class="client-card"><div class="client-logo"><svg><use href="#logo-instagram"/></svg></div><div><div class="client-name">@aaronmercury <svg class="badge-verified"><use href="#ig-verified"/></svg></div><div class="client-username">Aaron Mercury</div></div></div>
         <div class="client-card"><div class="client-logo"><svg><use href="#logo-instagram"/></svg></div><div><div class="client-name">@televisadigital <svg class="badge-verified"><use href="#ig-verified"/></svg></div><div class="client-username">Televisa Digital</div></div></div>
@@ -293,10 +341,10 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       </div>
     </section>
 
-    <!-- DEVICE FARM (mejorado) -->
+    <!-- DEVICE FARM -->
     <section class="view" data-tab="farm" aria-label="Device Farm">
       <div class="section-title">Device Farm</div>
-      <div class="hint">Asigna una URL de stream (HLS .m3u8, MJPEG .mjpg o página/visor). Se guarda en localStorage.</div>
+      <div class="hint">Asigna una URL de stream (HLS .m3u8, MJPEG .mjpg, o visor http). Se guarda en localStorage.</div>
       <div class="farm" id="farm-grid"></div>
     </section>
 
@@ -331,6 +379,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     </section>
   </main>
 
+  <!-- Bottom nav -->
   <nav class="nav" id="nav">
     <label class="tab" for="tab-home"><svg><use href="#ico-home"/></svg><small>Inicio</small></label>
     <label class="tab" for="tab-services"><svg><use href="#ico-tools"/></svg><small>Servicios</small></label>
@@ -346,10 +395,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 (function(){
   const API_URL = "https://api.kraveapi.xyz";
 
-  /* ===== Tema ===== */
+  /* ===================== Tema ===================== */
   const themeToggle = document.getElementById('theme-toggle');
   const saved = localStorage.getItem('theme');
   if(saved){ document.documentElement.setAttribute('data-theme', saved); }
+  else {
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    document.documentElement.setAttribute('data-theme', prefersLight ? 'light' : 'dark');
+  }
   themeToggle.addEventListener('click', ()=>{
     const cur = document.documentElement.getAttribute('data-theme') || 'dark';
     const next = cur === 'dark' ? 'light' : 'dark';
@@ -357,7 +410,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     localStorage.setItem('theme', next);
   });
 
-  /* ===== Estado backend ===== */
+  /* ===================== Estado backend ===================== */
   const statusWrap = document.getElementById('status');
   const statusText = document.getElementById('status-text');
   async function checkHealth(){
@@ -371,15 +424,13 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   }
   checkHealth(); setInterval(checkHealth, 120000);
 
-  /* ===== Micro‑interacción nav (pos ripple) ===== */
+  /* ===================== Nav micro-interacción + atajos ===================== */
   document.getElementById('nav').addEventListener('pointermove', e=>{
     const t=e.target.closest('.tab'); if(!t) return;
     const r=t.getBoundingClientRect();
     t.style.setProperty('--x', `${e.clientX - r.left}px`);
     t.style.setProperty('--y', `${e.clientY - r.top}px`);
   });
-
-  /* ===== Atajos de teclado 1–5 ===== */
   const ids=['tab-home','tab-services','tab-clients','tab-farm','tab-accounts'];
   window.addEventListener('keydown', (e)=>{
     if(e.target.matches('input,textarea')) return;
@@ -387,7 +438,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     if(i>-1){ document.getElementById(ids[i]).checked = true; handleTabChange(); }
   });
 
-  /* ===== Toast ===== */
+  /* ===================== Toast ===================== */
   function toast(msg,err){
     const el=document.createElement('div');
     el.textContent=msg;
@@ -395,7 +446,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     document.body.appendChild(el); setTimeout(()=>el.remove(),2200);
   }
 
-  /* ===== Quick automation ===== */
+  /* ===================== Quick automation ===================== */
   document.getElementById('quick-run').addEventListener('click',()=>{
     const v=(document.getElementById('quick-input').value||'').trim();
     if(!v){toast('Escribe qué automatizar',true);return}
@@ -403,8 +454,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     document.getElementById('quick-input').value='';
   });
 
-  /* ===== Instagram → Comentarios ===== */
-  const igFormRoot=document.getElementById('ig-comments'); const igStatus=document.getElementById('ig-comments-status');
+  /* ===================== Click en redes → Servicios ===================== */
+  document.getElementById('social-grid').addEventListener('click',(e)=>{
+    if(e.target.closest('.tile')){ document.getElementById('tab-services').checked=true; handleTabChange(); }
+  });
+
+  /* ===================== Instagram → Comentarios ===================== */
+  const igFormRoot=document.getElementById('ig-comments');
+  const igStatus=document.getElementById('ig-comments-status');
   document.getElementById('ig-send').addEventListener('click', async ()=>{
     const inputs = igFormRoot.querySelectorAll('input');
     const fd = new FormData(); inputs.forEach(i=> fd.append(i.name||i.id, i.value));
@@ -419,9 +476,15 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   });
   document.getElementById('ig-cancel').addEventListener('click',()=>{ igStatus.textContent='—'; });
 
-  /* ===== Sesión / Cuentas ===== */
+  /* ===================== Sesión / Cuentas ===================== */
   const sessionSub=document.getElementById('session-sub');
-  async function checkSession(){ try{ const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'}); const d=await r.json(); sessionSub.textContent=(d.status==='activo')?`Sesión activa como @${d.usuario}`:'No hay sesión activa'; }catch{ sessionSub.textContent='Error al verificar sesión'; } }
+  async function checkSession(){
+    try{
+      const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
+      const d=await r.json();
+      sessionSub.textContent=(d.status==='activo')?`Sesión activa como @${d.usuario}`:'No hay sesión activa';
+    }catch{ sessionSub.textContent='Error al verificar sesión'; }
+  }
   checkSession();
 
   document.getElementById('login-btn').addEventListener('click', async ()=>{
@@ -485,7 +548,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     }
   });
 
-  /* ===== Device Farm mejorado ===== */
+  /* ===================== Device Farm ===================== */
   const defaultDevices=[
     {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
     {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
@@ -507,15 +570,12 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       </div>
       <div class="screen" data-screen>
         <div class="ov"><span class="chip-b">${active? 'Live' : 'Idle'}</span></div>
-        ${active ? (
-          (src.endsWith('.mjpg')||src.endsWith('.mjpeg')) ? `<img src="${src}" crossorigin="anonymous">` :
-          (src.endsWith('.m3u8')) ? `<video src="${src}" autoplay muted playsinline></video>` :
-          `<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>`
-        ) : '<div class="placeholder"></div>'}
+        <!-- Media se inyecta solo cuando Farm está visible -->
+        <div class="placeholder" data-ph></div>
         <div class="metric" data-metric>FPS: — · Lat: —</div>
         <div class="toolbar">
           <button class="tool" data-set="${d.id}">Stream</button>
-          <button class="tool" data-playpause="${d.id}">${active?'Pausar':'Reanudar'}</button>
+          <button class="tool" data-playpause="${d.id}">Pausar</button>
           <button class="tool" data-pip="${d.id}">PiP</button>
           <button class="tool" data-full="${d.id}">Full</button>
           <button class="tool" data-clear="${d.id}">Clear</button>
@@ -524,15 +584,39 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     </div>`;
   }
 
-  function renderFarm(initOnly=false){
+  function renderFarm(){
+    // Construye tarjetas (sin cargar medios aún)
     farmGrid.innerHTML = defaultDevices.map(d=>{
       const src = localStorage.getItem('stream:'+d.id)||'';
       return deviceTile(d, src);
     }).join('');
+    // Inyecta medios solo si hay stream guardado
+    initFarmStreams();
   }
-  renderFarm(true);
 
-  // utilidades toolbar
+  function initFarmStreams(){
+    farmGrid.querySelectorAll('.dev').forEach(card=>{
+      const id = card.dataset.id;
+      const src = localStorage.getItem('stream:'+id)||'';
+      const screen = card.querySelector('[data-screen]');
+      const ph = screen.querySelector('[data-ph]');
+      if(!src) return;
+      ph?.remove();
+      if(src.endsWith('.mjpg')||src.endsWith('.mjpeg')){
+        const img = document.createElement('img'); img.src = src; img.crossOrigin='anonymous'; screen.appendChild(img);
+      } else if(src.endsWith('.m3u8')){
+        const v = document.createElement('video'); v.src = src; v.autoplay=true; v.muted=true; v.playsInline=true; screen.appendChild(v);
+      } else {
+        const f = document.createElement('iframe'); f.src = src; f.allow='autoplay; encrypted-media'; f.allowFullscreen=true; f.loading='lazy'; screen.appendChild(f);
+      }
+    });
+  }
+
+  function teardownFarm(){ // pausa videos
+    farmGrid.querySelectorAll('video').forEach(v=> v.pause());
+  }
+
+  // Toolbar actions
   async function requestPiP(video){
     if(!('pictureInPictureEnabled' in document)) { toast('PiP no soportado', true); return; }
     try{
@@ -542,47 +626,55 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   }
   function requestFull(el){ if(el.requestFullscreen) el.requestFullscreen(); }
 
-  function handleFarmClick(e){
+  farmGrid.addEventListener('click', (e)=>{
     const b=e.target.closest('button,.chip-b'); if(!b) return;
-    const card=b.closest('.dev'); const id=card.dataset.id;
+    const card=b.closest('.dev'); const id=card.dataset.id; const screen=card.querySelector('[data-screen]');
     if(b.dataset.copyIp){ navigator.clipboard?.writeText(b.dataset.copyIp); toast('IP copiada'); }
-    if(b.dataset.set){ const cur=localStorage.getItem('stream:'+id)||''; const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur); if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); toast('Stream actualizado'); } }
+    if(b.dataset.set){
+      const cur=localStorage.getItem('stream:'+id)||'';
+      const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur);
+      if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); toast('Stream actualizado'); }
+    }
     if(b.dataset.clear){ localStorage.removeItem('stream:'+id); renderFarm(); toast('Stream limpiado'); }
-    if(b.dataset.full){ const screen=card.querySelector('[data-screen]'); requestFull(screen); }
+    if(b.dataset.full){ requestFull(screen); }
     if(b.dataset.pip){
-      const v = card.querySelector('video');
+      const v = screen.querySelector('video');
       if(v) requestPiP(v); else toast('PiP solo disponible en video', true);
     }
     if(b.dataset.playpause){
-      const v = card.querySelector('video'); const img=card.querySelector('img'); const iframe=card.querySelector('iframe');
+      const v = screen.querySelector('video');
+      const img = screen.querySelector('img');
+      const iframe = screen.querySelector('iframe');
       if(v){ v.paused ? v.play() : v.pause(); b.textContent = v.paused ? 'Reanudar' : 'Pausar'; }
       else if(img){ img.src = img.src ? '' : (localStorage.getItem('stream:'+id)||''); b.textContent = img.src ? 'Pausar' : 'Reanudar'; }
       else if(iframe){ iframe.style.opacity = (iframe.style.opacity==='0.3'?'1':'0.3'); b.textContent = (iframe.style.opacity==='0.3') ? 'Reanudar' : 'Pausar'; }
     }
-  }
-  farmGrid.addEventListener('click', handleFarmClick);
+  });
 
-  // Auto‑pausa cuando sales de la pestaña Farm
-  function pauseAllFarm(){
-    farmGrid.querySelectorAll('video').forEach(v=> v.pause());
-  }
-  function handleTabChange(){
-    const farmChecked = document.getElementById('tab-farm').checked;
-    if(!farmChecked) pauseAllFarm();
-  }
-  document.querySelectorAll('input[name="tab"]').forEach(r=> r.addEventListener('change', handleTabChange));
-
-  /* ===== Métricas dummy (FPS/Latencia) ===== */
+  // FPS/Latencia dummy
   setInterval(()=>{
     farmGrid.querySelectorAll('.dev').forEach(card=>{
       const metric=card.querySelector('[data-metric]'); if(!metric) return;
-      const active = !!card.querySelector('video, img, iframe:not(.placeholder)');
+      const active = !!card.querySelector('video, img, iframe') && !card.querySelector('[data-ph]');
       metric.textContent = active ? `FPS: ${Math.floor(24+Math.random()*6)} · Lat: ${Math.floor(40+Math.random()*40)}ms` : 'FPS: — · Lat: —';
     });
   }, 1500);
 
-  /* ===== Quick toast y navegación por click de tiles ===== */
-  document.getElementById('social-grid').addEventListener('click',(e)=>{ if(e.target.closest('.tile')){ document.getElementById('tab-services').checked=true; handleTabChange(); } });
+  /* ===================== Tab change (lazy farm) ===================== */
+  function handleTabChange(){
+    const farmChecked = document.getElementById('tab-farm').checked;
+    if(farmChecked){
+      if(!farmGrid.childElementCount) renderFarm(); // primera vez
+      else { // si ya existe, asegúrate de que haya medios
+        initFarmStreams();
+      }
+    } else {
+      teardownFarm();
+    }
+  }
+  document.querySelectorAll('input[name="tab"]').forEach(r=> r.addEventListener('change', handleTabChange));
+  // Llamada inicial (Home por defecto)
+  handleTabChange();
 
 })();
 </script>
