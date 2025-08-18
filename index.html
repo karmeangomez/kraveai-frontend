@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>KRAVEAI — Nova</title>
+<title>KraveAI</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0b0d12">
+<meta name="theme-color" content="#ffffff">
 
-<!-- Tema sin parpadeo -->
+<!-- No flash theme -->
 <script>
   (function(){
     const saved = localStorage.getItem('theme');
@@ -18,175 +18,156 @@
 </script>
 
 <style>
-/* ================== Tokens ================== */
+/* ================= TOKENS ================= */
 :root{
-  --bg:#f7f8fb; --elev:#ffffff; --card:#ffffff; --text:#0f1421; --muted:#6c778d; --line:#e7ecf4;
-  --brand:linear-gradient(135deg,#7c5cff 0%,#00d3c2 100%);
-  --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
-  --r:16px; --gap:12px; --shadow:0 10px 26px rgba(0,0,0,.06);
+  --bg:#ffffff; --surface:#ffffff; --muted-bg:#f2f3f7; --text:#0b1323; --muted:#6b7280; --line:#e7ebf2;
+  --brandA:#7c5cff; --brandB:#00d3c2; --ok:#22c55e; --err:#ef4444;
+  --pill:#f6f7fb; --shadow:0 8px 30px rgba(16,24,40,.06);
+  --r:16px; --gap:12px;
 }
 [data-theme="dark"]{
-  --bg:#0a0e14; --elev:#0d121a; --card:#101826; --text:#e9eef6; --muted:#97a4ba; --line:#1c2737;
-  --shadow:0 18px 44px rgba(0,0,0,.28);
+  --bg:#0a0e14; --surface:#0d121a; --muted-bg:#121826; --text:#eaf0f8; --muted:#99a3b5; --line:#1e293b;
+  --pill:#0f1726; --shadow:0 18px 44px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box} html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 ui-sans-serif,system-ui,-apple-system,"SF Pro Text",Inter,Roboto}
 .app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+h1,h2,h3,p{margin:0}
+a{color:inherit;text-decoration:none}
 
-/* ================== Topbar ================== */
-.top{
-  position:sticky;top:0;z-index:40;
-  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
-  padding:12px max(14px,env(safe-area-inset-left)) 10px max(14px,env(safe-area-inset-right));
-  background:color-mix(in oklab,var(--elev) 92%, transparent);
-  border-bottom:1px solid var(--line);
-  backdrop-filter:saturate(1.05) blur(14px);
-}
+/* ================= TOPBAR ================= */
+.top{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
+  padding:12px max(16px,env(safe-area-inset-left)) 8px max(16px,env(safe-area-inset-right));
+  background:color-mix(in oklab, var(--surface) 92%, transparent); border-bottom:1px solid var(--line);
+  backdrop-filter:saturate(1.05) blur(14px);}
 .brand{display:flex;align-items:center;gap:10px}
-.badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--brand)}
-.word{font-weight:900;letter-spacing:.16em;background:var(--brand);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.status{display:flex;align-items:center;gap:8px;justify-self:center;color:var(--muted)}
-.status .dot{width:8px;height:8px;border-radius:50%;background:#8aa}
-.status[data-online="true"] .dot{background:var(--ok)}
-.theme-toggle{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;cursor:pointer;background:rgba(0,0,0,.04);border:1px solid var(--line)}
+.badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brandA),var(--brandB))}
+.word{font-weight:900;font-size:18px;letter-spacing:.02em}
+.status{justify-self:center;color:var(--muted);font-size:12px;display:flex;align-items:center;gap:8px}
+.status .dot{width:8px;height:8px;border-radius:50%;background:#9aa;opacity:.7}
+.status[data-online="true"] .dot{background:var(--ok);opacity:1}
+.theme-toggle{width:36px;height:36px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;background:var(--pill);cursor:pointer}
 .icon-moon{display:none}
 [data-theme="dark"] .icon-sun{display:none}
 [data-theme="dark"] .icon-moon{display:block}
-.back{
-  position:absolute;left:max(8px,env(safe-area-inset-left));top:12px;
-  width:36px;height:36px;border-radius:12px;display:none;place-items:center;background:rgba(0,0,0,.04);border:1px solid var(--line);cursor:pointer;z-index:45;
-}
-.back svg{width:20px;height:20px}
+
+.back{position:absolute;left:max(10px,env(safe-area-inset-left));top:12px;width:36px;height:36px;border-radius:12px;display:none;
+  place-items:center;border:1px solid var(--line);background:var(--pill);cursor:pointer;z-index:60}
 body[data-can-back="true"] .back{display:grid}
 
-/* ================== Bottom nav ================== */
-.nav{
-  position:sticky;bottom:0;z-index:35;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
-  padding:8px max(12px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-right));
-  background:color-mix(in oklab,var(--elev) 92%, transparent);
-  border-top:1px solid var(--line);
-  backdrop-filter:saturate(1.05) blur(14px);
-}
+/* ================= NAV ================= */
+.nav{position:sticky;bottom:0;z-index:45;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  padding:8px max(14px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-right));
+  background:color-mix(in oklab,var(--surface) 92%, transparent);border-top:1px solid var(--line);backdrop-filter:blur(12px)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer}
 .tab svg{width:18px;height:18px}
-.tab small{font-size:.72rem}
+.tab small{font-size:11px}
 input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 #tab-home:checked ~ .app .nav label[for="tab-home"],
 #tab-clients:checked ~ .app .nav label[for="tab-clients"],
 #tab-farm:checked ~ .app .nav label[for="tab-farm"],
-#tab-accounts:checked ~ .app .nav label[for="tab-accounts"]{color:var(--text);background:rgba(0,0,0,.04);border-color:var(--line)}
+#tab-accounts:checked ~ .app .nav label[for="tab-accounts"]{color:var(--text);background:var(--pill);border-color:var(--line)}
 
-/* ================== Views y paneles ================== */
-.main{
-  height:calc(100svh - 60px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  padding:12px max(14px,env(safe-area-inset-left)) 12px max(14px,env(safe-area-inset-right));
-  overflow:auto;
-}
-.view{display:none;animation:fade .16s ease}
+/* ================= MAIN ================= */
+.main{height:calc(100svh - 60px - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  padding:14px max(16px,env(safe-area-inset-left)) 16px max(16px,env(safe-area-inset-right));overflow:auto}
+.view{display:none;animation:fade .14s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 #tab-home:checked ~ .app .view[data-tab="home"],
 #tab-clients:checked ~ .app .view[data-tab="clients"],
 #tab-farm:checked ~ .app .view[data-tab="farm"],
 #tab-accounts:checked ~ .app .view[data-tab="accounts"]{display:block}
 
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
-.section-title{font-weight:900;margin:2px 0 10px}
-.hint{color:var(--muted);font-size:.86rem;margin:6px 0 12px}
-.btn{border:1px solid var(--line);background:rgba(0,0,0,.04);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
-.btn-primary{border:0;background:var(--brand);color:#0b0d13}
+/* ================= HOME (estilo mock) ================= */
+.hero{display:flex;align-items:center;gap:10px;margin:6px 0 16px}
+.hero h1{font-size:28px;font-weight:900}
+.hero-sub{color:var(--muted);margin-top:6px}
+.orb{width:96px;height:96px;border-radius:50%;margin:14px auto;background:
+  radial-gradient(ellipse at 30% 30%, rgba(124,92,255,.45), transparent 55%),
+  radial-gradient(ellipse at 70% 70%, rgba(0,211,194,.38), transparent 55%), #0a46ff22;
+  box-shadow:0 20px 50px rgba(73,100,255,.25)}
 
-/* ================== Home — SOLO logos ================== */
+.pills{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 18px}
+.pill{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:var(--pill);
+  border:1px solid var(--line);cursor:pointer;box-shadow:var(--shadow)}
+.pill .logo{width:22px;height:22px;display:grid;place-items:center}
+.pill strong{font-weight:800}
+
+.section-title{font-weight:900;margin:10px 0 8px}
+.clients{display:grid;gap:10px}
+.client{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--pill);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.client .id{display:flex;align-items:center;gap:10px}
+.client .pf{width:34px;height:34px;border-radius:999px;overflow:hidden;background:#ddd}
+.client .handle{font-weight:800}
+.verify{width:18px;height:18px}
+
+.quick{position:sticky;bottom:0;margin-top:18px;background:linear-gradient(180deg, transparent, var(--bg) 60%);padding-top:12px}
+.input{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
+.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:16px}
+.btn{border:1px solid var(--line);background:linear-gradient(135deg,var(--brandA),var(--brandB));color:#08121a;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer}
+
+/* ================= STACK (Home -> Net -> Svc) ================= */
 .stack{position:relative}
 .panel{display:none}
 .panel.active{display:block}
 
-/* Logos grid */
-.home-grid{
-  display:grid;gap:14px;
-  grid-template-columns:repeat(4, minmax(0,1fr));
-}
-@media (min-width:520px){.home-grid{grid-template-columns:repeat(6, minmax(0,1fr))}}
-@media (min-width:900px){.home-grid{grid-template-columns:repeat(8, minmax(0,1fr))}}
-.app-icon{
-  background:var(--card);border:1px solid var(--line);border-radius:18px;
-  display:grid;gap:10px;place-items:center;padding:16px 8px;cursor:pointer;
-  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
-}
-.app-icon:hover{transform:translateY(-3px);border-color:color-mix(in oklab, var(--brand) 30%, var(--line));box-shadow:0 12px 24px rgba(0,0,0,.1)}
-.app-badge{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:rgba(0,0,0,.04);border:1px solid var(--line)}
-.app-badge svg{width:26px;height:26px}
-.app-label{font-weight:800;font-size:.86rem}
-
-/* Lista de servicios de una red */
-.serv-list{display:grid;gap:10px;max-width:760px}
-.item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer}
+.serv-list{display:grid;gap:10px}
+.item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);cursor:pointer}
 .left{display:flex;align-items:center;gap:10px}
-.ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(0,0,0,.05);border:1px solid var(--line)}
-.ico svg{width:18px;height:18px}
-.tt{font-weight:800}
+.ico{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:var(--pill);border:1px solid var(--line)}
 .arrow{opacity:.6}
 
-/* Form servicio */
-.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(0,0,0,.04);border-radius:12px;padding:10px}
-.input input,.input textarea{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
-.form-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-.form-grid .full{grid-column:1/-1}
+/* ================= CLIENTES TAB ================= */
+.clients-tab .client{background:var(--surface)}
 
-/* ================== Clientes (IG) ================== */
-.clients{display:grid;gap:10px;grid-template-columns:1fr;max-width:700px}
-.client{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
-.client .logo{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg, rgba(225,48,108,.12), rgba(155,28,78,.18));border:1px solid rgba(225,48,108,.35)}
-.client .logo svg{width:16px;height:16px}
-.handle{font-weight:800}
-.verify{width:18px;height:18px}
-
-/* ================== Farm ================== */
+/* ================= FARM ================= */
+.farm-bar{display:flex;align-items:center;justify-content:space-between;margin:6px 0 10px;color:var(--muted)}
 .farm{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.farm-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
 .dev{display:grid;gap:10px;padding:12px}
-.dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
+.dev-head{display:flex;align-items:center;justify-content:space-between}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.04);font-size:.78rem}
-.chip[data-live="true"]{background:rgba(34,197,94,.12);border-color:var(--ok);color:var(--ok)}
-.screen{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#000;height:220px;position:relative}
-.screen::after{content:"";position:absolute;inset:-2px;border-radius:18px;pointer-events:none;box-shadow:0 0 0 0 rgba(34,197,94,.0);transition:box-shadow .2s}
-.screen[data-live="true"]::after{box-shadow:0 0 0 3px rgba(34,197,94,.35)}
-.screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.screen .placeholder{position:absolute;inset:0;background:radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.25), transparent 60%),radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%),#000}
-.ov{position:absolute;left:6px;top:6px;display:flex;gap:6px;z-index:2}
-.toolbar{position:absolute;right:6px;bottom:6px;display:flex;gap:6px;z-index:2}
-.tool{border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.38);color:#fff;padding:6px 8px;border-radius:10px;font-size:.78rem;cursor:pointer}
+.chip{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:var(--pill);font-size:12px}
+.chip[data-live="true"]{background:#22c55e1a;border-color:#22c55e;color:#22c55e}
+.screen{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;height:220px;position:relative}
+.screen .placeholder{position:absolute;inset:0;background:
+  radial-gradient(120% 80% at 10% 10%, rgba(124,92,255,.25), transparent 60%),
+  radial-gradient(120% 80% at 90% 90%, rgba(0,211,194,.18), transparent 60%), #000}
+.screen iframe,.screen video,.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.toolbar{position:absolute;right:6px;bottom:6px;display:flex;gap:6px}
+.tool{border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.4);color:#fff;padding:6px 8px;border-radius:10px;font-size:12px}
 
-/* ================== Créditos ================== */
-.credit{
-  position:fixed;right:max(12px,env(safe-area-inset-right));z-index:50;
-  bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom) + 8px);
-  font-size:.86rem;color:var(--text);
-  background:linear-gradient(180deg,color-mix(in oklab,var(--elev) 96%, transparent),color-mix(in oklab,var(--elev) 98%, transparent));
-  border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(6px)
-}
+/* ================= ACCOUNTS ================= */
+.form{display:grid;gap:10px}
+.input-row{display:flex;gap:8px}
+.input-row .field{flex:1}
+.field{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px}
+.field input{flex:1;border:0;background:transparent;outline:none;color:var(--text)}
+
+/* ================= CREDITS ================= */
+.credit{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(64px + env(safe-area-inset-bottom) + 8px);
+  z-index:60;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 12px;box-shadow:var(--shadow);font-size:13px}
+
+/* ================= ICONS ================= */
+svg{display:block}
 </style>
 </head>
 <body>
 
-<!-- Tabs -->
+<!-- TABS -->
 <input type="radio" name="tab" id="tab-home" checked>
 <input type="radio" name="tab" id="tab-clients">
 <input type="radio" name="tab" id="tab-farm">
 <input type="radio" name="tab" id="tab-accounts">
 
-<!-- ===== SVG sprite ===== -->
+<!-- ===== SPRITE ===== -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/></linearGradient>
-    <!-- Logo KRAVE -->
-    <symbol id="klogo" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
-      <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
-    </symbol>
-    <!-- Nav -->
+    <!-- KRAVE -->
+    <symbol id="klogo" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/>
+      <path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/></symbol>
+    <!-- NAV -->
     <symbol id="ico-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-devices" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="8" width="2" height="8" rx="1" fill="currentColor"/></symbol>
@@ -194,37 +175,33 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     <symbol id="ico-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-    <!-- IG verified oficial -->
-    <symbol id="ig-verified" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0095F6"/><path d="M8.8 12.2l2.2 2.2 5-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <!-- Logos oficiales (mínimos) -->
-    <symbol id="logo-instagram" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
-    </symbol>
-    <symbol id="logo-tiktok" viewBox="0 0 24 24">
-      <path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/>
-      <path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/>
-    </symbol>
+    <!-- IG verified real -->
+    <symbol id="ig-verified" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0095F6"/>
+      <path d="M8.8 12.2l2.2 2.2 5-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+
+    <!-- LOGOS oficiales mínimos -->
+    <symbol id="logo-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/></symbol>
+    <symbol id="logo-tiktok" viewBox="0 0 24 24"><path d="M10 4v9.2a3.8 3.8 0 1 1-2.8 6.2" fill="none" stroke="#69C9D0" stroke-width="2"/>
+      <path d="M14 4c.5 2.3 2.2 4 5 4" fill="none" stroke="#ff0050" stroke-width="2"/></symbol>
     <symbol id="logo-youtube" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/></symbol>
-    <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#111" stroke-width="2"/></symbol>
-    <symbol id="logo-facebook" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
-    <symbol id="logo-linkedin" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
-    <symbol id="logo-telegram" viewBox="0 0 24 24"><path d="M21 3L3 11l6 2 2 6 3-4 4-10z" fill="#0088cc"/></symbol>
+    <symbol id="logo-threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.5-1-3.5-2.5S9 14 12 14c2.5 0 3.8-1.2 3.8-3S14.5 8 12 8" fill="none" stroke="#111" stroke-width="2"/></symbol>
+    <symbol id="logo-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" fill="none"/></symbol>
     <symbol id="logo-whatsapp" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 1 0 18 9.4 9.4 0 0 1-4-.9L5 21l.9-3.1A9.4 9.4 0 0 1 3 12 9 9 0 0 1 12 3z" fill="#25D366"/><path d="M9 8c0 3 3 6 5 6l1-1" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="logo-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#111" stroke-width="2"/></symbol>
   </defs>
 </svg>
 
 <div class="app" id="app">
-  <!-- Topbar -->
+  <!-- Top -->
   <header class="top">
     <button class="back" id="back-btn" title="Volver"><svg><use href="#ico-back"/></svg></button>
     <div class="brand">
-      <div class="badge"><svg viewBox="0 0 64 64" width="20" height="20"><use href="#klogo"/></svg></div>
-      <div class="word">KRAVEAI</div>
+      <div class="badge"><svg width="20" height="20"><use href="#klogo"/></svg></div>
+      <div class="word">KraveAI</div>
     </div>
-    <div class="status" id="status"><span class="dot"></span><small id="status-text">Conectando…</small></div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+    <div class="status" id="status"><span class="dot"></span> <span id="status-text">Conectando…</span></div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Tema">
       <svg class="icon-sun" width="20" height="20"><use href="#ico-sun"/></svg>
       <svg class="icon-moon" width="20" height="20"><use href="#ico-moon"/></svg>
     </button>
@@ -235,17 +212,83 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     <!-- HOME -->
     <section class="view" data-tab="home">
       <div class="stack" id="stack">
-        <!-- Panel raíz (solo logos) -->
+        <!-- Panel raíz -->
         <div class="panel active" data-panel="root">
+          <div class="hero">
+            <h1>Redes sociales</h1>
+          </div>
+          <p class="hero-sub">Domina todas tus redes con IA</p>
+          <div class="orb"></div>
+
           <div class="section-title">Redes sociales</div>
-          <div class="hint">Toca una red para ver sus servicios.</div>
-          <div class="home-grid" id="home-grid"></div>
+          <div class="pills" id="pills">
+            <button class="pill" data-net="instagram"><span class="logo" style="color:#E1306C"><svg><use href="#logo-instagram"/></svg></span><strong>Instagram</strong></button>
+            <button class="pill" data-net="tiktok"><span class="logo" style="color:#69C9D0"><svg><use href="#logo-tiktok"/></svg></span><strong>TikTok</strong></button>
+            <button class="pill" data-net="youtube"><span class="logo" style="color:#FF0000"><svg><use href="#logo-youtube"/></svg></span><strong>YouTube</strong></button>
+            <button class="pill" data-net="spotify"><span class="logo" style="color:#1DB954"><svg><use href="#logo-spotify"/></svg></span><strong>Spotify</strong></button>
+            <button class="pill" data-net="threads"><span class="logo" style="color:#111"><svg><use href="#logo-threads"/></svg></span><strong>Threads</strong></button>
+            <button class="pill" data-net="modo"><span class="logo" style="color:#111">⚡</span><strong>Modo Bestia</strong></button>
+          </div>
+
+          <div class="section-title">Clientes recientes</div>
+          <div class="clients">
+            <div class="client">
+              <div class="id">
+                <img class="pf" src="https://i.pravatar.cc/68?img=12" alt="">
+                <div>
+                  <div class="handle">@aaronmercury <svg class="verify"><use href="#ig-verified"/></svg></div>
+                  <small style="color:var(--muted)">Instagram</small>
+                </div>
+              </div>
+              <span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span>
+            </div>
+            <div class="client">
+              <div class="id">
+                <img class="pf" src="https://i.pravatar.cc/68?img=26" alt="">
+                <div>
+                  <div class="handle">@televisadigital <svg class="verify"><use href="#ig-verified"/></svg></div>
+                  <small style="color:var(--muted)">Instagram</small>
+                </div>
+              </div>
+              <span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span>
+            </div>
+            <div class="client">
+              <div class="id">
+                <img class="pf" src="https://i.pravatar.cc/68?img=5" alt="">
+                <div>
+                  <div class="handle">@joscanela <svg class="verify"><use href="#ig-verified"/></svg></div>
+                  <small style="color:var(--muted)">Instagram</small>
+                </div>
+              </div>
+              <span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span>
+            </div>
+            <div class="client">
+              <div class="id">
+                <img class="pf" src="https://i.pravatar.cc/68?img=32" alt="">
+                <div>
+                  <div class="handle">@jimenagallegotv <svg class="verify"><use href="#ig-verified"/></svg></div>
+                  <small style="color:var(--muted)">Instagram</small>
+                </div>
+              </div>
+              <span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span>
+            </div>
+          </div>
+
+          <div class="quick">
+            <div class="input">
+              <span>➕</span>
+              <input id="quick-input" placeholder="¿Qué quieres automatizar hoy?">
+              <button class="btn" id="quick-run">Enviar</button>
+            </div>
+          </div>
         </div>
+
         <!-- Panel de red -->
         <div class="panel" data-panel="net">
           <div class="section-title" id="net-title">Servicios</div>
           <div class="serv-list" id="serv-list"></div>
         </div>
+
         <!-- Panel de servicio -->
         <div class="panel" data-panel="svc">
           <div class="section-title" id="svc-title">Servicio</div>
@@ -254,15 +297,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       </div>
     </section>
 
-    <!-- CLIENTES -->
-    <section class="view" data-tab="clients">
+    <!-- CLIENTES TAB (mismos handles) -->
+    <section class="view clients-tab" data-tab="clients">
       <div class="section-title">Clientes recientes</div>
-      <div class="hint">Cuentas verificadas en Instagram</div>
-      <div class="clients">
-        <div class="card client"><div class="logo"><svg><use href="#logo-instagram"/></svg></div><div class="handle">@aaronmercury</div><svg class="verify"><use href="#ig-verified"/></svg></div>
-        <div class="card client"><div class="logo"><svg><use href="#logo-instagram"/></svg></div><div class="handle">@televisadigital</div><svg class="verify"><use href="#ig-verified"/></svg></div>
-        <div class="card client"><div class="logo"><svg><use href="#logo-instagram"/></svg></div><div class="handle">@joscanela</div><svg class="verify"><use href="#ig-verified"/></svg></div>
-        <div class="card client"><div class="logo"><svg><use href="#logo-instagram"/></svg></div><div class="handle">@jimenagallegotv</div><svg class="verify"><use href="#ig-verified"/></svg></div>
+      <div class="clients" style="margin-top:8px">
+        <div class="client"><div class="id"><span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span><div class="handle">@aaronmercury</div><svg class="verify"><use href="#ig-verified"/></svg></div></div>
+        <div class="client"><div class="id"><span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span><div class="handle">@televisadigital</div><svg class="verify"><use href="#ig-verified"/></svg></div></div>
+        <div class="client"><div class="id"><span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span><div class="handle">@joscanela</div><svg class="verify"><use href="#ig-verified"/></svg></div></div>
+        <div class="client"><div class="id"><span class="logo" style="color:#E1306C"><svg width="22" height="22"><use href="#logo-instagram"/></svg></span><div class="handle">@jimenagallegotv</div><svg class="verify"><use href="#ig-verified"/></svg></div></div>
       </div>
     </section>
 
@@ -270,53 +312,48 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     <section class="view" data-tab="farm">
       <div class="section-title">Device Farm</div>
       <div class="farm-bar">
-        <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="dense"> Vista densa</label>
-        <small class="hint">Streams: HLS .m3u8, MJPEG .mjpg o visor http</small>
+        <label><input type="checkbox" id="dense"> Vista densa</label>
+        <small>Streams: HLS .m3u8, MJPEG .mjpg o visor http</small>
       </div>
       <div class="farm" id="farm-grid"></div>
     </section>
 
-    <!-- CUENTAS -->
+    <!-- ACCOUNTS -->
     <section class="view" data-tab="accounts">
       <div class="section-title">Cuentas</div>
-      <div class="grid" style="grid-template-columns:1fr;max-width:880px">
-        <div class="card" style="padding:12px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div class="ico"><svg><use href="#ico-lock"/></svg></div>
-            <div><div class="tt" style="font-weight:800">Sesión</div><small class="hint" id="session-sub" style="margin:0">Verificando…</small></div>
+      <div class="card" style="padding:12px;margin-top:8px">
+        <div class="form">
+          <div id="session-sub" style="color:var(--muted)">Verificando…</div>
+          <div class="input-row">
+            <div class="field"><span>@</span><input id="login-username" placeholder="Usuario"></div>
+            <div class="field"><span>🔒</span><input id="login-password" type="password" placeholder="Contraseña"></div>
           </div>
-          <div class="form-grid" style="margin-top:10px">
-            <div class="input full"><span>@</span><input id="login-username" placeholder="Usuario"></div>
-            <div class="input full"><span>🔒</span><input id="login-password" type="password" placeholder="Contraseña"></div>
-            <button class="btn btn-primary" id="login-btn">Iniciar sesión</button>
-            <button class="btn" id="logout-btn">Cerrar sesión</button>
+          <div class="input-row">
+            <button class="btn" id="login-btn">Iniciar sesión</button>
+            <button class="btn" style="background:var(--pill);color:var(--text)" id="logout-btn">Cerrar sesión</button>
           </div>
         </div>
+      </div>
 
-        <div class="card" style="padding:12px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div class="ico"><svg><use href="#logo-instagram"/></svg></div>
-            <div><div class="tt" style="font-weight:800">Agregar cuenta manual</div><small class="hint" style="margin:0">Se valida y se inserta</small></div>
+      <div class="card" style="padding:12px;margin-top:12px">
+        <div class="form">
+          <div style="font-weight:800">Agregar cuenta manual</div>
+          <div class="input-row">
+            <div class="field"><span>@</span><input id="manual-username" placeholder="@usuario"></div>
+            <div class="field"><span>🔒</span><input id="manual-password" type="password" placeholder="••••••••"></div>
           </div>
-          <div class="form-grid" style="margin-top:10px">
-            <div class="input full"><span>@</span><input id="manual-username" placeholder="@usuario"></div>
-            <div class="input full"><span>🔒</span><input id="manual-password" type="password" placeholder="••••••••"></div>
-            <button class="btn btn-primary" id="add-account-btn">Guardar cuenta</button>
-          </div>
+          <button class="btn" id="add-account-btn">Guardar cuenta</button>
         </div>
+      </div>
 
-        <div class="card" style="padding:12px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div class="ico"><svg><use href="#ico-users"/></svg></div>
-            <div><div class="tt" style="font-weight:800">Cuentas activas</div><small class="hint" style="margin:0">Actualiza cada 30s</small></div>
-          </div>
-          <div id="accounts-list" class="grid" style="grid-template-columns:1fr;gap:8px;margin-top:10px"><div class="hint">Cargando…</div></div>
-        </div>
+      <div class="card" style="padding:12px;margin-top:12px">
+        <div style="font-weight:800;margin-bottom:8px">Cuentas activas</div>
+        <div id="accounts-list" class="clients"><div style="color:var(--muted)">Cargando…</div></div>
       </div>
     </section>
   </main>
 
-  <!-- Bottom nav -->
+  <!-- NAV -->
   <nav class="nav" id="nav">
     <label class="tab" for="tab-home"><svg><use href="#ico-home"/></svg><small>Inicio</small></label>
     <label class="tab" for="tab-clients"><svg><use href="#ico-users"/></svg><small>Clientes</small></label>
@@ -325,152 +362,112 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
   </nav>
 </div>
 
-<!-- Firma correcta -->
+<!-- Firma -->
 <div class="credit" id="credit">Created by Karmean Gómez</div>
 
 <script>
 (function(){
-  const API_URL = "https://api.kraveapi.xyz";
+  const API_URL="https://api.kraveapi.xyz";
 
   // ===== Tema =====
-  document.getElementById('theme-toggle').addEventListener('click', ()=>{
-    const cur=document.documentElement.getAttribute('data-theme')||'light';
-    const next=cur==='light'?'dark':'light';
-    document.documentElement.setAttribute('data-theme',next);
-    localStorage.setItem('theme',next);
+  document.getElementById('theme-toggle').addEventListener('click',()=>{
+    const cur=document.documentElement.getAttribute('data-theme'); const next=cur==='light'?'dark':'light';
+    document.documentElement.setAttribute('data-theme',next); localStorage.setItem('theme',next);
   });
 
-  // ===== Estado backend (sin info falsa) =====
-  const status = document.getElementById('status');
-  const statusText = document.getElementById('status-text');
+  // ===== Estado backend (sin inventar nada) =====
+  const status=document.getElementById('status'); const statusText=document.getElementById('status-text');
   async function checkHealth(){
-    try{
-      const r=await fetch(`${API_URL}/health`,{credentials:'include'});
+    try{ const r=await fetch(`${API_URL}/health`,{credentials:'include'});
       if(r.ok){status.setAttribute('data-online','true'); statusText.textContent='Conectado';}
       else throw new Error();
     }catch{ status.removeAttribute('data-online'); statusText.textContent='Sin conexión'; }
-  }
-  checkHealth(); setInterval(checkHealth,120000);
+  } checkHealth(); setInterval(checkHealth,120000);
 
-  // ===== Ajuste firma según nav =====
-  const nav=document.getElementById('nav'); const credit=document.getElementById('credit');
-  function positionCredit(){ document.body.style.setProperty('--nav-h', nav.getBoundingClientRect().height + 'px'); }
-  window.addEventListener('resize', positionCredit); positionCredit();
+  // ===== Quick =====
+  document.getElementById('quick-run').addEventListener('click',()=>{
+    const v=(document.getElementById('quick-input').value||'').trim();
+    alert(v ? ('Automatizando: '+v) : 'Escribe qué automatizar');
+  });
 
-  // =====================================================
-  // HOME — jerarquía root → net → svc
-  // =====================================================
-  const NETWORKS=[
-    {key:'instagram',label:'Instagram',color:'#E1306C',logo:'#logo-instagram',services:[
-      {key:'comentarios',label:'Comentarios',type:'form'},
-      {key:'likes',label:'Likes',type:'template'},
-      {key:'seguidores',label:'Seguidores',type:'template'},
-      {key:'vistas',label:'Vistas',type:'template'},
+  // ===== Navegación Home -> Net -> Svc =====
+  const NETWORKS={
+    instagram:{label:'Instagram',logo:'#logo-instagram',color:'#E1306C',services:[
+      {key:'comentarios',label:'Comentarios',form:true},
+      {key:'likes',label:'Likes'}, {key:'seguidores',label:'Seguidores'}, {key:'vistas',label:'Vistas'}
     ]},
-    {key:'tiktok',label:'TikTok',color:'#69C9D0',logo:'#logo-tiktok',services:[
-      {key:'vistas',label:'Vistas',type:'template'},
-      {key:'likes',label:'Likes',type:'template'},
-      {key:'seguidores',label:'Seguidores',type:'template'},
-      {key:'compartidos',label:'Compartidos',type:'template'},
+    tiktok:{label:'TikTok',logo:'#logo-tiktok',color:'#69C9D0',services:[
+      {key:'vistas',label:'Vistas'},{key:'likes',label:'Likes'},{key:'seguidores',label:'Seguidores'}
     ]},
-    {key:'youtube',label:'YouTube',color:'#FF0000',logo:'#logo-youtube',services:[
-      {key:'vistas',label:'Vistas',type:'template'},
-      {key:'likes',label:'Likes',type:'template'},
-      {key:'suscripciones',label:'Suscripciones',type:'template'},
-      {key:'comentarios',label:'Comentarios',type:'template'},
+    youtube:{label:'YouTube',logo:'#logo-youtube',color:'#FF0000',services:[
+      {key:'vistas',label:'Vistas'},{key:'likes',label:'Likes'},{key:'suscripciones',label:'Suscripciones'}
     ]},
-    {key:'x',label:'X',color:'#111',logo:'#logo-x',services:[
-      {key:'likes',label:'Likes',type:'template'},
-      {key:'reposts',label:'Reposts',type:'template'},
-      {key:'seguidores',label:'Seguidores',type:'template'},
-      {key:'respuestas',label:'Respuestas',type:'template'},
-    ]},
-    {key:'facebook',label:'Facebook',color:'#1877F2',logo:'#logo-facebook',services:[
-      {key:'reacciones',label:'Reacciones',type:'template'},
-      {key:'comentarios',label:'Comentarios',type:'template'},
-      {key:'compartidos',label:'Compartidos',type:'template'},
-    ]},
-    {key:'linkedin',label:'LinkedIn',color:'#0A66C2',logo:'#logo-linkedin',services:[
-      {key:'reacciones',label:'Reacciones',type:'template'},
-      {key:'comentarios',label:'Comentarios',type:'template'},
-      {key:'conexiones',label:'Conexiones',type:'template'},
-    ]},
-    {key:'whatsapp',label:'WhatsApp',color:'#25D366',logo:'#logo-whatsapp',services:[
-      {key:'mensajes',label:'Mensajes',type:'template'},
-      {key:'grupos',label:'Grupos',type:'template'},
-    ]},
-    {key:'telegram',label:'Telegram',color:'#0088cc',logo:'#logo-telegram',services:[
-      {key:'mensajes',label:'Mensajes',type:'template'},
-      {key:'miembros',label:'Miembros',type:'template'},
-      {key:'reacciones',label:'Reacciones',type:'template'},
-    ]}
-  ];
+    spotify:{label:'Spotify',logo:'#logo-spotify',color:'#1DB954',services:[{key:'streams',label:'Streams'},{key:'saves',label:'Saves'}]},
+    threads:{label:'Threads',logo:'#logo-threads',color:'#111',services:[{key:'likes',label:'Likes'},{key:'respuestas',label:'Respuestas'}]},
+    modo:{label:'Modo Bestia',logo:'#logo-x',color:'#111',services:[{key:'config',label:'Configuración'}]}
+  };
 
-  const homeGrid=document.getElementById('home-grid');
   const stack=document.getElementById('stack');
   const panels={
     root:stack.querySelector('[data-panel="root"]'),
     net:stack.querySelector('[data-panel="net"]'),
     svc:stack.querySelector('[data-panel="svc"]'),
   };
-  const netTitle=document.getElementById('net-title');
-  const servList=document.getElementById('serv-list');
-  const svcTitle=document.getElementById('svc-title');
-  const svcBody=document.getElementById('svc-body');
-
+  const netTitle=document.getElementById('net-title'), servList=document.getElementById('serv-list');
+  const svcTitle=document.getElementById('svc-title'), svcBody=document.getElementById('svc-body');
   let navStack=['root'];
+
   function showPanel(name){
     stack.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     panels[name].classList.add('active');
     document.body.toggleAttribute('data-can-back', navStack.length>1);
   }
 
-  // Pintar Home (asegurado)
-  homeGrid.innerHTML = NETWORKS.map(n=>`
-    <button class="app-icon" data-net="${n.key}">
-      <span class="app-badge" style="color:${n.color}"><svg><use href="${n.logo}"/></svg></span>
-      <span class="app-label">${n.label}</span>
-    </button>`).join('');
-
-  // Entrar a red
-  homeGrid.addEventListener('click', (e)=>{
-    const btn=e.target.closest('.app-icon'); if(!btn) return;
-    const net=NETWORKS.find(n=>n.key===btn.dataset.net); if(!net) return;
+  // pills → net
+  document.getElementById('pills').addEventListener('click',e=>{
+    const b=e.target.closest('.pill'); if(!b) return;
+    const net=NETWORKS[b.dataset.net]; if(!net) return;
     netTitle.textContent=net.label;
     servList.innerHTML=net.services.map(s=>`
-      <div class="card item" data-net="${net.key}" data-service="${s.key}">
-        <div class="left"><div class="ico"><svg><use href="${net.logo}"/></svg></div><div class="tt">${s.label}</div></div>
+      <div class="item" data-net="${b.dataset.net}" data-svc="${s.key}">
+        <div class="left"><div class="ico"><svg width="20" height="20"><use href="${net.logo}"/></svg></div><div class="tt" style="font-weight:800">${s.label}</div></div>
         <div class="arrow">›</div>
       </div>`).join('');
     navStack.push('net'); showPanel('net');
   });
 
-  // Entrar a servicio
-  servList.addEventListener('click', (e)=>{
+  // net → svc
+  servList.addEventListener('click', e=>{
     const it=e.target.closest('.item'); if(!it) return;
-    const net=NETWORKS.find(n=>n.key===it.dataset.net); const svc=net?.services.find(s=>s.key===it.dataset.service);
-    if(!svc) return;
+    const net=NETWORKS[it.dataset.net]; const svc=net?.services.find(x=>x.key===it.dataset.svc); if(!svc) return;
     svcTitle.textContent=`${net.label} — ${svc.label}`;
-
-    if(net.key==='instagram' && svc.key==='comentarios'){
+    if(net===NETWORKS.instagram && svc.key==='comentarios'){
       svcBody.innerHTML=`
-      <div class="card" style="padding:14px">
-        <div class="form-grid">
-          <div class="input full"><span>🔗</span><input id="ig-url" placeholder="URL del post (https://www.instagram.com/p/...)" required></div>
-          <div class="input"><span>#</span><input id="ig-cantidad" type="number" min="1" max="100" value="30" placeholder="Cantidad"></div>
-          <div class="input"><span>🎛️</span><input id="ig-modo" value="auto" list="modos" placeholder="Modo"></div>
+      <div class="card" style="padding:12px">
+        <div class="form">
+          <div class="field"><span>🔗</span><input id="ig-url" placeholder="URL del post (https://www.instagram.com/p/...)"></div>
+          <div class="input-row">
+            <div class="field"><span>#</span><input id="ig-cantidad" type="number" min="1" max="100" value="30"></div>
+            <div class="field"><span>🎛️</span><input id="ig-modo" value="auto" list="modos"></div>
+          </div>
           <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
-          <div class="input full"><span>🧑‍💼</span><input id="ig-apodo" placeholder="Apodo (opcional)"></div>
-          <div class="input"><span>🎯</span><input id="ig-estilo" placeholder="Estilo (fitness, sexy, etc)"></div>
-          <div class="input"><span>🏷️</span><input id="ig-actividad" placeholder="Actividad (entrenador, etc)"></div>
-          <div class="input full"><span>📝</span><textarea id="ig-ejemplos" rows="2" placeholder="Ejemplos (uno por línea)"></textarea></div>
-          <button class="btn btn-primary" id="ig-send">Lanzar</button>
-          <button class="btn" id="ig-cancel">Cancelar</button>
+          <div class="input-row">
+            <div class="field"><span>🧑‍💼</span><input id="ig-apodo" placeholder="Apodo (opcional)"></div>
+            <div class="field"><span>🎯</span><input id="ig-estilo" placeholder="Estilo"></div>
+          </div>
+          <div class="input-row">
+            <div class="field"><span>🏷️</span><input id="ig-actividad" placeholder="Actividad"></div>
+          </div>
+          <div class="field"><span>📝</span><input id="ig-ejemplos" placeholder="Ejemplos (uno por línea)"></div>
+          <div class="input-row">
+            <button class="btn" id="ig-send">Lanzar</button>
+            <button class="btn" style="background:var(--pill);color:var(--text)" id="ig-cancel">Cancelar</button>
+          </div>
+          <div class="hint" id="ig-status">—</div>
         </div>
-        <div id="ig-status" class="hint" style="margin-top:8px">—</div>
       </div>`;
-      // Eventos
       setTimeout(()=>{
+        const st=()=>document.getElementById('ig-status');
         document.getElementById('ig-send').addEventListener('click', async ()=>{
           const payload={
             url:document.getElementById('ig-url').value.trim(),
@@ -481,122 +478,91 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
             actividad:document.getElementById('ig-actividad').value.trim(),
             ejemplos:document.getElementById('ig-ejemplos').value.trim(),
           };
-          const st=document.getElementById('ig-status');
-          if(!payload.url){ st.textContent='❌ Falta URL'; return; }
+          if(!payload.url){ st().textContent='❌ Falta URL'; return; }
           try{
-            st.textContent='Enviando…';
+            st().textContent='Enviando…';
             const r=await fetch(`${API_URL}/instagram/comentarios`,{
-              method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)
-            });
+              method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
             const d=await r.json().catch(()=>({}));
-            if(r.ok){ st.textContent='✅ Comentarios en proceso'; } else { throw new Error(d.mensaje||'Error en comentarios'); }
-          }catch(err){ st.textContent='❌ '+err.message; }
+            if(r.ok){ st().textContent='✅ Comentarios en proceso'; } else { throw new Error(d.mensaje||'Error en comentarios'); }
+          }catch(err){ st().textContent='❌ '+err.message; }
         });
-        document.getElementById('ig-cancel').addEventListener('click',()=>{ document.getElementById('ig-status').textContent='—'; });
+        document.getElementById('ig-cancel').addEventListener('click',()=>{ st().textContent='—'; });
       },0);
     } else {
-      // Plantilla limpia (sin info falsa)
-      svcBody.innerHTML=`
-      <div class="card" style="padding:14px">
+      // Plantilla sin datos falsos
+      svcBody.innerHTML=`<div class="card" style="padding:12px">
         <div class="hint">Interfaz lista para conectar a <strong>${net.label} → ${svc.label}</strong>.</div>
-        <div class="form-grid">
-          <div class="input full"><span>🔗</span><input placeholder="URL / identificador"></div>
-          <div class="input"><span>#</span><input type="number" min="1" placeholder="Cantidad"></div>
-          <button class="btn btn-primary">Enviar</button>
-        </div>
-      </div>`;
+        <div class="form" style="margin-top:8px">
+          <div class="field"><span>🔗</span><input placeholder="URL / identificador"></div>
+          <div class="input-row">
+            <div class="field"><span>#</span><input type="number" min="1" placeholder="Cantidad"></div>
+            <button class="btn">Enviar</button>
+          </div>
+        </div></div>`;
     }
-
     navStack.push('svc'); showPanel('svc');
   });
 
-  // Volver + swipe-back
-  function goBack(){ if(navStack.length>1){ navStack.pop(); showPanel(navStack.at(-1)); } else { window.history.back(); } }
+  // Back + swipe-back
+  function goBack(){ if(navStack.length>1){ navStack.pop(); showPanel(navStack.at(-1)); } }
   document.getElementById('back-btn').addEventListener('click', goBack);
   let sx=null, sy=null, tracking=false;
   document.addEventListener('pointerdown',(e)=>{ if(e.clientX<24){ sx=e.clientX; sy=e.clientY; tracking=true; }});
   document.addEventListener('pointermove',(e)=>{ if(!tracking) return; const dx=e.clientX-sx, dy=Math.abs(e.clientY-sy); if(dx>70&&dy<40){tracking=false;goBack();} if(dx<-10||dy>48) tracking=false; });
   document.addEventListener('pointerup',()=>tracking=false);
-
-  // Reset stack al volver a Home
   document.querySelectorAll('input[name="tab"]').forEach(r=> r.addEventListener('change', ()=>{
     if(document.getElementById('tab-home').checked){ navStack=['root']; showPanel('root'); }
-    document.body.toggleAttribute('data-can-back', navStack.length>1);
   }));
 
-  // =====================================================
-  // CUENTAS
-  // =====================================================
+  // ===== Accounts =====
   const sessionSub=document.getElementById('session-sub');
   async function checkSession(){
-    try{
-      const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'});
-      const d=await r.json();
+    try{ const r=await fetch(`${API_URL}/estado-sesion`,{credentials:'include'}); const d=await r.json();
       sessionSub.textContent=(d.status==='activo')?`Sesión activa como @${d.usuario}`:'No hay sesión activa';
     }catch{ sessionSub.textContent='Error al verificar sesión'; }
-  }
-  checkSession();
+  } checkSession();
 
   document.getElementById('login-btn').addEventListener('click', async ()=>{
     const u=document.getElementById('login-username').value.trim().replace('@','');
     const p=document.getElementById('login-password').value.trim();
     if(!u||!p){ sessionSub.textContent='Completa usuario y contraseña'; return; }
     try{
-      const btn=document.getElementById('login-btn'); btn.textContent='Iniciando…'; btn.disabled=true;
       const r=await fetch(`${API_URL}/iniciar-sesion`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:u,contrasena:p})});
-      const d=await r.json();
-      if(d.exito){ sessionSub.textContent=`Sesión activa como @${d.usuario}`; } else { throw new Error(d.mensaje||'Error al iniciar'); }
+      const d=await r.json(); if(d.exito){ sessionSub.textContent=`Sesión activa como @${d.usuario}`; } else throw new Error(d.mensaje||'Error al iniciar');
     }catch(err){ sessionSub.textContent=err.message; }
-    finally{ const btn=document.getElementById('login-btn'); btn.textContent='Iniciar sesión'; btn.disabled=false; }
   });
 
   document.getElementById('logout-btn').addEventListener('click', async ()=>{
     try{
-      const btn=document.getElementById('logout-btn'); btn.textContent='Cerrando…'; btn.disabled=true;
       const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'}); const d=await r.json();
-      if(d.exito){ sessionSub.textContent='No hay sesión activa'; } else { throw new Error(d.mensaje||'Error al cerrar'); }
+      sessionSub.textContent = d.exito ? 'No hay sesión activa' : (d.mensaje||'Error al cerrar');
     }catch(err){ sessionSub.textContent=err.message; }
-    finally{ const btn=document.getElementById('logout-btn'); btn.textContent='Cerrar sesión'; btn.disabled=false; }
   });
 
   const accountsList=document.getElementById('accounts-list');
   async function loadAccounts(){
-    try{
-      const r=await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'}); const arr=await r.json();
-      if(!Array.isArray(arr)||arr.length===0){accountsList.innerHTML='<div class="hint">No hay cuentas activas</div>';return}
+    try{ const r=await fetch(`${API_URL}/cuentas-activas`,{credentials:'include'}); const arr=await r.json();
+      if(!Array.isArray(arr)||arr.length===0){accountsList.innerHTML='<div style="color:var(--muted)">No hay cuentas activas</div>';return}
       accountsList.innerHTML=arr.map(acc=>`
-        <div class="card" style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="width:10px;height:10px;border-radius:50%;background:${acc.status==='activo'?'var(--ok)':'var(--err)'}"></span>
-            <strong>@${acc.username}</strong>
-          </div>
-          <div style="display:flex;gap:6px">
-            ${acc.status==='activo' ? `<button class="btn" data-logout="${acc.username}">Logout</button>` : `<button class="btn btn-primary" data-login="${acc.username}">Login</button>`}
+        <div class="client">
+          <div class="id"><div class="handle">@${acc.username}</div></div>
+          <div class="chips">
+            ${acc.status==='activo'
+              ? `<button class="chip" data-logout="${acc.username}">Logout</button>`
+              : `<button class="chip" data-login="${acc.username}">Login</button>`}
           </div>
         </div>`).join('');
-    }catch{ accountsList.innerHTML='<div class="hint">Error al cargar cuentas</div>'; }
+    }catch{ accountsList.innerHTML='<div style="color:var(--muted)">Error al cargar cuentas</div>'; }
   }
-  loadAccounts(); setInterval(loadAccounts,30000);
-
+  loadAccounts(); setInterval(loadAccounts, 30000);
   accountsList.addEventListener('click', async (e)=>{
     const b=e.target.closest('button'); if(!b) return;
-    if(b.dataset.login){
-      try{
-        const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.login})});
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); loadAccounts();
-      }catch(err){ alert(err.message); }
-    }
-    if(b.dataset.logout){
-      try{
-        const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})});
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error'); loadAccounts();
-      }catch(err){ alert(err.message); }
-    }
+    if(b.dataset.login){ await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.login})}); loadAccounts(); }
+    if(b.dataset.logout){ await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})}); loadAccounts(); }
   });
 
-  // =====================================================
-  // FARM (render SIEMPRE al cargar + herramientas)
-  // =====================================================
+  // ===== Farm =====
   const defaultDevices=[
     {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
     {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
@@ -604,37 +570,31 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
     {id:'dev4',name:'Pixel 8',os:'Android',ip:'10.0.0.11'}
   ];
   const farmGrid=document.getElementById('farm-grid');
-  const denseToggle=document.getElementById('dense');
-  denseToggle.addEventListener('change',()=>{ farmGrid.style.gridTemplateColumns=denseToggle.checked?'repeat(auto-fit,minmax(200px,1fr))':'repeat(auto-fit,minmax(260px,1fr))'; });
+  document.getElementById('dense').addEventListener('change',e=>{
+    farmGrid.style.gridTemplateColumns=e.target.checked?'repeat(auto-fit,minmax(200px,1fr))':'repeat(auto-fit,minmax(260px,1fr))';
+  });
 
   function renderFarm(){
-    farmGrid.innerHTML = defaultDevices.map(d=>{
+    farmGrid.innerHTML=defaultDevices.map(d=>{
       const src=localStorage.getItem('stream:'+d.id)||''; const live=!!src;
-      return `
-      <div class="card dev" data-id="${d.id}">
+      return `<div class="card dev" data-id="${d.id}">
         <div class="dev-head">
           <div><strong>${d.name}</strong> · ${d.os}</div>
-          <div class="chips">
-            <button class="chip" data-copy="${d.ip}" title="Copiar IP">${d.ip}</button>
-            <span class="chip" data-live="${live}">${live?'Live':'Idle'}</span>
-          </div>
+          <div class="chips"><span class="chip">${d.ip}</span><span class="chip" data-live="${live}">${live?'Live':'Idle'}</span></div>
         </div>
-        <div class="screen" data-screen data-live="${live}">
-          <div class="ov"><span class="chip">${live?'Live':'Idle'}</span></div>
-          ${live? '' : '<div class="placeholder"></div>'}
+        <div class="screen" data-screen>${live?'': '<div class="placeholder"></div>'}
           <div class="toolbar">
             <button class="tool" data-set="${d.id}">Stream</button>
             <button class="tool" data-toggle="${d.id}">Pausa</button>
-            <button class="tool" data-pip="${d.id}">PiP</button>
             <button class="tool" data-full="${d.id}">Full</button>
             <button class="tool" data-clear="${d.id}">Clear</button>
           </div>
         </div>
       </div>`;
     }).join('');
-    initStreams();
+    mountStreams();
   }
-  function initStreams(){
+  function mountStreams(){
     farmGrid.querySelectorAll('.dev').forEach(card=>{
       const id=card.dataset.id; const src=localStorage.getItem('stream:'+id)||''; const screen=card.querySelector('[data-screen]');
       if(!src) return;
@@ -643,30 +603,26 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
       else { const f=document.createElement('iframe'); f.src=src; f.allow='autoplay; encrypted-media'; f.allowFullscreen=true; f.loading='lazy'; screen.appendChild(f); }
     });
   }
-  function pauseStreams(){ farmGrid.querySelectorAll('video').forEach(v=> v.pause()); }
   farmGrid.addEventListener('click',(e)=>{
-    const el=e.target.closest('button,.chip'); if(!el) return;
-    const card=el.closest('.dev'); const id=card.dataset.id; const screen=card.querySelector('[data-screen]');
-    if(el.dataset.copy){ navigator.clipboard?.writeText(el.dataset.copy); alert('IP copiada'); }
+    const el=e.target.closest('button.tool'); if(!el) return;
+    const id=el.dataset.set||el.dataset.toggle||el.dataset.full||el.dataset.clear;
+    const card=e.target.closest('.dev'); const screen=card.querySelector('[data-screen]');
     if(el.dataset.set){ const cur=localStorage.getItem('stream:'+id)||''; const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur); if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); } }
     if(el.dataset.clear){ localStorage.removeItem('stream:'+id); renderFarm(); }
-    if(el.dataset.full){ if(screen.requestFullscreen) screen.requestFullscreen(); }
-    if(el.dataset.pip){ const v=screen.querySelector('video'); if(v && 'pictureInPictureEnabled' in document){ if(document.pictureInPictureElement) document.exitPictureInPicture(); else v.requestPictureInPicture().catch(()=>{}); } else { alert('PiP disponible solo con video'); } }
+    if(el.dataset.full){ screen.requestFullscreen?.(); }
     if(el.dataset.toggle){
-      const v=screen.querySelector('video'); const img=screen.querySelector('img'); const iframe=screen.querySelector('iframe');
-      if(v){ v.paused ? v.play() : v.pause(); el.textContent = v.paused?'Reanudar':'Pausa'; }
-      else if(img){ img.src = img.src ? '' : (localStorage.getItem('stream:'+id)||''); el.textContent = img.src ? 'Pausa':'Reanudar'; }
-      else if(iframe){ iframe.style.opacity = (iframe.style.opacity==='0.3'?'1':'0.3'); el.textContent = (iframe.style.opacity==='0.3')?'Reanudar':'Pausa'; }
+      const v=screen.querySelector('video'); if(v){ v.paused? v.play(): v.pause(); el.textContent=v.paused?'Reanudar':'Pausa'; }
+      const f=screen.querySelector('iframe'); if(f){ f.style.opacity=(f.style.opacity==='0.35'?'1':'0.35'); el.textContent=(f.style.opacity==='0.35')?'Reanudar':'Pausa'; }
     }
   });
-
-  // Render SIEMPRE al cargar (evita pantalla vacía)
   renderFarm();
 
-  // Pausar streams al salir del tab
-  document.querySelectorAll('input[name="tab"]').forEach(r=> r.addEventListener('change', ()=>{
-    if(!document.getElementById('tab-farm').checked) pauseStreams();
-  }));
+  // ===== Posición del crédito respecto al nav =====
+  (function positionCredit(){
+    const nav=document.getElementById('nav'); const credit=document.getElementById('credit');
+    const set=()=>credit.style.bottom=`calc(${nav.getBoundingClientRect().height}px + env(safe-area-inset-bottom) + 8px)`;
+    set(); addEventListener('resize',set);
+  })();
 })();
 </script>
 </body>
