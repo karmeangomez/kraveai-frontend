@@ -1,554 +1,398 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>KRAVEAI — Panel</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0b0d12">
-<style>
-/* ================= TOKENS ================= */
-:root{
-  --bg:#0a0e14; --elev:#0f141d; --card:#101826; --text:#eaf0f7; --muted:#8fa0b6; --line:#1a2536;
-  --ok:#22c55e; --err:#ef4444; --grad1:#7c5cff; --grad2:#22d3ee;
-  --r:16px; --gap:14px; --shadow:0 18px 50px rgba(0,0,0,.32);
-}
-[data-theme="light"]{
-  --bg:#f8fafc; --elev:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#667389; --line:#e6ebf3;
-  --shadow:0 16px 40px rgba(0,0,0,.08);
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto;overflow:hidden}
-/* Layout 100vh sin scroll */
-.app{height:100svh;display:grid;grid-template-rows:auto 1fr auto}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <title>KRAVEAI — Panel</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0b0d12">
+  <style>
+    :root {
+      --bg: #0a0e14; --elev: #0f141d; --card: #101826; --text: #eaf0f7; --muted: #8fa0b6; --line: #1a2536;
+      --ok: #22c55e; --err: #ef4444; --grad1: #7c5cff; --grad2: #22d3ee;
+      --r: 16px; --gap: 14px; --shadow: 0 18px 50px rgba(0,0,0,.32);
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc; --elev: #ffffff; --card: #ffffff; --text: #0f172a; --muted: #667389; --line: #e6ebf3;
+      --shadow: 0 16px 40px rgba(0,0,0,.08);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font: 15px/1.45 system-ui, -apple-system, "SF Pro Text", Inter, Roboto; }
+    body { background: var(--bg); color: var(--text); overflow: hidden; }
+    .app { height: 100svh; display: grid; grid-template-rows: auto 1fr auto; }
 
-/* ================= TOP ================= */
-.top{
-  height:56px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px;
-  padding:10px max(14px,env(safe-area-inset-left)) 8px max(14px,env(safe-area-inset-right));
-  background:color-mix(in oklab, var(--elev) 92%, transparent); border-bottom:1px solid var(--line);
-  backdrop-filter:saturate(1.08) blur(12px);
-}
-.brand{display:flex;align-items:center;gap:10px}
-.logo-badge{width:34px;height:34px;border-radius:12px;background:conic-gradient(from 220deg,var(--grad2),var(--grad1),var(--grad2));box-shadow:0 10px 22px rgba(124,92,255,.28),0 8px 16px rgba(34,211,238,.18)}
-.word{font-weight:900;letter-spacing:.14em}
-.status{justify-self:center;display:flex;align-items:center;gap:8px;color:var(--muted)}
-.status .dot{width:8px;height:8px;border-radius:50%;background:#8b8b8b}
-.tog{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);display:grid;place-items:center;cursor:pointer}
-.icon-moon{display:none}
-[data-theme="light"] .icon-sun{display:none}
-[data-theme="light"] .icon-moon{display:block}
+    /* Top Bar */
+    .top {
+      height: 56px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+      padding: 10px max(14px, env(safe-area-inset-left)) 8px max(14px, env(safe-area-inset-right));
+      background: color-mix(in oklab, var(--elev) 92%, transparent); border-bottom: 1px solid var(--line);
+      backdrop-filter: saturate(1.08) blur(12px);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo-badge { width: 34px; height: 34px; border-radius: 12px; background: conic-gradient(from 220deg, var(--grad2), var(--grad1), var(--grad2)); }
+    .word { font-weight: 900; letter-spacing: .14em; }
+    .status { justify-self: center; display: flex; align-items: center; gap: 8px; color: var(--muted); }
+    .status .dot { width: 8px; height: 8px; border-radius: 50%; background: #8b8b8b; }
+    .tog { width: 36px; height: 36px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.05); display: grid; place-items: center; cursor: pointer; }
+    .icon-moon { display: none; }
+    [data-theme="light"] .icon-sun { display: none; }
+    [data-theme="light"] .icon-moon { display: block; }
 
-/* ================= HOME (sin scroll) ================= */
-.main{position:relative;overflow:hidden}
-.home{
-  /* zona visible fija */
-  height:calc(100% - 0px);
-  display:grid;
-  grid-template-rows: 160px 1fr 90px; /* orb / contenido / clientes */
-  gap:10px;
-  padding:10px max(16px,env(safe-area-inset-left)) 10px max(16px,env(safe-area-inset-right));
-}
+    /* Main Content */
+    .main { position: relative; overflow: hidden; }
+    .home {
+      height: 100%; display: grid; grid-template-rows: 160px 1fr 90px; gap: 10px;
+      padding: 10px max(16px, env(safe-area-inset-left)) 10px max(16px, env(safe-area-inset-right));
+    }
+    .orb-wrap { display: grid; place-items: center; }
+    .orb {
+      width: min(70vw, 300px); height: min(70vw, 300px); border-radius: 50%;
+      background: radial-gradient(40% 40% at 28% 32%, rgba(124,92,255,.95) 0%, transparent 60%),
+                  radial-gradient(45% 55% at 70% 65%, rgba(34,211,238,.95) 0%, transparent 70%),
+                  radial-gradient(28% 28% at 50% 50%, rgba(110,231,183,.45) 0%, transparent 75%),
+                  #0b1020;
+      box-shadow: 0 38px 88px rgba(34,211,238,.25), 0 16px 34px rgba(124,92,255,.22);
+      animation: spin 16s linear infinite;
+    }
+    .orb::after {
+      content: ""; position: absolute; inset: -10px; border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--grad2), var(--grad1), var(--grad2));
+      filter: blur(10px); opacity: .55; animation: pulse 4.2s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 50% { opacity: .28; transform: scale(1.03); } }
 
-/* Orb arriba centrado */
-.orb-wrap{display:grid;place-items:center;position:relative}
-.orb{
-  width:min(70vw, 300px); height:min(70vw, 300px);
-  border-radius:50%;
-  background:
-    radial-gradient(40% 40% at 28% 32%, rgba(124,92,255,.95) 0%, transparent 60%),
-    radial-gradient(45% 55% at 70% 65%, rgba(34,211,238,.95) 0%, transparent 70%),
-    radial-gradient(28% 28% at 50% 50%, rgba(110,231,183,.45) 0%, transparent 75%),
-    #0b1020;
-  box-shadow:0 38px 88px rgba(34,211,238,.25), 0 16px 34px rgba(124,92,255,.22);
-  animation:spin 16s linear infinite;
-  position:relative;
-}
-.orb::after{
-  content:""; position:absolute; inset:-10px; border-radius:50%;
-  background:conic-gradient(from 0deg, var(--grad2), var(--grad1), var(--grad2));
-  filter:blur(10px); opacity:.55; animation:pulse 4.2s ease-in-out infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{50%{opacity:.28; transform:scale(1.03)}}
+    .center { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 760px) { .center { grid-template-columns: 1fr; } }
 
-/* Contenido medio: redes + acciones */
-.center{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:12px;
-}
-@media (max-width:760px){ .center{grid-template-columns:1fr} }
+    .networks { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pill {
+      display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r);
+      box-shadow: var(--shadow); cursor: pointer; transition: transform .12s ease, box-shadow .2s ease;
+    }
+    .pill:hover { transform: translateY(-2px); box-shadow: 0 16px 30px rgba(0,0,0,.18); }
+    .pico { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: rgba(255,255,255,.06); }
+    .plab { font-weight: 800; }
 
-/* Redes (píldoras) */
-.networks{
-  display:grid; gap:10px;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  align-content:start;
-}
-.pill{
-  display:flex; align-items:center; gap:10px;
-  padding:12px 14px; background:var(--card); border:1px solid var(--line); border-radius:14px;
-  box-shadow:var(--shadow); cursor:pointer; transition:transform .12s ease, box-shadow .2s ease;
-}
-.pill:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(0,0,0,.18)}
-.pico{width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06)}
-.plab{font-weight:800}
+    .panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; display: grid; gap: 10px;
+    }
+    .input { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.04); border-radius: 12px; padding: 10px; }
+    .input input { flex: 1; background: transparent; border: 0; outline: none; color: var(--text); font-size: 1rem; }
+    .btn {
+      border: 1px solid var(--line); background: linear-gradient(135deg, var(--grad1), var(--grad2)); color: #0b0d13; padding: 10px 14px;
+      border-radius: 12px; font-weight: 900; cursor: pointer; text-align: center;
+    }
 
-/* Bloque derecho: acciones rápidas + botón Farm */
-.panel{
-  background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; display:grid; gap:10px; align-content:start;
-}
-.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:10px}
-.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:1rem}
-.btn{border:1px solid var(--line);background:linear-gradient(135deg,var(--grad1),var(--grad2));color:#0b0d13;padding:10px 14px;border-radius:12px;font-weight:900;cursor:pointer;text-align:center}
+    .clients { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    @media (max-width: 860px) { .clients { grid-template-columns: repeat(2, 1fr); } }
+    .client { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); }
+    .avatar { position: relative; width: 34px; height: 34px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 60% 110%, #feda75 0, #d62976 25%, #962fbf 50%, #4f5bd5 75%); }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .badge-ig { position: absolute; right: -3px; bottom: -3px; width: 18px; height: 18px; background: #0095F6; color: #fff; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--card); font-size: 12px; }
+    .handle { font-weight: 800; }
+    .platform { color: var(--muted); font-size: .9rem; margin-left: 6px; }
 
-/* Clientes recientes (faja inferior sin scroll) */
-.clients{
-  display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
-}
-@media (max-width:860px){ .clients{grid-template-columns:repeat(2,1fr)} }
-.client{
-  display:flex; align-items:center; gap:10px; padding:10px 12px;
-  background:var(--card); border:1px solid var(--line); border-radius:14px;
-}
-.avatar{position:relative;width:34px;height:34px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 60% 110%, #feda75 0, #d62976 25%, #962fbf 50%, #4f5bd5 75%)}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.badge-ig{position:absolute;right:-3px;bottom:-3px;width:18px;height:18px;background:#0095F6;color:#fff;border-radius:50%;display:grid;place-items:center;border:2px solid var(--card);font-size:12px;line-height:1}
-.handle{font-weight:800}
-.platform{color:var(--muted);font-size:.9rem;margin-left:6px}
+    .credit {
+      height: 48px; display: grid; place-items: center; position: relative;
+    }
+    .credit .chip {
+      position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(6px + env(safe-area-inset-bottom));
+      font-size: .88rem; color: var(--text); background: linear-gradient(180deg, color-mix(in oklab, var(--elev) 96%, transparent), color-mix(in oklab, var(--elev) 98%, transparent));
+      border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; animation: glow 3.2s ease-in-out infinite; backdrop-filter: blur(6px);
+    }
+    @keyframes glow { 50% { box-shadow: 0 0 28px rgba(124,92,255,.8), 0 0 46px rgba(34,211,238,.52); transform: translate(-50%, -1px); } }
 
-/* Sello (centrado abajo) */
-.credit{
-  height:48px; display:grid; place-items:center;
-  position:relative;
-}
-.credit .chip{
-  position:absolute; left:50%; transform:translateX(-50%);
-  bottom: calc(6px + env(safe-area-inset-bottom));
-  font-size:.88rem; color:var(--text);
-  background:linear-gradient(180deg, color-mix(in oklab, var(--elev) 96%, transparent), color-mix(in oklab, var(--elev) 98%, transparent));
-  border:1px solid var(--line); border-radius:999px; padding:8px 14px;
-  box-shadow:0 0 18px rgba(124,92,255,.6), 0 0 32px rgba(34,211,238,.42);
-  animation:glow 3.2s ease-in-out infinite; backdrop-filter:blur(6px);
-}
-@keyframes glow{50%{box-shadow:0 0 28px rgba(124,92,255,.8),0 0 46px rgba(34,211,238,.52); transform:translate(-50%, -1px)}}
+    .sheet {
+      position: absolute; inset: 0; background: color-mix(in oklab, var(--bg) 98%, transparent); display: grid; grid-template-rows: 56px 1fr;
+      border-top: 1px solid var(--line); transform: translateX(100%); transition: transform .18s ease;
+    }
+    .sheet.active { transform: translateX(0); }
+    .sheet .topbar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); backdrop-filter: blur(10px); }
+    .back { border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+    .sheet-body { padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; overflow: hidden; }
+    @media (max-width: 840px) { .sheet-body { grid-template-columns: 1fr; } }
 
-/* ================= SHEETS (capas sin salir de 100vh) ================= */
-.sheet{
-  position:absolute; inset:0; background:color-mix(in oklab, var(--bg) 98%, transparent);
-  display:grid; grid-template-rows:56px 1fr; border-top:1px solid var(--line);
-  transform:translateX(100%); transition:transform .18s ease;
-}
-.sheet.active{transform:translateX(0)}
-.sheet .topbar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:color-mix(in oklab,var(--elev) 96%, transparent);backdrop-filter:saturate(1.05) blur(10px)}
-.back{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer}
-.sheet-body{padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px;overflow:hidden}
-@media (max-width:840px){ .sheet-body{grid-template-columns:1fr} }
+    .svc-list { display: grid; gap: 10px; }
+    .svc-item { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; cursor: pointer; }
+    .svc-item:hover { outline: 1px solid color-mix(in oklab, var(--grad1) 40%, transparent); }
 
-/* Lista de servicios de la red (izquierda) */
-.svc-list{display:grid;gap:10px;align-content:start}
-.svc-item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}
-.svc-item:hover{outline:1px solid color-mix(in oklab,var(--grad1) 40%, transparent)}
+    .detail { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; display: grid; gap: 10px; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.06); border: 1px solid var(--line); }
+    .form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form .input { padding: 8px; }
+    .form .actions { grid-column: 1/-1; display: flex; gap: 8px; }
+    .hint { color: var(--muted); font-size: .86rem; }
 
-/* Panel de detalle de servicio (derecha) */
-.detail{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:10px;align-content:start}
-.row{display:flex;align-items:center;gap:10px}
-.ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line)}
-.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form .input{padding:8px}
-.form .actions{grid-column:1/-1;display:flex;gap:8px}
-.hint{color:var(--muted);font-size:.86rem}
-
-/* FARM sheet */
-.grid-farm{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
-.dev{display:grid;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
-.dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.92rem}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip-b{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:.78rem}
-.screen{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;height:180px;position:relative}
-.screen iframe,.screen video,.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-
-/* ================= SVG LOGOS ================= */
-svg{display:block}
-</style>
+    .grid-farm { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dev { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 10px; display: grid; gap: 8px; }
+    .dev-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .92rem; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip-b { padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.04); font-size: .78rem; }
+    .screen { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #000; height: 180px; position: relative; }
+    .screen img, .screen video, .screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  </style>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <defs>
+      <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/></symbol>
+      <symbol id="moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+      <symbol id="ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/></symbol>
+      <symbol id="tiktok" viewBox="0 0 24 24"><path d="M11 4v9.6a3.4 3.4 0 1 1-2.6 5.3" fill="none" stroke="#69C9D0" stroke-width="2" stroke-linecap="round"/><path d="M15 4c.4 2.6 2.4 4.4 5 4.6" fill="none" stroke="#FF0050" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="yt" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/></symbol>
+      <symbol id="threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.6-1-3.6-2.6S9 14 12 14c2.6 0 3.9-1.2 3.9-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
+      <symbol id="fb" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
+      <symbol id="li" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
+      <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
+      <symbol id="tg" viewBox="0 0 24 24"><path d="M21 3L3 11l6 2 2 6 3-4 4-10z" fill="#0088cc"/></symbol>
+      <symbol id="wa" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 1 0 18 9.4 9.4 0 0 1-4-.9L5 21l.9-3.1A9.4 9.4 0 0 1 3 12 9 9 0 0 1 12 3z" fill="#25D366"/><path d="M9 8c0 3 3 6 5 6l1-1" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
+    </defs>
+  </svg>
 </head>
 <body>
-
-<!-- ===== Tabs invisibles (para conservar patrón de “home” y hojas) ===== -->
-<input type="radio" name="tab" id="t-home" checked hidden>
-
-<!-- ===== Sprite de íconos (logos oficiales simplificados) ===== -->
-<svg width="0" height="0" aria-hidden="true" style="position:absolute">
-  <defs>
-    <!-- Sol/Luna -->
-    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/></symbol>
-    <symbol id="moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
-
-    <!-- Instagram -->
-    <symbol id="ig" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
-      <circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/>
-    </symbol>
-    <!-- TikTok (2 trazos oficiales) -->
-    <symbol id="tiktok" viewBox="0 0 24 24">
-      <path d="M11 4v9.6a3.4 3.4 0 1 1-2.6 5.3" fill="none" stroke="#69C9D0" stroke-width="2" stroke-linecap="round"/>
-      <path d="M15 4c.4 2.6 2.4 4.4 5 4.6" fill="none" stroke="#FF0050" stroke-width="2" stroke-linecap="round"/>
-    </symbol>
-    <!-- YouTube -->
-    <symbol id="yt" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/></symbol>
-    <!-- Threads -->
-    <symbol id="threads" viewBox="0 0 24 24"><path d="M6 12c0-4 3-7 6-7s6 3 6 7-3 7-6 7c-2 0-3.6-1-3.6-2.6S9 14 12 14c2.6 0 3.9-1.2 3.9-3S14.5 8 12 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></symbol>
-    <!-- X -->
-    <symbol id="x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="#fff" stroke-width="2"/></symbol>
-    <!-- Facebook -->
-    <symbol id="fb" viewBox="0 0 24 24"><path d="M14 8h3V5h-3c-2 0-3 .9-3 3v2H8v3h3v6h3v-6h3l1-3h-4V8c0-.7.3-1 1-1z" fill="#1877F2"/></symbol>
-    <!-- LinkedIn -->
-    <symbol id="li" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="12" fill="#0A66C2"/><circle cx="5" cy="5.5" r="2" fill="#0A66C2"/><rect x="9" y="8" width="12" height="12" rx="2" fill="none" stroke="#0A66C2" stroke-width="2"/></symbol>
-    <!-- Spotify -->
-    <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#1DB954"/><path d="M7 10c3-1 7-1 10 1M7 13c3-1 6-1 9 1M7 16c2-.5 4-.5 6 .5" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
-    <!-- Telegram -->
-    <symbol id="tg" viewBox="0 0 24 24"><path d="M21 3L3 11l6 2 2 6 3-4 4-10z" fill="#0088cc"/></symbol>
-    <!-- WhatsApp -->
-    <symbol id="wa" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 1 0 18 9.4 9.4 0 0 1-4-.9L5 21l.9-3.1A9.4 9.4 0 0 1 3 12 9 9 0 0 1 12 3z" fill="#25D366"/><path d="M9 8c0 3 3 6 5 6l1-1" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
-  </defs>
-</svg>
-
-<div class="app" id="app">
-  <!-- TOP -->
-  <header class="top">
-    <div class="brand"><div class="logo-badge"></div><div class="word">KRAVEAI</div></div>
-    <div class="status"><span class="dot" id="dot"></span><small id="stat">Conectando…</small></div>
-    <button class="tog" id="themeBtn" aria-label="Cambiar tema">
-      <svg class="icon-sun" width="18" height="18"><use href="#sun"/></svg>
-      <svg class="icon-moon" width="18" height="18"><use href="#moon"/></svg>
-    </button>
-  </header>
-
-  <!-- HOME (sin scroll) -->
-  <main class="main">
-    <section class="home" id="home">
-      <!-- 1) Orb arriba centrado -->
-      <div class="orb-wrap"><div class="orb" aria-hidden="true"></div></div>
-
-      <!-- 2) Centro: redes + panel rápido -->
-      <div class="center">
-        <div class="networks" id="networks"></div>
-
-        <div class="panel">
-          <div class="row"><div class="ico"><svg width="20" height="20"><use href="#ig"/></svg></div><strong>Acciones rápidas</strong></div>
-          <div class="input"><span>🔗</span><input id="quickInput" placeholder="Pega una URL o escribe una acción"></div>
-          <button class="btn" id="quickBtn">Enviar</button>
-          <button class="btn" id="openFarm">Abrir Device Farm</button>
-        </div>
-      </div>
-
-      <!-- 3) Clientes (con verificación real) -->
-      <div class="clients" id="clients"></div>
-    </section>
-
-    <!-- SHEET: Servicios por red -->
-    <section class="sheet" id="sheetServices" aria-hidden="true">
-      <div class="topbar">
-        <button class="back" id="backFromServices">← Volver</button>
-        <div class="row"><div class="ico" id="svcIcon"></div><strong id="svcTitle">Servicios</strong></div>
-      </div>
-      <div class="sheet-body">
-        <div class="svc-list" id="svcList"></div>
-        <div class="detail" id="svcDetail">
-          <div class="hint">Selecciona un servicio a la izquierda.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SHEET: Farm -->
-    <section class="sheet" id="sheetFarm" aria-hidden="true">
-      <div class="topbar">
-        <button class="back" id="backFromFarm">← Volver</button>
-        <div class="row"><div class="ico">📱</div><strong>Device Farm</strong></div>
-      </div>
-      <div class="sheet-body" style="grid-template-columns:1fr">
-        <div class="grid-farm" id="farmGrid"></div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Sello centrado abajo -->
-  <footer class="credit">
-    <div class="chip">Created by Karmean Gómez</div>
-  </footer>
-</div>
-
-<script>
-(function(){
-  const API_URL = "https://api.kraveapi.xyz";
-
-  /* ===== Tema día/noche persistente ===== */
-  const themeBtn = document.getElementById('themeBtn');
-  const saved = localStorage.getItem('krv_theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  themeBtn.addEventListener('click', ()=>{
-    const cur = document.documentElement.getAttribute('data-theme');
-    const next = (cur==='light') ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('krv_theme', next);
-  });
-
-  /* ===== Estado backend (sin inventar datos) ===== */
-  const dot=document.getElementById('dot'), stat=document.getElementById('stat');
-  async function health(){
-    try{ const r=await fetch(`${API_URL}/health`, {credentials:'include'});
-      dot.style.background=r.ok?'var(--ok)':'var(--err)';
-      stat.textContent=r.ok?'Conectado':'Sin conexión';
-    }catch{ dot.style.background='var(--err)'; stat.textContent='Sin conexión'; }
-  }
-  health(); setInterval(health, 120000);
-
-  /* ===== Redes (con logos) y navegación a servicios ===== */
-  const networksMeta = [
-    {k:'instagram', label:'Instagram', icon:'#ig'},
-    {k:'tiktok', label:'TikTok', icon:'#tiktok'},
-    {k:'youtube', label:'YouTube', icon:'#yt'},
-    {k:'threads', label:'Threads', icon:'#threads'},
-    {k:'x', label:'X', icon:'#x'},
-    {k:'facebook', label:'Facebook', icon:'#fb'},
-    {k:'linkedin', label:'LinkedIn', icon:'#li'},
-    {k:'spotify', label:'Spotify', icon:'#sp'},
-    {k:'telegram', label:'Telegram', icon:'#tg'},
-    {k:'whatsapp', label:'WhatsApp', icon:'#wa'}
-  ];
-  const networks = document.getElementById('networks');
-  networks.innerHTML = networksMeta.map(n=>`
-    <button class="pill" data-k="${n.k}">
-      <span class="pico"><svg width="18" height="18"><use href="${n.icon}"/></svg></span>
-      <span class="plab">${n.label}</span>
-    </button>
-  `).join('');
-
-  /* ===== Servicios por red (restaurados) ===== */
-  const SERVICES = {
-    instagram: [
-      {key:'comments', label:'Comentarios', template:'ig-comments'},
-      {key:'likes', label:'Likes'},
-      {key:'followers', label:'Seguidores'},
-      {key:'views', label:'Vistas'}
-    ],
-    tiktok: [
-      {key:'views', label:'Vistas'},
-      {key:'likes', label:'Likes'},
-      {key:'followers', label:'Seguidores'}
-    ],
-    youtube: [
-      {key:'views', label:'Vistas'},
-      {key:'likes', label:'Likes'},
-      {key:'subs', label:'Suscripciones'}
-    ],
-    x: [
-      {key:'likes', label:'Likes'},
-      {key:'reposts', label:'Reposts'},
-      {key:'replies', label:'Respuestas'}
-    ],
-    facebook: [
-      {key:'reactions', label:'Reacciones'},
-      {key:'comments', label:'Comentarios'},
-      {key:'shares', label:'Compartidos'}
-    ],
-    linkedin: [
-      {key:'reactions', label:'Reacciones'},
-      {key:'comments', label:'Comentarios'},
-      {key:'connections', label:'Conexiones'}
-    ],
-    threads: [{key:'likes', label:'Likes'},{key:'replies', label:'Respuestas'}],
-    spotify: [{key:'streams', label:'Streams'},{key:'saves', label:'Saves'}],
-    telegram: [{key:'messages', label:'Mensajes'},{key:'members', label:'Miembros'}],
-    whatsapp: [{key:'messages', label:'Mensajes'}],
-  };
-
-  // Abrir hoja de servicios
-  const sheetServices = document.getElementById('sheetServices');
-  const svcList = document.getElementById('svcList');
-  const svcDetail = document.getElementById('svcDetail');
-  const svcIcon = document.getElementById('svcIcon');
-  const svcTitle = document.getElementById('svcTitle');
-  let currentNet = null;
-
-  networks.addEventListener('click', (e)=>{
-    const b = e.target.closest('.pill'); if(!b) return;
-    const k = b.dataset.k; currentNet = k;
-    const meta = networksMeta.find(x=>x.k===k);
-    svcIcon.innerHTML = `<svg width="20" height="20"><use href="${meta.icon}"/></svg>`;
-    svcTitle.textContent = meta.label;
-
-    // Render lista
-    const items = SERVICES[k] || [];
-    svcList.innerHTML = items.map(it=>`<div class="svc-item" data-svc="${it.key}"><strong>${it.label}</strong></div>`).join('');
-    svcDetail.innerHTML = `<div class="hint">Selecciona un servicio a la izquierda.</div>`;
-
-    openSheet(sheetServices);
-  });
-
-  // Click en servicio => mostrar detalle/form
-  svcList.addEventListener('click',(e)=>{
-    const it = e.target.closest('.svc-item'); if(!it) return;
-    const svcKey = it.dataset.svc;
-    renderServiceDetail(currentNet, svcKey);
-  });
-
-  function renderServiceDetail(net, svcKey){
-    // Instagram → Comentarios (form RESTAURADO)
-    if(net==='instagram' && svcKey==='comments'){
-      svcDetail.innerHTML = `
-        <div class="row"><div class="ico"><svg width="20" height="20"><use href="#ig"/></svg></div><strong>Instagram — Comentarios</strong></div>
-        <div class="form" id="igForm">
-          <div class="input" style="grid-column:1/-1"><span>🔗</span><input name="url" placeholder="URL del post (https://www.instagram.com/p/...)" required></div>
-          <div class="input"><span>#</span><input type="number" name="cantidad" min="1" max="100" value="30" placeholder="Cantidad"></div>
-          <div class="input"><span>🎛️</span><input name="modo" value="auto" list="modos" placeholder="Modo"></div>
-          <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
-          <div class="input" style="grid-column:1/-1"><span>🧑‍💼</span><input name="apodo" placeholder="Apodo (opcional)"></div>
-          <div class="input"><span>🎯</span><input name="estilo" placeholder="Estilo (fitness, sexy, etc)"></div>
-          <div class="input"><span>🏷️</span><input name="actividad" placeholder="Actividad (entrenador, etc)"></div>
-          <div class="input" style="grid-column:1/-1"><span>📝</span><input name="ejemplos" placeholder="Ejemplos (uno por línea)"></div>
-          <div class="actions">
-            <button class="btn" id="igSend">Lanzar</button>
-            <button class="back" id="igCancel">Cancelar</button>
+  <div class="app" id="app">
+    <header class="top" role="banner">
+      <div class="brand"><div class="logo-badge"></div><div class="word">KRAVEAI</div></div>
+      <div class="status" role="status"><span class="dot" id="dot"></span><small id="stat">Conectado</small></div>
+      <button class="tog" id="themeBtn" aria-label="Cambiar tema">
+        <svg class="icon-sun" width="18" height="18"><use href="#sun"/></svg>
+        <svg class="icon-moon" width="18" height="18"><use href="#moon"/></svg>
+      </button>
+    </header>
+    <main class="main" role="main">
+      <section class="home" id="home">
+        <div class="orb-wrap"><div class="orb" aria-hidden="true"></div></div>
+        <div class="center">
+          <div class="networks" id="networks"></div>
+          <div class="panel" role="region">
+            <div class="row"><div class="ico"><svg width="20" height="20"><use href="#ig"/></svg></div><strong>Acciones rápidas</strong></div>
+            <div class="input"><span>🔗</span><input id="quickInput" placeholder="Pega una URL o escribe una acción" aria-label="Acción rápida"></div>
+            <button class="btn" id="quickBtn">Enviar</button>
+            <button class="btn" id="openFarm">Abrir Device Farm</button>
           </div>
         </div>
-        <div class="hint" id="igStatus">—</div>
-      `;
-      const igForm = svcDetail.querySelector('#igForm');
-      const igStatus = document.getElementById('igStatus');
-      svcDetail.querySelector('#igSend').addEventListener('click', async ()=>{
-        // armar payload
-        const fd = new FormData(igForm); const payload = Object.fromEntries(fd.entries());
-        if(!payload.url){ toast('Falta URL'); return; }
-        try{
-          igStatus.textContent='Enviando…';
-          const r=await fetch(`${API_URL}/instagram/comentarios`,{
-            method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)
-          });
-          const data=await r.json().catch(()=>({}));
-          if(r.ok){ igStatus.textContent='✅ Comentarios en proceso'; toast('Comentarios lanzados'); }
-          else{ throw new Error(data.mensaje||'Error en comentarios'); }
-        }catch(err){ igStatus.textContent='❌ '+err.message; toast(err.message, true); }
+        <div class="clients" id="clients"></div>
+      </section>
+      <section class="sheet" id="sheetServices" aria-hidden="true">
+        <div class="topbar">
+          <button class="back" id="backFromServices" aria-label="Volver">←</button>
+          <div class="row"><div class="ico" id="svcIcon"></div><strong id="svcTitle">Servicios</strong></div>
+        </div>
+        <div class="sheet-body">
+          <div class="svc-list" id="svcList"></div>
+          <div class="detail" id="svcDetail">
+            <div class="hint">Selecciona un servicio a la izquierda.</div>
+          </div>
+        </div>
+      </section>
+      <section class="sheet" id="sheetFarm" aria-hidden="true">
+        <div class="topbar">
+          <button class="back" id="backFromFarm" aria-label="Volver">←</button>
+          <div class="row"><div class="ico">📱</div><strong>Device Farm</strong></div>
+        </div>
+        <div class="sheet-body" style="grid-template-columns: 1fr">
+          <div class="grid-farm" id="farmGrid"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="credit" role="contentinfo">
+      <div class="chip">Created by Karmean Gómez</div>
+    </footer>
+  </div>
+  <script>
+    (function() {
+      const API_URL = "https://api.kraveapi.xyz";
+
+      // Theme Toggle
+      const themeBtn = document.getElementById('themeBtn');
+      const savedTheme = localStorage.getItem('krv_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('krv_theme', newTheme);
       });
-      svcDetail.querySelector('#igCancel').addEventListener('click', ()=>{ igStatus.textContent='—'; });
-      return;
-    }
-    // Otros servicios (placeholder visual sin datos falsos)
-    const svc = (SERVICES[net]||[]).find(s=>s.key===svcKey);
-    svcDetail.innerHTML = `
-      <div class="row"><div class="ico">${svc?svc.label:''}</div><strong>${svc?svc.label:'Servicio'}</strong></div>
-      <div class="hint">Conecta este servicio a tu endpoint para habilitarlo.</div>
-      <div class="actions"><button class="back" id="closeDetail">Cerrar</button></div>
-    `;
-    svcDetail.querySelector('#closeDetail')?.addEventListener('click', ()=>{ svcDetail.innerHTML = '<div class="hint">Selecciona un servicio a la izquierda.</div>'; });
-  }
 
-  /* ===== Clientes (solo los que me diste) con verificación real ===== */
-  const clients = [
-    {h:'@aaronmercury', a:''},
-    {h:'@televisadigital', a:''},
-    {h:'@joscanela', a:''},
-    {h:'@jimenagallegotv', a:''},
-  ];
-  const clientsRoot=document.getElementById('clients');
-  clientsRoot.innerHTML = clients.map(c=>`
-    <div class="client">
-      <div class="avatar">
-        ${c.a? `<img src="${c.a}" alt="${c.h}">` : `<svg width="34" height="34" viewBox="0 0 24 24" style="transform:scale(.92)"><use href="#ig"/></svg>`}
-        <span class="badge-ig" title="Verificado">✓</span>
-      </div>
-      <div class="handle">${c.h}</div>
-      <div class="platform">Instagram</div>
-    </div>
-  `).join('');
+      // Health Check
+      const dot = document.getElementById('dot');
+      const stat = document.getElementById('stat');
+      async function health() {
+        try {
+          const response = await fetch(`${API_URL}/health`, { credentials: 'include' });
+          dot.style.background = response.ok ? 'var(--ok)' : 'var(--err)';
+          stat.textContent = response.ok ? 'Conectado' : 'Sin conexión';
+        } catch {
+          dot.style.background = 'var(--err');
+          stat.textContent = 'Sin conexión';
+        }
+      }
+      health(); setInterval(health, 120000);
 
-  /* ===== Device Farm (sheet) ===== */
-  const sheetFarm = document.getElementById('sheetFarm');
-  const farmGrid = document.getElementById('farmGrid');
-  document.getElementById('openFarm').addEventListener('click', ()=> openSheet(sheetFarm));
-  const defaultDevices=[
-    {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
-    {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
-    {id:'dev3',name:'iPhone 13',os:'iOS',ip:'10.0.0.10'},
-    {id:'dev4',name:'Pixel 8',os:'Android',ip:'10.0.0.11'},
-  ];
-  function renderFarm(){
-    farmGrid.innerHTML = defaultDevices.map(d=>{
-      const src = localStorage.getItem('stream:'+d.id)||'';
-      return `
-      <div class="dev">
-        <div class="dev-head">
-          <div><strong>${d.name}</strong> · ${d.os}</div>
-          <div class="chips">
-            <span class="chip-b">${src?'Live':'Idle'}</span>
-            <span class="chip-b">${d.ip}</span>
+      // Networks
+      const networksMeta = [
+        { k: 'instagram', label: 'Instagram', icon: '#ig' },
+        { k: 'tiktok', label: 'TikTok', icon: '#tiktok' },
+        { k: 'youtube', label: 'YouTube', icon: '#yt' },
+        { k: 'threads', label: 'Threads', icon: '#threads' },
+        { k: 'x', label: 'X', icon: '#x' },
+        { k: 'facebook', label: 'Facebook', icon: '#fb' },
+        { k: 'linkedin', label: 'LinkedIn', icon: '#li' },
+        { k: 'spotify', label: 'Spotify', icon: '#sp' },
+        { k: 'telegram', label: 'Telegram', icon: '#tg' },
+        { k: 'whatsapp', label: 'WhatsApp', icon: '#wa' }
+      ];
+      const networks = document.getElementById('networks');
+      networks.innerHTML = networksMeta.map(n => `
+        <button class="pill" data-k="${n.k}" aria-label="Abrir ${n.label}">
+          <span class="pico"><svg width="18" height="18"><use href="${n.icon}"/></svg></span>
+          <span class="plab">${n.label}</span>
+        </button>
+      `).join('');
+
+      // Services
+      const SERVICES = {
+        instagram: [{ key: 'comments', label: 'Comentarios' }, { key: 'likes', label: 'Likes' }, { key: 'followers', label: 'Seguidores' }, { key: 'views', label: 'Vistas' }],
+        tiktok: [{ key: 'views', label: 'Vistas' }, { key: 'likes', label: 'Likes' }, { key: 'followers', label: 'Seguidores' }],
+        youtube: [{ key: 'views', label: 'Vistas' }, { key: 'likes', label: 'Likes' }, { key: 'subs', label: 'Suscripciones' }],
+        x: [{ key: 'likes', label: 'Likes' }, { key: 'reposts', label: 'Reposts' }, { key: 'replies', label: 'Respuestas' }],
+        facebook: [{ key: 'reactions', label: 'Reacciones' }, { key: 'comments', label: 'Comentarios' }, { key: 'shares', label: 'Compartidos' }],
+        linkedin: [{ key: 'reactions', label: 'Reacciones' }, { key: 'comments', label: 'Comentarios' }, { key: 'connections', label: 'Conexiones' }],
+        threads: [{ key: 'likes', label: 'Likes' }, { key: 'replies', label: 'Respuestas' }],
+        spotify: [{ key: 'streams', label: 'Streams' }, { key: 'saves', label: 'Saves' }],
+        telegram: [{ key: 'messages', label: 'Mensajes' }, { key: 'members', label: 'Miembros' }],
+        whatsapp: [{ key: 'messages', label: 'Mensajes' }]
+      };
+
+      const sheetServices = document.getElementById('sheetServices');
+      const svcList = document.getElementById('svcList');
+      const svcDetail = document.getElementById('svcDetail');
+      const svcIcon = document.getElementById('svcIcon');
+      const svcTitle = document.getElementById('svcTitle');
+      let currentNet = null;
+
+      networks.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pill');
+        if (!btn) return;
+        const k = btn.dataset.k; currentNet = k;
+        const meta = networksMeta.find(x => x.k === k);
+        svcIcon.innerHTML = `<svg width="20" height="20"><use href="${meta.icon}"/></svg>`;
+        svcTitle.textContent = meta.label;
+        svcList.innerHTML = (SERVICES[k] || []).map(it => `<div class="svc-item" data-svc="${it.key}">${it.label}</div>`).join('');
+        svcDetail.innerHTML = '<div class="hint">Selecciona un servicio a la izquierda.</div>';
+        openSheet(sheetServices);
+      });
+
+      svcList.addEventListener('click', (e) => {
+        const item = e.target.closest('.svc-item');
+        if (!item) return;
+        const svcKey = item.dataset.svc;
+        if (currentNet === 'instagram' && svcKey === 'comments') {
+          svcDetail.innerHTML = `
+            <div class="row"><div class="ico"><svg width="20" height="20"><use href="#ig"/></svg></div><strong>Instagram — Comentarios</strong></div>
+            <div class="form">
+              <div class="input" style="grid-column: 1/-1"><span>🔗</span><input name="url" placeholder="URL del post" required></div>
+              <div class="input"><span>#</span><input type="number" name="cantidad" min="1" max="100" value="30" placeholder="Cantidad"></div>
+              <div class="input"><span>🎛️</span><input name="modo" list="modos" placeholder="Modo"></div>
+              <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
+              <div class="actions" style="grid-column: 1/-1">
+                <button class="btn" id="igSend">Lanzar</button>
+                <button class="back" id="igCancel">Cancelar</button>
+              </div>
+            </div>
+            <div class="hint" id="igStatus">—</div>
+          `;
+          document.getElementById('igSend').addEventListener('click', async () => {
+            const form = svcDetail.querySelector('.form');
+            const url = form.querySelector('[name="url"]').value;
+            const cantidad = form.querySelector('[name="cantidad"]').value;
+            if (!url) { document.getElementById('igStatus').textContent = '❌ Falta URL'; return; }
+            try {
+              document.getElementById('igStatus').textContent = 'Enviando…';
+              const response = await fetch(`${API_URL}/instagram/comentarios`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+                body: JSON.stringify({ url, cantidad })
+              });
+              const data = await response.json().catch(() => ({}));
+              document.getElementById('igStatus').textContent = response.ok ? '✅ En proceso' : '❌ ' + (data.mensaje || 'Error');
+            } catch (err) { document.getElementById('igStatus').textContent = '❌ ' + err.message; }
+          });
+          document.getElementById('igCancel').addEventListener('click', () => {
+            document.getElementById('igStatus').textContent = '—';
+          });
+        } else {
+          svcDetail.innerHTML = `
+            <div class="row"><div class="ico">${SERVICES[currentNet].find(s => s.key === svcKey)?.label || 'Servicio'}</div><strong>${SERVICES[currentNet].find(s => s.key === svcKey)?.label || 'Servicio'}</strong></div>
+            <div class="hint">Conecta este servicio a tu endpoint.</div>
+          `;
+        }
+      });
+
+      // Clients
+      const clients = [
+        { h: '@aaronmercury', p: 'Instagram' },
+        { h: '@televisadigital', p: 'Instagram' },
+        { h: '@joscanela', p: 'Instagram' },
+        { h: '@jimenagallegotv', p: 'Instagram' }
+      ];
+      const clientsRoot = document.getElementById('clients');
+      clientsRoot.innerHTML = clients.map(c => `
+        <div class="client" aria-label="${c.h}">
+          <div class="avatar"><svg width="34" height="34" viewBox="0 0 24 24"><use href="#ig"/></svg><span class="badge-ig">✓</span></div>
+          <div class="handle">${c.h}</div>
+          <div class="platform">${c.p}</div>
+        </div>
+      `).join('');
+
+      // Device Farm
+      const sheetFarm = document.getElementById('sheetFarm');
+      const farmGrid = document.getElementById('farmGrid');
+      document.getElementById('openFarm').addEventListener('click', () => openSheet(sheetFarm));
+      const defaultDevices = [
+        { id: 'dev1', name: 'iPhone 14 Pro', os: 'iOS', ip: '10.0.0.8' },
+        { id: 'dev2', name: 'Galaxy S23', os: 'Android', ip: '10.0.0.9' },
+        { id: 'dev3', name: 'iPhone 13', os: 'iOS', ip: '10.0.0.10' },
+        { id: 'dev4', name: 'Pixel 8', os: 'Android', ip: '10.0.0.11' }
+      ];
+      function renderFarm() {
+        farmGrid.innerHTML = defaultDevices.map(d => `
+          <div class="dev" aria-label="${d.name}">
+            <div class="dev-head"><strong>${d.name}</strong> · ${d.os}<div class="chips"><span class="chip-b">Idle</span><span class="chip-b">${d.ip}</span></div></div>
+            <div class="screen"></div>
           </div>
-        </div>
-        <div class="screen">
-          ${src ? (src.endsWith('.mjpg')||src.endsWith('.mjpeg')?`<img src="${src}">`
-          : src.endsWith('.m3u8')?`<video src="${src}" autoplay muted playsinline></video>`
-          : `<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`)
-          : '<div class="placeholder"></div>'}
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="back" data-set="${d.id}">Asignar stream</button>
-          <button class="back" data-clear="${d.id}">Limpiar</button>
-        </div>
-      </div>`;
-    }).join('');
-  }
-  renderFarm();
-  farmGrid.addEventListener('click',(e)=>{
-    const b=e.target.closest('button'); if(!b) return;
-    if(b.dataset.set){
-      const id=b.dataset.set; const cur=localStorage.getItem('stream:'+id)||'';
-      const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur);
-      if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); toast('Stream actualizado'); }
-    }
-    if(b.dataset.clear){ localStorage.removeItem('stream:'+b.dataset.clear); renderFarm(); toast('Stream limpiado'); }
-  });
+        `).join('');
+      }
+      renderFarm();
 
-  /* ===== Hoja: controles de volver y gesto ===== */
-  const backFromServices = document.getElementById('backFromServices');
-  const backFromFarm = document.getElementById('backFromFarm');
-  backFromServices.addEventListener('click', ()=> closeSheet(sheetServices));
-  backFromFarm.addEventListener('click', ()=> closeSheet(sheetFarm));
+      // Sheet Management
+      const backFromServices = document.getElementById('backFromServices');
+      const backFromFarm = document.getElementById('backFromFarm');
+      backFromServices.addEventListener('click', () => closeSheet(sheetServices));
+      backFromFarm.addEventListener('click', () => closeSheet(sheetFarm));
 
-  function openSheet(el){ el.classList.add('active'); el.setAttribute('aria-hidden','false'); sheetStack.push(el); }
-  function closeSheet(el){ el.classList.remove('active'); el.setAttribute('aria-hidden','true'); sheetStack = sheetStack.filter(x=>x!==el); }
-  let sheetStack = [];
+      function openSheet(el) { el.classList.add('active'); el.setAttribute('aria-hidden', 'false'); }
+      function closeSheet(el) { el.classList.remove('active'); el.setAttribute('aria-hidden', 'true'); }
 
-  // Gesto de borde para “atrás”
-  let startX=null;
-  window.addEventListener('touchstart',(e)=>{ if(e.touches[0].clientX<18) startX=e.touches[0].clientX; },{passive:true});
-  window.addEventListener('touchend',(e)=>{
-    if(startX!==null){
-      const dx = e.changedTouches[0].clientX - startX;
-      if(dx>60 && sheetStack.length){ closeSheet(sheetStack[sheetStack.length-1]); }
-      startX=null;
-    }
-  },{passive:true});
+      // Quick Action
+      document.getElementById('quickBtn').addEventListener('click', () => {
+        const value = document.getElementById('quickInput').value.trim();
+        if (value) alert('Automatizando: ' + value);
+        document.getElementById('quickInput').value = '';
+      });
 
-  /* ===== Quick ===== */
-  document.getElementById('quickBtn').addEventListener('click', ()=>{
-    const v=(document.getElementById('quickInput').value||'').trim();
-    if(!v) return toast('Escribe qué automatizar');
-    toast('Automatizando: '+v);
-    document.getElementById('quickInput').value='';
-  });
-
-  /* ===== Toast ===== */
-  function toast(msg,err){
-    const el=document.createElement('div'); el.textContent=msg;
-    el.style.cssText=`position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;background:${err?'#ef4444':'#111827'};color:#fff;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12)`;
-    document.body.appendChild(el); setTimeout(()=>el.remove(),2100);
-  }
-
-})();
-</script>
+      // Touch Gesture
+      let startX = null;
+      window.addEventListener('touchstart', (e) => { if (e.touches[0].clientX < 18) startX = e.touches[0].clientX; }, { passive: true });
+      window.addEventListener('touchend', (e) => {
+        if (startX !== null && e.changedTouches[0].clientX - startX > 60) {
+          const activeSheet = document.querySelector('.sheet.active');
+          if (activeSheet) closeSheet(activeSheet);
+        }
+        startX = null;
+      }, { passive: true });
+    })();
+  </script>
 </body>
 </html>
