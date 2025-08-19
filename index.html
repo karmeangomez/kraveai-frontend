@@ -11,7 +11,7 @@
     --ring:rgba(111,227,255,.25); --shadow:0 10px 30px rgba(0,0,0,.35);
     --radius:16px; --gap:16px; --ig-blue:#1095F6;
 
-    /* Colores sensibles a tema */
+    /* Sensibles a tema */
     --brand-x:#ffffff;
     --brand-threads:#ffffff;
     --brand-tiktok:#ffffff;
@@ -37,7 +37,7 @@
   }
   .bar{display:flex;align-items:center;gap:12px;padding:14px clamp(16px,4vw,28px)}
   .logo{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.02em}
-  .logo-badge{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c5cff,#00d3c2);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .logo-badge{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#7c5cff,#00d3c2);box-shadow:0 4px 12px rgba(0,0,0,.2);display:grid;place-items:center}
   .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
   .dot{width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.14)}
   .theme-btn{width:32px;height:32px;display:grid;place-items:center;border-radius:8px;cursor:pointer}
@@ -59,7 +59,7 @@
   .sub{margin:0 0 18px;color:var(--muted)}
   .section-title{margin:6px 0 10px;font-weight:800}
 
-  /* Grid redes (mejor uso de espacio) */
+  /* Grid redes */
   .social-grid{
     display:grid;gap:var(--gap);
     grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -76,7 +76,7 @@
   .sicon{width:38px;height:38px;flex:0 0 38px}
   .slabel{font-size:18px;letter-spacing:.2px}
 
-  /* Colores de marca */
+  /* Marcas */
   .brand-ig{color:#E1306C}
   .brand-yt{color:#FF0000}
   .brand-fb{color:#0866FF}
@@ -98,8 +98,7 @@
     border:1px solid color-mix(in oklab,var(--muted),transparent 70%);border-radius:14px}
   .avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#1b232b}
   .ig{display:flex;align-items:center;gap:6px;font-weight:800}
-  .verif{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ig-blue);color:#fff}
-  .verif svg{width:12px;height:12px}
+  .verif-ig{width:18px;height:18px} /* tamaño del badge original */
   .meta{color:var(--muted);font-size:12px}
   .grow{flex:1}
   .open{opacity:.9;font-size:12px;color:var(--muted)}
@@ -116,10 +115,17 @@
   .cta{height:46px;padding:0 16px;border-radius:10px;border:0;color:#052029;background:linear-gradient(135deg,#8af1ff,#45e0c3);
     font-weight:900;letter-spacing:.2px;box-shadow:0 8px 18px var(--ring);cursor:pointer}
 
-  /* Badge */
+  /* Badge con resplandor persistente */
   .badge{margin:18px auto 0;width:max-content;padding:10px 14px;border-radius:999px;
     background:radial-gradient(120px 50px at 50% 120%,rgba(111,227,255,.35),rgba(111,227,255,0) 60%),var(--panel);
-    border:1px solid color-mix(in oklab,var(--muted),transparent 75%);box-shadow:0 12px 28px var(--ring);font-size:12px;color:var(--muted)
+    border:1px solid color-mix(in oklab,var(--muted),transparent 75%);box-shadow:0 12px 28px var(--ring);font-size:12px;color:var(--muted);
+    animation:breath 4s ease-in-out infinite, glow 2.6s ease-in-out infinite;
+  }
+  @keyframes breath{50%{transform:scale(1.03)}}
+  @keyframes glow{
+    0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}
+    50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}
+    100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}
   }
 
   /* Modal ficha */
@@ -156,12 +162,43 @@
 </style>
 </head>
 <body>
+<!-- SPRITE / ICONOS GLOBALES -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <!-- LOGO ROBOT KRAVEAI -->
+    <symbol id="krobot" viewBox="0 0 64 64">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/>
+        </linearGradient>
+      </defs>
+      <rect x="2" y="10" width="60" height="46" rx="14" fill="url(#g1)"/>
+      <rect x="10" y="18" width="44" height="30" rx="10" fill="#0b0f14" opacity=".85"/>
+      <circle cx="24" cy="33" r="6" fill="#8af1ff"/>
+      <circle cx="40" cy="33" r="6" fill="#45e0c3"/>
+      <rect x="30" y="6" width="4" height="8" rx="2" fill="url(#g1)"/>
+      <rect x="18" y="50" width="28" height="4" rx="2" fill="url(#g1)" opacity=".8"/>
+    </symbol>
+
+    <!-- Verified IG (original: círculo azul + check blanco) -->
+    <symbol id="ig-verified" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="#1095F6"/>
+      <path d="M7.5 12.5l2.6 2.6 5.4-5.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
 <div class="wrap">
 
   <!-- Header -->
   <header>
     <div class="bar">
-      <div class="logo"><div class="logo-badge"></div><div>KraveAI</div></div>
+      <div class="logo">
+        <div class="logo-badge">
+          <svg viewBox="0 0 64 64" width="22" height="22"><use href="#krobot"/></svg>
+        </div>
+        <div>KraveAI</div>
+      </div>
       <div class="status"><span class="dot" id="dot"></span><span id="net">Sin conexión</span></div>
       <div id="themeToggle" class="theme-btn" title="Cambiar tema" aria-label="Cambiar tema">
         <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -351,13 +388,13 @@ socialGrid.querySelectorAll('.sbtn').forEach(btn=>{
   btn.addEventListener('click',(e)=>{e.preventDefault(); openNet(btn.dataset.net);});
 });
 
-/* ===== Clientes (TODOS los que me diste + conocidos) ===== */
+/* ===== Clientes (todos los que me diste + conocidos) ===== */
 const CLIENTES = [
   {user:'@aaronmercury',    name:'Aaron Mercurio',            followers:'5.4M',  posts:'543',   following:'924',   verified:true,  avatar:''},
   {user:'@televisadigital', name:'Televisa Digital',          followers:'246K',  posts:'5,779', following:'617',   verified:true,  avatar:''},
   {user:'@joscanela',       name:'Jos Canela',                followers:'722K',  posts:'63',    following:'425',   verified:true,  avatar:''},
   {user:'@jimenagallegotv', name:'Jimena Gállego',            followers:'544K',  posts:'3,328', following:'1,608', verified:true,  avatar:''},
-  {user:'@elmalilla_',      name:'MALI EL MALILLAA!!🇲🇽',        followers:'3.6M',  posts:'675',   following:'2,006', verified:true,  avatar:''},
+  {user:'@elmalilla_',      name:'MALI EL MALILLAA!!',        followers:'3.6M',  posts:'675',   following:'2,006', verified:true,  avatar:''},
   {user:'@mariobautista',   name:'Mario Bautista (MB)',       followers:'6.7M',  posts:'515',   following:'3,371', verified:true,  avatar:''},
   {user:'@aldotdenigris',   name:'Aldo Tamez De Nigris',      followers:'1.5M',  posts:'607',   following:'2,748', verified:true,  avatar:''},
   {user:'@sonymusiclatin',  name:'Sony Music Latin',          followers:'1.1M',  posts:'43.3K', following:'535',   verified:true,  avatar:''},
@@ -366,12 +403,10 @@ const CLIENTES = [
   {user:'@pesopluma',       name:'La Doble P',                followers:'15.4M', posts:'44',    following:'1,195', verified:true,  avatar:''},
   {user:'@oscar_maydonn',   name:'Oscar Maydon',              followers:'2.5M',  posts:'20',    following:'1,203', verified:true,  avatar:''},
   {user:'@diegodeericemx',  name:'Diego de Erice',            followers:'551K',  posts:'2,039', following:'682',   verified:true,  avatar:''},
-  /* Puedes seguir agregando aquí los adicionales de tus capturas */
 ];
 
-/* Carga de avatar opcional vía proxy/back */
 async function ensureAvatars(){
-  if(!AVATAR_PROXY) return; // si no hay proxy, no intentes
+  if(!AVATAR_PROXY) return;
   await Promise.all(CLIENTES.map(async c=>{
     if(!c.avatar){
       try{
@@ -388,9 +423,7 @@ function renderHomes(){
   homeClients.innerHTML = CLIENTES.slice(0,6).map(c=>clientCard(c)).join('');
   renderClients();
 }
-ensureAvatars(); // no rompe si AVATAR_PROXY vacío
-
-/* Listado y búsqueda */
+ensureAvatars();
 const list = document.getElementById('clientsList');
 const q = document.getElementById('q');
 function renderClients(filter=''){
@@ -405,7 +438,7 @@ q?.addEventListener('input', e=>renderClients(e.target.value));
 
 function clientCard(c){
   const av = c.avatar ? `<img class="avatar" src="${c.avatar}" alt="${c.user}">` : `<div class="avatar" aria-hidden="true"></div>`;
-  const tick = c.verified ? `<span class="verif" title="Verificado IG"><svg viewBox="0 0 24 24" fill="none"><path d="M6 12l3 3 9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : '';
+  const tick = c.verified ? `<svg class="verif-ig" viewBox="0 0 24 24"><use href="#ig-verified"/></svg>` : '';
   return `<div class="client" role="button" onclick='openFicha(${JSON.stringify(c).replace(/"/g,"&quot;")})'>
     ${av}
     <div class="grow">
@@ -421,7 +454,7 @@ const dlg = document.getElementById('dlg');
 function openFicha(c){
   document.getElementById('dlgAv').src = c.avatar || '';
   document.getElementById('dlgAv').alt = c.user;
-  const tick = c.verified ? `<span class="verif"><svg viewBox="0 0 24 24" fill="none"><path d="M6 12l3 3 9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : '';
+  const tick = c.verified ? `<svg class="verif-ig" viewBox="0 0 24 24" style="vertical-align:-3px"><use href="#ig-verified"/></svg>` : '';
   document.getElementById('dlgUser').innerHTML = `${c.user} ${tick}`;
   document.getElementById('dlgName').textContent = c.name;
   document.getElementById('kPosts').textContent = c.posts;
@@ -431,7 +464,7 @@ function openFicha(c){
 }
 dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.close(); });
 
-/* Accounts: buscador simple local (y hook a backend) */
+/* Accounts: buscador */
 const accLookup = document.getElementById('accLookup');
 const accSearch = document.getElementById('accSearch');
 const accResult = document.getElementById('accResult');
@@ -439,12 +472,8 @@ async function lookupUser(){
   let u = (accLookup.value||'').trim();
   if(!u) { accResult.textContent='Escribe un @usuario'; return; }
   if(!u.startsWith('@')) u = '@'+u;
-
-  // 1) Local
   const local = CLIENTES.find(c=>c.user.toLowerCase()===u.toLowerCase());
   if(local){ openFicha(local); accResult.textContent='Ficha abierta (local).'; return; }
-
-  // 2) Backend (si existe)
   try{
     const r = await fetch(`${API_URL}/instagram/lookup?u=${encodeURIComponent(u)}`, {credentials:'include'});
     if(r.ok){
@@ -529,9 +558,10 @@ function openTab(id){
 }
 tabs.forEach(t=>t.addEventListener('click', e=>{ e.preventDefault(); openTab(t.dataset.tab); }));
 
-/* Pantallas de servicios: 1 por red, con IG Comentarios especial */
+/* ====== PANTALLAS DE SERVICIOS (1 por red) ====== */
 const wrap = document.querySelector('.wrap');
 REDES.forEach(r => buildNetSection(r));
+
 function buildNetSection({id,name,brandClass,icon}){
   const m = document.createElement('main');
   m.id = `svc-${id}`;
@@ -559,6 +589,7 @@ function buildNetSection({id,name,brandClass,icon}){
   const titleEl = m.querySelector(`#title-${id}`);
   const formWrap = m.querySelector(`#formwrap-${id}`);
 
+  /* Servicios por red (cada una tiene sus chips) */
   const kinds = CATALOG[id];
   const keys = Object.keys(kinds);
   let current = keys[0];
@@ -571,6 +602,7 @@ function buildNetSection({id,name,brandClass,icon}){
   }));
   function updateTitle(){ titleEl.textContent = `${name} · ${kinds[current].label}` }
 
+  /* Formularios: especial IG Comentarios; genérico para el resto */
   function renderForm(){
     if(id==='instagram' && current==='comments'){
       formWrap.innerHTML = `
@@ -655,7 +687,7 @@ function buildNetSection({id,name,brandClass,icon}){
 /* Abrir red */
 function openNet(id){ openTab(`svc-${id}`); window.scrollTo({top:0,behavior:'instant'}); }
 
-/* Iconos */
+/* Iconos (currentColor para respetar tema) */
 function ig(){return `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.8" fill="currentColor"/></svg>`}
 function tiktok(){return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3c.3 2.5 1.9 4.4 4.4 4.6V11c-1.7 0-3.3-.6-4.4-1.6v5.7a5.6 5.6 0 1 1-5.6-5.6c.4 0 .8 0 1.2.1v3a2.6 2.6 0 1 0 1.9 2.5V3h2.5z"/></svg>`}
 function yt(){return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.4-.4-5a3 3 0 0 0-2.1-2.1C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.5.6A3 3 0 0 0 1.4 7C1 8.6 1 12 1 12s0 3.4.4 5a3 3 0 0 0 2.1 2.1c1.6.6 8.5.6 8.5.6s6.9 0 8.5-.6A3 3 0 0 0 22.6 17c.4-1.6.4-5 .4-5zM10 15.5v-7l6 3.5-6 3.5z"/></svg>`}
