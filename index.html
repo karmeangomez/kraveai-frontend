@@ -10,7 +10,6 @@
     --bg:#0f1418; --panel:#141a20; --card:#12171c; --text:#e8eef4; --muted:#8ea0ae;
     --ring:rgba(111,227,255,.25); --shadow:0 10px 30px rgba(0,0,0,.35);
     --radius:16px; --gap:16px; --ig-blue:#1095F6;
-    /* sensibles a tema (para X/Threads/TikTok en claro/oscuro) */
     --brand-x:#ffffff; --brand-threads:#ffffff; --brand-tiktok:#ffffff;
   }
   [data-theme="light"]{
@@ -21,8 +20,8 @@
 
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
-  .wrap{min-height:100svh;display:flex;flex-direction:column}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Inter,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
+  .wrap{min-height:100dvh;display:flex;flex-direction:column}
 
   /* Header */
   header{position:sticky;top:0;z-index:30;backdrop-filter:saturate(1.1) blur(10px);
@@ -34,15 +33,15 @@
   .logo-badge{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#7c5cff,#00d3c2);box-shadow:0 4px 12px rgba(0,0,0,.2);display:grid;place-items:center}
   .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
   .dot{width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.14)}
-  .theme-btn{width:32px;height:32px;display:grid;place-items:center;border-radius:8px;cursor:pointer}
+  .theme-btn{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;cursor:pointer}
   .theme-btn:hover{background:color-mix(in oklab,var(--panel),transparent 50%)}
   .icon{width:20px;height:20px}
 
   /* Nav inferior */
   nav{position:fixed;left:0;right:0;bottom:0;background:var(--panel);
     border-top:1px solid color-mix(in oklab,var(--muted),transparent 70%);
-    display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 10px env(safe-area-inset-bottom)}
-  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;border-radius:10px;color:var(--muted);text-decoration:none}
+    display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 10px max(8px,env(safe-area-inset-bottom))}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);text-decoration:none}
   .tab svg{width:22px;height:22px}
   .tab.active{color:var(--text);background:color-mix(in oklab,#202a33,transparent 55%)}
 
@@ -53,22 +52,22 @@
   .sub{margin:0 0 18px;color:var(--muted)}
   .section-title{margin:6px 0 10px;font-weight:800}
 
-  /* Grid redes (aprovecha espacio, simétrico) */
+  /* Grid redes (aprovecha espacio y simetría) */
   .social-grid{
     display:grid;gap:var(--gap);
-    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-    grid-auto-rows:120px; /* un poco más alto para ocupar huecos */
-    margin-top:10px;margin-bottom:20px;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    grid-auto-rows:128px;
+    margin:14px 0 20px;
   }
   .sbtn{
-    display:flex;align-items:center;justify-content:center;gap:16px;
+    display:flex;align-items:center;justify-content:center;gap:18px;
     background:var(--card); border:1px solid color-mix(in oklab,var(--muted),transparent 70%);
-    border-radius:18px; box-shadow:var(--shadow); text-decoration:none; color:var(--text);
-    transition:.18s ease; position:relative; overflow:hidden; font-weight:800;
+    border-radius:20px; box-shadow:var(--shadow); text-decoration:none; color:var(--text);
+    transition:.18s ease; position:relative; overflow:hidden; font-weight:900;
   }
   .sbtn:hover{transform:translateY(-2px)}
-  .sicon{width:40px;height:40px;flex:0 0 40px}
-  .slabel{font-size:18px;letter-spacing:.2px}
+  .sicon{width:42px;height:42px;flex:0 0 42px}
+  .slabel{font-size:19px;letter-spacing:.2px}
 
   /* Colores marca */
   .brand-ig{color:#E1306C}
@@ -92,7 +91,7 @@
     border:1px solid color-mix(in oklab,var(--muted),transparent 70%);border-radius:14px}
   .avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#1b232b}
   .ig{display:flex;align-items:center;gap:6px;font-weight:800}
-  .verif-ig{width:18px;height:18px;vertical-align:middle} /* VERIFIED ORIGINAL (símbolo oficial abajo) */
+  .verif-ig{width:18px;height:18px;vertical-align:middle} /* VERIFIED ORIGINAL (círculo azul + check blanco) */
   .meta{color:var(--muted);font-size:12px}
   .grow{flex:1}
   .open{opacity:.9;font-size:12px;color:var(--muted)}
@@ -103,7 +102,7 @@
     background:var(--card);color:var(--text);padding:0 12px}
 
   /* Composer */
-  .composer{position:sticky;bottom:64px;margin-top:18px;display:flex;gap:10px;padding:8px;border-radius:14px;
+  .composer{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));margin-top:18px;display:flex;gap:10px;padding:8px;border-radius:14px;
     background:var(--panel);border:1px solid color-mix(in oklab,var(--muted),transparent 75%);box-shadow:var(--shadow)}
   .composer input{flex:1;height:46px;border:0;outline:0;border-radius:10px;padding:0 12px;background:var(--card);color:var(--text)}
   .cta{height:46px;padding:0 16px;border-radius:10px;border:0;color:#052029;background:linear-gradient(135deg,#8af1ff,#45e0c3);
@@ -159,7 +158,7 @@
 <!-- SPRITES / ICONOS -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
-    <!-- LOGO ROBOT KRAVEAI (real, no cuadro vacío) -->
+    <!-- LOGO ROBOT KRAVEAI -->
     <symbol id="krobot" viewBox="0 0 64 64">
       <defs>
         <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
@@ -174,7 +173,7 @@
       <rect x="18" y="50" width="28" height="4" rx="2" fill="url(#g1)" opacity=".8"/>
     </symbol>
 
-    <!-- VERIFIED ORIGINAL DE INSTAGRAM (círculo azul + check blanco) -->
+    <!-- VERIFIED ORIGINAL DE INSTAGRAM -->
     <symbol id="ig-verified" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="10" fill="#1095F6"/>
       <path d="M7.5 12.5l2.6 2.6 5.4-5.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -307,7 +306,7 @@
 <script>
 /* ===== CONFIG ===== */
 const API_URL = "https://api.kraveapi.xyz";
-const AVATAR_PROXY = ""; // opcional, ej: "https://api.kraveapi.xyz/ig/avatar?u="
+const AVATAR_PROXY = ""; // opcional: ej. "https://api.kraveapi.xyz/ig/avatar?u="
 
 /* ===== TEMA ===== */
 const root = document.documentElement;
@@ -352,7 +351,7 @@ const REDES = [
   {id:'whatsapp',   name:'WhatsApp',   brandClass:'brand-wa',       icon:wa()},
 ];
 
-/* Catálogo de servicios (CHIPS por red). Cada red abre su propia pantalla con sus formularios */
+/* Catálogo de servicios (cada red tendrá su propia pantalla con chips y formularios) */
 const CATALOG = {
   instagram: { likes:{label:'Likes',base:1.2}, comments:{label:'Comentarios',base:4.5}, followers:{label:'Seguidores',base:6.9}, views:{label:'Vistas',base:0.8}, stories:{label:'Historias',base:1.1} },
   tiktok:    { likes:{label:'Likes',base:1.0}, comments:{label:'Comentarios',base:4.0}, followers:{label:'Seguidores',base:5.9}, views:{label:'Vistas',base:0.7}, stories:{label:'Historias',base:0.95} },
@@ -379,7 +378,7 @@ socialGrid.querySelectorAll('.sbtn').forEach(btn=>{
   btn.addEventListener('click',(e)=>{e.preventDefault(); openNet(btn.dataset.net);});
 });
 
-/* CLIENTES (los que me diste + extra) */
+/* CLIENTES (lista completa con los que me diste) */
 const CLIENTES = [
   {user:'@aaronmercury',    name:'Aaron Mercurio',            followers:'5.4M',  posts:'543',   following:'924',   verified:true,  avatar:''},
   {user:'@televisadigital', name:'Televisa Digital',          followers:'246K',  posts:'5,779', following:'617',   verified:true,  avatar:''},
@@ -397,7 +396,7 @@ const CLIENTES = [
 ];
 
 async function ensureAvatars(){
-  if(!AVATAR_PROXY) return;
+  if(!AVATAR_PROXY) return; // si configuras un proxy, traerá fotos reales
   await Promise.all(CLIENTES.map(async c=>{
     if(!c.avatar){
       try{
@@ -410,8 +409,7 @@ async function ensureAvatars(){
   renderHomes();
 }
 function renderHomes(){
-  const homeClients = document.getElementById('homeClients');
-  homeClients.innerHTML = CLIENTES.slice(0,6).map(c=>clientCard(c)).join('');
+  document.getElementById('homeClients').innerHTML = CLIENTES.slice(0,6).map(c=>clientCard(c)).join('');
   renderClients();
 }
 ensureAvatars();
@@ -549,7 +547,7 @@ function openTab(id){
 }
 tabs.forEach(t=>t.addEventListener('click', e=>{ e.preventDefault(); openTab(t.dataset.tab); }));
 
-/* ===== PANTALLAS DE SERVICIOS (UNA POR RED, con chips y formularios) ===== */
+/* ===== PANTALLAS DE SERVICIOS (UNA POR RED) ===== */
 const wrap = document.querySelector('.wrap');
 REDES.forEach(r => buildNetSection(r));
 
