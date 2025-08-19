@@ -46,8 +46,11 @@ body{
 
 .main{
   height: calc(var(--app-h, 100svh) - var(--top-h, 58px) - var(--nav-h, 70px) - var(--safe-b));
-  overflow:hidden; padding:12px 14px;
+  padding:12px 14px;
+  /* clave para evitar huecos: */
+  min-height:0;
 }
+.main > .view{min-height:0;}
 
 /* ========================= NAV BOTTOM ========================= */
 .nav{
@@ -69,14 +72,14 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 }
 
 /* ========================= VIEWS ========================= */
-.view{display:none; height:100%; }
+.view{display:none;height:100%}
 #t-home:checked ~ .app .view[data-tab="home"],
-#t-search:checked ~ .app .view[data-tab="serv"], /* abrimos servicios solo desde tiles */
+#t-search:checked ~ .app .view[data-tab="serv"],
 #t-clients:checked ~ .app .view[data-tab="clients"],
 #t-farm:checked ~ .app .view[data-tab="farm"],
 #t-acc:checked ~ .app .view[data-tab="acc"]{display:grid}
 
-/* ====== HOME (sin scroll, auto-fit) ====== */
+/* ====== HOME ====== */
 .home{
   grid-template-rows:auto 1fr auto;
   gap:12px; max-width:980px; margin-inline:auto;
@@ -84,60 +87,52 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 .h-hero{display:flex;align-items:center;justify-content:space-between;padding:6px 2px}
 .h-hero h1{margin:0 0 2px;font-size:clamp(22px,4.6vw,28px)}
 .h-hero p{margin:0;color:var(--muted)}
-/* Grid de redes: botones compactos (solo logo+nombre) */
-.s-grid{
-  display:grid;gap:10px;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-}
-.s-btn{
-  display:flex;align-items:center;gap:10px;
-  padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);
-  cursor:pointer; user-select:none;
-}
+.s-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.s-btn{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer}
 .s-btn:hover{outline:2px solid color-mix(in oklab,var(--text) 16%, transparent)}
 .s-ico{width:22px;height:22px;display:grid;place-items:center}
 
-/* Clientes (lista fija, sin overflow global) */
-.clients{
-  display:grid;gap:8px;
-  grid-template-columns:1fr;
-}
-.c-item{
-  display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card)
-}
+/* ====== CLIENTES ====== */
+.clients{display:grid;gap:8px}
+.c-item{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .c-ava{width:28px;height:28px;border-radius:50%;overflow:hidden;background:#0a0}
 .c-u{font-weight:800}
 .c-net{font-size:.86rem;color:var(--muted)}
 .c-r{margin-left:auto;opacity:.9}
 
-/* Quick box */
+/* Quick */
 .quick{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .quick input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
 .btn{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer}
 .btn-primary{border:0;background:var(--grad);color:#0b0d13}
 
-/* ====== SERVICES (por red) ====== */
-.serv{grid-template-rows:auto auto 1fr; gap:12px; max-width:980px; margin-inline:auto}
+/* ====== SERVICIOS ====== */
+.serv{
+  grid-template-rows:auto auto 1fr;
+  gap:12px; max-width:1100px; margin-inline:auto;
+  min-height:0; /* clave */
+}
 .s-head{display:flex;align-items:center;gap:10px}
 .back{display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.05);cursor:pointer}
 .s-title{font-weight:900;font-size:1.1rem}
 .s-chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);cursor:pointer}
-.panel{display:none;height:100%;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px;overflow:auto}
-.panel.active{display:block}
-/* IG Comentarios form */
-.form-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-.input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:10px}
-.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text)}
-@media (max-width:520px){.form-grid{grid-template-columns:1fr}}
+.panel{
+  height:100%; min-height:0; overflow:auto;
+  border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px;
+}
+.s-grid-cards{
+  display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+}
+.s-card{
+  display:grid;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)
+}
+.s-row{display:flex;gap:8px}
+.s-row .input{flex:1}
 
-/* ====== CLIENTES ====== */
-.clients-page{grid-template-rows:auto 1fr;gap:12px;max-width:980px;margin-inline:auto}
-.c-list{display:grid;gap:10px;grid-auto-rows:min-content;overflow:auto}
-.c-verified{width:16px;height:16px}
-
-/* ====== DEVICE FARM ====== */
-.farm{grid-template-rows:auto 1fr;gap:12px;max-width:1100px;margin-inline:auto}
+/* ====== FARM ====== */
+.farm{grid-template-rows:auto 1fr;gap:12px;max-width:1100px;margin-inline:auto;min-height:0}
 .fgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));overflow:auto}
 .dev{display:grid;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .d-head{display:flex;align-items:center;justify-content:space-between;font-weight:800}
@@ -145,8 +140,8 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 .screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .d-actions{display:flex;gap:8px;flex-wrap:wrap}
 
-/* ====== CUENTAS ====== */
-.acc{grid-template-rows:auto 1fr;gap:12px;max-width:820px;margin-inline:auto}
+/* ====== ACC ====== */
+.acc{grid-template-rows:auto 1fr;gap:12px;max-width:820px;margin-inline:auto;min-height:0}
 .box{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .box-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
 @media (max-width:560px){.box-grid{grid-template-columns:1fr}}
@@ -168,16 +163,16 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 }
 
 /* Helpers */
-input, button { font-size:16px; } /* evita zoom iOS en inputs */
+input, button { font-size:16px; } /* evita zoom iOS */
 .section-title{font-weight:900;margin:2px 0 4px}
 .hint{color:var(--muted);font-size:.86rem;margin:0 0 8px}
 .hide{display:none}
-svg.brand-icon{color:var(--text);} /* para logos con currentColor */
+svg.brand-icon{color:var(--text);}
 </style>
 </head>
 <body>
 
-<!-- TABS (sin JS) -->
+<!-- TABS -->
 <input type="radio" name="tab" id="t-home" checked>
 <input type="radio" name="tab" id="t-search">
 <input type="radio" name="tab" id="t-clients">
@@ -206,7 +201,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
       <path d="M8.2 12.4l2.2 2.2 5.4-5.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
 
-    <!-- Brand logos con currentColor -->
+    <!-- Brand logos -->
     <symbol id="logo-instagram" viewBox="0 0 24 24">
       <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/>
       <circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/>
@@ -269,20 +264,22 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
       </div>
     </section>
 
-    <!-- SERVICES (por red; se abre desde los tiles) -->
+    <!-- SERVICIOS -->
     <section class="view serv" data-tab="serv">
       <div class="s-head">
         <div class="back" id="backHome"><svg width="18" height="18"><use href="#ico-left"/></svg> Atrás</div>
         <div class="s-title" id="servTitle">Servicios</div>
       </div>
       <div class="s-chips" id="servChips"></div>
-      <div class="panel active" id="servPanel"></div>
+      <div class="panel" id="servPanel">
+        <!-- tarjetas se renderizan aquí -->
+      </div>
     </section>
 
     <!-- CLIENTES -->
     <section class="view clients-page" data-tab="clients">
       <div class="section-title">Clientes recientes</div>
-      <div class="c-list" id="clientsFull"></div>
+      <div class="clients" id="clientsFull"></div>
     </section>
 
     <!-- DEVICE FARM -->
@@ -305,7 +302,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
         </div>
       </div>
 
-      <!-- Buscador de usuarios IG -->
+      <!-- Buscador IG -->
       <div class="box" id="userSearchBox">
         <div style="display:flex;align-items:center;gap:10px">
           <svg width="20" height="20"><use href="#ico-users"/></svg>
@@ -317,7 +314,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
           </div>
           <button class="btn btn-primary" id="igSearchBtn">Buscar</button>
         </div>
-        <div id="igSearchResult" class="c-list" style="margin-top:10px"></div>
+        <div id="igSearchResult" class="clients" style="margin-top:10px"></div>
       </div>
 
       <div class="box">
@@ -331,7 +328,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
 
       <div class="box">
         <div style="display:flex;align-items:center;gap:10px"><svg width="20" height="20"><use href="#ico-users"/></svg><strong>Cuentas activas</strong></div>
-        <div id="accountsList" class="c-list"><div class="hint">Cargando…</div></div>
+        <div id="accountsList" class="clients"><div class="hint">Cargando…</div></div>
       </div>
     </section>
 
@@ -347,27 +344,24 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
   </nav>
 </div>
 
-<!-- Firma (respira y no tapa) -->
+<!-- Firma -->
 <div class="credit">Created by Karmean Gómez</div>
 
 <script>
 (function(){
   const API_URL = "https://api.kraveapi.xyz";
 
-  /* ===== Viewport real en iOS/Android ===== */
+  /* ===== Altura real ===== */
   function setLayoutHeights(){
     const app = document.getElementById('app');
     const top = app.querySelector('.top');
     const nav = app.querySelector('.nav');
-
     const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     document.documentElement.style.setProperty('--app-h', vh + 'px');
-
     const topH = top?.getBoundingClientRect().height || 58;
     const navH = nav?.getBoundingClientRect().height || 70;
     document.documentElement.style.setProperty('--top-h',  Math.round(topH) + 'px');
     document.documentElement.style.setProperty('--nav-h',  Math.round(navH) + 'px');
-
     const safeB = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-b'))||0;
     const credit = document.querySelector('.credit');
     if(credit){ credit.style.bottom = `calc(${Math.round(navH)}px + ${safeB}px + 10px)`; }
@@ -380,7 +374,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
   window.addEventListener('orientationchange', setLayoutHeights, {passive:true});
   window.addEventListener('resize', setLayoutHeights, {passive:true});
 
-  /* ========= Tema ========= */
+  /* ===== Tema ===== */
   const themeToggle = document.getElementById('themeToggle');
   const themeEmoji = document.getElementById('themeEmoji');
   const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -393,7 +387,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     themeEmoji.textContent = t==='dark' ? '🌙' : '☀️';
   });
 
-  /* ========= Estado backend ========= */
+  /* ===== Salud backend ===== */
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
   async function checkHealth(){
@@ -405,7 +399,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
   }
   checkHealth(); setInterval(checkHealth, 120000);
 
-  /* ========= GRID redes ========= */
+  /* ===== GRID redes ===== */
   const networks = [
     {key:'instagram', name:'Instagram', icon:'#logo-instagram'},
     {key:'tiktok', name:'TikTok', icon:'#logo-tiktok'},
@@ -425,7 +419,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
       <span>${n.name}</span>
     </button>`).join('');
 
-  /* ========= Clientes ========= */
+  /* ===== Clientes mock ===== */
   const IG_VER = '<svg class="c-verified"><use href="#ig-verified"/></svg>';
   const CLIENTS = [
     {user:'@aaronmercury', net:'Instagram', avatar:'', verified:true},
@@ -433,6 +427,8 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     {user:'@joscanela', net:'Instagram', avatar:'', verified:true},
     {user:'@jimenagallegotv', net:'Instagram', avatar:'', verified:true},
   ];
+  const brief = document.getElementById('clientsBrief');
+  const full = document.getElementById('clientsFull');
   function avatarFor(c){
     if(c.avatar) return `<img class="c-ava" src="${c.avatar}" alt="">`;
     const map = {Instagram:'#logo-instagram', YouTube:'#logo-youtube', TikTok:'#logo-tiktok'};
@@ -441,17 +437,17 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
               <svg width="18" height="18" class="brand-icon"><use href="${use}"/></svg>
             </div>`;
   }
-  const brief = document.getElementById('clientsBrief');
-  brief.innerHTML = CLIENTS.slice(0,4).map(c=>`
-    <div class="c-item">
-      ${avatarFor(c)}
-      <div>
-        <div class="c-u">${c.user} ${c.verified?IG_VER:''}</div>
-        <div class="c-net">${c.net}</div>
-      </div>
-      <div class="c-r"><svg width="18" height="18" class="brand-icon"><use href="#logo-instagram"/></svg></div>
-    </div>`).join('');
-  const full = document.getElementById('clientsFull');
+  if(brief){
+    brief.innerHTML = CLIENTS.slice(0,4).map(c=>`
+      <div class="c-item">
+        ${avatarFor(c)}
+        <div>
+          <div class="c-u">${c.user} ${c.verified?IG_VER:''}</div>
+          <div class="c-net">${c.net}</div>
+        </div>
+        <div class="c-r"><svg width="18" height="18" class="brand-icon"><use href="#logo-instagram"/></svg></div>
+      </div>`).join('');
+  }
   if(full){
     full.innerHTML = CLIENTS.map(c=>`
       <div class="c-item">
@@ -464,7 +460,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
       </div>`).join('');
   }
 
-  /* ========= Quick ========= */
+  /* ===== Quick ===== */
   function toast(msg, err){
     const el=document.createElement('div'); el.textContent=msg;
     el.style.cssText=`position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;
@@ -479,11 +475,12 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     document.getElementById('quickInput').value='';
   });
 
-  /* ========= Navegación a Servicios por red ========= */
+  /* ===== Servicios ===== */
   const servTitle = document.getElementById('servTitle');
   const servChips = document.getElementById('servChips');
   const servPanel = document.getElementById('servPanel');
 
+  // catálogo de servicios por red
   const SERVICES_BY_NET = {
     instagram: ['Likes','Comentarios','Seguidores','Vistas','Historias'],
     tiktok: ['Vistas','Likes','Seguidores'],
@@ -497,6 +494,107 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     whatsapp: ['Mensajes','Grupos','Respuestas']
   };
 
+  // definición de endpoints/inputs por servicio (genérico)
+  const SERVICE_DEFS = {
+    Likes:       {slug:'likes',       fields:['url','cantidad']},
+    Comentarios: {slug:'comentarios', fields:['url','cantidad','modo','apodo','estilo','actividad','ejemplos']},
+    Seguidores:  {slug:'seguidores',  fields:['usuario','cantidad']},
+    Vistas:      {slug:'vistas',      fields:['url','cantidad']},
+    Historias:   {slug:'historias',   fields:['usuario','cantidad']},
+    Suscripciones:{slug:'suscripciones',fields:['url','cantidad']},
+    Respuestas:  {slug:'respuestas',  fields:['url','cantidad']},
+    Reposts:     {slug:'reposts',     fields:['url','cantidad']},
+    Reacciones:  {slug:'reacciones',  fields:['url','cantidad']},
+    Conexiones:  {slug:'conexiones',  fields:['usuario','cantidad']},
+    Visitas:     {slug:'visitas',     fields:['usuario','cantidad']},
+    Streams:     {slug:'streams',     fields:['track','cantidad']},
+    Saves:       {slug:'saves',       fields:['track','cantidad']},
+    Mensajes:    {slug:'mensajes',    fields:['chat','mensaje','cantidad']},
+    Miembros:    {slug:'miembros',    fields:['grupo','cantidad']},
+    Compartidos: {slug:'compartidos', fields:['url','cantidad']},
+    Grupos:      {slug:'grupos',      fields:['nombre','cantidad']}
+  };
+
+  // mapeo de placeholders
+  const PH = {
+    url:'URL del post (https://…)', cantidad:'Cantidad', modo:'Modo (auto/personalizado)',
+    apodo:'Apodo (opcional)', estilo:'Estilo (fitness, etc)', actividad:'Actividad (entrenador, etc)',
+    ejemplos:'Ejemplos (uno por línea)', usuario:'@usuario', track:'URL o ID del track',
+    chat:'@usuario o link al chat', mensaje:'Mensaje', grupo:'@grupo', nombre:'Nombre del grupo'
+  };
+
+  function fieldInput(name){
+    const type = (name==='cantidad')?'number':'text';
+    const extra = name==='cantidad' ? 'min="1" max="10000" value="30"' : '';
+    return `<div class="input"><span>✚</span><input name="${name}" ${extra} placeholder="${PH[name]||name}"></div>`;
+  }
+
+  function serviceCard(net, serviceName){
+    const def = SERVICE_DEFS[serviceName];
+    const fields = def?.fields || ['url','cantidad'];
+    return `
+      <div class="s-card" data-net="${net}" data-s="${serviceName}">
+        <div style="font-weight:800">${serviceName}</div>
+        <div class="s-row">${fields.slice(0,2).map(fieldInput).join('')}</div>
+        ${fields.length>2 ? `<div class="s-row">${fields.slice(2,4).map(fieldInput).join('')}</div>`:''}
+        ${fields.length>4 ? `<div class="s-row">${fields.slice(4,6).map(fieldInput).join('')}</div>`:''}
+        ${fields.includes('modo') ? `
+          <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
+          <script>/* noop: datalist global */</script>` : '' }
+        ${fields.includes('modo') ? '' : ''}
+        ${fields.includes('modo') ? '' : ''}
+        ${fields.includes('modo') ? '' : ''}
+        ${fields.includes('modo') ? '' : ''}
+        <div class="s-row">
+          <button class="btn btn-primary s-run">Lanzar</button>
+          <button class="btn s-cancel">Cancelar</button>
+        </div>
+        <div class="hint s-status">—</div>
+      </div>`;
+  }
+
+  function renderServiceChips(key){
+    const items = SERVICES_BY_NET[key]||[];
+    servChips.innerHTML = items.map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('');
+  }
+
+  function renderServicePanel(netKey){
+    const items = SERVICES_BY_NET[netKey]||[];
+    servPanel.innerHTML = `<div class="s-grid-cards">${items.map(s=>serviceCard(netKey,s)).join('')}</div>`;
+    attachServiceHandlers();
+  }
+
+  function attachServiceHandlers(){
+    servPanel.querySelectorAll('.s-card').forEach(card=>{
+      const status = card.querySelector('.s-status');
+      const run = card.querySelector('.s-run');
+      const cancel = card.querySelector('.s-cancel');
+      run.onclick = async ()=>{
+        const net = card.dataset.net;
+        const service = card.dataset.s;
+        const def = SERVICE_DEFS[service]||{slug:service.toLowerCase(),fields:[]};
+        const payload = {};
+        card.querySelectorAll('input').forEach(i=>{
+          const k=i.name; const v=(i.value||'').trim();
+          if(v) payload[k]= (k==='cantidad')? Number(v) : v;
+        });
+        if(def.fields.includes('url') && !payload.url){ status.textContent='❌ Falta URL'; return; }
+        if(def.fields.includes('usuario') && !payload.usuario){ status.textContent='❌ Falta usuario'; return; }
+        try{
+          status.textContent='Enviando…';
+          const r = await fetch(`${API_URL}/${net}/${def.slug}`,{
+            method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
+            body:JSON.stringify(payload)
+          });
+          const d = await r.json().catch(()=>({}));
+          if(r.ok){ status.textContent='✅ En proceso'; toast(`${service} lanzado`); }
+          else throw new Error(d.mensaje||'Error');
+        }catch(err){ status.textContent='❌ '+err.message; toast(err.message,true); }
+      };
+      cancel.onclick = ()=>{ status.textContent='—'; card.querySelectorAll('input').forEach(i=>i.value=''); };
+    });
+  }
+
   socialGrid.addEventListener('click',(e)=>{
     const b=e.target.closest('.s-btn'); if(!b) return;
     const key=b.dataset.net;
@@ -508,84 +606,25 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     const n = networks.find(n=>n.key===key); if(!n) return;
     servTitle.textContent = `Servicios · ${n.name}`;
     renderServiceChips(key);
-    openService(key, SERVICES_BY_NET[key][0]);
-  }
-
-  function renderServiceChips(key){
-    const items = SERVICES_BY_NET[key]||[];
-    servChips.innerHTML = items.map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('');
+    renderServicePanel(key); // panel lleno (tarjetas)
   }
 
   servChips.addEventListener('click',(e)=>{
     const c=e.target.closest('.chip'); if(!c) return;
     const key = (servTitle.textContent.split('·')[1]||'').trim().toLowerCase();
     const netKey = networks.find(n=>n.name.toLowerCase()===key)?.key;
-    if(netKey) openService(netKey, c.dataset.s);
+    if(netKey){
+      // scroll al card del servicio seleccionado
+      const idx = (SERVICES_BY_NET[netKey]||[]).indexOf(c.dataset.s);
+      const target = servPanel.querySelectorAll('.s-card')[idx];
+      if(target){ target.scrollIntoView({behavior:'smooth',block:'start'}); }
+    }
   });
 
-  function openService(netKey, serviceName){
-    if(netKey==='instagram' && serviceName==='Comentarios'){
-      servPanel.innerHTML = `
-        <div class="section-title">Instagram — Comentarios</div>
-        <div class="form-grid">
-          <div class="input" style="grid-column:1/-1"><span>🔗</span><input id="ig-url" placeholder="URL del post (https://www.instagram.com/p/...)"></div>
-          <div class="input"><span>#</span><input id="ig-cant" type="number" min="1" max="100" value="30" placeholder="Cantidad"></div>
-          <div class="input"><span>🎛️</span><input id="ig-modo" value="auto" list="modos" placeholder="Modo"></div>
-          <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
-          <div class="input" style="grid-column:1/-1"><span>🧑‍💼</span><input id="ig-apodo" placeholder="Apodo (opcional)"></div>
-          <div class="input"><span>🎯</span><input id="ig-estilo" placeholder="Estilo (fitness, etc)"></div>
-          <div class="input"><span>🏷️</span><input id="ig-actividad" placeholder="Actividad (entrenador, etc)"></div>
-          <div class="input" style="grid-column:1/-1"><span>📝</span><input id="ig-ejemplos" placeholder="Ejemplos (uno por línea)"></div>
-          <button class="btn btn-primary" id="ig-launch">Lanzar</button>
-          <button class="btn" id="ig-cancel">Cancelar</button>
-        </div>
-        <div id="ig-status" class="hint" style="margin-top:8px">—</div>`;
-      servPanel.classList.add('active');
-
-      document.getElementById('ig-launch').onclick = async ()=>{
-        const payload = {
-          url: document.getElementById('ig-url').value.trim(),
-          cantidad: document.getElementById('ig-cant').value.trim(),
-          modo: document.getElementById('ig-modo').value.trim(),
-          apodo: document.getElementById('ig-apodo').value.trim(),
-          estilo: document.getElementById('ig-estilo').value.trim(),
-          actividad: document.getElementById('ig-actividad').value.trim(),
-          ejemplos: document.getElementById('ig-ejemplos').value.trim()
-        };
-        if(!payload.url) return toast('Falta URL', true);
-        try{
-          document.getElementById('ig-status').textContent='Enviando…';
-          const r=await fetch(`${API_URL}/instagram/comentarios`,{
-            method:'POST',headers:{'Content-Type':'application/json'},
-            credentials:'include', body:JSON.stringify(payload)
-          });
-          const d=await r.json().catch(()=>({}));
-          if(r.ok){ document.getElementById('ig-status').textContent='✅ Comentarios en proceso'; toast('Comentarios lanzados'); }
-          else throw new Error(d.mensaje||'Error en comentarios');
-        }catch(err){ document.getElementById('ig-status').textContent='❌ '+err.message; toast(err.message,true); }
-      };
-      document.getElementById('ig-cancel').onclick = ()=>{ document.getElementById('ig-status').textContent='—'; };
-      return;
-    }
-    // Otros servicios (placeholder)
-    servPanel.innerHTML = `<div class="hint">Servicio <strong>${serviceName}</strong> para <strong>${netKey.charAt(0).toUpperCase()+netKey.slice(1)}</strong> — interfaz lista para cablear.</div>`;
-    servPanel.classList.add('active');
-  }
-
-  // Botón y gesto atrás
+  // Atrás
   document.getElementById('backHome').addEventListener('click', ()=>{ document.getElementById('t-home').checked=true; });
-  let touchX = null;
-  document.addEventListener('touchstart', (e)=>{ touchX = e.touches[0].clientX; }, {passive:true});
-  document.addEventListener('touchend', (e)=>{
-    if(touchX===null) return;
-    const dx = e.changedTouches[0].clientX - touchX;
-    touchX = null;
-    if(dx > 60 && document.getElementById('t-search').checked){
-      document.getElementById('t-home').checked=true;
-    }
-  }, {passive:true});
 
-  /* ========= Device Farm ========= */
+  /* ===== Farm ===== */
   const DEVICES = [
     {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
     {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
@@ -627,7 +666,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     }
   });
 
-  /* ========= Cuentas ========= */
+  /* ===== Cuentas ===== */
   const sessionSub=document.getElementById('sessionSub');
   async function checkSession(){
     try{
@@ -661,7 +700,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     }catch(err){ toast(err.message,true); }
   });
 
-  // Enfocar buscador al abrir pestaña Cuentas desde el nav “Buscar”
+  // Enfocar buscador al abrir pestaña Cuentas
   document.addEventListener('change',(e)=>{
     if(e.target && e.target.id==='t-acc'){
       const el = document.getElementById('igSearchUser');
@@ -669,7 +708,7 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
     }
   });
 
-  /* ========= Buscador Instagram ========= */
+  /* ===== Buscador IG ===== */
   const igSearchBtn = document.getElementById('igSearchBtn');
   const igSearchUser = document.getElementById('igSearchUser');
   const igSearchResult = document.getElementById('igSearchResult');
@@ -679,10 +718,8 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
       igSearchResult.innerHTML = '<div class="hint">Buscando…</div>';
       const q = username.replace(/^@/,'').trim();
       if(!q) throw new Error('Escribe un usuario');
-
       const r = await fetch(`${API_URL}/buscar-usuario?username=${encodeURIComponent(q)}`, {credentials:'include'});
       const d = await r.json();
-
       if(!r.ok) throw new Error(d.mensaje || 'No se pudo buscar');
 
       const {
@@ -715,15 +752,10 @@ svg.brand-icon{color:var(--text);} /* para logos con currentColor */
       igSearchResult.innerHTML = `<div class="hint">❌ ${err.message}</div>`;
     }
   }
+  if(igSearchBtn){ igSearchBtn.addEventListener('click', ()=> buscarUsuarioIG(igSearchUser.value||'')); }
+  if(igSearchUser){ igSearchUser.addEventListener('keydown', (e)=>{ if(e.key==='Enter') buscarUsuarioIG(igSearchUser.value||''); }); }
 
-  if(igSearchBtn){
-    igSearchBtn.addEventListener('click', ()=> buscarUsuarioIG(igSearchUser.value||''));
-  }
-  if(igSearchUser){
-    igSearchUser.addEventListener('keydown', (e)=>{ if(e.key==='Enter') buscarUsuarioIG(igSearchUser.value||''); });
-  }
-
-  /* ========= Cuentas activas ========= */
+  /* ===== Cuentas activas ===== */
   const accList=document.getElementById('accountsList');
   async function loadAccounts(){
     try{
