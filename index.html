@@ -1,207 +1,513 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>KraveAI</title>
-  <style>
-    :root{
-      --tabbar-h: 72px;
-      --tabbar-pad-y: 10px;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>KraveAI</title>
+<style>
+  /* ====== THEME ====== */
+  :root{
+    --bg:#0f1419;
+    --card:#141a21;
+    --card-2:#11171d;
+    --muted:#8ea0b2;
+    --text:#e9eef5;
+    --line:#1f2833;
+    --brand:#19c2ff;
+    --accent:#0077ff;
+    --chip:#1b2430;
+    --chip-text:#dfe7ef;
+    --success:#25d366;
+  }
+  .light{
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --card-2:#ffffff;
+    --muted:#5c6b7a;
+    --text:#0b1220;
+    --line:#e7edf4;
+    --brand:#0077ff;
+    --accent:#0057d6;
+    --chip:#eef3f8;
+    --chip-text:#0b1220;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  }
+  a{color:inherit; text-decoration:none}
+  .hidden{display:none!important}
+  .muted{color:var(--muted)}
+  .btn{
+    background:var(--card); color:var(--text); border:1px solid var(--line);
+    padding:10px 14px; border-radius:12px; cursor:pointer;
+  }
+  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--brand)); border-color:transparent; color:#fff}
+  .btn.ghost{background:transparent}
+  .input{
+    width:100%; background:var(--card); color:var(--text); border:1px solid var(--line);
+    padding:12px 14px; border-radius:14px; outline:none;
+  }
 
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background:#0d0d0f;
-      color:#fff;
-    }
+  /* ====== HEADER ====== */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:var(--card-2);
+    border-bottom:1px solid var(--line);
+    padding:14px clamp(16px, 4vw, 28px);
+    display:flex; align-items:center; gap:12px; justify-content:space-between;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800}
+  .brand .name{letter-spacing:.2px}
+  .robot{width:28px; height:28px; display:block}
+  .right-head{display:flex; align-items:center; gap:12px}
+  .pill{font-size:12px; color:var(--muted); display:flex; gap:6px; align-items:center}
+  .dot{width:8px; height:8px; border-radius:999px; background:#e0565b}
+  .toggle{border:1px solid var(--line); background:transparent; color:var(--muted);
+    padding:8px 10px; border-radius:10px; cursor:pointer;}
 
-    header{
-      padding:12px 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
+  /* ====== LAYOUT ====== */
+  .wrap{max-width:1100px; margin:0 auto; padding:18px clamp(14px,4vw,28px) 110px;}
+  h1{margin:8px 0 0; font-size:28px}
+  .sub{color:var(--muted); margin:6px 0 12px; font-size:14px}
+  .section-title{margin:22px 0 12px; font-weight:800; letter-spacing:.4px}
 
-    .status{ font-size:14px; color:#999; }
+  /* ====== GRID SOCIAL ====== */
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  @media (min-width:760px){ .grid{grid-template-columns:repeat(4,1fr)} }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px;
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+    transition:transform .12s ease, box-shadow .2s ease;
+  }
+  .card:hover{transform:translateY(-1px)}
+  .logo-wrap{width:28px; height:28px; display:grid; place-items:center}
+  .card .title{font-weight:700}
 
-    h2{ margin:24px 16px 8px; }
+  /* ====== CLIENTES LIST ====== */
+  .list{display:flex; flex-direction:column; gap:12px}
+  .row{
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .avatar{width:36px; height:36px; border-radius:999px; background:#2a3442; flex:none; overflow:hidden}
+  .row .user{font-weight:700}
+  .grow{flex:1}
+  .chip{background:var(--chip); color:var(--chip-text); border-radius:999px; padding:6px 10px; font-size:12px}
 
-    .redes{
-      display:grid;
-      grid-template-columns: repeat(4,1fr);
-      gap:12px;
-      padding:0 16px;
-    }
+  /* ====== VERIFIED (IG – roseta original) ====== */
+  .ig-verified{
+    width:16px; height:16px; display:inline-block; vertical-align:-3px; margin-left:6px;
+  }
 
-    .red{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:12px;
-      background:#1c1c20;
-      border-radius:12px;
-      font-size:14px;
-      cursor:pointer;
-    }
+  /* ====== NAV BOTTOM (amplio para toque) ====== */
+  .nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    background:var(--card-2); border-top:1px solid var(--line);
+    display:flex; gap:10px;
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    justify-content:space-around;
+  }
+  .nav .item{
+    flex:1; text-align:center; padding:12px 10px; border-radius:14px; color:var(--muted);
+    font-size:13.5px; cursor:pointer; min-height:48px; line-height:1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav .item.active{color:var(--text); background:rgba(255,255,255,.02); border:1px solid var(--line)}
 
-    .clientes{
-      margin:16px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
+  /* ====== VISTAS ====== */
+  .view{display:none}
+  .view.active{display:block}
 
-    .cliente{
-      background:#1c1c20;
-      padding:12px;
-      border-radius:12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      font-size:14px;
-    }
+  /* ====== NETWORK VIEW ====== */
+  .back{margin:6px 0 16px; display:inline-flex; gap:8px; align-items:center; color:var(--muted); cursor:pointer}
+  .svc-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+  @media (min-width:860px){ .svc-grid{grid-template-columns:repeat(3,1fr)} }
+  .svc{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px}
+  .svc h4{margin:0 0 10px; font-size:14px}
+  .svc .input{margin:6px 0}
+  .svc .btn{width:100%; margin-top:8px}
 
-    .cliente strong{
-      display:block;
-      font-size:15px;
-    }
+  /* ====== FARM ====== */
+  .devices{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+  @media (min-width:820px){ .devices{grid-template-columns:repeat(3,1fr)} }
+  .device{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px}
+  .device .thumb{height:86px; border-radius:10px; background:#0b1220; border:1px dashed var(--line); margin-bottom:10px}
+  .device .btn{width:48%}
 
-    /* Badge verificado IG */
-    .ig-verified{
-      display:inline-block;
-      width:18px; height:18px;
-      vertical-align:-3px;
-      margin-left:4px;
-    }
-    .ig-verified svg{ display:block; }
+  /* ====== CUENTAS ====== */
+  .stack{display:flex; flex-direction:column; gap:10px}
 
-    /* Tabbar */
-    .tabbar{
-      position:fixed;
-      left:0; right:0; bottom:0;
-      height:calc(var(--tabbar-h) + env(safe-area-inset-bottom));
-      padding:var(--tabbar-pad-y) 8px calc(var(--tabbar-pad-y) + env(safe-area-inset-bottom));
-      display:grid;
-      grid-template-columns: repeat(4,1fr);
-      align-items:center;
-      gap:6px;
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
-      background:#0d0d0f;
-      border-top:1px solid #222;
-      z-index:50;
-    }
+  /* ====== FOOTER BADGE (glow persistente) ====== */
+  .credit{
+    position:fixed; left:50%; transform:translateX(-50%);
+    bottom:64px; z-index:61;
+    padding:8px 14px; border-radius:999px; font-size:12px; color:#fff;
+    background:rgba(41,178,255,.12); border:1px solid rgba(41,178,255,.35);
+    box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
+    backdrop-filter: blur(6px);
+  }
 
-    .tab{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      min-height:44px;
-      padding:8px 6px;
-      border-radius:12px;
-      font-size:13px;
-      color:#aaa;
-    }
-
-    .tab.active{ color:#fff; }
-
-    .main{
-      padding-bottom:calc(var(--tabbar-h) + 28px + env(safe-area-inset-bottom));
-    }
-
-    footer{
-      text-align:center;
-      padding:16px;
-      color:#888;
-      font-size:13px;
-    }
-  </style>
+  /* ====== MODAL FICHA CLIENTE ====== */
+  .modal{position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:70}
+  .modal.show{display:flex}
+  .sheet{
+    width:min(560px,92vw); background:var(--card-2); border:1px solid var(--line);
+    border-radius:16px; padding:16px;
+  }
+  .sheet .top{display:flex; gap:12px; align-items:center}
+  .sheet .top .avatar{width:56px; height:56px}
+  .meta{display:flex; gap:14px; margin-top:6px; color:var(--muted); font-size:12px}
+  .meta b{color:var(--text)}
+  .close{float:right; cursor:pointer; color:var(--muted)}
+</style>
 </head>
 <body>
-  <header>
-    <div>🤖 KraveAI</div>
-    <div class="status">🔴 Sin conexión</div>
-  </header>
-
-  <main class="main">
-    <h2>Redes sociales</h2>
-    <p style="margin:0 16px 16px; color:#aaa;">Domina todas tus redes con IA</p>
-
-    <div class="redes">
-      <div class="red">Instagram</div>
-      <div class="red">TikTok</div>
-      <div class="red">YouTube</div>
-      <div class="red">Threads</div>
-      <div class="red">X</div>
-      <div class="red">Facebook</div>
-      <div class="red">LinkedIn</div>
-      <div class="red">Spotify</div>
-      <div class="red">Telegram</div>
-      <div class="red">WhatsApp</div>
-    </div>
-
-    <h2>Clientes recientes</h2>
-    <div class="clientes">
-      <div class="cliente">
-        <div>@aaronmercury <span class="ig-verified"></span><br><strong>Aaron Mercury</strong> · 5.4M seguidores</div>
-        <button>Ver ficha</button>
-      </div>
-      <div class="cliente">
-        <div>@televisadigital <span class="ig-verified"></span><br><strong>Televisa Digital</strong> · 246K seguidores</div>
-        <button>Ver ficha</button>
-      </div>
-      <div class="cliente">
-        <div>@joscanela <span class="ig-verified"></span><br><strong>Jos Canela</strong> · 722K seguidores</div>
-        <button>Ver ficha</button>
-      </div>
-      <div class="cliente">
-        <div>@jimenagallegotv <span class="ig-verified"></span><br><strong>Jimena Gállego</strong> · 544K seguidores</div>
-        <button>Ver ficha</button>
-      </div>
-      <div class="cliente">
-        <div>@elmalilla_ <span class="ig-verified"></span><br><strong>MALI EL MALILLAA!!</strong> · 3.6M seguidores</div>
-        <button>Ver ficha</button>
-      </div>
-      <div class="cliente">
-        <div>@mariobautista <span class="ig-verified"></span><br><strong>Mario Bautista (MB)</strong> · 6.7M seguidores</div>
-        <button>Ver ficha</button>
-      </div>
-    </div>
-  </main>
-
-  <footer>
-    Created by Karmean Gómez
-  </footer>
-
-  <nav class="tabbar">
-    <div class="tab active">Inicio</div>
-    <div class="tab">Clientes</div>
-    <div class="tab">Farm</div>
-    <div class="tab">Cuentas</div>
-  </nav>
-
-  <script>
-    function hydrateIgBadges(){
-      const svg = `
-      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- ====== HEADER ====== -->
+  <header class="topbar">
+    <div class="brand">
+      <!-- Robot SVG -->
+      <svg class="robot" viewBox="0 0 64 64" aria-hidden="true">
         <defs>
-          <linearGradient id="igv" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%"  stop-color="#4CB5FF"/>
-            <stop offset="100%" stop-color="#1877F2"/>
+          <linearGradient id="g" x1="0" x2="1">
+            <stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/>
           </linearGradient>
         </defs>
-        <path fill="url(#igv)" d="M24 2.5c1.8 0 3.5 1 4.4 2.6l1 1.6 1.8-.2c1.9-.2 3.8.8 4.7 2.5l.9 1.7 1.7.9c1.7.9 2.7 2.8 2.5 4.7l-.2 1.8 1.6 1c1.6.9 2.6 2.6 2.6 4.4s-1 3.5-2.6 4.4l-1.6 1 .2 1.8c.2 1.9-.8 3.8-2.5 4.7l-1.7.9-.9 1.7c-.9 1.7-2.8 2.7-4.7 2.5l-1.8-.2-1 1.6c-.9 1.6-2.6 2.6-4.4 2.6s-3.5-1-4.4-2.6l-1-1.6-1.8.2c-1.9.2-3.8-.8-4.7-2.5l-.9-1.7-1.7-.9c-1.7-.9-2.7-2.8-2.5-4.7l.2-1.8-1.6-1C2.9 31.5 2 29.8 2 28s1-3.5 2.6-4.4l1.6-1-.2-1.8c-.2-1.9.8-3.8 2.5-4.7l1.7-.9.9-1.7c.9-1.7 2.8-2.7 4.7-2.5l1.8.2 1-1.6C20.5 3.5 22.2 2.5 24 2.5z"/>
-        <path fill="#fff" d="M21.4 31.6l-7-7a2.2 2.2 0 1 1 3.1-3.1l5.3 5.3 9-9a2.2 2.2 0 0 1 3.1 3.1l-10.6 10.7a2.2 2.2 0 0 1-3.1 0z"/>
-      </svg>`;
-      document.querySelectorAll('.ig-verified').forEach(el=>{
-        if(!el.firstChild) el.innerHTML = svg;
-      });
-    }
-    document.addEventListener('DOMContentLoaded', hydrateIgBadges);
-  </script>
+        <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g)"/>
+        <rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/>
+        <circle cx="22" cy="32" r="6" fill="#19c2ff"/>
+        <circle cx="42" cy="32" r="6" fill="#19c2ff"/>
+        <rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/>
+      </svg>
+      <span class="name">KraveAI</span>
+    </div>
+    <div class="right-head">
+      <div class="pill"><span class="dot"></span> <span id="conn">Sin conexión</span></div>
+      <button id="themeToggle" class="toggle" title="Cambiar tema">🌙</button>
+    </div>
+  </header>
+
+  <!-- ====== CONTENIDO ====== -->
+  <main class="wrap">
+    <!-- Home -->
+    <section id="view-home" class="view active">
+      <h1>Redes sociales</h1>
+      <div class="sub">Domina todas tus redes con IA</div>
+
+      <div class="section-title">Redes</div>
+      <div class="grid" id="socialGrid">
+        <!-- Cards de redes, inyectadas por JS -->
+      </div>
+
+      <div class="section-title" style="margin-top:22px">Clientes recientes</div>
+      <div class="list" id="recentList"></div>
+
+      <div style="display:flex; gap:10px; margin-top:14px">
+        <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
+        <button class="btn primary" onclick="alert('Acción enviada')">Enviar</button>
+      </div>
+    </section>
+
+    <!-- Clientes -->
+    <section id="view-clients" class="view">
+      <h1>Clientes</h1>
+      <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:12px 0 16px"/>
+      <div class="list" id="clientsList"></div>
+    </section>
+
+    <!-- Farm -->
+    <section id="view-farm" class="view">
+      <h1>Device Farm</h1>
+      <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
+      <div class="devices" id="farmGrid"></div>
+    </section>
+
+    <!-- Cuentas -->
+    <section id="view-accounts" class="view">
+      <h1>Cuentas</h1>
+      <div class="sub">Gestión de sesión y cuentas manuales</div>
+      <div class="stack" style="max-width:560px">
+        <div class="svc">
+          <h4>Iniciar sesión</h4>
+          <input class="input" placeholder="Usuario" />
+          <input class="input" placeholder="Contraseña" type="password"/>
+          <div style="display:flex; gap:10px">
+            <button class="btn primary">Iniciar sesión</button>
+            <button class="btn">Cerrar sesión</button>
+          </div>
+        </div>
+        <div class="svc">
+          <h4>Agregar cuenta manual</h4>
+          <input class="input" placeholder="@usuario"/>
+          <input class="input" placeholder="Token / Contraseña" type="password"/>
+          <button class="btn primary">Guardar cuenta</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Network (pantallas propias) -->
+    <section id="view-network" class="view">
+      <div class="back" onclick="goHome()">
+        ← Atrás
+      </div>
+      <h1 id="networkTitle">Servicios</h1>
+      <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
+      <div class="svc-grid" id="networkServices"></div>
+    </section>
+  </main>
+
+  <!-- Badge con glow -->
+  <div class="credit">Created by Karmean Gómez</div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="item active" data-go="home">Inicio</div>
+    <div class="item" data-go="clients">Clientes</div>
+    <div class="item" data-go="farm">Farm</div>
+    <div class="item" data-go="accounts">Cuentas</div>
+  </nav>
+
+  <!-- Modal Ficha -->
+  <div class="modal" id="clientModal" role="dialog" aria-modal="true" aria-label="Ficha del cliente">
+    <div class="sheet">
+      <div class="close" onclick="closeModal()">✕</div>
+      <div class="top">
+        <img id="mAvatar" class="avatar" alt="avatar"/>
+        <div>
+          <div id="mUser" style="font-weight:800"></div>
+          <div class="muted" id="mName"></div>
+          <div class="meta">
+            <div><b id="mPosts"></b> posts</div>
+            <div><b id="mFollowers"></b> seguidores</div>
+            <div><b id="mFollowing"></b> siguiendo</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:10px">
+        <button class="btn">Abrir Instagram</button>
+        <button class="btn primary">Crear campaña</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SVGs ====== -->
+  <svg style="position:absolute; width:0; height:0; overflow:hidden">
+    <!-- IG Verified: roseta/estrellado (no se recorta) -->
+    <symbol id="igVerified" viewBox="0 0 24 24">
+      <defs>
+        <radialGradient id="metaBlue" cx="50%" cy="40%" r="75%">
+          <stop offset="0" stop-color="#67B7FF"/>
+          <stop offset="1" stop-color="#0B65FF"/>
+        </radialGradient>
+      </defs>
+      <!-- Roseta (8 puntas suavizadas, dentro del 24x24) -->
+      <path fill="url(#metaBlue)"
+            d="M23 12l-2.12 2.12.3 3.27-3.2.93-1.57 2.88-2.65-1.7-2.65 1.7-1.57-2.88-3.2-.93.3-3.27L1 12l2.12-2.12-.3-3.27 3.2-.93L7.59 2.8l2.65 1.7 2.65-1.7 1.57 2.88 3.2.93-.3 3.27L23 12z"/>
+      <!-- Check -->
+      <path fill="#fff" d="M10.1 14.9l-2.5-2.5a1.1 1.1 0 1 1 1.6-1.6l1.7 1.7 4.6-4.6a1.1 1.1 0 0 1 1.6 1.6l-5.4 5.4a1.1 1.1 0 0 1-1.6 0z"/>
+    </symbol>
+
+    <!-- Logos (colores de marca) -->
+    <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
+    <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
+    <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
+    <symbol id="threads" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#000"/><path fill="#fff" d="M8.5 12c0 2.2 1.8 3.5 3.7 3.5 2.3 0 3.8-1.4 3.8-3.8 0-2.7-1.8-4.2-4.8-4.2h-.9V6h.8c3.9 0 6.5 2.2 6.5 5.9 0 3.2-2.4 5.3-5.6 5.3-3.2 0-5.5-2.1-5.5-5.2h1z"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path fill="#fff" d="M17.5 4H20l-5.5 6 6 10h-5l-3.5-6-4 4-3-2 5-5-5-7h5l3 5 4.5-5z"/></symbol>
+    <symbol id="fb" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12a10 10 0 008.5 9.87v-6.98H8.07v-2.9h2.43V9.41c0-2.4 1.43-3.73 3.63-3.73 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.19 0-1.56.74-1.56 1.49v1.79h2.65l-.42 2.9h-2.23V21.9A10 10 0 0022 12z"/></symbol>
+    <symbol id="li" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.45 20.45H17V14.6c0-1.39-.5-2.34-1.75-2.34-.95 0-1.52.64-1.77 1.26-.09.22-.11.52-.11.82v6.11H9.89s.05-9.92 0-10.95h3.48v1.55c.46-.71 1.29-1.72 3.13-1.72 2.28 0 3.95 1.49 3.95 4.69v6.43zM7.34 8.94a2.02 2.02 0 110-4.04 2.02 2.02 0 010 4.04zM5.57 20.45h3.54V9.5H5.57v10.95z"/></symbol>
+    <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path fill="#fff" d="M7 9c4-1 8 0 10 1 .5.2.7.8.5 1.3-.3.5-.9.6-1.4.4-1.8-.9-5-1.7-8.7-.7-.6.2-1.1-.2-1.3-.8-.2-.6.2-1.1.9-1.2zM7 12c3-.7 6 0 8 .7.4.1.7.6.5 1-.2.5-.7.6-1.2.4-1.6-.7-4.1-1.3-7.2-.6-.5.1-1-.2-1.1-.7-.1-.6.2-1 .9-1.2zM7 15c2-.4 4 .1 5.4.6.4.1.6.5.5.9-.1.4-.5.5-.9.4-1.2-.5-3-1-4.6-.6-.4.1-.8-.1-.9-.5-.1-.5.1-.8.5-.8z"/></symbol>
+    <symbol id="tg" viewBox="0 0 24 24"><path fill="#229ED9" d="M9.6 16.8l-.4 3.7c.6 0 .9-.3 1.2-.6l2.8-2.7 5.8 4.3c1 .6 1.6.3 1.9-.9l3.4-16c.3-1.2-.4-1.7-1.3-1.4L2.2 9.9c-1.1.4-1.1 1.1-.2 1.4l5.6 1.7L18.8 6c.7-.4 1.2-.2.7.3"/></symbol>
+    <symbol id="wa" viewBox="0 0 24 24"><path fill="#25D366" d="M20.5 3.5A10 10 0 003.6 20.4L2 22l1.8-.5a10 10 0 0014.3-14zM12 19a7 7 0 116.2-10.2A7 7 0 0112 19z"/><path fill="#25D366" d="M8.8 7.7c-.4 0-.7.3-.7.7 0 2.2 2.2 4.4 4.4 4.4.4 0 .7-.3.7-.7 0-.2-.1-.5-.3-.6l-1.1-.6c-.1-.1-.3-.1-.4 0l-.3.2c-.6-.3-1.1-.8-1.4-1.4l.2-.3c.1-.1.1-.3 0-.4l-.6-1.1c-.1-.2-.4-.3-.6-.3z"/></symbol>
+  </svg>
+
+<script>
+/* ====== TEMA ====== */
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('krave-theme');
+if(savedTheme === 'light') document.body.classList.add('light');
+themeToggle.textContent = document.body.classList.contains('light') ? '🌞' : '🌙';
+themeToggle.onclick = () => {
+  document.body.classList.toggle('light');
+  localStorage.setItem('krave-theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  themeToggle.textContent = document.body.classList.contains('light') ? '🌞' : '🌙';
+};
+
+/* ====== NAV ====== */
+const views = {
+  home: document.getElementById('view-home'),
+  clients: document.getElementById('view-clients'),
+  farm: document.getElementById('view-farm'),
+  accounts: document.getElementById('view-accounts'),
+  network: document.getElementById('view-network')
+};
+document.querySelectorAll('.nav .item').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav .item').forEach(i=>i.classList.remove('active'));
+    el.classList.add('active');
+    const key = el.getAttribute('data-go');
+    Object.values(views).forEach(v=>v.classList.remove('active'));
+    views[key].classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+function goHome(){
+  Object.values(views).forEach(v=>v.classList.remove('active'));
+  views.home.classList.add('active');
+  document.querySelectorAll('.nav .item').forEach(i=>i.classList.remove('active'));
+  document.querySelector('.nav [data-go="home"]').classList.add('active');
+}
+
+/* ====== DATA: REDES ====== */
+const networks = [
+  {key:'instagram',  name:'Instagram', icon:'#ig',      color:'#E1306C',
+    services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},
+  {key:'tiktok',     name:'TikTok',    icon:'#tiktok',  color:'#000000',
+    services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},
+  {key:'youtube',    name:'YouTube',   icon:'#yt',      color:'#FF0000',
+    services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},
+  {key:'threads',    name:'Threads',   icon:'#threads', color:'#000000',
+    services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},
+  {key:'x',          name:'X',         icon:'#x',       color:'#ffffff',
+    services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},
+  {key:'facebook',   name:'Facebook',  icon:'#fb',      color:'#1877F2',
+    services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},
+  {key:'linkedin',   name:'LinkedIn',  icon:'#li',      color:'#0A66C2',
+    services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},
+  {key:'spotify',    name:'Spotify',   icon:'#sp',      color:'#1DB954',
+    services:['Streams','Saves','Oyentes mensuales','Playlist adds']},
+  {key:'telegram',   name:'Telegram',  icon:'#tg',      color:'#229ED9',
+    services:['Miembros','Vistas post','Forwards/Repost']},
+  {key:'whatsapp',   name:'WhatsApp',  icon:'#wa',      color:'#25D366',
+    services:['Vistas de estado','Clicks','Mensajes masivos']}
+];
+
+/* ====== RENDER: GRID REDES ====== */
+const socialGrid = document.getElementById('socialGrid');
+socialGrid.innerHTML = networks.map(n => `
+  <div class="card" onclick="openNetwork('${n.key}')">
+    <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
+    <div class="title">${n.name}</div>
+  </div>
+`).join('');
+
+/* ====== VIEW NETWORK ====== */
+const netTitle = document.getElementById('networkTitle');
+const netSub = document.getElementById('networkSub');
+const netServices = document.getElementById('networkServices');
+function openNetwork(key){
+  const net = networks.find(x=>x.key===key);
+  if(!net) return;
+  netTitle.textContent = `Servicios · ${net.name}`;
+  netSub.textContent = `Automatiza ${net.name} con IA`;
+  netServices.innerHTML = net.services.map(svc => `
+    <div class="svc">
+      <h4>${svc}</h4>
+      <input class="input" placeholder="${svc.includes('Seguidores')?'@usuario':'URL / ID / Nota'}" />
+      <input class="input" placeholder="Cantidad" type="number" min="10" />
+      <button class="btn primary">Ordenar</button>
+    </div>
+  `).join('');
+  // Cambiar vista
+  Object.values(views).forEach(v=>v.classList.remove('active'));
+  views.network.classList.add('active');
+  document.querySelectorAll('.nav .item').forEach(i=>i.classList.remove('active'));
+}
+
+/* ====== VERIFIED SVG helper ====== */
+function verifiedSvg(){
+  return `<svg class="ig-verified"><use href="#igVerified"></use></svg>`;
+}
+
+/* ====== DATA: CLIENTES ====== */
+const clients = [
+  {user:'aaronmercury',      name:'Aaron Mercurio',                     followers:'5.4M', posts:'543', following:'924',  verified:true},
+  {user:'televisadigital',   name:'Televisa Digital',                   followers:'246K', posts:'5,779', following:'617', verified:true},
+  {user:'joscanela',         name:'Jos Canela',                         followers:'722K', posts:'63',   following:'425',  verified:true},
+  {user:'jimenagallegotv',   name:'Jimena Gállego',                     followers:'544K', posts:'3,328',following:'1,608',verified:true},
+  {user:'elmalilla_',        name:'MALI EL MALILLAA!!',                 followers:'3.6M', posts:'675',  following:'2,006',verified:true},
+  {user:'mariobautista',     name:'Mario Bautista (MB)',                followers:'6.7M', posts:'515',  following:'3,371',verified:true},
+  {user:'aldotdenigris',     name:'Aldo Tamez De Nigris',               followers:'1.5M', posts:'607',  following:'2,748',verified:true},
+  {user:'sonymusiclatin',    name:'Sony Music Latin',                   followers:'1.1M', posts:'43.3K',following:'535',  verified:true},
+  {user:'lacasafamososmx',   name:'La Casa de los Famosos MX',          followers:'3.3M', posts:'6,632',following:'90',   verified:true},
+  {user:'manuelturizo',      name:'Manuel Turizo - MTZ',                followers:'14.6M',posts:'127',  following:'1,298',verified:true},
+  {user:'pesopluma',         name:'La Doble P',                         followers:'15.4M',posts:'44',   following:'1,195',verified:true},
+  {user:'oscar_maydonn',     name:'Oscar Maydon',                       followers:'2.5M', posts:'20',   following:'1,203',verified:true},
+  {user:'diegodeericemx',    name:'Diego de Erice',                     followers:'551K', posts:'2,039',following:'682',  verified:true}
+];
+
+/* (Opcional) si tienes las fotos reales, coloca aquí las URLs por usuario */
+const avatars = {};
+
+/* ====== RENDER: HOME (recientes) ====== */
+const recentList = document.getElementById('recentList');
+recentList.innerHTML = clients.slice(0,6).map(c => rowHtml(c)).join('');
+
+/* ====== RENDER: CLIENTS (completo) ====== */
+const clientsList = document.getElementById('clientsList');
+function paintClients(arr){ clientsList.innerHTML = arr.map(c=>rowHtml(c,true)).join(''); }
+paintClients(clients);
+
+function rowHtml(c,withButton=false){
+  const badge = c.verified ? verifiedSvg() : '';
+  const avatarUrl = avatars[c.user] || '';
+  return `
+    <div class="row">
+      <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+      <div class="grow">
+        <div class="user">@${c.user} ${badge}</div>
+        <div class="muted">${c.name} · ${c.followers} seguidores</div>
+      </div>
+      ${withButton? `<a class="chip" href="javascript:void(0)" onclick="openCard('${c.user}')">Ver ficha</a>`: `<span class="muted">Ver ficha</span>`}
+    </div>
+  `;
+}
+
+/* ====== BUSCADOR CLIENTES ====== */
+document.getElementById('clientSearch').addEventListener('input', e=>{
+  const q = e.target.value.toLowerCase().trim();
+  paintClients(clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)));
+});
+
+/* ====== MODAL FICHA ====== */
+const modal = document.getElementById('clientModal');
+function openCard(user){
+  const c = clients.find(x=>x.user===user);
+  if(!c) return;
+  document.getElementById('mAvatar').src = avatars[c.user] || '';
+  document.getElementById('mAvatar').onerror = function(){ this.style.background='#2a3442'; this.removeAttribute('src'); };
+  document.getElementById('mUser').innerHTML = `@${c.user} ${c.verified?verifiedSvg():''}`;
+  document.getElementById('mName').textContent = c.name;
+  document.getElementById('mPosts').textContent = c.posts;
+  document.getElementById('mFollowers').textContent = c.followers;
+  document.getElementById('mFollowing').textContent = c.following;
+  modal.classList.add('show');
+}
+function closeModal(){ modal.classList.remove('show'); }
+modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+
+/* ====== FARM (dummy devices) ====== */
+const farmGrid = document.getElementById('farmGrid');
+const devices = [
+  {name:'iPhone 14 Pro · iOS', id:'10.0.0.8'},
+  {name:'Galaxy S23 · Android', id:'10.0.0.9'},
+  {name:'iPhone 13 · iOS', id:'10.0.0.10'},
+  {name:'Pixel 8 · Android', id:'10.0.0.11'},
+  {name:'iPhone 12 mini · iOS', id:'10.0.0.12'},
+  {name:'Galaxy A54 · Android', id:'10.0.0.13'}
+];
+farmGrid.innerHTML = devices.map(d => `
+  <div class="device">
+    <div class="thumb"></div>
+    <div style="font-weight:700">${d.name}</div>
+    <div class="muted">${d.id}</div>
+    <div style="display:flex; gap:8px; margin-top:10px">
+      <button class="btn primary" onclick="alert('Asignar stream a ${d.name}')">Asignar stream</button>
+      <button class="btn" onclick="alert('Limpiar ${d.name}')">Limpiar</button>
+    </div>
+  </div>
+`).join('');
+</script>
 </body>
 </html>
