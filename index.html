@@ -4,20 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>KraveAI · Social Suite</title>
+<meta name="color-scheme" content="dark light">
 <style>
   :root{
     --bg:#0f1418; --panel:#141a20; --card:#12171c; --text:#e8eef4; --muted:#8ea0ae;
-    --brand:#6fe3ff; --ring:rgba(111,227,255,.25); --shadow:0 10px 30px rgba(0,0,0,.35);
-    --radius:16px; --gap:16px;
+    --ring:rgba(111,227,255,.25); --shadow:0 10px 30px rgba(0,0,0,.35);
+    --radius:16px; --gap:16px; --ig-blue:#0095f6;
   }
   [data-theme="light"]{
-    --bg:#f6f9fc; --panel:#fff; --card:#fff; --text:#182028; --muted:#5e6a75;
+    --bg:#f6f9fc; --panel:#ffffff; --card:#ffffff; --text:#182028; --muted:#5e6a75;
     --shadow:0 10px 30px rgba(10,15,20,.08); --ring:rgba(0,153,255,.15);
   }
+
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial;background:var(--bg);color:var(--text)}
   .wrap{min-height:100%;display:flex;flex-direction:column}
+
   /* HEADER */
   header{position:sticky;top:0;z-index:20;backdrop-filter:saturate(1.1) blur(8px);
     background:color-mix(in oklab,var(--bg),transparent 25%);
@@ -28,7 +31,9 @@
   .logo-badge{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7cf,#9f7cff 60%,#41ffc9)}
   .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
   .dot{width:8px;height:8px;border-radius:50%;background:#ff4757;box-shadow:0 0 0 4px rgba(255,71,87,.12)}
-  .moon{width:22px;height:22px;opacity:.8}
+  .theme-btn{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;cursor:pointer}
+  .theme-btn:hover{background:color-mix(in oklab,var(--panel),transparent 50%)}
+  .icon{width:20px;height:20px}
 
   /* PAGE */
   main{flex:1;padding:22px clamp(16px,4vw,28px) 110px;display:none}
@@ -36,22 +41,22 @@
   h1{margin:6px 0 8px;font-size:30px}
   .sub{margin:0 0 18px;color:var(--muted)}
 
-  /* GRID REDES — simétrico, ocupa espacio */
-  .social-wrap{margin:6px 0 22px}
+  /* GRID REDES */
   .social-grid{
     display:grid; gap:var(--gap);
     grid-template-columns:repeat(auto-fit,minmax(165px,1fr));
-    grid-auto-rows:88px; /* alto para llenar mejor el viewport */
+    grid-auto-rows:92px;
+    margin-top:10px;margin-bottom:22px;
   }
   .sbtn{
-    display:flex;align-items:center;justify-content:center;gap:12px;
+    display:flex;align-items:center;justify-content:center;gap:14px;
     background:var(--card); border:1px solid color-mix(in oklab,var(--muted),transparent 70%);
     border-radius:14px; box-shadow:var(--shadow); text-decoration:none; color:var(--text);
-    transition:.18s ease; position:relative; overflow:hidden;
+    transition:.18s ease; position:relative; overflow:hidden; font-weight:700;
   }
   .sbtn:hover{transform:translateY(-2px)}
-  .sicon{width:26px;height:26px;flex:0 0 26px}
-  .slabel{font-size:16px;font-weight:700;letter-spacing:.2px}
+  .sicon{width:28px;height:28px;flex:0 0 28px}
+  .slabel{font-size:16px;letter-spacing:.2px}
 
   /* CARDS / SECCIONES */
   .section-title{margin:10px 0 10px;font-weight:800}
@@ -64,7 +69,8 @@
     border:1px solid color-mix(in oklab,var(--muted),transparent 70%);border-radius:14px}
   .avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#1b232b}
   .ig{display:flex;align-items:center;gap:6px;font-weight:800}
-  .verif{width:16px;height:16px}
+  .verif{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ig-blue);color:#fff}
+  .verif svg{width:12px;height:12px}
   .meta{color:var(--muted);font-size:12px}
   .grow{flex:1}
   .open{opacity:.9;font-size:12px;color:var(--muted)}
@@ -105,7 +111,7 @@
   .k b{display:block;font-size:16px}
   .k small{color:var(--muted)}
 
-  /* SERVICIOS (forms) */
+  /* SERVICIOS */
   .svc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
   .chip{padding:8px 12px;border-radius:999px;background:color-mix(in oklab,var(--card),transparent 10%);
     border:1px solid color-mix(in oklab,var(--muted),transparent 70%);cursor:pointer}
@@ -125,7 +131,9 @@
     <div class="bar">
       <div class="logo"><div class="logo-badge"></div><div>KraveAI</div></div>
       <div class="status"><span class="dot"></span><span id="net">Sin conexión</span></div>
-      <svg class="moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.6"/></svg>
+      <div id="themeToggle" class="theme-btn" title="Cambiar tema" aria-label="Cambiar tema">
+        <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8"/></svg>
+      </div>
     </div>
   </header>
 
@@ -135,7 +143,7 @@
     <p class="sub">Domina todas tus redes con IA</p>
 
     <div class="section-title">Redes sociales</div>
-    <div class="social-wrap"><div id="socialGrid" class="social-grid"></div></div>
+    <div id="socialGrid" class="social-grid"></div>
 
     <div class="section-title">Clientes recientes</div>
     <div id="homeClients" class="clients"></div>
@@ -153,17 +161,20 @@
     <p class="sub">Likes, Comentarios, Seguidores, Vistas e Historias — listos para cablear</p>
 
     <div class="card pad">
-      <div class="section-title">Selecciona red</div>
+      <div class="section-title">Red seleccionada</div>
       <div id="svcNets" class="svc-tabs"></div>
-      <div id="svcTitle" class="section-title" style="margin-top:4px">Instagram · Likes</div>
+
+      <div class="section-title" style="margin-top:4px">Tipo de servicio</div>
+      <div id="svcKinds" class="svc-tabs"></div>
+
+      <div id="svcTitle" class="section-title" style="margin-top:6px">Instagram · Likes</div>
 
       <form id="svcForm" class="svc">
-        <input class="full" type="url" placeholder="URL del post / perfil">
-        <select><option value="likes">Likes</option><option value="comments">Comentarios</option><option value="followers">Seguidores</option><option value="views">Vistas</option><option value="stories">Historias</option></select>
-        <select><option value="mx" selected>México</option><option value="us">Estados Unidos</option><option value="world">Global</option></select>
-        <input type="number" min="10" step="10" placeholder="Cantidad">
-        <select><option value="normal" selected>Velocidad normal</option><option value="rapida">Rápida</option><option value="lenta">Lenta</option></select>
-        <div class="price full"><b id="svcPrice">$0.00</b><span class="meta">Se calcula al enviar</span><button type="button" class="cta" onclick="alert('Enviar (demo)')">Continuar</button></div>
+        <input class="full" id="f_url" type="url" inputmode="url" placeholder="URL del post / perfil">
+        <select id="f_region"><option value="mx" selected>México</option><option value="us">Estados Unidos</option><option value="world">Global</option></select>
+        <select id="f_speed"><option value="normal" selected>Velocidad normal</option><option value="rapida">Rápida</option><option value="lenta">Lenta</option></select>
+        <input id="f_qty" type="number" min="10" step="10" placeholder="Cantidad">
+        <div class="price full"><b id="svcPrice">$0.00</b><span class="meta">Se calcula al cambiar cantidad/velocidad/región</span><button type="button" class="cta" onclick="alert('Enviar (demo)')">Continuar</button></div>
       </form>
     </div>
 
@@ -190,7 +201,7 @@
         <div class="pad" style="background:var(--card);border-radius:12px">MJPEG (.mjpg)</div>
         <div class="pad" style="background:var(--card);border-radius:12px">RTSP proxy</div>
       </div>
-      <p class="meta" style="margin-top:10px">Se integra a tu backend (persistencia localStorage lista).</p>
+      <p class="meta" style="margin-top:10px">Persistencia preparada (localStorage). Conecta aquí tus endpoints.</p>
     </div>
     <div class="badge">Created by Karmean Gómez</div>
   </main>
@@ -263,13 +274,24 @@
 </dialog>
 
 <script>
-/* ====== DATA ====== */
+/* ====== TEMA (persistente) ====== */
+const root = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('krv_theme');
+if(savedTheme) root.setAttribute('data-theme', savedTheme);
+themeBtn.addEventListener('click', ()=>{
+  const cur = root.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+  root.setAttribute('data-theme', cur);
+  localStorage.setItem('krv_theme', cur);
+});
+
+/* ====== REDES + SERVICIOS ====== */
 const REDES = [
   {id:'instagram',  name:'Instagram',  color:'#E1306C', icon:ig()},
-  {id:'tiktok',     name:'TikTok',     color:'#000',    icon:tiktok()},
+  {id:'tiktok',     name:'TikTok',     color:'#000000', icon:tiktok()},
   {id:'youtube',    name:'YouTube',    color:'#FF0000', icon:yt()},
-  {id:'threads',    name:'Threads',    color:'#000',    icon:threads()},
-  {id:'x',          name:'X',          color:'#fff',    icon:xlogo()},
+  {id:'threads',    name:'Threads',    color:'#000000', icon:threads()},
+  {id:'x',          name:'X',          color:'#ffffff', icon:xlogo()},
   {id:'facebook',   name:'Facebook',   color:'#0866FF', icon:fb()},
   {id:'linkedin',   name:'LinkedIn',   color:'#0A66C2', icon:inlogo()},
   {id:'spotify',    name:'Spotify',    color:'#1DB954', icon:spotify()},
@@ -277,35 +299,117 @@ const REDES = [
   {id:'whatsapp',   name:'WhatsApp',   color:'#25D366', icon:wa()},
 ];
 
-const CLIENTES = [
-  {user:'@aaronmercury',    name:'Aaron Mercurio',            followers:'5.4M', posts:'543',   following:'924',   avatar:''},
-  {user:'@televisadigital', name:'Televisa Digital',          followers:'246K', posts:'5,779', following:'617',   avatar:''},
-  {user:'@joscanela',       name:'Jos Canela',                followers:'722K', posts:'63',    following:'425',   avatar:''},
-  {user:'@jimenagallegotv', name:'Jimena Gállego',            followers:'544K', posts:'3,328', following:'1,608', avatar:''},
-  {user:'@elmalilla_',      name:'MALI EL MALILLAA!!',        followers:'3.6M', posts:'675',   following:'2,006', avatar:''},
-  {user:'@mariobautista',   name:'Mario Bautista (MB)',       followers:'6.7M', posts:'515',   following:'3,371', avatar:''},
-  {user:'@aldotdenigris',   name:'Aldo Tamez De Nigris',      followers:'1.5M', posts:'607',   following:'2,748', avatar:''},
-  {user:'@sonymusiclatin',  name:'Sony Music Latin',          followers:'1.1M', posts:'43.3K', following:'535',   avatar:''},
-  {user:'@lacasafamososmx', name:'La Casa de los Famosos MX', followers:'3.3M', posts:'6,632', following:'90',    avatar:''},
-  {user:'@manuelturizo',    name:'Manuel Turizo - MTZ',       followers:'14.6M',posts:'127',   following:'1,298', avatar:''},
-  {user:'@pesopluma',       name:'La Doble P',                followers:'15.4M',posts:'44',    following:'1,195', avatar:''},
-  {user:'@oscar_maydonn',   name:'Oscar Maydon',              followers:'2.5M', posts:'20',    following:'1,203', avatar:''},
-  {user:'@diegodeericemx',  name:'Diego de Erice',            followers:'551K', posts:'2,039', following:'682',   avatar:''},
-];
+/* Catálogo por red y tipo (base x 1000 unidades) */
+const CATALOG = {
+  instagram: {
+    likes:       {label:'Likes',        base: 1.20},
+    comments:    {label:'Comentarios',  base: 4.50},
+    followers:   {label:'Seguidores',   base: 6.90},
+    views:       {label:'Vistas',       base: 0.80},
+    stories:     {label:'Historias',    base: 1.10},
+  },
+  tiktok: {
+    likes:{label:'Likes',base:1.00}, comments:{label:'Comentarios',base:4.00},
+    followers:{label:'Seguidores',base:5.90}, views:{label:'Vistas',base:0.70}, stories:{label:'Historias',base:0.95}
+  },
+  youtube:{
+    likes:{label:'Likes',base:1.40}, comments:{label:'Comentarios',base:6.00},
+    followers:{label:'Suscriptores',base:10.0}, views:{label:'Vistas',base:1.20}, stories:{label:'Shorts Boost',base:1.30}
+  },
+  threads:{likes:{label:'Likes',base:0.9},comments:{label:'Respuestas',base:3.9},followers:{label:'Seguidores',base:5.5},views:{label:'Vistas',base:0.6},stories:{label:'Historias',base:0.9}},
+  x:{likes:{label:'Likes',base:1.2},comments:{label:'Replies',base:4.8},followers:{label:'Seguidores',base:7.0},views:{label:'Impresiones',base:0.9},stories:{label:'Citas',base:1.1}},
+  facebook:{likes:{label:'Reacciones',base:1.0},comments:{label:'Comentarios',base:3.9},followers:{label:'Seguidores',base:5.1},views:{label:'Reproducciones',base:0.7},stories:{label:'Historias',base:0.9}},
+  linkedin:{likes:{label:'Reacciones',base:1.6},comments:{label:'Comentarios',base:5.2},followers:{label:'Seguidores',base:9.0},views:{label:'Impresiones',base:1.3},stories:{label:'Artículos Boost',base:1.8}},
+  spotify:{likes:{label:'Saves',base:2.4},comments:{label:'Reviews',base:5.0},followers:{label:'Followers',base:11},views:{label:'Streams',base:1.9},stories:{label:'Playlist Push',base:3.0}},
+  telegram:{likes:{label:'Reacciones',base:0.7},comments:{label:'Mensajes',base:2.4},followers:{label:'Miembros',base:3.9},views:{label:'Vistas',base:0.4},stories:{label:'Historias',base:0.6}},
+  whatsapp:{likes:{label:'Reacciones',base:0.6},comments:{label:'Respuestas',base:1.8},followers:{label:'Suscriptores Canal',base:4.5},views:{label:'Vistas Estado',base:0.5},stories:{label:'Estados',base:0.7}}
+};
 
-/* ====== RENDER HOME: REDES ====== */
+/* Multiplicadores */
+const REGION = {mx:1.0, us:1.25, world:1.1};
+const SPEED  = {lenta:0.95, normal:1.0, rapida:1.15};
+
+/* Render GRID redes con icono a color */
 const socialGrid = document.getElementById('socialGrid');
 socialGrid.innerHTML = REDES.map(r => `
-  <a class="sbtn" href="#" data-net="${r.id}" style="--ring:${hex2rgba(r.color,.18)}">
-    <span class="sicon">${r.icon}</span>
+  <a class="sbtn" href="#" data-net="${r.id}" title="${r.name}">
+    <span class="sicon" style="color:${r.color}">${r.icon}</span>
     <span class="slabel">${r.name}</span>
   </a>`).join('');
 
-/* ====== RENDER HOME: CLIENTES RECIENTES ====== */
+/* Al tocar una red => abrir Servicios con esa red preseleccionada */
+socialGrid.querySelectorAll('.sbtn').forEach(btn=>{
+  btn.addEventListener('click',(e)=>{
+    e.preventDefault();
+    openTab('services');
+    selectNetwork(btn.dataset.net);
+  })
+});
+
+/* Render tabs de redes en Servicios */
+const svcNets = document.getElementById('svcNets');
+svcNets.innerHTML = REDES.map((r,i)=>`<button class="chip ${i? '' : 'active'}" data-id="${r.id}">${r.name}</button>`).join('');
+svcNets.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>selectNetwork(ch.dataset.id)));
+
+const svcKinds = document.getElementById('svcKinds');
+const svcTitle = document.getElementById('svcTitle');
+const fUrl = document.getElementById('f_url'), fQty = document.getElementById('f_qty'),
+      fReg = document.getElementById('f_region'), fSpd = document.getElementById('f_speed'),
+      pOut = document.getElementById('svcPrice');
+
+let currentNet = REDES[0].id, currentKind = 'likes';
+function selectNetwork(id){
+  currentNet = id;
+  svcNets.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active', x.dataset.id===id));
+  /* kinds */
+  const kinds = CATALOG[id];
+  svcKinds.innerHTML = Object.keys(kinds).map((k,i)=>`<button class="chip ${i? '' : 'active'}" data-kind="${k}">${kinds[k].label}</button>`).join('');
+  currentKind = Object.keys(kinds)[0];
+  svcKinds.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
+    currentKind = ch.dataset.kind;
+    svcKinds.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+    ch.classList.add('active');
+    updateSvcTitle(); updatePrice();
+  }));
+  updateSvcTitle(); updatePrice();
+}
+function updateSvcTitle(){
+  const netName = REDES.find(n=>n.id===currentNet).name;
+  const kind = CATALOG[currentNet][currentKind].label;
+  svcTitle.textContent = `${netName} · ${kind}`;
+}
+function calcPrice(){
+  const base = CATALOG[currentNet][currentKind].base; // por 1000
+  const qty  = Math.max(0, Number(fQty.value||0));
+  const units = qty/1000;
+  return Math.max(0, units * base * REGION[fReg.value] * SPEED[fSpd.value]);
+}
+function updatePrice(){
+  const val = calcPrice();
+  pOut.textContent = '$' + val.toFixed(2);
+}
+[fQty,fReg,fSpd].forEach(el=>el.addEventListener('input', updatePrice));
+selectNetwork(currentNet); // inicial
+
+/* ====== CLIENTES ====== */
+const CLIENTES = [
+  {user:'@aaronmercury',    name:'Aaron Mercurio',            followers:'5.4M', posts:'543',   following:'924',   verified:true,  avatar:''},
+  {user:'@televisadigital', name:'Televisa Digital',          followers:'246K', posts:'5,779', following:'617',   verified:true,  avatar:''},
+  {user:'@joscanela',       name:'Jos Canela',                followers:'722K', posts:'63',    following:'425',   verified:true,  avatar:''},
+  {user:'@jimenagallegotv', name:'Jimena Gállego',            followers:'544K', posts:'3,328', following:'1,608', verified:true,  avatar:''},
+  {user:'@elmalilla_',      name:'MALI EL MALILLAA!!',        followers:'3.6M', posts:'675',   following:'2,006', verified:true,  avatar:''},
+  {user:'@mariobautista',   name:'Mario Bautista (MB)',       followers:'6.7M', posts:'515',   following:'3,371', verified:true,  avatar:''},
+  {user:'@aldotdenigris',   name:'Aldo Tamez De Nigris',      followers:'1.5M', posts:'607',   following:'2,748', verified:true,  avatar:''},
+  {user:'@sonymusiclatin',  name:'Sony Music Latin',          followers:'1.1M', posts:'43.3K', following:'535',   verified:true,  avatar:''},
+  {user:'@lacasafamososmx', name:'La Casa de los Famosos MX', followers:'3.3M', posts:'6,632', following:'90',    verified:true,  avatar:''},
+  {user:'@manuelturizo',    name:'Manuel Turizo - MTZ',       followers:'14.6M',posts:'127',   following:'1,298', verified:true,  avatar:''},
+  {user:'@pesopluma',       name:'La Doble P',                followers:'15.4M',posts:'44',    following:'1,195', verified:true,  avatar:''},
+  {user:'@oscar_maydonn',   name:'Oscar Maydon',              followers:'2.5M', posts:'20',    following:'1,203', verified:true,  avatar:''},
+  {user:'@diegodeericemx',  name:'Diego de Erice',            followers:'551K', posts:'2,039', following:'682',   verified:true,  avatar:''},
+];
+
 const homeClients = document.getElementById('homeClients');
 homeClients.innerHTML = CLIENTES.slice(0,6).map(c=>clientCard(c)).join('');
-
-/* ====== RENDER CLIENTS PAGE ====== */
 const list = document.getElementById('clientsList');
 const q = document.getElementById('q');
 function renderClients(filter=''){
@@ -317,16 +421,18 @@ function renderClients(filter=''){
   list.innerHTML = rows || `<div class="card pad meta">Sin resultados</div>`;
 }
 renderClients();
-q.addEventListener('input', e=>renderClients(e.target.value));
+q?.addEventListener('input', e=>renderClients(e.target.value));
 
-/* ====== CLIENT CARD COMPONENT ====== */
 function clientCard(c){
   const av = c.avatar ? `<img class="avatar" src="${c.avatar}" alt="${c.user}">`
                       : `<div class="avatar" aria-hidden="true"></div>`;
+  const tick = c.verified ? `<span class="verif" title="Verificado IG">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M6 12l3 3 9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </span>` : '';
   return `<div class="client" role="button" onclick='openFicha(${JSON.stringify(c).replace(/"/g,"&quot;")})'>
     ${av}
     <div class="grow">
-      <div class="ig">${c.user} ${check()}</div>
+      <div class="ig">${c.user} ${tick}</div>
       <div class="meta">${c.name} · ${c.followers} seguidores</div>
     </div>
     <div class="open">Ver ficha</div>
@@ -336,10 +442,10 @@ function clientCard(c){
 /* ====== MODAL FICHA ====== */
 const dlg = document.getElementById('dlg');
 function openFicha(c){
-  const av = c.avatar || '';
-  document.getElementById('dlgAv').src = av || '';
+  document.getElementById('dlgAv').src = c.avatar || '';
   document.getElementById('dlgAv').alt = c.user;
-  document.getElementById('dlgUser').innerHTML = `${c.user} ${check()}`;
+  const tick = c.verified ? `<span class="verif"><svg viewBox="0 0 24 24" fill="none"><path d="M6 12l3 3 9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : '';
+  document.getElementById('dlgUser').innerHTML = `${c.user} ${tick}`;
   document.getElementById('dlgName').textContent = c.name;
   document.getElementById('kPosts').textContent = c.posts;
   document.getElementById('kFollowers').textContent = c.followers;
@@ -348,38 +454,21 @@ function openFicha(c){
 }
 dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.close(); });
 
-/* ====== SERVICIOS ====== */
-const svcNets = document.getElementById('svcNets');
-svcNets.innerHTML = REDES.map((r,i)=>`<button class="chip ${i? '' : 'active'}" data-id="${r.id}">${r.name}</button>`).join('');
-let svcCurrent = REDES[0].id;
-const svcTitle = document.getElementById('svcTitle');
-svcNets.querySelectorAll('.chip').forEach(ch=>{
-  ch.addEventListener('click',()=>{
-    svcNets.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
-    ch.classList.add('active'); svcCurrent = ch.dataset.id;
-    svcTitle.textContent = `${ch.textContent} · Likes`;
-  });
-});
-
 /* ====== NAV ====== */
 const tabs = document.querySelectorAll('nav .tab');
 const pages = document.querySelectorAll('main');
-tabs.forEach(t=>{
-  t.addEventListener('click', e=>{
-    e.preventDefault();
-    tabs.forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    const id = t.dataset.tab;
-    pages.forEach(p=>p.classList.toggle('active', p.id===id));
-    window.scrollTo({top:0,behavior:'instant'});
-  });
-});
+function openTab(id){
+  tabs.forEach(x=>x.classList.toggle('active', x.dataset.tab===id));
+  pages.forEach(p=>p.classList.toggle('active', p.id===id));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+tabs.forEach(t=>t.addEventListener('click', e=>{
+  e.preventDefault();
+  openTab(t.dataset.tab);
+}));
 
-/* ====== UTILS / ICONS ====== */
-function hex2rgba(hex, a=1){const c=hex.replace('#','');const n=parseInt(c.length===3?c.split('').map(x=>x+x).join(''):c,16);
-  const r=(n>>16)&255,g=(n>>8)&255,b=n&255;return `rgba(${r},${g},${b},${a})`; }
-function check(){return `<svg class="verif" viewBox="0 0 24 24" fill="none"><path d="m9.5 12.5 2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
-function ig(){return `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>`}
+/* ====== ICONS ====== */
+function ig(){return `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.5" cy="6.5" r="1.6" fill="currentColor"/></svg>`}
 function tiktok(){return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3c.3 2.5 1.9 4.4 4.4 4.6V11c-1.7 0-3.3-.6-4.4-1.6v5.7a5.6 5.6 0 1 1-5.6-5.6c.4 0 .8 0 1.2.1v3a2.6 2.6 0 1 0 1.9 2.5V3h2.5z"/></svg>`}
 function yt(){return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.4-.4-5a3 3 0 0 0-2.1-2.1C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.5.6A3 3 0 0 0 1.4 7C1 8.6 1 12 1 12s0 3.4.4 5a3 3 0 0 0 2.1 2.1c1.6.6 8.5.6 8.5.6s6.9 0 8.5-.6A3 3 0 0 0 22.6 17c.4-1.6.4-5 .4-5zM10 15.5v-7l6 3.5-6 3.5z"/></svg>`}
 function threads(){return `<svg viewBox="0 0 24 24" fill="none"><path d="M20.7 13.6c-.6-3.9-3.2-6.3-7.1-6.6V5h-2v2.1c-3.8.4-6.2 2.7-6.2 6.1 0 3.8 2.9 6.3 6.9 6.3 3.2 0 5.6-1.5 6.6-3.9l-2.3-.9c-.6 1.5-2.1 2.4-4.1 2.4-2.5 0-4.4-1.4-4.7-3.5h9.5v-1zM8.8 11.3c.5-1.4 1.9-2.3 3.9-2.3 2.1 0 3.6.9 4.1 2.3H8.8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`}
