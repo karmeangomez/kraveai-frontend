@@ -8,9 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0B0D12">
 <style>
-/* ========================= TOKENS ========================= */
+/* ====== TOKENS ====== */
 :root{
-  /* Dark */
   --bg:#0a0e14; --elev:#0e131b; --card:#111827; --text:#e9eef7; --muted:#93a0b4; --line:#1f2a3a;
   --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
   --grad:linear-gradient(135deg,#7c5cff 0%, #00d3c2 100%);
@@ -23,20 +22,14 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto;
-}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"SF Pro Text",Inter,Roboto}
 
-/* ========================= LAYOUT ========================= */
+/* ====== LAYOUT ====== */
 .app{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto}
-.top{
-  position:sticky;top:0;z-index:30;
-  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
+.top{position:sticky;top:0;z-index:30;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
   padding:10px max(14px,env(safe-area-inset-left)) 8px max(14px,env(safe-area-inset-right));
-  background:color-mix(in oklab,var(--elev) 92%, transparent);
-  border-bottom:1px solid var(--line); backdrop-filter:saturate(1.1) blur(14px);
-}
+  background:color-mix(in oklab,var(--elev) 92%, transparent); border-bottom:1px solid var(--line);
+  backdrop-filter:saturate(1.1) blur(14px)}
 .brand{display:flex;align-items:center;gap:10px}
 .badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--grad)}
 .word{font-weight:900;letter-spacing:.16em}
@@ -48,28 +41,6 @@ body{
   height: calc(var(--app-h, 100svh) - var(--top-h, 58px) - var(--nav-h, 70px) - var(--safe-b));
   padding:12px 14px; min-height:0;
 }
-.main > .view{min-height:0}
-
-/* ========================= NAV BOTTOM ========================= */
-.nav{
-  position:sticky;bottom:0;z-index:25;
-  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
-  padding:8px max(12px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right));
-  background:color-mix(in oklab,var(--elev) 92%, transparent);
-  border-top:1px solid var(--line); backdrop-filter:saturate(1.1) blur(14px);
-}
-.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer}
-.tab small{font-size:.74rem}
-input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
-#t-home:checked ~ .app .nav label[for="t-home"],
-#t-serv:checked ~ .app .nav label[for="t-serv"],
-#t-clients:checked ~ .app .nav label[for="t-clients"],
-#t-farm:checked ~ .app .nav label[for="t-farm"],
-#t-acc:checked ~ .app .nav label[for="t-acc"]{
-  color:var(--text); background:rgba(255,255,255,.05); border-color:var(--line)
-}
-
-/* ========================= VIEWS ========================= */
 .view{display:none;height:100%}
 #t-home:checked   ~ .app .view[data-tab="home"],
 #t-serv:checked   ~ .app .view[data-tab="serv"],
@@ -77,43 +48,51 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 #t-farm:checked   ~ .app .view[data-tab="farm"],
 #t-acc:checked    ~ .app .view[data-tab="acc"]{display:grid}
 
+/* ====== NAV BOTTOM ====== */
+.nav{position:sticky;bottom:0;z-index:25;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  padding:8px max(12px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right));
+  background:color-mix(in oklab,var(--elev) 92%, transparent);border-top:1px solid var(--line);backdrop-filter:saturate(1.1) blur(14px)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;color:var(--muted);border:1px solid transparent;cursor:pointer}
+.tab small{font-size:.74rem}
+input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
+#t-home:checked ~ .app .nav label[for="t-home"],
+#t-serv:checked ~ .app .nav label[for="t-serv"],
+#t-clients:checked ~ .app .nav label[for="t-clients"],
+#t-farm:checked ~ .app .nav label[for="t-farm"],
+#t-acc:checked ~ .app .nav label[for="t-acc"]{color:var(--text);background:rgba(255,255,255,.05);border-color:var(--line)}
+
 /* ====== HOME ====== */
-.home{
-  grid-template-rows:auto 1fr auto;
-  gap:12px; max-width:980px; margin-inline:auto;
-}
-.h-hero{display:flex;align-items:center;justify-content:space-between;padding:6px 2px}
+.home{grid-template-rows:auto auto 1fr auto;gap:12px;max-width:980px;margin-inline:auto}
 .h-hero h1{margin:0 0 2px;font-size:clamp(22px,4.6vw,28px)}
 .h-hero p{margin:0;color:var(--muted)}
 
-/* más separación y mejor malla */
+.section-title{font-weight:900;margin:2px 0 6px}
+
+/* Redes: ocupa espacio sobrante con tiles altos y aspect-ratio */
 .s-grid{
-  display:grid;
-  gap:14px 14px;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  display:grid;gap:16px 16px;
+  grid-template-columns:repeat(2, 1fr); /* iPhone → 2 cols */
 }
-@media (min-width:520px){.s-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}}
+@media (min-width:560px){.s-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:880px){.s-grid{grid-template-columns:repeat(4,1fr)}}
 .s-btn{
-  display:flex;align-items:center;justify-content:flex-start;gap:12px;
-  padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card);
-  cursor:pointer; transition:transform .08s ease;
+  display:flex;align-items:center;gap:12px;justify-content:flex-start;
+  padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card);
+  cursor:pointer;transition:transform .08s ease;min-height:84px;aspect-ratio: 10 / 5;
 }
 .s-btn:hover{outline:2px solid color-mix(in oklab,var(--text) 16%, transparent)}
 .s-btn:active{transform:translateY(1px)}
-.s-ico{width:22px;height:22px;display:grid;place-items:center}
+.s-ico{width:26px;height:26px;display:grid;place-items:center}
 
-/* ====== CLIENTES ====== */
+/* Clientes compactos */
 .clients{display:grid;gap:10px}
 .c-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
-.c-ava{width:32px;height:32px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.06);display:grid;place-items:center}
+.c-ava{width:36px;height:36px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.06);display:grid;place-items:center}
 .c-u{font-weight:800}
-.c-net{font-size:.86rem;color:var(--muted)}
+.c-net{font-size:.9rem;color:var(--muted)}
 .c-r{margin-left:auto;opacity:.9}
-
-/* Fix verificación tamaño */
 .c-verified{width:16px;height:16px;vertical-align:-3px;margin-left:6px;display:inline-block}
 
-/* Quick */
 .quick{display:flex;align-items:center;gap:8px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
 .quick input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
 .btn{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer}
@@ -132,7 +111,7 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 .s-row{display:flex;gap:8px}
 .s-row .input{flex:1}
 
-/* ====== FARM ====== */
+/* ====== FARM / ACC ====== */
 .farm{grid-template-rows:auto 1fr;gap:12px;max-width:1100px;margin-inline:auto;min-height:0}
 .fgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));overflow:auto}
 .dev{display:grid;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
@@ -141,30 +120,29 @@ input[name="tab"]{position:absolute;opacity:0;pointer-events:none}
 .screen iframe,.screen img,.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .d-actions{display:flex;gap:8px;flex-wrap:wrap}
 
-/* ====== ACC ====== */
 .acc{grid-template-rows:auto 1fr;gap:12px;max-width:820px;margin-inline:auto;min-height:0}
 .box{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .box-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
 @media (max-width:560px){.box-grid{grid-template-columns:1fr}}
 
-/* ====== FIRMA ====== */
-.credit{
-  position:fixed; left:50%; transform:translateX(-50%);
+.hint{color:var(--muted);font-size:.86rem;margin:0 0 8px}
+
+/* Firma */
+.credit{position:fixed; left:50%; transform:translateX(-50%);
   bottom: calc(56px + var(--safe-b) + 10px);
   padding:8px 14px; border-radius:999px; font-weight:800; font-size:.88rem;
   color:var(--text); background:color-mix(in oklab,var(--elev) 96%, transparent);
   border:1px solid var(--line); pointer-events:none; z-index:40;
-  animation:breath 4s ease-in-out infinite, glow 2.6s ease-in-out infinite;
-}
+  animation:breath 4s ease-in-out infinite, glow 2.6s ease-in-out infinite}
 @keyframes breath{50%{transform:translateX(-50%) scale(1.04)}}
-@keyframes glow{0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}}
+@keyframes glow{0%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}
+50%{box-shadow:0 0 18px rgba(124,92,255,.75),0 0 30px rgba(0,211,194,.48)}
+100%{box-shadow:0 0 10px rgba(124,92,255,.45),0 0 18px rgba(0,211,194,.28)}}
 
-/* Helpers */
-input, button { font-size:16px; } /* evita zoom iOS */
-.section-title{font-weight:900;margin:2px 0 4px}
-.hint{color:var(--muted);font-size:.86rem;margin:0 0 8px}
-.hide{display:none}
-svg.brand-icon{color:var(--text);}
+/* Inputs simples */
+.input{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04)}
+.input input{flex:1;background:transparent;border:0;outline:none;color:var(--text);font-size:.95rem}
+svg.brand-icon{color:var(--text)}
 </style>
 </head>
 <body>
@@ -176,15 +154,12 @@ svg.brand-icon{color:var(--text);}
 <input type="radio" name="tab" id="t-farm">
 <input type="radio" name="tab" id="t-acc">
 
-<!-- ========== SPRITE (LOGOS) ========== -->
+<!-- ====== SPRITES (logos y verificado) ====== -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#00d3c2"/></linearGradient>
-    <symbol id="klogo" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/><path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/>
-    </symbol>
+    <symbol id="klogo" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".14"/><path d="M18 14h10v16l16-16h12L40 30l16 20H44L28 36v14H18V14z" fill="url(#g)"/></symbol>
 
-    <!-- Nav icons -->
     <symbol id="ico-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-tools" viewBox="0 0 24 24"><path d="M3 21l6-6M7 3l3 3-2 2 6 6 2-2 3 3M14 7l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="ico-users" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 4-4M3 21a6 6 0 0 1 12 0M17 11a3 3 0 1 1 6 0M15 21a6 6 0 0 1 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
@@ -192,13 +167,12 @@ svg.brand-icon{color:var(--text);}
     <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="ico-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 
-    <!-- Verified IG real -->
+    <!-- Verificado IG compacto -->
     <symbol id="ig-verified" viewBox="0 0 24 24">
-      <path d="M12 2.5l2 1.7 2.6-.6 1.2 2.4 2.6.7-.3 2.7 1.9 1.9-1.9 1.9.3 2.7-2.6.7-1.2 2.4-2.6-.6-2 1.7-2-1.7-2.6.6-1.2-2.4-2.6-.7.3-2.7-1.9-1.9 1.9-1.9-.3-2.7 2.6-.7 1.2-2.4 2.6.6 2-1.7z" fill="#1095F6"/>
-      <path d="M8.2 12.4l2.2 2.2 5.4-5.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 2.5l2 1.7 2.6-.6 1.2 2.4 2.6.7-.3 2.7 1.9 1.9-1.9 1.9.3 2.7-2.6.7-1.2 2.4-2.6-.6-2 1.7-2-1.7-2.6.6-1.2-2.4-2.6-.7.3-2.7-1.9-1.9 1.9-1.9-.3-2.7 2.6-.7 1.2-2.4 2.6.6 2-1.7z" fill="#1095F6"/><path d="M8.4 12.4l2.1 2.1 5.2-5.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
 
-    <!-- Brand logos (currentColor donde aplica) -->
+    <!-- Logos -->
     <symbol id="logo-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="#E1306C" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="#E1306C"/></symbol>
     <symbol id="logo-tiktok" viewBox="0 0 24 24"><path d="M10 4v9a4 4 0 1 1-3 6.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 4c.6 2.6 2.6 4.3 5 4.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="logo-youtube" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="#FF0000"/><path d="M10 9l6 3-6 3z" fill="#fff"/></symbol>
@@ -331,14 +305,13 @@ svg.brand-icon{color:var(--text);}
 <!-- Firma -->
 <div class="credit">Created by Karmean Gómez</div>
 
-<!-- datalist global para “modo” -->
 <datalist id="modos"><option value="auto"><option value="personalizado"><option value="manual"></datalist>
 
 <script>
 (function(){
   const API_URL = "https://api.kraveapi.xyz";
 
-  /* ===== Altura real ===== */
+  /* Altura real */
   function setLayoutHeights(){
     const app = document.getElementById('app');
     const top = app.querySelector('.top');
@@ -361,7 +334,7 @@ svg.brand-icon{color:var(--text);}
   window.addEventListener('orientationchange', setLayoutHeights, {passive:true});
   window.addEventListener('resize', setLayoutHeights, {passive:true});
 
-  /* ===== Tema ===== */
+  /* Tema */
   const themeToggle = document.getElementById('themeToggle');
   const themeEmoji = document.getElementById('themeEmoji');
   const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -374,7 +347,7 @@ svg.brand-icon{color:var(--text);}
     themeEmoji.textContent = t==='dark' ? '🌙' : '☀️';
   });
 
-  /* ===== Salud backend ===== */
+  /* Estado backend */
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
   async function checkHealth(){
@@ -386,7 +359,7 @@ svg.brand-icon{color:var(--text);}
   }
   checkHealth(); setInterval(checkHealth, 120000);
 
-  /* ===== GRID redes ===== */
+  /* Redes */
   const networks = [
     {key:'instagram', name:'Instagram', icon:'#logo-instagram'},
     {key:'tiktok', name:'TikTok', icon:'#logo-tiktok'},
@@ -399,53 +372,53 @@ svg.brand-icon{color:var(--text);}
     {key:'telegram', name:'Telegram', icon:'#logo-telegram'},
     {key:'whatsapp', name:'WhatsApp', icon:'#logo-whatsapp'}
   ];
-  const socialGrid = document.getElementById('socialGrid');
-  socialGrid.innerHTML = networks.map(n => `
+  document.getElementById('socialGrid').innerHTML = networks.map(n => `
     <button class="s-btn" data-net="${n.key}">
-      <span class="s-ico"><svg width="22" height="22" class="brand-icon"><use href="${n.icon}"/></svg></span>
+      <span class="s-ico"><svg width="26" height="26" class="brand-icon"><use href="${n.icon}"/></svg></span>
       <span>${n.name}</span>
     </button>`).join('');
 
-  /* ===== Clientes (mock) ===== */
+  /* Clientes (con @elmalilla_) */
   const IG_VER = '<svg class="c-verified"><use href="#ig-verified"/></svg>';
-  const CLIENTS = [
-    {user:'@aaronmercury', net:'Instagram', avatar:'', verified:true},
-    {user:'@televisadigital', net:'Instagram', avatar:'', verified:true},
-    {user:'@joscanela', net:'Instagram', avatar:'', verified:true},
-    {user:'@jimenagallegotv', net:'Instagram', avatar:'', verified:true},
-  ];
-  const brief = document.getElementById('clientsBrief');
-  const full = document.getElementById('clientsFull');
-  function avatarFor(c){
-    if(c.avatar) return `<img class="c-ava" src="${c.avatar}" alt="">`;
-    const map = {Instagram:'#logo-instagram', YouTube:'#logo-youtube', TikTok:'#logo-tiktok'};
-    const use = map[c.net] || '#logo-instagram';
-    return `<div class="c-ava"><svg width="18" height="18" class="brand-icon"><use href="${use}"/></svg></div>`;
-  }
-  if(brief){
-    brief.innerHTML = CLIENTS.slice(0,4).map(c=>`
+  const CLIENT_USERNAMES = ['aaronmercury','televisadigital','joscanela','jimenagallegotv','elmalilla_'];
+  const FALLBACK = {
+    'elmalilla_': { full_name:'MALI EL MALILLAA!!', follower_count: 3600000, following_count:2006, media_count:675, is_verified:true }
+  };
+  function nfmt(n){ if(n==null) return ''; if(n>=1e6) return (n/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(n>=1e3) return (n/1e3).toFixed(1).replace(/\.0$/,'')+'K'; return String(n); }
+  function clientCard(d){
+    const {username, full_name, is_verified, follower_count, following_count, media_count, profile_pic_url} = d;
+    return `
       <div class="c-item">
-        ${avatarFor(c)}
+        ${profile_pic_url ? `<img class="c-ava" src="${profile_pic_url}" alt="">`
+                          : `<div class="c-ava"><svg width="16" height="16" class="brand-icon"><use href="#logo-instagram"/></svg></div>`}
         <div>
-          <div class="c-u">${c.user} ${c.verified?IG_VER:''}</div>
-          <div class="c-net">${c.net}</div>
+          <div class="c-u">@${username} ${is_verified?IG_VER:''}</div>
+          <div class="c-net">${full_name || 'Instagram'}</div>
+          <div class="hint">${media_count!=null?`${media_count.toLocaleString()} posts · `:''}${follower_count!=null?`${nfmt(follower_count)} seguidores · `:''}${following_count!=null?`${following_count.toLocaleString()} siguiendo`:''}</div>
         </div>
         <div class="c-r"><svg width="18" height="18" class="brand-icon"><use href="#logo-instagram"/></svg></div>
-      </div>`).join('');
+      </div>`;
   }
-  if(full){
-    full.innerHTML = CLIENTS.map(c=>`
-      <div class="c-item">
-        ${avatarFor(c)}
-        <div>
-          <div class="c-u">${c.user} ${c.verified?IG_VER:''}</div>
-          <div class="c-net">${c.net}</div>
-        </div>
-        <div class="c-r"><svg width="18" height="18" class="brand-icon"><use href="#logo-instagram"/></svg></div>
-      </div>`).join('');
+  async function loadClients(){
+    const brief = document.getElementById('clientsBrief');
+    const full = document.getElementById('clientsFull');
+    const items = [];
+    for(const u of CLIENT_USERNAMES){
+      try{
+        const r = await fetch(`${API_URL}/buscar-usuario?username=${encodeURIComponent(u)}`, {credentials:'include'});
+        if(!r.ok) throw new Error('api');
+        const d = await r.json();
+        items.push(d);
+      }catch{
+        items.push(Object.assign({username:u, profile_pic_url:'', is_verified:false}, FALLBACK[u]||{}));
+      }
+    }
+    if(brief) brief.innerHTML = items.slice(0,4).map(clientCard).join('');
+    if(full)  full.innerHTML  = items.map(clientCard).join('');
   }
+  loadClients();
 
-  /* ===== Quick ===== */
+  /* Quick */
   function toast(msg, err){
     const el=document.createElement('div'); el.textContent=msg;
     el.style.cssText=`position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;
@@ -460,7 +433,7 @@ svg.brand-icon{color:var(--text);}
     document.getElementById('quickInput').value='';
   });
 
-  /* ===== Servicios ===== */
+  /* Servicios */
   const servTitle = document.getElementById('servTitle');
   const servChips = document.getElementById('servChips');
   const servPanel = document.getElementById('servPanel');
@@ -532,19 +505,15 @@ svg.brand-icon{color:var(--text);}
     const items = SERVICES_BY_NET[key]||[];
     servChips.innerHTML = items.map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('');
   }
-
   function renderServicePanel(netKey){
     const items = SERVICES_BY_NET[netKey]||[];
     servPanel.innerHTML = `<div class="s-grid-cards">${items.map(s=>serviceCard(netKey,s)).join('')}</div>`;
     attachServiceHandlers();
   }
-
   function attachServiceHandlers(){
     servPanel.querySelectorAll('.s-card').forEach(card=>{
       const status = card.querySelector('.s-status');
-      const run = card.querySelector('.s-run');
-      const cancel = card.querySelector('.s-cancel');
-      run.onclick = async ()=>{
+      card.querySelector('.s-run').onclick = async ()=>{
         const net = card.dataset.net;
         const service = card.dataset.s;
         const def = SERVICE_DEFS[service]||{slug:service.toLowerCase(),fields:[]};
@@ -562,29 +531,26 @@ svg.brand-icon{color:var(--text);}
             body:JSON.stringify(payload)
           });
           const d = await r.json().catch(()=>({}));
-          if(r.ok){ status.textContent='✅ En proceso'; toast(`${service} lanzado`); }
+          if(r.ok){ status.textContent='✅ En proceso'; }
           else throw new Error(d.mensaje||'Error');
-        }catch(err){ status.textContent='❌ '+err.message; toast(err.message,true); }
+        }catch(err){ status.textContent='❌ '+err.message; }
       };
-      cancel.onclick = ()=>{ status.textContent='—'; card.querySelectorAll('input').forEach(i=>i.value=''); };
+      card.querySelector('.s-cancel').onclick = ()=>{ status.textContent='—'; card.querySelectorAll('input').forEach(i=>i.value=''); };
     });
   }
 
-  // Abrir Servicios desde la malla
-  socialGrid.addEventListener('click',(e)=>{
+  // Abrir Servicios desde Home
+  document.getElementById('socialGrid').addEventListener('click',(e)=>{
     const b=e.target.closest('.s-btn'); if(!b) return;
     const key=b.dataset.net;
     document.getElementById('t-serv').checked=true;
     openNetwork(key);
   });
-
   function openNetwork(key){
     const n = networks.find(n=>n.key===key); if(!n) return;
     servTitle.textContent = `Servicios · ${n.name}`;
-    renderServiceChips(key);
-    renderServicePanel(key);
+    renderServiceChips(key); renderServicePanel(key);
   }
-
   servChips.addEventListener('click',(e)=>{
     const c=e.target.closest('.chip'); if(!c) return;
     const key = (servTitle.textContent.split('·')[1]||'').trim().toLowerCase();
@@ -595,11 +561,9 @@ svg.brand-icon{color:var(--text);}
       if(target){ target.scrollIntoView({behavior:'smooth',block:'start'}); }
     }
   });
-
-  // Atrás
   document.getElementById('backHome').addEventListener('click', ()=>{ document.getElementById('t-home').checked=true; });
 
-  /* ===== Farm ===== */
+  /* Device Farm */
   const DEVICES = [
     {id:'dev1',name:'iPhone 14 Pro',os:'iOS',ip:'10.0.0.8'},
     {id:'dev2',name:'Galaxy S23',os:'Android',ip:'10.0.0.9'},
@@ -634,14 +598,12 @@ svg.brand-icon{color:var(--text);}
     if(b.dataset.set){
       const id=b.dataset.set; const cur=localStorage.getItem('stream:'+id)||'';
       const url=prompt('URL stream (HLS .m3u8, MJPEG .mjpg, o https):',cur);
-      if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); toast('Stream actualizado'); }
+      if(url!==null){ localStorage.setItem('stream:'+id,url.trim()); renderFarm(); }
     }
-    if(b.dataset.clear){
-      const id=b.dataset.clear; localStorage.removeItem('stream:'+id); renderFarm(); toast('Stream limpiado');
-    }
+    if(b.dataset.clear){ const id=b.dataset.clear; localStorage.removeItem('stream:'+id); renderFarm(); }
   });
 
-  /* ===== Cuentas ===== */
+  /* Sesión */
   const sessionSub=document.getElementById('sessionSub');
   async function checkSession(){
     try{
@@ -655,35 +617,25 @@ svg.brand-icon{color:var(--text);}
   document.getElementById('loginBtn').addEventListener('click', async ()=>{
     const u=document.getElementById('loginUser').value.trim().replace('@','');
     const p=document.getElementById('loginPass').value.trim();
-    if(!u||!p) return toast('Completa usuario y contraseña',true);
+    if(!u||!p) return;
     try{
       const r=await fetch(`${API_URL}/iniciar-sesion`,{
         method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
         body:JSON.stringify({usuario:u,contrasena:p})
       });
       const d=await r.json();
-      if(d.exito){ toast('Sesión iniciada @'+d.usuario); sessionSub.textContent=`Sesión activa como @${d.usuario}`; }
-      else throw new Error(d.mensaje||'Error al iniciar');
-    }catch(err){ toast(err.message,true); }
+      sessionSub.textContent = d.exito?`Sesión activa como @${d.usuario}`:(d.mensaje||'Error al iniciar');
+    }catch{ sessionSub.textContent='Error al iniciar'; }
   });
   document.getElementById('logoutBtn').addEventListener('click', async ()=>{
     try{
       const r=await fetch(`${API_URL}/cerrar-sesion`,{credentials:'include'});
       const d=await r.json();
-      if(d.exito){ toast('Sesión cerrada'); sessionSub.textContent='No hay sesión activa'; }
-      else throw new Error(d.mensaje||'Error al cerrar');
-    }catch(err){ toast(err.message,true); }
+      sessionSub.textContent = d.exito?'No hay sesión activa':(d.mensaje||'Error al cerrar');
+    }catch{ sessionSub.textContent='Error al cerrar'; }
   });
 
-  // Enfocar buscador al abrir pestaña Cuentas
-  document.addEventListener('change',(e)=>{
-    if(e.target && e.target.id==='t-acc'){
-      const el = document.getElementById('igSearchUser');
-      if(el) setTimeout(()=>el.focus(), 80);
-    }
-  });
-
-  /* ===== Buscador IG ===== */
+  /* Buscador IG */
   const igSearchBtn = document.getElementById('igSearchBtn');
   const igSearchUser = document.getElementById('igSearchUser');
   const igSearchResult = document.getElementById('igSearchResult');
@@ -697,24 +649,18 @@ svg.brand-icon{color:var(--text);}
       const d = await r.json();
       if(!r.ok) throw new Error(d.mensaje || 'No se pudo buscar');
 
-      const {
-        username:uname, full_name, is_verified, follower_count, following_count,
-        media_count, biography, profile_pic_url, external_url
-      } = d;
+      const { username:uname, full_name, is_verified, follower_count, following_count, media_count, biography, profile_pic_url, external_url } = d;
 
       igSearchResult.innerHTML = `
         <div class="c-item">
-          ${profile_pic_url
-            ? `<img class="c-ava" src="${profile_pic_url}" alt="">`
-            : `<div class="c-ava"><svg width="16" height="16" class="brand-icon"><use href="#logo-instagram"/></svg></div>`
-          }
+          ${profile_pic_url?`<img class="c-ava" src="${profile_pic_url}" alt="">`:`<div class="c-ava"><svg width="16" height="16" class="brand-icon"><use href="#logo-instagram"/></svg></div>`}
           <div>
             <div class="c-u">@${uname} ${is_verified ? '<svg class="c-verified"><use href="#ig-verified"/></svg>' : ''}</div>
             <div class="c-net">${full_name || ''}</div>
             <div class="hint">
-              ${follower_count!=null?`👥 ${follower_count.toLocaleString()} seguidores · `:''}
-              ${following_count!=null?`${following_count.toLocaleString()} seguidos · `:''}
-              ${media_count!=null?`${media_count.toLocaleString()} posts`:''}
+              ${media_count!=null?`${media_count.toLocaleString()} posts · `:''}
+              ${follower_count!=null?`${nfmt(follower_count)} seguidores · `:''}
+              ${following_count!=null?`${following_count.toLocaleString()} siguiendo`:''}
             </div>
             ${external_url?`<div class="hint">🔗 <a href="${external_url}" target="_blank" rel="noopener">${external_url}</a></div>`:''}
             ${biography?`<div class="hint" style="margin-top:6px;white-space:pre-wrap">${biography}</div>`:''}
@@ -728,7 +674,7 @@ svg.brand-icon{color:var(--text);}
   if(igSearchBtn){ igSearchBtn.addEventListener('click', ()=> buscarUsuarioIG(igSearchUser.value||'')); }
   if(igSearchUser){ igSearchUser.addEventListener('keydown', (e)=>{ if(e.key==='Enter') buscarUsuarioIG(igSearchUser.value||''); }); }
 
-  /* ===== Cuentas activas ===== */
+  /* Cuentas activas */
   const accList=document.getElementById('accountsList');
   async function loadAccounts(){
     try{
@@ -738,33 +684,15 @@ svg.brand-icon{color:var(--text);}
       accList.innerHTML = arr.map(acc=>`
         <div class="c-item">
           <div class="c-ava"><svg width="16" height="16" class="brand-icon"><use href="#logo-instagram"/></svg></div>
-          <div><div class="c-u">@${acc.username}</div><div class="c-net">${acc.status==='activo'?'Activa':'Inactiva'}</div></div>
-          <div class="c-r">
-            ${acc.status==='activo' ? `<button class="btn" data-logout="${acc.username}">Logout</button>` : `<button class="btn btn-primary" data-login="${acc.username}">Login</button>`}
+          <div>
+            <div class="c-u">@${acc.usuario} ${acc.verificado?IG_VER:''}</div>
+            <div class="c-net">${acc.red||'Instagram'}</div>
           </div>
+          <div class="c-r">${acc.estado||''}</div>
         </div>`).join('');
     }catch{ accList.innerHTML='<div class="hint">Error al cargar cuentas</div>'; }
   }
-  loadAccounts(); setInterval(loadAccounts, 30000);
-  accList.addEventListener('click', async (e)=>{
-    const b=e.target.closest('button'); if(!b) return;
-    if(b.dataset.login){
-      toast('Iniciando @'+b.dataset.login+'…');
-      try{
-        const r=await fetch(`${API_URL}/iniciar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.login})});
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast('Sesión iniciada @'+b.dataset.login); loadAccounts();
-      }catch(err){ toast(err.message,true); }
-    }
-    if(b.dataset.logout){
-      toast('Cerrando @'+b.dataset.logout+'…');
-      try{
-        const r=await fetch(`${API_URL}/cerrar-sesion-cuenta`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({usuario:b.dataset.logout})});
-        const d=await r.json(); if(!d.exito) throw new Error(d.mensaje||'Error');
-        toast('Sesión cerrada @'+b.dataset.logout); loadAccounts();
-      }catch(err){ toast(err.message,true); }
-    }
-  });
+  loadAccounts();
 
 })();
 </script>
