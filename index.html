@@ -99,7 +99,12 @@
 
   /* ====== VERIFIED (IG – roseta original) ====== */
   .ig-verified{
-    width:16px; height:16px; display:inline-block; vertical-align:-3px; margin-left:6px;
+    width:1em;                 /* mismo alto que el texto */
+    height:1em;
+    display:inline-block;
+    vertical-align:-0.20em;    /* alineación Safari como IG */
+    margin-left:2px;           /* más pegado al usuario */
+    shape-rendering:geometricPrecision;
   }
 
   /* ====== NAV BOTTOM (amplio para toque) ====== */
@@ -149,7 +154,7 @@
     background:rgba(41,178,255,.12); border:1px solid rgba(41,178,255,.35);
     box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
     backdrop-filter: blur(6px);
-    pointer-events:none;                 /* <-- no tapa la barra */
+    pointer-events:none;
     animation:pulse-glow 2.8s ease-in-out infinite;
   }
   @keyframes pulse-glow{
@@ -299,20 +304,20 @@
 
   <!-- ====== SVGs ====== -->
   <svg style="position:absolute; width:0; height:0; overflow:hidden">
-    <!-- IG Verified: roseta oficial 8 puntas + gradiente radial + check centrado -->
-    <symbol id="igVerified" viewBox="0 0 24 24">
+    <!-- IG Verified: 8 puntas + gradiente radial, proporción perfecta, sin clipping -->
+    <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
       <defs>
-        <radialGradient id="metaBlue" cx="50%" cy="35%" r="70%">
+        <radialGradient id="metaBlue" cx="50%" cy="40%" r="70%">
           <stop offset="0" stop-color="#67B7FF"/>
           <stop offset="1" stop-color="#0B65FF"/>
         </radialGradient>
       </defs>
-      <!-- Roseta (8 puntas redondeadas, completamente dentro del 24x24) -->
+      <!-- roseta con márgenes internos para evitar aliasing -->
       <path fill="url(#metaBlue)"
-        d="M12 2.5c1.05 0 2.05.41 2.79 1.15l.32.32 1.02-.27c.82-.22 1.69.1 2.18.82l.53.75.87.12c.85.12 1.53.8 1.64 1.64l.12.87.75.53c.72.5 1.04 1.36.82 2.18l-.27 1.02.32.32c.74.74 1.15 1.74 1.15 2.79s-.41 2.05-1.15 2.79l-.32.32.27 1.02c.22.82-.1 1.69-.82 2.18l-.75.53-.12.87c-.11.84-.79 1.52-1.64 1.64l-.87.12-.53.75c-.49.72-1.36 1.04-2.18.82l-1.02-.27-.32.32A3.95 3.95 0 0 1 12 21.5a3.95 3.95 0 0 1-2.79-1.15l-.32-.32-1.02.27c-.82.22-1.69-.1-2.18-.82l-.53-.75-.87-.12a1.92 1.92 0 0 1-1.64-1.64l-.12-.87-.75-.53c-.72-.49-1.04-1.36-.82-2.18l.27-1.02-.32-.32A3.95 3.95 0 0 1 2.5 12c0-1.05.41-2.05 1.15-2.79l.32-.32-.27-1.02c-.22-.82.1-1.69.82-2.18l.75-.53.12-.87c.11-.84.79-1.52 1.64-1.64l.87-.12.53-.75c.49-.72 1.36-1.04 2.18-.82l1.02.27.32-.32A3.95 3.95 0 0 1 12 2.5z"/>
-      <!-- Check centrado -->
+        d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
+      <!-- check centrado y balanceado -->
       <path fill="#fff"
-        d="M10.2 13.6l-2.1-2.1a1 1 0 0 1 1.4-1.4l1.4 1.4 4-4a1 1 0 1 1 1.4 1.4l-4.7 4.7a1 1 0 0 1-1.4 0z"/>
+        d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
 
     <!-- Logos (colores de marca) -->
@@ -432,7 +437,7 @@ function openNetwork(key){
 
 /* ====== VERIFIED SVG helper ====== */
 function verifiedSvg(){
-  return `<svg class="ig-verified" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`;
+  return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`;
 }
 
 /* ====== DATA: CLIENTES ====== */
@@ -471,7 +476,7 @@ function rowHtml(c,withButton=false){
     <div class="row">
       <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
       <div class="grow">
-        <div class="user">@${c.user} ${badge}</div>
+        <div class="user">@${c.user}${badge}</div>
         <div class="muted">${c.name} · ${c.followers} seguidores</div>
       </div>
       ${withButton? `<a class="chip" href="javascript:void(0)" onclick="openCard('${c.user}')">Ver ficha</a>`: `<span class="muted">Ver ficha</span>`}
@@ -492,7 +497,7 @@ function openCard(user){
   if(!c) return;
   document.getElementById('mAvatar').src = avatars[c.user] || '';
   document.getElementById('mAvatar').onerror = function(){ this.style.background='#2a3442'; this.removeAttribute('src'); };
-  document.getElementById('mUser').innerHTML = `@${c.user} ${c.verified?verifiedSvg():''}`;
+  document.getElementById('mUser').innerHTML = `@${c.user}${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent = c.name;
   document.getElementById('mPosts').textContent = c.posts;
   document.getElementById('mFollowers').textContent = c.followers;
