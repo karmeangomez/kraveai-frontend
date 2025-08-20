@@ -99,7 +99,12 @@
 
   /* ====== VERIFIED (IG – roseta original) ====== */
   .ig-verified{
-    width:16px; height:16px; display:inline-block; vertical-align:-3px; margin-left:6px;
+    /* escalar con el tamaño de la fuente del usuario (proporcional y nítido) */
+    width:0.95em; height:0.95em;
+    display:inline-block;
+    vertical-align:-0.15em;
+    margin-left:6px;
+    shape-rendering:geometricPrecision;
   }
 
   /* ====== NAV BOTTOM (amplio para toque) ====== */
@@ -299,7 +304,7 @@
 
   <!-- ====== SVGs ====== -->
   <svg style="position:absolute; width:0; height:0; overflow:hidden">
-    <!-- IG Verified: roseta 8 puntas + gradiente radial, sin recortes -->
+    <!-- IG Verified: 8 puntas + gradiente radial, proporción perfecta, sin clipping -->
     <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
       <defs>
         <radialGradient id="metaBlue" cx="50%" cy="40%" r="70%">
@@ -307,10 +312,12 @@
           <stop offset="1" stop-color="#0B65FF"/>
         </radialGradient>
       </defs>
-      <!-- Roseta (márgenes a 1.5/22.5 para evitar clipping) -->
-      <path fill="url(#metaBlue)" d="M22.5 12l-2.1 2.1.3 3.3-3.3.9-1.6 2.9-2.8-1.8-2.8 1.8-1.6-2.9-3.3-.9.3-3.3L1.5 12l2.1-2.1-.3-3.3 3.3-.9L8.2 2.8 11 4.6 13.8 2.8l1.6 2.9 3.3.9-.3 3.3L22.5 12z"/>
-      <!-- Check centrado -->
-      <path fill="#fff" d="M10.1 14.6l-2.3-2.3 1.4-1.4 1.6 1.6 4.2-4.2 1.4 1.4-5.6 5.6z"/>
+      <!-- roseta con márgenes internos para evitar aliasing -->
+      <path fill="url(#metaBlue)"
+        d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
+      <!-- check centrado y balanceado -->
+      <path fill="#fff"
+        d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
 
     <!-- Logos (colores de marca) -->
@@ -430,7 +437,7 @@ function openNetwork(key){
 
 /* ====== VERIFIED SVG helper ====== */
 function verifiedSvg(){
-  return `<svg class="ig-verified" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`;
+  return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`;
 }
 
 /* ====== DATA: CLIENTES ====== */
@@ -523,4 +530,4 @@ farmGrid.innerHTML = devices.map(d => `
 `).join('');
 </script>
 </body>
-</html> 
+</html>
