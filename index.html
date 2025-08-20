@@ -99,12 +99,12 @@
 
   /* ====== VERIFIED (IG – roseta original) ====== */
   .ig-verified{
-    width:1em;                 /* mismo alto que el texto */
-    height:1em;
-    display:inline-block;
-    vertical-align:-0.20em;    /* alineación Safari como IG */
-    margin-left:2px;           /* más pegado al usuario */
-    shape-rendering:geometricPrecision;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: -0.1em; /* Ajuste fino para alinear con el texto */
+    margin-left: 2px; /* Espaciado mínimo pegado al usuario */
+    shape-rendering: geometricPrecision;
   }
 
   /* ====== NAV BOTTOM (amplio para toque) ====== */
@@ -304,7 +304,7 @@
 
   <!-- ====== SVGs ====== -->
   <svg style="position:absolute; width:0; height:0; overflow:hidden">
-    <!-- IG Verified: 8 puntas + gradiente radial, proporción perfecta, sin clipping -->
+    <!-- IG Verified: diseño oficial de Instagram con gradiente radial y check centrado -->
     <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
       <defs>
         <radialGradient id="metaBlue" cx="50%" cy="40%" r="70%">
@@ -312,12 +312,10 @@
           <stop offset="1" stop-color="#0B65FF"/>
         </radialGradient>
       </defs>
-      <!-- roseta con márgenes internos para evitar aliasing -->
-      <path fill="url(#metaBlue)"
-        d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
-      <!-- check centrado y balanceado -->
-      <path fill="#fff"
-        d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
+      <!-- Roseta oficial de Instagram optimizada -->
+      <path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
+      <!-- Check centrado y proporcional al diseño real -->
+      <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
 
     <!-- Logos (colores de marca) -->
@@ -429,7 +427,6 @@ function openNetwork(key){
       <button class="btn primary">Ordenar</button>
     </div>
   `).join('');
-  // Cambiar vista
   Object.values(views).forEach(v=>v.classList.remove('active'));
   views.network.classList.add('active');
   document.querySelectorAll('.nav .item').forEach(i=>i.classList.remove('active'));
@@ -476,7 +473,7 @@ function rowHtml(c,withButton=false){
     <div class="row">
       <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
       <div class="grow">
-        <div class="user">@${c.user}${badge}</div>
+        <div class="user">@${c.user} ${badge}</div>
         <div class="muted">${c.name} · ${c.followers} seguidores</div>
       </div>
       ${withButton? `<a class="chip" href="javascript:void(0)" onclick="openCard('${c.user}')">Ver ficha</a>`: `<span class="muted">Ver ficha</span>`}
@@ -497,7 +494,7 @@ function openCard(user){
   if(!c) return;
   document.getElementById('mAvatar').src = avatars[c.user] || '';
   document.getElementById('mAvatar').onerror = function(){ this.style.background='#2a3442'; this.removeAttribute('src'); };
-  document.getElementById('mUser').innerHTML = `@${c.user}${c.verified?verifiedSvg():''}`;
+  document.getElementById('mUser').innerHTML = `@${c.user} ${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent = c.name;
   document.getElementById('mPosts').textContent = c.posts;
   document.getElementById('mFollowers').textContent = c.followers;
