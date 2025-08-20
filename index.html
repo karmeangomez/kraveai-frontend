@@ -143,11 +143,18 @@
   /* ====== FOOTER BADGE (glow persistente) ====== */
   .credit{
     position:fixed; left:50%; transform:translateX(-50%);
-    bottom:64px; z-index:61;
+    bottom:calc(var(--nav-h, 64px) + env(safe-area-inset-bottom) + 10px);
+    z-index:61;
     padding:8px 14px; border-radius:999px; font-size:12px; color:#fff;
     background:rgba(41,178,255,.12); border:1px solid rgba(41,178,255,.35);
     box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
     backdrop-filter: blur(6px);
+    pointer-events:none;                 /* <-- no tapa la barra */
+    animation:pulse-glow 2.8s ease-in-out infinite;
+  }
+  @keyframes pulse-glow{
+    0%,100%{ box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22); }
+    50%   { box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30); }
   }
 
   /* ====== MODAL FICHA CLIENTE ====== */
@@ -249,9 +256,7 @@
 
     <!-- Network (pantallas propias) -->
     <section id="view-network" class="view">
-      <div class="back" onclick="goHome()">
-        ← Atrás
-      </div>
+      <div class="back" onclick="goHome()">← Atrás</div>
       <h1 id="networkTitle">Servicios</h1>
       <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
       <div class="svc-grid" id="networkServices"></div>
@@ -294,19 +299,21 @@
 
   <!-- ====== SVGs ====== -->
   <svg style="position:absolute; width:0; height:0; overflow:hidden">
-    <!-- IG Verified: roseta/estrellado (no se recorta) -->
+    <!-- IG Verified: roseta oficial con margen para evitar recortes -->
     <symbol id="igVerified" viewBox="0 0 24 24">
       <defs>
-        <radialGradient id="metaBlue" cx="50%" cy="40%" r="75%">
+        <radialGradient id="metaBlue" cx="50%" cy="35%" r="70%">
           <stop offset="0" stop-color="#67B7FF"/>
           <stop offset="1" stop-color="#0B65FF"/>
         </radialGradient>
       </defs>
-      <!-- Roseta (8 puntas suavizadas, dentro del 24x24) -->
-      <path fill="url(#metaBlue)"
-            d="M23 12l-2.12 2.12.3 3.27-3.2.93-1.57 2.88-2.65-1.7-2.65 1.7-1.57-2.88-3.2-.93.3-3.27L1 12l2.12-2.12-.3-3.27 3.2-.93L7.59 2.8l2.65 1.7 2.65-1.7 1.57 2.88 3.2.93-.3 3.27L23 12z"/>
-      <!-- Check -->
-      <path fill="#fff" d="M10.1 14.9l-2.5-2.5a1.1 1.1 0 1 1 1.6-1.6l1.7 1.7 4.6-4.6a1.1 1.1 0 0 1 1.6 1.6l-5.4 5.4a1.1 1.1 0 0 1-1.6 0z"/>
+      <g transform="translate(1.2 1.2) scale(0.9)">
+        <!-- Roseta 8 puntas -->
+        <path fill="url(#metaBlue)"
+          d="M23 12l-2.12 2.12.3 3.27-3.2.93-1.57 2.88-2.65-1.7-2.65 1.7-1.57-2.88-3.2-.93.3-3.27L1 12l2.12-2.12-.3-3.27 3.2-.93L7.59 2.8l2.65 1.7 2.65-1.7 1.57 2.88 3.2.93-.3 3.27L23 12z"/>
+        <!-- Check -->
+        <path fill="#fff" d="M10.2 14.8l-2.4-2.4a1 1 0 1 1 1.4-1.4l1.7 1.7 4.5-4.5a1 1 0 0 1 1.4 1.4l-5.2 5.2a1 1 0 0 1-1.4 0z"/>
+      </g>
     </symbol>
 
     <!-- Logos (colores de marca) -->
@@ -358,6 +365,15 @@ function goHome(){
   document.querySelectorAll('.nav .item').forEach(i=>i.classList.remove('active'));
   document.querySelector('.nav [data-go="home"]').classList.add('active');
 }
+
+/* ====== Ajuste dinámico para el badge ====== */
+const navEl = document.querySelector('.nav');
+function setNavHeight(){
+  document.documentElement.style.setProperty('--nav-h', navEl.offsetHeight + 'px');
+}
+setNavHeight();
+addEventListener('resize', setNavHeight);
+addEventListener('orientationchange', setNavHeight);
 
 /* ====== DATA: REDES ====== */
 const networks = [
@@ -417,7 +433,7 @@ function openNetwork(key){
 
 /* ====== VERIFIED SVG helper ====== */
 function verifiedSvg(){
-  return `<svg class="ig-verified"><use href="#igVerified"></use></svg>`;
+  return `<svg class="ig-verified" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`;
 }
 
 /* ====== DATA: CLIENTES ====== */
@@ -426,7 +442,7 @@ const clients = [
   {user:'televisadigital',   name:'Televisa Digital',                   followers:'246K', posts:'5,779', following:'617', verified:true},
   {user:'joscanela',         name:'Jos Canela',                         followers:'722K', posts:'63',   following:'425',  verified:true},
   {user:'jimenagallegotv',   name:'Jimena Gállego',                     followers:'544K', posts:'3,328',following:'1,608',verified:true},
-  {user:'elmalilla_',        name:'MALI EL MALILLAA!!🇲🇽',                 followers:'3.6M', posts:'675',  following:'2,006',verified:true},
+  {user:'elmalilla_',        name:'MALI EL MALILLAA!!🇲🇽',              followers:'3.6M', posts:'675',  following:'2,006',verified:true},
   {user:'mariobautista',     name:'Mario Bautista (MB)',                followers:'6.7M', posts:'515',  following:'3,371',verified:true},
   {user:'aldotdenigris',     name:'Aldo Tamez De Nigris',               followers:'1.5M', posts:'607',  following:'2,748',verified:true},
   {user:'sonymusiclatin',    name:'Sony Music Latin',                   followers:'1.1M', posts:'43.3K',following:'535',  verified:true},
@@ -437,7 +453,7 @@ const clients = [
   {user:'diegodeericemx',    name:'Diego de Erice',                     followers:'551K', posts:'2,039',following:'682',  verified:true}
 ];
 
-/* (Opcional) si tienes las fotos reales, coloca aquí las URLs por usuario */
+/* (Opcional) avatares reales */
 const avatars = {};
 
 /* ====== RENDER: HOME (recientes) ====== */
