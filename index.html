@@ -852,38 +852,53 @@ farmGrid.innerHTML = devices.map(d => `
 `).join('');
 
 /* ====== MODO BESTIA ====== */
+let beastCanvas = null;
 function activateBeastMode(event) {
   const beastCard = event.currentTarget;
+  if (beastCard.classList.contains('beast-mode-active')) return;
+
   beastCard.classList.add('beast-mode-active');
   const radial = document.createElement('div');
   radial.classList.add('radial-effect');
   beastCard.appendChild(radial);
-  const canvas = document.createElement('canvas');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  canvas.style.position = 'absolute';
-  canvas.style.top = 0;
-  canvas.style.left = 0;
-  canvas.style.zIndex = 99;
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
+
+  if (!beastCanvas) {
+    beastCanvas = document.createElement('canvas');
+    beastCanvas.width = window.innerWidth;
+    beastCanvas.height = window.innerHeight;
+    beastCanvas.style.position = 'absolute';
+    beastCanvas.style.top = 0;
+    beastCanvas.style.left = 0;
+    beastCanvas.style.zIndex = 99;
+    beastCanvas.style.pointerEvents = 'none'; // Evitar interferencias
+    document.body.appendChild(beastCanvas);
+  }
+
+  const ctx = beastCanvas.getContext('2d');
+  let particlesActive = true;
+
   function drawParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!particlesActive) return;
+    ctx.clearRect(0, 0, beastCanvas.width, beastCanvas.height);
     for (let i = 0; i < 20; i++) {
-      const x = beastCard.getBoundingClientRect().left + beastCard.offsetWidth / 2;
-      const y = beastCard.getBoundingClientRect().top + beastCard.offsetHeight / 2;
+      const rect = beastCard.getBoundingClientRect();
+      const x = rect.left + beastCard.offsetWidth / 2;
+      const y = rect.top + beastCard.offsetHeight / 2;
       ctx.beginPath();
       ctx.arc(x + (Math.random() - 0.5) * 100, y + (Math.random() - 0.5) * 100, 2, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(255, 0, 0, ${0.5 - i * 0.025})`;
       ctx.fill();
     }
-    if (beastCard.classList.contains('beast-mode-active')) requestAnimationFrame(drawParticles);
+    requestAnimationFrame(drawParticles);
   }
+
   drawParticles();
+
   setTimeout(() => {
     beastCard.classList.remove('beast-mode-active');
     radial.remove();
-    canvas.remove();
+    particlesActive = false; // Detener las partículas sin eliminar el canvas
+    showToast('Modo Bestia desactivado');
   }, 1000);
 }
 
