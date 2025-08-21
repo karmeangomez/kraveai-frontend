@@ -59,7 +59,7 @@
     border-bottom:1px solid var(--line);
     padding:14px calc(14px + env(safe-area-inset-left, 0px)) calc(14px + env(safe-area-inset-right, 0px));
     display:flex; align-items:center; gap:12px; justify-content:space-between;
-    width: 100vw; /* Usa el ancho completo del viewport */
+    width: 100vw;
     box-sizing: border-box;
   }
   .brand{display:flex; align-items:center; gap:10px; font-weight:800}
@@ -73,16 +73,16 @@
 
   /* ====== LAYOUT ====== */
   .wrap{
-    position: absolute; /* Forzar posición absoluta para llenar pantalla */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 18px calc(14px + env(safe-area-inset-left, 0px)) calc(110px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-right, 0px));
-    width: 100vw; /* Ancho completo del viewport */
-    height: auto; /* Altura dinámica */
+    display: flex; /* Cambio a flex para controlar el espacio */
+    flex-direction: column;
+    min-height: 100vh; /* Asegura que ocupe toda la altura */
+    padding: 10px calc(14px + env(safe-area-inset-left, 0px)) calc(80px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-right, 0px));
+    width: 100vw;
     box-sizing: border-box;
-    overflow-y: auto; /* Scroll vertical si es necesario */
+    overflow-y: auto;
+  }
+  .content-flex{
+    flex: 1 0 auto; /* Permite que el contenido crezca pero no se contraiga demasiado */
   }
   h1{margin:8px 0 0; font-size:28px}
   .sub{color:var(--muted); margin:6px 0 12px; font-size:14px}
@@ -101,23 +101,23 @@
   .card .title{font-weight:700}
 
   /* ====== CLIENTES LIST ====== */
-  .list{display:flex; flex-direction:column; gap:12px}
+  .list{display:flex; flex-direction:column; gap:12px; margin-bottom: 0;} /* Elimina margen inferior */
   .row{
     background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px;
     display:flex; align-items:center; gap:12px;
   }
   .avatar{width:36px; height:36px; border-radius:999px; background:#2a3442; flex:none; overflow:hidden}
-  .row .user{font-weight:700; font-size: 16px;} /* Tamaño base para alinear verificación */
+  .row .user{font-weight:700; font-size:16px;}
   .grow{flex:1}
   .chip{background:var(--chip); color:var(--chip-text); border-radius:999px; padding:6px 10px; font-size:12px}
 
   /* ====== VERIFIED (IG – roseta original) ====== */
   .ig-verified{
-    width: 16px; /* Ajustado al tamaño del texto base (16px) */
-    height: 16px; /* Ajustado al tamaño del texto base */
+    width: 20px; /* Aumentado a 20px para que sea más visible */
+    height: 20px;
     display: inline-block;
-    vertical-align: middle; /* Alineación vertical con el texto */
-    margin-left: 4px; /* Espaciado un poco mayor para legibilidad */
+    vertical-align: middle;
+    margin-left: 4px;
     shape-rendering: geometricPrecision;
   }
 
@@ -128,7 +128,7 @@
     display:flex; gap:10px;
     padding:12px calc(12px + env(safe-area-inset-left, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-right, 0px));
     justify-content:space-around;
-    width: 100vw; /* Ancho completo del viewport */
+    width: 100vw;
     box-sizing: border-box;
   }
   .nav .item{
@@ -191,10 +191,43 @@
   .meta b{color:var(--text)}
   .close{float:right; cursor:pointer; color:var(--muted)}
 
+  /* ====== MODO BESTIA ====== */
+  .beast-mode-card {
+    background: linear-gradient(45deg, #FFD700, #FF4500); /* Dorado a naranja rojizo */
+    border: 1px solid rgba(255, 69, 0, 0.5);
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .2s ease;
+    box-shadow: 0 0 15px #FFD700, inset 0 0 10px #FF4500;
+    animation: beast-glow 3s ease-in-out infinite;
+  }
+  .beast-mode-card:hover { transform: translateY(-1px); box-shadow: 0 0 20px #FFD700; }
+  @keyframes beast-glow {
+    0%, 100% { box-shadow: 0 0 15px #FFD700, inset 0 0 10px #FF4500; }
+    50% { box-shadow: 0 0 25px #FF4500, inset 0 0 15px #FFD700; }
+  }
+  .beast-mode-card .logo-wrap {
+    width: 28px; height: 28px; display: grid; place-items: center;
+  }
+  .beast-mode-card .title { font-weight: 700; color: #fff; text-shadow: 0 0 5px #fff; }
+  .beast-mode-card .beast-icon {
+    width: 24px; height: 24px; fill: #fff;
+  }
+  @keyframes screen-flash {
+    0% { background: rgba(255, 255, 255, 0); }
+    50% { background: rgba(255, 255, 255, 0.8); }
+    100% { background: rgba(255, 255, 255, 0); }
+  }
+  .beast-mode-active { animation: screen-flash 0.5s ease-out; }
+
   /* ====== MEDIA QUERIES PARA MÓVILES ====== */
   @media (max-width: 480px) {
     .wrap {
-      padding: 10px calc(14px + env(safe-area-inset-left, 0px)) calc(110px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-right, 0px));
+      padding: 10px calc(14px + env(safe-area-inset-left, 0px)) calc(80px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-right, 0px));
     }
     .topbar {
       padding-left: calc(14px + env(safe-area-inset-left, 0px));
@@ -205,7 +238,7 @@
       padding-right: calc(12px + env(safe-area-inset-right, 0px));
     }
     .grid {
-      grid-template-columns: repeat(2, 1fr); /* Reduce columnas en pantallas pequeñas */
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>
@@ -237,69 +270,71 @@
 
   <!-- ====== CONTENIDO ====== -->
   <main class="wrap">
-    <!-- Home -->
-    <section id="view-home" class="view active">
-      <h1>Redes sociales</h1>
-      <div class="sub">Domina todas tus redes con IA</div>
+    <div class="content-flex">
+      <!-- Home -->
+      <section id="view-home" class="view active">
+        <h1>Redes sociales</h1>
+        <div class="sub">Domina todas tus redes con IA</div>
 
-      <div class="section-title">Redes</div>
-      <div class="grid" id="socialGrid">
-        <!-- Cards de redes, inyectadas por JS -->
-      </div>
+        <div class="section-title">Redes</div>
+        <div class="grid" id="socialGrid">
+          <!-- Cards de redes, inyectadas por JS -->
+        </div>
 
-      <div class="section-title" style="margin-top:22px">Clientes recientes</div>
-      <div class="list" id="recentList"></div>
+        <div class="section-title" style="margin-top:22px">Clientes recientes</div>
+        <div class="list" id="recentList"></div>
 
-      <div style="display:flex; gap:10px; margin-top:14px">
-        <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
-        <button class="btn primary" onclick="alert('Acción enviada')">Enviar</button>
-      </div>
-    </section>
+        <div style="display:flex; gap:10px; margin-top:14px">
+          <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
+          <button class="btn primary" onclick="alert('Acción enviada')">Enviar</button>
+        </div>
+      </section>
 
-    <!-- Clientes -->
-    <section id="view-clients" class="view">
-      <h1>Clientes</h1>
-      <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:12px 0 16px"/>
-      <div class="list" id="clientsList"></div>
-    </section>
+      <!-- Clientes -->
+      <section id="view-clients" class="view">
+        <h1>Clientes</h1>
+        <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:12px 0 16px"/>
+        <div class="list" id="clientsList"></div>
+      </section>
 
-    <!-- Farm -->
-    <section id="view-farm" class="view">
-      <h1>Device Farm</h1>
-      <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
-      <div class="devices" id="farmGrid"></div>
-    </section>
+      <!-- Farm -->
+      <section id="view-farm" class="view">
+        <h1>Device Farm</h1>
+        <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
+        <div class="devices" id="farmGrid"></div>
+      </section>
 
-    <!-- Cuentas -->
-    <section id="view-accounts" class="view">
-      <h1>Cuentas</h1>
-      <div class="sub">Gestión de sesión y cuentas manuales</div>
-      <div class="stack" style="max-width:560px">
-        <div class="svc">
-          <h4>Iniciar sesión</h4>
-          <input class="input" placeholder="Usuario" />
-          <input class="input" placeholder="Contraseña" type="password"/>
-          <div style="display:flex; gap:10px">
-            <button class="btn primary">Iniciar sesión</button>
-            <button class="btn">Cerrar sesión</button>
+      <!-- Cuentas -->
+      <section id="view-accounts" class="view">
+        <h1>Cuentas</h1>
+        <div class="sub">Gestión de sesión y cuentas manuales</div>
+        <div class="stack" style="max-width:560px">
+          <div class="svc">
+            <h4>Iniciar sesión</h4>
+            <input class="input" placeholder="Usuario" />
+            <input class="input" placeholder="Contraseña" type="password"/>
+            <div style="display:flex; gap:10px">
+              <button class="btn primary">Iniciar sesión</button>
+              <button class="btn">Cerrar sesión</button>
+            </div>
+          </div>
+          <div class="svc">
+            <h4>Agregar cuenta manual</h4>
+            <input class="input" placeholder="@usuario"/>
+            <input class="input" placeholder="Token / Contraseña" type="password"/>
+            <button class="btn primary">Guardar cuenta</button>
           </div>
         </div>
-        <div class="svc">
-          <h4>Agregar cuenta manual</h4>
-          <input class="input" placeholder="@usuario"/>
-          <input class="input" placeholder="Token / Contraseña" type="password"/>
-          <button class="btn primary">Guardar cuenta</button>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Network (pantallas propias) -->
-    <section id="view-network" class="view">
-      <div class="back" onclick="goHome()">← Atrás</div>
-      <h1 id="networkTitle">Servicios</h1>
-      <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
-      <div class="svc-grid" id="networkServices"></div>
-    </section>
+      <!-- Network (pantallas propias) -->
+      <section id="view-network" class="view">
+        <div class="back" onclick="goHome()">← Atrás</div>
+        <h1 id="networkTitle">Servicios</h1>
+        <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
+        <div class="svc-grid" id="networkServices"></div>
+      </section>
+    </div>
   </main>
 
   <!-- Badge con glow -->
@@ -346,10 +381,13 @@
           <stop offset="1" stop-color="#0B65FF"/>
         </radialGradient>
       </defs>
-      <!-- Roseta oficial de Instagram optimizada -->
       <path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
-      <!-- Check centrado y proporcional al diseño real -->
       <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
+    </symbol>
+
+    <!-- Lobo para Modo Bestia -->
+    <symbol id="beastIcon" viewBox="0 0 24 24">
+      <path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/>
     </symbol>
 
     <!-- Logos (colores de marca) -->
@@ -435,14 +473,28 @@ const networks = [
     services:['Vistas de estado','Clicks','Mensajes masivos']}
 ];
 
+// Agregar Modo Bestia
+networks.push({key:'beast-mode', name:'Modo Bestia', icon:'#beastIcon', color:'#FFD700',
+  services:[]}); // Sin servicios por ahora
+
 /* ====== RENDER: GRID REDES ====== */
 const socialGrid = document.getElementById('socialGrid');
-socialGrid.innerHTML = networks.map(n => `
-  <div class="card" onclick="openNetwork('${n.key}')">
-    <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
-    <div class="title">${n.name}</div>
-  </div>
-`).join('');
+socialGrid.innerHTML = networks.map(n => {
+  if (n.key === 'beast-mode') {
+    return `
+      <div class="beast-mode-card" onclick="activateBeastMode()">
+        <div class="logo-wrap"><svg class="beast-icon" viewBox="0 0 24 24"><use href="#beastIcon"></use></svg></div>
+        <div class="title">${n.name}</div>
+      </div>
+    `;
+  }
+  return `
+    <div class="card" onclick="openNetwork('${n.key}')">
+      <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
+      <div class="title">${n.name}</div>
+    </div>
+  `;
+}).join('');
 
 /* ====== VIEW NETWORK ====== */
 const netTitle = document.getElementById('networkTitle');
@@ -493,7 +545,7 @@ const avatars = {};
 
 /* ====== RENDER: HOME (recientes) ====== */
 const recentList = document.getElementById('recentList');
-recentList.innerHTML = clients.slice(0,6).map(c => rowHtml(c)).join('');
+recentList.innerHTML = clients.slice(0,6).map(c => rowHtml(c, true)).join(''); // Añadido true para "Ver ficha"
 
 /* ====== RENDER: CLIENTS (completo) ====== */
 const clientsList = document.getElementById('clientsList');
@@ -559,6 +611,17 @@ farmGrid.innerHTML = devices.map(d => `
     </div>
   </div>
 `).join('');
+
+/* ====== MODO BESTIA ====== */
+function activateBeastMode() {
+  document.body.classList.add('beast-mode-active');
+  const beastCard = document.querySelector('.beast-mode-card');
+  beastCard.style.background = 'linear-gradient(45deg, #FF0000, #FF4500)'; // Rojo al activar
+  setTimeout(() => {
+    document.body.classList.remove('beast-mode-active');
+    beastCard.style.background = 'linear-gradient(45deg, #FFD700, #FF4500)'; // Vuelve al resplandor original
+  }, 500); // Duración del destello
+}
 </script>
 </body>
 </html>
