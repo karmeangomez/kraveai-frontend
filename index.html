@@ -87,7 +87,7 @@
     box-sizing: border-box;
   }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 800 }
-  .brand .name { letter-spacing: .2px }
+  .brand .name { letter-spacing: .2px; text-shadow: 0 0 10px rgba(25, 194, 255, 0.7), 0 0 20px rgba(0, 119, 255, 0.5); }
   .robot { width: 28px; height: 28px; display: block }
   .right-head { display: flex; align-items: center; gap: 12px }
   .pill { font-size: 12px; color: var(--muted); display: flex; gap: 6px; align-items: center }
@@ -122,8 +122,8 @@
     overflow-y: auto;
   }
   .content-flex { flex: 1 0 auto; }
-  h1 { margin: 8px 0 0; font-size: 28px; }
-  .section-title { margin: 22px 0 12px; font-weight: 800; letter-spacing: .4px; }
+  h1 { margin: 8px 0 0; font-size: 28px; text-shadow: 0 0 10px rgba(25, 194, 255, 0.7), 0 0 20px rgba(0, 119, 255, 0.5); }
+  .section-title { margin: 22px 0 12px; font-weight: 800; letter-spacing: .4px; text-shadow: 0 0 8px rgba(25, 194, 255, 0.6), 0 0 15px rgba(0, 119, 255, 0.4); }
 
   /* ====== GRID SOCIAL ====== */
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px }
@@ -138,10 +138,11 @@
     gap: 12px;
     cursor: pointer;
     transition: transform .12s ease, box-shadow .2s ease;
+    box-shadow: 0 0 15px rgba(25, 194, 255, 0.3), inset 0 0 10px rgba(0, 119, 255, 0.2);
   }
-  .card:hover { transform: translateY(-1px) }
+  .card:hover { transform: translateY(-1px); box-shadow: 0 0 20px rgba(25, 194, 255, 0.5), inset 0 0 15px rgba(0, 119, 255, 0.3); }
   .logo-wrap { width: 28px; height: 28px; display: grid; place-items: center }
-  .card .title { font-weight: 700 }
+  .card .title { font-weight: 700; text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
 
   /* ====== CLIENTES LIST ====== */
   .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 0; }
@@ -153,7 +154,10 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    transition: transform .12s ease, box-shadow .2s ease;
+    box-shadow: 0 0 10px rgba(25, 194, 255, 0.2);
   }
+  .row:hover { transform: translateY(-1px); box-shadow: 0 0 15px rgba(25, 194, 255, 0.4); }
   .avatar { width: 36px; height: 36px; border-radius: 999px; background: #2a3442; flex: none; overflow: hidden }
   .row .user { font-weight: 700; font-size: 16px; }
   .grow { flex: 1 }
@@ -184,6 +188,7 @@
     justify-content: space-around;
     width: 100vw;
     box-sizing: border-box;
+    box-shadow: 0 0 20px rgba(25, 194, 255, 0.3);
   }
   .nav .item {
     flex: 1;
@@ -196,25 +201,29 @@
     min-height: 48px;
     line-height: 1;
     -webkit-tap-highlight-color: transparent;
+    transition: color .2s ease, background .2s ease;
   }
-  .nav .item.active { color: var(--text); background: rgba(255, 255, 255, .02); border: 1px solid var(--line); }
+  .nav .item.active { color: var(--text); background: rgba(255, 255, 255, .02); border: 1px solid var(--line); text-shadow: 0 0 5px rgba(25, 194, 255, 0.7); }
 
   /* ====== VISTAS ====== */
   .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   /* ====== NETWORK VIEW ====== */
-  .back { margin: 6px 0 16px; display: inline-flex; gap: 8px; align-items: center; color: var(--muted); cursor: pointer }
+  .back { margin: 6px 0 16px; display: inline-flex; gap: 8px; align-items: center; color: var(--muted); cursor: pointer; transition: color .2s ease; }
+  .back:hover { color: var(--text); }
   .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px }
   @media (min-width: 860px) { .svc-grid { grid-template-columns: repeat(3, 1fr) } }
-  .svc { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px }
-  .svc h4 { margin: 0 0 10px; font-size: 14px }
+  .svc { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 0 10px rgba(25, 194, 255, 0.2); }
+  .svc h4 { margin: 0 0 10px; font-size: 14px; text-shadow: 0 0 5px rgba(255, 255, 255, 0.6); }
   .svc .input { margin: 6px 0 }
   .svc .btn { width: 100%; margin-top: 8px }
 
   /* ====== FARM ====== */
   .devices { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px }
   @media (min-width: 820px) { .devices { grid-template-columns: repeat(3, 1fr) } }
-  .device { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px }
+  .device { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; box-shadow: 0 0 10px rgba(25, 194, 255, 0.2); }
   .device .thumb { height: 86px; border-radius: 10px; background: #0b1220; border: 1px dashed var(--line); margin-bottom: 10px }
   .device .btn { width: 48% }
 
@@ -246,19 +255,22 @@
 
   /* ====== MODAL FICHA CLIENTE ====== */
   .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, .55); display: none; align-items: center; justify-content: center; z-index: 70 }
-  .modal.show { display: flex }
+  .modal.show { display: flex; animation: fadeInModal 0.3s ease-in; }
+  @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
   .sheet {
     width: min(560px, 92vw);
     background: var(--card-2);
     border: 1px solid var(--line);
     border-radius: 16px;
     padding: 16px;
+    box-shadow: 0 0 20px rgba(25, 194, 255, 0.3);
   }
   .sheet .top { display: flex; gap: 12px; align-items: center }
   .sheet .top .avatar { width: 56px; height: 56px }
   .meta { display: flex; gap: 14px; margin-top: 6px; color: var(--muted); font-size: 12px }
   .meta b { color: var(--text) }
-  .close { float: right; cursor: pointer; color: var(--muted) }
+  .close { float: right; cursor: pointer; color: var(--muted); transition: color .2s ease; }
+  .close:hover { color: var(--text); }
 
   /* ====== MODO BESTIA ====== */
   .beast-mode-card {
@@ -271,10 +283,11 @@
     gap: 12px;
     cursor: pointer;
     transition: transform .12s ease, box-shadow .2s ease;
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.5), inset 0 0 15px rgba(255, 69, 0, 0.3);
   }
-  .beast-mode-card:hover { transform: translateY(-1px) }
+  .beast-mode-card:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(255, 69, 0, 0.7), inset 0 0 20px rgba(255, 69, 0, 0.4); }
   .beast-mode-card .logo-wrap { width: 28px; height: 28px; display: grid; place-items: center }
-  .beast-mode-card .title { font-weight: 700; color: #fff }
+  .beast-mode-card .title { font-weight: 700; color: #fff; text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
   .beast-mode-card .beast-icon { width: 24px; height: 24px; fill: #fff }
 
   /* ====== LOADING SPINNER ====== */
@@ -311,6 +324,20 @@
   }
   @keyframes slide-up { from { bottom: -50px; } to { bottom: calc(var(--nav-h, 64px) + 80px); } }
   @keyframes fade-out { to { opacity: 0; } }
+
+  /* ====== BACKGROUND 3D ====== */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(25, 194, 255, 0.05) 0%, rgba(0, 119, 255, 0.02) 70%, transparent 100%);
+    z-index: -1;
+    animation: rotate 20s linear infinite;
+  }
+  @keyframes rotate { 100% { transform: rotate(360deg); } }
 
   /* ====== MEDIA QUERIES ====== */
   @media (max-width: 480px) {
@@ -680,7 +707,7 @@ farmGrid.innerHTML = devices.map(d => `
 /* ====== MODO BESTIA ====== */
 function activateBeastMode() {
   const beastCard = document.querySelector('.beast-mode-card');
-  beastCard.style.background = '#FF4500'; // Cambio simple a un color naranja intenso
+  beastCard.style.background = '#FF4500'; // Cambio a naranja sin partículas
   showToast('Modo Bestia activado');
   setTimeout(() => {
     beastCard.style.background = 'linear-gradient(45deg, var(--accent), var(--brand))';
