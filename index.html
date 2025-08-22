@@ -209,7 +209,7 @@
     height: 1.1em;
     display: inline-block;
     vertical-align: -0.15em;
-    margin-left: 2px;
+    margin-left: 2px; /* pegadito al texto */
     shape-rendering: geometricPrecision;
   }
 
@@ -275,56 +275,7 @@
   .svc .input { margin: 6px 0 }
   .svc .btn { width: 100%; margin-top: 8px }
 
-  /* ====== FARM ====== */
-  .devices { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px }
-  @media (min-width: 820px) { .devices { grid-template-columns: repeat(3, 1fr) } }
-  .device { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px }
-  .device .thumb { height: 86px; border-radius: 10px; background: #0b1220; border: 1px dashed var(--line); margin-bottom: 10px }
-  .device .btn { width: 48% }
-
-  /* ====== CUENTAS ====== */
-  .stack { display: flex; flex-direction: column; gap: 10px }
-
-  /* ====== FOOTER BADGE ====== */
-  .credit {
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 10px);
-    z-index: 61;
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    color: #fff;
-    background: rgba(41, 178, 255, .12);
-    border: 1px solid rgba(41, 178, 255, .35);
-    box-shadow: 0 0 30px 6px rgba(41, 178, 255, .35), inset 0 0 24px rgba(41, 178, 255, .25);
-    backdrop-filter: blur(6px);
-    pointer-events: none;
-    animation: pulse-glow 2.8s ease-in-out infinite;
-  }
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 26px 5px rgba(41, 178, 255, .32), inset 0 0 22px rgba(41, 178, 255, .22); }
-    50% { box-shadow: 0 0 42px 10px rgba(41, 178, 255, .55), inset 0 0 28px rgba(41, 178, 255, .30); }
-  }
-
-  /* ====== MODAL FICHA CLIENTE ====== */
-  .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, .55); display: none; align-items: center; justify-content: center; z-index: 70 }
-  .modal.show { display: flex }
-  .sheet {
-    width: min(560px, 92vw);
-    background: var(--card-2);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 16px;
-  }
-  .sheet .top { display: flex; gap: 12px; align-items: center }
-  .sheet .top .avatar { width: 56px; height: 56px }
-  .meta { display: flex; gap: 14px; margin-top: 6px; color: var(--muted); font-size: 12px }
-  .meta b { color: var(--text) }
-  .close { float: right; cursor: pointer; color: var(--muted) }
-
-  /* ====== MODO BESTIA ====== */
+  /* ====== MODO BESTIA (efectos restaurados) ====== */
   .beast-mode-card {
     background: linear-gradient(45deg, var(--accent), var(--brand));
     border: 1px solid rgba(25, 194, 255, 0.5);
@@ -340,17 +291,41 @@
     position: relative;
     text-shadow: 0 0 8px var(--brand), 0 0 16px var(--accent);
   }
-  .beast-mode-card:hover {
-    transform: translateY(-1px) scale(1.05);
-    box-shadow: 0 0 30px var(--brand), 0 0 50px var(--accent);
-  }
-  @keyframes beast-glow {
-    0%, 100% { box-shadow: 0 0 15px var(--brand), inset 0 0 10px var(--accent); }
-    50% { box-shadow: 0 0 25px var(--accent), inset 0 0 15px var(--brand); }
-  }
+  .beast-mode-card:hover { transform: translateY(-1px) scale(1.05); box-shadow: 0 0 30px var(--brand), 0 0 50px var(--accent); }
+  @keyframes beast-glow { 0%,100%{box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent);} 50%{box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--brand);} }
   .beast-mode-card .logo-wrap { width: 28px; height: 28px; display: grid; place-items: center; }
   .beast-mode-card .title { font-weight: 700; color: #fff; text-shadow: 0 0 5px #fff; }
   .beast-mode-card .beast-icon { width: 24px; height: 24px; fill: #fff; }
+
+  /* 🔥 Flash radial restaurado */
+  @keyframes radial-flash { 0% { transform: scale(0); opacity: .8; } 100% { transform: scale(20); opacity: 0; } }
+  .radial-effect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 0, 0, 0.3);
+    border-radius: 50%;
+    animation: radial-flash 1s ease-out forwards;
+    pointer-events: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* 🌀 Vórtice restaurado */
+  @keyframes vortex { 100% { transform: rotate(360deg); } }
+  .beast-mode-card::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #ff00ff 0%, transparent 70%);
+    animation: vortex 1s linear;
+    opacity: 0;
+    z-index: -1;
+  }
+  .beast-mode-active::after { opacity: 1; }
+  .beast-mode-active { background: #FF0000; }
 
   /* ====== BACKGROUND 3D ====== */
   .background-3d {
@@ -363,18 +338,8 @@
     z-index: -1;
     overflow: hidden;
   }
-  .node {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: var(--brand);
-    border-radius: 50%;
-    animation: float 15s infinite linear;
-  }
-  @keyframes float {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(50vw, 50vh); }
-  }
+  .node { position: absolute; width: 4px; height: 4px; background: var(--brand); border-radius: 50%; animation: float 15s infinite linear; }
+  @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50vw, 50vh); } }
 
   /* ====== LOADING SPINNER ====== */
   .spinner {
@@ -430,13 +395,7 @@
   .dashboard.active { display: block; }
   .dashboard h4 { margin: 0 0 8px; font-size: 14px; }
   .dashboard .stat { color: var(--muted); font-size: 12px; }
-  .dashboard .close {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    cursor: pointer;
-    color: var(--muted);
-  }
+  .dashboard .close { position: absolute; top: 5px; right: 10px; cursor: pointer; color: var(--muted); }
 
   /* ====== GLITCH EFFECT ====== */
   body::after {
@@ -612,9 +571,7 @@
       <path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
       <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
-    <symbol id="beastIcon" viewBox="0 0 24 24">
-      <path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/>
-    </symbol>
+    <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
     <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
     <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
     <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
@@ -656,7 +613,7 @@ themeToggle.onclick = (e) => {
   e.currentTarget.appendChild(menu);
 };
 
-/* ====== NAV (sin desaparecer vistas) ====== */
+/* ====== NAV ====== */
 const views = {
   home: document.getElementById('view-home'),
   clients: document.getElementById('view-clients'),
@@ -703,7 +660,7 @@ const networks = [
   { key: 'threads', name: 'Threads', icon: '#threads', color: '#000000', services: ['Likes', 'Respuestas', 'Seguidores', 'Vistas', 'Reposts'] },
   { key: 'x', name: 'X', icon: '#x', color: '#ffffff', services: ['Likes', 'Respuestas', 'Seguidores', 'Vistas', 'Reposts', 'Citas'] },
   { key: 'facebook', name: 'Facebook', icon: '#fb', color: '#1877F2', services: ['Likes', 'Comentarios', 'Seguidores/Página', 'Vistas', 'Compartidos', 'Live Views'] },
-  { key: 'linkedin', name: 'LinkedIn', icon: '#li', color: '#0A66C2', services: ['Reacciones', 'Comentarios', 'Seguidores', 'Vistas', 'Compartidos'] },
+  { key: 'linkedin', name: 'LinkedIn', icon: '#li', color: #0A66C2, services: ['Reacciones', 'Comentarios', 'Seguidores', 'Vistas', 'Compartidos'] },
   { key: 'spotify', name: 'Spotify', icon: '#sp', color: '#1DB954', services: ['Streams', 'Saves', 'Oyentes mensuales', 'Playlist adds'] },
   { key: 'telegram', name: 'Telegram', icon: '#tg', color: '#229ED9', services: ['Miembros', 'Vistas post', 'Forwards/Repost'] },
   { key: 'whatsapp', name: 'WhatsApp', icon: '#wa', color: '#25D366', services: ['Vistas de estado', 'Clicks', 'Mensajes masivos'] },
@@ -795,7 +752,7 @@ const totalFollowers = clients.reduce((sum, c) => {
 summary.textContent = `Total seguidores: ${totalFollowers.toLocaleString()}`;
 recentList.after(summary);
 
-/* ====== CLIENTES (TARJETAS) ====== */
+/* ====== CLIENTES (tarjetas responsivas + botón Abrir Instagram) ====== */
 const clientsGrid = document.getElementById('clientsGrid');
 
 function cardHtml(c) {
@@ -808,6 +765,7 @@ function cardHtml(c) {
         <div class="muted">${c.name}</div>
         <div class="muted" style="font-size:12px">${c.followers} seguidores · ${c.posts} posts</div>
       </div>
+      <a class="btn ghost" href="https://instagram.com/${c.user}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Abrir Instagram</a>
       <span class="chip">Ver ficha</span>
     </div>
   `;
@@ -820,7 +778,7 @@ function paintClientsGrid(arr) {
 }
 paintClientsGrid(clients);
 
-/* ====== BUSCADOR CLIENTES (filtra SOLO tarjetas) ====== */
+/* ====== BUSCADOR CLIENTES ====== */
 document.getElementById('clientSearch').addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
   const filtered = clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q));
@@ -866,7 +824,7 @@ farmGrid.innerHTML = devices.map(d => `
   </div>
 `).join('');
 
-/* ====== MODO BESTIA ====== */
+/* ====== MODO BESTIA (flash + vórtice + partículas) ====== */
 let beastCanvas = null;
 let beastRAF = null;
 function activateBeastMode(event) {
@@ -882,9 +840,7 @@ function activateBeastMode(event) {
     beastCanvas = document.createElement('canvas');
     beastCanvas.width = window.innerWidth;
     beastCanvas.height = window.innerHeight;
-    Object.assign(beastCanvas.style, {
-      position:'absolute', top:0, left:0, zIndex:99, pointerEvents:'none'
-    });
+    Object.assign(beastCanvas.style, { position:'absolute', top:0, left:0, zIndex:99, pointerEvents:'none' });
     document.body.appendChild(beastCanvas);
   }
 
@@ -908,11 +864,8 @@ function activateBeastMode(event) {
       ctx.fillStyle = `rgba(255,0,0,${1 - elapsed/1000})`;
       ctx.fill();
     }
-    if (elapsed < 900) {
-      beastRAF = requestAnimationFrame(drawParticles);
-    } else {
-      cleanupParticles();
-    }
+    if (elapsed < 900) beastRAF = requestAnimationFrame(drawParticles);
+    else cleanupParticles();
   }
   function cleanupParticles() {
     if (beastRAF) cancelAnimationFrame(beastRAF);
