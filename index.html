@@ -182,6 +182,22 @@
   .grow { flex: 1 }
   .chip { background: var(--chip); color: var(--chip-text); border-radius: 999px; padding: 6px 10px; font-size: 12px }
 
+  /* ====== CLIENT CARD (NUEVO, solo para vista Clientes) ====== */
+  .client-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .client-card.visible { opacity: 1; transform: translateY(0); }
+  .client-card .avatar { width: 44px; height: 44px; border-radius: 999px; }
+
   /* ====== VERIFIED ====== */
   .ig-verified {
     width: 16px;
@@ -522,6 +538,9 @@
       <section id="view-clients" class="view">
         <h1>Clientes</h1>
         <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin: 12px 0 16px"/>
+        <!-- NUEVO: tarjetas de clientes -->
+        <div class="grid" id="clientsGrid" style="margin-bottom:12px"></div>
+        <!-- Lista en filas (ya existente) -->
         <div class="list" id="clientsList"></div>
       </section>
 
@@ -663,7 +682,7 @@ themeToggle.onclick = (e) => {
   e.currentTarget.appendChild(menu);
 };
 
-/* ====== NAV (arreglado: sin desaparecer vistas) ====== */
+/* ====== NAV ====== */
 const views = {
   home: document.getElementById('view-home'),
   clients: document.getElementById('view-clients'),
@@ -737,7 +756,7 @@ socialGrid.innerHTML = networks.map(n => {
 }).join('');
 setTimeout(() => socialGrid.querySelectorAll('.card').forEach(el => el.classList.add('visible')), 100);
 
-/* ====== VIEW NETWORK (usa showView) ====== */
+/* ====== VIEW NETWORK ====== */
 const netTitle = document.getElementById('networkTitle');
 const netSub = document.getElementById('networkSub');
 const netServices = document.getElementById('networkServices');
@@ -795,8 +814,7 @@ recentList.after(summary);
 
 /* ====== RENDER: CLIENTES (vista Clientes) ====== */
 const clientsList = document.getElementById('clientsList');
-function paintClients(arr) { clientsList.innerHTML = arr.map(c => rowHtml(c, true)).join(''); }
-paintClients(clients);
+const clientsGrid = document.getElementById('clientsGrid');
 
 function rowHtml(c, withButton = false) {
   const badge = c.verified ? verifiedSvg() : '';
@@ -813,10 +831,41 @@ function rowHtml(c, withButton = false) {
   `;
 }
 
+/* NUEVO: tarjeta estilo grid */
+function cardHtml(c) {
+  const badge = c.verified ? verifiedSvg() : '';
+  const avatarUrl = avatars[c.user] || '';
+  return `
+    <div class="client-card" onclick="openCard('${c.user}')">
+      <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+      <div class="grow">
+        <div style="font-weight:800">@${c.user} ${badge}</div>
+        <div class="muted">${c.name}</div>
+        <div class="muted" style="font-size:12px">${c.followers} seguidores · ${c.posts} posts</div>
+      </div>
+      <span class="chip">Ver ficha</span>
+    </div>
+  `;
+}
+
+function paintClients(arr) {
+  clientsList.innerHTML = arr.map(c => rowHtml(c, true)).join('');
+  setTimeout(() => clientsList.querySelectorAll('.row').forEach(el => el.classList.add('visible')), 50);
+}
+function paintClientsGrid(arr) {
+  clientsGrid.innerHTML = arr.map(cardHtml).join('');
+  setTimeout(() => clientsGrid.querySelectorAll('.client-card').forEach(el => el.classList.add('visible')), 50);
+}
+
+paintClients(clients);
+paintClientsGrid(clients);
+
 /* ====== BUSCADOR CLIENTES ====== */
 document.getElementById('clientSearch').addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
-  paintClients(clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)));
+  const filtered = clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q));
+  paintClients(filtered);
+  paintClientsGrid(filtered);
 });
 
 /* ====== MODAL FICHA ====== */
@@ -858,7 +907,7 @@ farmGrid.innerHTML = devices.map(d => `
   </div>
 `).join('');
 
-/* ====== MODO BESTIA (limpieza de partículas) ====== */
+/* ====== MODO BESTIA ====== */
 let beastCanvas = null;
 let beastRAF = null;
 function activateBeastMode(event) {
