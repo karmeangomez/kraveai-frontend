@@ -162,7 +162,7 @@
   .logo-wrap { width: 28px; height: 28px; display: grid; place-items: center }
   .card .title { font-weight: 700 }
 
-  /* ====== CLIENTES LIST ====== */
+  /* ====== CLIENTES LIST (home recientes) ====== */
   .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 0; }
   .row {
     background: var(--card);
@@ -182,7 +182,12 @@
   .grow { flex: 1 }
   .chip { background: var(--chip); color: var(--chip-text); border-radius: 999px; padding: 6px 10px; font-size: 12px }
 
-  /* ====== CLIENT CARD (NUEVO, solo para vista Clientes) ====== */
+  /* ====== CLIENT CARD (VISTA CLIENTES) ====== */
+  .clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
   .client-card {
     background: var(--card);
     border: 1px solid var(--line);
@@ -198,13 +203,13 @@
   .client-card.visible { opacity: 1; transform: translateY(0); }
   .client-card .avatar { width: 44px; height: 44px; border-radius: 999px; }
 
-  /* ====== VERIFIED ====== */
+  /* ====== VERIFIED (más grande y más cerca del @usuario en TODAS las vistas) ====== */
   .ig-verified {
-    width: 16px;
-    height: 16px;
+    width: 1.1em;
+    height: 1.1em;
     display: inline-block;
-    vertical-align: -3px;
-    margin-left: 4px;
+    vertical-align: -0.15em;
+    margin-left: 2px;
     shape-rendering: geometricPrecision;
   }
 
@@ -346,35 +351,6 @@
   .beast-mode-card .logo-wrap { width: 28px; height: 28px; display: grid; place-items: center; }
   .beast-mode-card .title { font-weight: 700; color: #fff; text-shadow: 0 0 5px #fff; }
   .beast-mode-card .beast-icon { width: 24px; height: 24px; fill: #fff; }
-  @keyframes radial-flash {
-    0% { transform: scale(0); opacity: 0.8; }
-    100% { transform: scale(20); opacity: 0; }
-  }
-  .radial-effect {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 0, 0, 0.3);
-    border-radius: 50%;
-    animation: radial-flash 1s ease-out forwards;
-    pointer-events: none;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .beast-mode-card::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, #ff00ff 0%, transparent 70%);
-    animation: vortex 1s linear;
-    opacity: 0;
-    z-index: -1;
-  }
-  .beast-mode-active::after { opacity: 1; }
-  @keyframes vortex { 100% { transform: rotate(360deg); } }
-  .beast-mode-active { background: #FF0000; }
 
   /* ====== BACKGROUND 3D ====== */
   .background-3d {
@@ -448,8 +424,8 @@
     padding: 20px;
     z-index: 100;
     display: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
   .dashboard.active { display: block; }
   .dashboard h4 { margin: 0 0 8px; font-size: 14px; }
@@ -538,10 +514,8 @@
       <section id="view-clients" class="view">
         <h1>Clientes</h1>
         <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin: 12px 0 16px"/>
-        <!-- NUEVO: tarjetas de clientes -->
-        <div class="grid" id="clientsGrid" style="margin-bottom:12px"></div>
-        <!-- Lista en filas (ya existente) -->
-        <div class="list" id="clientsList"></div>
+        <!-- SOLO TARJETAS (responsivo) -->
+        <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
       </section>
 
       <!-- Farm -->
@@ -682,7 +656,7 @@ themeToggle.onclick = (e) => {
   e.currentTarget.appendChild(menu);
 };
 
-/* ====== NAV ====== */
+/* ====== NAV (sin desaparecer vistas) ====== */
 const views = {
   home: document.getElementById('view-home'),
   clients: document.getElementById('view-clients'),
@@ -798,9 +772,18 @@ const clients = [
 ];
 const avatars = {};
 
-/* ====== RENDER: HOME (recientes) ====== */
+/* ====== HOME: Clientes recientes (lista) ====== */
 const recentList = document.getElementById('recentList');
-recentList.innerHTML = clients.slice(0, 12).map(c => rowHtml(c, true)).join('');
+recentList.innerHTML = clients.slice(0, 12).map(c => `
+  <div class="row">
+    <img class="avatar" alt="" src="${avatars[c.user] || ''}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+    <div class="grow">
+      <div class="user">@${c.user} ${c.verified ? verifiedSvg() : ''}</div>
+      <div class="muted">${c.name} · ${c.followers} seguidores</div>
+    </div>
+    <a class="chip" href="javascript:void(0)" onclick="openCard('${c.user}')">Ver ficha</a>
+  </div>
+`).join('');
 setTimeout(() => recentList.querySelectorAll('.row').forEach(el => el.classList.add('visible')), 100);
 const summary = document.createElement('div');
 summary.className = 'summary';
@@ -812,34 +795,16 @@ const totalFollowers = clients.reduce((sum, c) => {
 summary.textContent = `Total seguidores: ${totalFollowers.toLocaleString()}`;
 recentList.after(summary);
 
-/* ====== RENDER: CLIENTES (vista Clientes) ====== */
-const clientsList = document.getElementById('clientsList');
+/* ====== CLIENTES (TARJETAS) ====== */
 const clientsGrid = document.getElementById('clientsGrid');
 
-function rowHtml(c, withButton = false) {
-  const badge = c.verified ? verifiedSvg() : '';
-  const avatarUrl = avatars[c.user] || '';
-  return `
-    <div class="row">
-      <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
-      <div class="grow">
-        <div class="user">@${c.user} ${badge}</div>
-        <div class="muted">${c.name} · ${c.followers} seguidores</div>
-      </div>
-      ${withButton ? `<a class="chip" href="javascript:void(0)" onclick="openCard('${c.user}')">Ver ficha</a>` : `<span class="muted">Ver ficha</span>`}
-    </div>
-  `;
-}
-
-/* NUEVO: tarjeta estilo grid */
 function cardHtml(c) {
-  const badge = c.verified ? verifiedSvg() : '';
   const avatarUrl = avatars[c.user] || '';
   return `
     <div class="client-card" onclick="openCard('${c.user}')">
       <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
       <div class="grow">
-        <div style="font-weight:800">@${c.user} ${badge}</div>
+        <div style="font-weight:800">@${c.user} ${c.verified ? verifiedSvg() : ''}</div>
         <div class="muted">${c.name}</div>
         <div class="muted" style="font-size:12px">${c.followers} seguidores · ${c.posts} posts</div>
       </div>
@@ -847,24 +812,18 @@ function cardHtml(c) {
     </div>
   `;
 }
-
-function paintClients(arr) {
-  clientsList.innerHTML = arr.map(c => rowHtml(c, true)).join('');
-  setTimeout(() => clientsList.querySelectorAll('.row').forEach(el => el.classList.add('visible')), 50);
-}
 function paintClientsGrid(arr) {
   clientsGrid.innerHTML = arr.map(cardHtml).join('');
-  setTimeout(() => clientsGrid.querySelectorAll('.client-card').forEach(el => el.classList.add('visible')), 50);
+  requestAnimationFrame(() => {
+    clientsGrid.querySelectorAll('.client-card').forEach(el => el.classList.add('visible'));
+  });
 }
-
-paintClients(clients);
 paintClientsGrid(clients);
 
-/* ====== BUSCADOR CLIENTES ====== */
+/* ====== BUSCADOR CLIENTES (filtra SOLO tarjetas) ====== */
 document.getElementById('clientSearch').addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
   const filtered = clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q));
-  paintClients(filtered);
   paintClientsGrid(filtered);
 });
 
