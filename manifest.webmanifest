@@ -1,28 +1,29 @@
 {
+  "id": "kraveai",
   "name": "KraveAI",
   "short_name": "KraveAI",
   "description": "Domina todas tus redes con IA",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "start_url": "./?source=pwa",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0b1220",
   "theme_color": "#0b1220",
   "icons": [
     {
-      "src": "/icons/robot-192.png",
+      "src": "icons/robot-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/robot-512.png",
+      "src": "icons/robot-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/robot-maskable.png",
+      "src": "icons/robot-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
