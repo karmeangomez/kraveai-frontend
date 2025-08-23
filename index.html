@@ -11,347 +11,203 @@
 
 <style>
   /* ====== THEME ====== */
-  :root {
-    --bg: #0f1419;
-    --card: #141a21;
-    --card-2: #11171d;
-    --muted: #8ea0b2;
-    --text: #e9eef5;
-    --line: #1f2833;
-    --brand: #19c2ff;
-    --accent: #0077ff;
-    --chip: #1b2430;
-    --chip-text: #dfe7ef;
-    --success: #25d366;
+  :root{
+    --bg:#0f1419;--card:#141a21;--card-2:#11171d;--muted:#8ea0b2;--text:#e9eef5;--line:#1f2833;
+    --brand:#19c2ff;--accent:#0077ff;--chip:#1b2430;--chip-text:#dfe7ef;--success:#25d366;
   }
-  .light {
-    --bg: #f6f8fb;
-    --card: #ffffff;
-    --card-2: #ffffff;
-    --muted: #5c6b7a;
-    --text: #0b1220;
-    --line: #e7edf4;
-    --brand: #0077ff;
-    --accent: #0057d6;
-    --chip: #eef3f8;
-    --chip-text: #0b1220;
+  .light{--bg:#f6f8fb;--card:#fff;--card-2:#fff;--muted:#5c6b7a;--text:#0b1220;--line:#e7edf4;--brand:#0077ff;--accent:#0057d6;--chip:#eef3f8;--chip-text:#0b1220}
+  .neon-theme{--bg:#0a0f14;--card:#1a2430;--text:#e0f7ff;--brand:#00ffcc;--accent:#ff00ff;--line:#2a3442}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    overflow-x:hidden;position:relative;-webkit-text-size-adjust:100%;
+    touch-action:manipulation;
   }
-  .neon-theme {
-    --bg: #0a0f14;
-    --card: #1a2430;
-    --text: #e0f7ff;
-    --brand: #00ffcc;
-    --accent: #ff00ff;
-    --line: #2a3442;
-  }
-  * { box-sizing: border-box }
-  html, body { height: 100%; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-    overflow-x: hidden;
-    position: relative;
-  }
-  a { color: inherit; text-decoration: none }
-  .hidden { display: none !important }
-  .muted { color: var(--muted) }
-  .btn {
-    background: var(--card);
-    color: var(--text);
-    border: 1px solid var(--line);
-    padding: 10px 14px;
-    border-radius: 12px;
-    cursor: pointer;
-  }
-  .btn.primary { background: linear-gradient(90deg, var(--accent), var(--brand)); border-color: transparent; color: #fff }
-  .btn.ghost { background: transparent }
-  .input {
-    width: 100%;
-    background: var(--card);
-    color: var(--text);
-    border: 1px solid var(--line);
-    padding: 12px 14px;
-    border-radius: 14px;
-    outline: none;
-  }
+  a{color:inherit;text-decoration:none}
+  .hidden{display:none!important}
+  .muted{color:var(--muted)}
+  .btn{background:var(--card);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:12px;cursor:pointer}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--brand));border-color:transparent;color:#fff}
+  .btn.ghost{background:transparent}
+  .input{width:100%;background:var(--card);color:var(--text);border:1px solid var(--line);padding:12px 14px;border-radius:14px;outline:none}
 
   /* ====== HEADER ====== */
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: var(--card-2);
-    border-bottom: 1px solid var(--line);
-    padding: 14px calc(14px + env(safe-area-inset-left, 0px)) calc(14px + env(safe-area-inset-right, 0px));
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    justify-content: space-between;
-    width: 100vw;
-    box-sizing: border-box;
-  }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800 }
-  .brand .name { letter-spacing: .2px }
-  .robot { width: 28px; height: 28px; display: block }
-  .right-head { display: flex; align-items: center; gap: 12px }
-  .pill { font-size: 12px; color: var(--muted); display: flex; gap: 6px; align-items: center }
-  .dot { width: 8px; height: 8px; border-radius: 999px; background: #e0565b }
-  .toggle {
-    border: 1px solid var(--line);
-    background: transparent;
-    color: var(--muted);
-    padding: 8px 10px;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  .mic-btn {
-    border: 1px solid var(--line);
-    background: transparent;
-    color: var(--muted);
-    padding: 8px;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  .mic-btn.recording { animation: pulse 1s infinite; }
-  @keyframes pulse { 50% { box-shadow: 0 0 10px var(--brand); } }
+  .topbar{position:sticky;top:0;z-index:80;background:var(--card-2);border-bottom:1px solid var(--line);
+    padding:14px calc(14px + env(safe-area-inset-left,0px)) 14px calc(14px + env(safe-area-inset-right,0px));
+    display:flex;align-items:center;gap:12px;justify-content:space-between;width:100vw}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .robot{width:28px;height:28px;display:block}
+  .right-head{display:flex;align-items:center;gap:12px}
+  .pill{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .dot{width:8px;height:8px;border-radius:999px;background:#e0565b}
+  .toggle,.mic-btn{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 10px;border-radius:10px;cursor:pointer}
+  .mic-btn{padding:8px}
+  .mic-btn.recording{animation:pulse 1s infinite}
+  @keyframes pulse{50%{box-shadow:0 0 10px var(--brand)}}
 
   /* ====== LAYOUT ====== */
-  .wrap {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding: 10px calc(14px + env(safe-area-inset-left, 0px)) calc(60px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-right, 0px));
-    width: 100vw;
-    box-sizing: border-box;
-    overflow-y: auto;
-  }
-  .content-flex { flex: 1 0 auto; }
-  h1 {
-    margin: 8px 0 0;
-    font-size: 28px;
-    text-shadow: 0 0 8px var(--brand), 0 0 16px var(--accent);
-    animation: neon-pulse 3s infinite alternate;
-  }
-  .section-title {
-    margin: 22px 0 12px;
-    font-weight: 800;
-    letter-spacing: .4px;
-    text-shadow: 0 0 8px var(--brand), 0 0 16px var(--accent);
-    animation: neon-pulse 3s infinite alternate;
-  }
-  @keyframes neon-pulse { 0% { text-shadow: 0 0 8px var(--brand), 0 0 16px var(--accent); } 100% { text-shadow: 0 0 12px var(--brand), 0 0 20px var(--accent); } }
+  .wrap{display:flex;flex-direction:column;min-height:100vh;
+    padding:10px calc(14px + env(safe-area-inset-left,0px)) calc(60px + env(safe-area-inset-bottom,0px)) calc(14px + env(safe-area-inset-right,0px));
+    width:100vw;box-sizing:border-box;overflow-y:auto}
+  .content-flex{flex:1 0 auto}
+  h1{margin:8px 0 0;font-size:28px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
+  .section-title{margin:22px 0 12px;font-weight:800;letter-spacing:.4px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
+  @keyframes neon-pulse{0%{text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}100%{text-shadow:0 0 12px var(--brand),0 0 20px var(--accent)}}
 
   /* ====== GRID SOCIAL ====== */
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px }
-  @media (min-width: 760px) { .grid { grid-template-columns: repeat(4, 1fr) } }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: transform .12s ease, box-shadow .2s ease;
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .card.visible { opacity: 1; transform: scale(1); }
-  .card:hover { transform: translateY(-1px) }
-  .logo-wrap { width: 28px; height: 28px; display: grid; place-items: center }
-  .card .title { font-weight: 700 }
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(min-width:760px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;
+    opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
+  .card.visible{opacity:1;transform:scale(1)}
+  .card:hover{transform:translateY(-1px)}
+  .logo-wrap{width:28px;height:28px;display:grid;place-items:center}
+  .card .title{font-weight:700}
 
-  /* ====== CLIENTES LIST (home recientes) ====== */
-  .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 0; }
-  .row {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .row.visible { opacity: 1; transform: scale(1); }
-  .avatar { width: 36px; height: 36px; border-radius: 999px; background: #2a3442; flex: none; overflow: hidden }
-  .row .user { font-weight: 700; font-size: 16px; }
-  .grow { flex: 1 }
-  .chip { background: var(--chip); color: var(--chip-text); border-radius: 999px; padding: 6px 10px; font-size: 12px }
+  /* ====== HOME LIST ====== */
+  .list{display:flex;flex-direction:column;gap:12px;margin-bottom:0}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;
+    opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
+  .row.visible{opacity:1;transform:scale(1)}
+  .avatar{width:36px;height:36px;border-radius:999px;background:#2a3442;flex:none;overflow:hidden}
+  .row .user{font-weight:700;font-size:16px}
+  .grow{flex:1}
+  .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
 
-  /* ====== CLIENT CARD (VISTA CLIENTES) ====== */
-  .clients-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-  }
-  .client-card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 14px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity .3s ease, transform .3s ease;
-  }
-  .client-card.visible { opacity: 1; transform: translateY(0); }
-  .client-card .avatar { width: 44px; height: 44px; border-radius: 999px; }
+  /* ====== CLIENTES (tarjetas) ====== */
+  .clients-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .client-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center;
+    opacity:0;transform:translateY(4px);transition:opacity .3s ease,transform .3s ease}
+  .client-card.visible{opacity:1;transform:translateY(0)}
+  .client-card .avatar{width:44px;height:44px;border-radius:999px}
+  /* Verified más grande y pegado */
+  .ig-verified{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;margin-left:1px;shape-rendering:geometricPrecision}
 
-  /* ====== VERIFIED (más grande y más cerca del @usuario) ====== */
-  .ig-verified{
-    width:1.15em; height:1.15em;
-    display:inline-block; vertical-align:-0.18em; margin-left:1px;
-    shape-rendering:geometricPrecision;
-  }
-
-  /* ====== NAV BOTTOM ====== */
-  .nav {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 60;
-    background: var(--card-2);
-    border-top: 1px solid var(--line);
-    display: flex;
-    gap: 10px;
-    padding: 12px calc(12px + env(safe-area-inset-left, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-right, 0px));
-    justify-content: space-around;
-    width: 100vw;
-    box-sizing: border-box;
-  }
-  .nav .item {
-    flex: 1;
-    text-align: center;
-    padding: 12px 10px;
-    border-radius: 14px;
-    color: var(--muted);
-    font-size: 13.5px;
-    cursor: pointer;
-    min-height: 48px;
-    line-height: 1;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .nav .item.active {
-    color: var(--text);
-    background: rgba(255, 255, 255, .02);
-    border: 1px solid var(--line);
-    text-shadow: 0 0 8px var(--brand), 0 0 16px var(--accent);
-  }
+  /* ====== NAV ====== */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--card-2);border-top:1px solid var(--line);display:flex;gap:10px;
+    padding:12px calc(12px + env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) calc(12px + env(safe-area-inset-right,0px));
+    justify-content:space-around;width:100vw;box-sizing:border-box}
+  .nav .item{flex:1;text-align:center;padding:12px 10px;border-radius:14px;color:var(--muted);font-size:13.5px;cursor:pointer;min-height:48px;line-height:1;-webkit-tap-highlight-color:transparent}
+  .nav .item.active{color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--line);text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
 
   /* ====== VISTAS ====== */
-  .view { display: none; opacity: 0; transform: scale(0.98); transition: opacity 0.4s ease, transform 0.4s ease; }
-  .view.active { display: block; opacity: 1; transform: scale(1); animation: holographic-enter 0.4s ease-out; }
-  @keyframes holographic-enter { 0% { filter: blur(2px); opacity: 0; } 100% { filter: blur(0); opacity: 1; } }
+  .view{display:none;opacity:0;transform:scale(.98);transition:opacity .4s ease,transform .4s ease}
+  .view.active{display:block;opacity:1;transform:scale(1);animation:holographic-enter .4s ease-out}
+  @keyframes holographic-enter{0%{filter:blur(2px);opacity:0}100%{filter:blur(0);opacity:1}}
 
-  /* ====== NETWORK VIEW ====== */
-  .back { margin: 6px 0 16px; display: inline-flex; gap: 8px; align-items: center; color: var(--muted); cursor: pointer }
-  .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px }
-  @media (min-width: 860px) { .svc-grid { grid-template-columns: repeat(3, 1fr) } }
-  .svc { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px }
-  .svc h4 { margin: 0 0 10px; font-size: 14px }
-  .svc .input { margin: 6px 0 }
-  .svc .btn { width: 100%; margin-top: 8px }
+  /* ====== NETWORK ====== */
+  .back{margin:6px 0 16px;display:inline-flex;gap:8px;align-items:center;color:var(--muted);cursor:pointer}
+  .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:860px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .svc h4{margin:0 0 10px;font-size:14px}
+  .svc .input{margin:6px 0}
+  .svc .btn{width:100%;margin-top:8px}
+
+  /* ====== FARM (marcos de celulares) ====== */
+  .devices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:820px){.devices{grid-template-columns:repeat(3,1fr)}}
+  .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .thumb{
+    position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);
+    overflow:hidden; /* teléfono */
+    aspect-ratio: 9 / 19.5; /* proporción de pantalla de móvil */
+    box-shadow: inset 0 0 0 8px rgba(255,255,255,.02);
+  }
+  /* notch */
+  .thumb::before{
+    content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;
+    box-shadow:0 1px 0 rgba(255,255,255,.06);
+  }
+  .device .btn{width:48%}
+
+  /* ====== MODAL ====== */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:120}
+  .modal.show{display:flex}
+  .sheet{width:min(560px,92vw);background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .sheet .top{display:flex;gap:12px;align-items:center}
+  .sheet .top .avatar{width:56px;height:56px}
+  .meta{display:flex;gap:14px;margin-top:6px;color:var(--muted);font-size:12px}
+  .meta b{color:var(--text)}
+  .close{float:right;cursor:pointer;color:var(--muted)}
 
   /* ====== MODO BESTIA ====== */
-  .beast-mode-card {
-    background: linear-gradient(45deg, var(--accent), var(--brand));
-    border: 1px solid rgba(25, 194, 255, 0.5);
-    border-radius: 18px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: transform .12s ease, box-shadow .2s ease;
-    box-shadow: 0 0 15px var(--brand), inset 0 0 10px var(--accent);
-    animation: beast-glow 3s ease-in-out infinite;
-    position: relative;
-    text-shadow: 0 0 8px var(--brand), 0 0 16px var(--accent);
+  .beast-mode-card{
+    background:linear-gradient(45deg,var(--accent),var(--brand));border:1px solid rgba(25,194,255,.5);
+    border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;
+    transition:transform .12s ease, box-shadow .2s ease;box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent);
+    animation:beast-glow 3s ease-in-out infinite;position:relative;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)
   }
-  .beast-mode-card:hover { transform: translateY(-1px) scale(1.05); box-shadow: 0 0 30px var(--brand), 0 0 50px var(--accent); }
-  @keyframes beast-glow { 0%,100% { box-shadow: 0 0 15px var(--brand), inset 0 0 10px var(--accent);} 50% { box-shadow: 0 0 25px var(--accent), inset 0 0 15px var(--brand);} }
-  .beast-mode-card .logo-wrap { width: 28px; height: 28px; display: grid; place-items: center; }
-  .beast-mode-card .title { font-weight: 700; color: #fff; text-shadow: 0 0 5px #fff; }
-  .beast-mode-card .beast-icon { width: 24px; height: 24px; fill: #fff; }
-
-  /* === MODO BESTIA · flash pantalla + estado activo === */
-  @keyframes radial-flash { 0% { transform: scale(0); opacity: .85; } 100% { transform: scale(20); opacity: 0; } }
-  .radial-effect{ position:absolute; inset:0; border-radius:inherit; background:rgba(255,0,0,.35); animation:radial-flash 700ms ease-out forwards; pointer-events:none; }
-  @keyframes screen-flash { from {opacity:.35} to {opacity:0} }
-  .screen-flash{ position:fixed; inset:0; background:rgba(255,0,0,.35); pointer-events:none; z-index:98; animation:screen-flash 600ms ease-out forwards; }
-  .beast-mode-active{ background:#FF0000 !important; border-color:#ff6b6b !important; box-shadow:0 0 30px #ff2d2d, inset 0 0 18px #ff9a9a !important; }
+  .beast-mode-card:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 0 30px var(--brand),0 0 50px var(--accent)}
+  @keyframes beast-glow{0%,100%{box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent)}50%{box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--brand)}}
+  .beast-mode-card .beast-icon{width:24px;height:24px;fill:#fff}
+  .beast-mode-active{background:#FF0000!important;border-color:#ff6b6b!important;box-shadow:0 0 30px #ff2d2d, inset 0 0 18px #ff9a9a!important}
+  /* halo interno del botón */
+  @keyframes radial-flash{0%{transform:scale(0);opacity:.85}100%{transform:scale(18);opacity:0}}
+  .radial-effect{position:absolute;inset:0;border-radius:inherit;background:rgba(255,0,0,.35);animation:radial-flash .7s ease-out forwards;pointer-events:none}
+  /* flash circular de pantalla (nace donde haces click) */
+  @keyframes circle-flash{0%{transform:scale(0);opacity:.35}100%{transform:scale(80);opacity:0}}
+  .screen-circle{position:fixed;width:24px;height:24px;border-radius:999px;background:rgba(255,0,0,.35);pointer-events:none;z-index:110;animation:circle-flash .8s ease-out forwards}
 
   /* ====== BACKGROUND 3D ====== */
-  .background-3d { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle, rgba(25, 194, 255, 0.05) 0%, rgba(0, 119, 255, 0.05) 100%); z-index: -1; overflow: hidden; }
-  .node { position: absolute; width: 4px; height: 4px; background: var(--brand); border-radius: 50%; animation: float 15s infinite linear; }
-  @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50vw, 50vh); } }
+  .background-3d{position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle,rgba(25,194,255,.05) 0%,rgba(0,119,255,.05) 100%);z-index:-1;overflow:hidden}
+  .node{position:absolute;width:4px;height:4px;background:var(--brand);border-radius:50%;animation:float 15s infinite linear}
+  @keyframes float{0%{transform:translate(0,0)}100%{transform:translate(50vw,50vh)}}
 
-  /* ====== LOADING SPINNER ====== */
-  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid transparent; border-top: 2px solid var(--brand); border-left: 2px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-left: 8px; vertical-align: middle; }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
-  .btn.loading { position: relative; opacity: 0.7; pointer-events: none; }
-
-  /* ====== TOAST ====== */
-  .toast { position: fixed; bottom: calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 80px); left: 50%; transform: translateX(-50%); background: var(--card); color: var(--text); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); z-index: 100; opacity: 0; animation: slide-up 0.5s ease-out, fade-out 3s ease-out 2.5s; }
-  @keyframes slide-up { from { bottom: -50px; } to { bottom: calc(var(--nav-h, 64px) + 80px); } }
-  @keyframes fade-out { to { opacity: 0; } }
+  /* ====== LOADING / TOAST ====== */
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top:2px solid var(--brand);border-left:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-left:8px;vertical-align:middle}
+  @keyframes spin{100%{transform:rotate(360deg)}}
+  .btn.loading{opacity:.7;pointer-events:none}
+  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
+  @keyframes slide-up{from{bottom:-50px}to{bottom:calc(var(--nav-h,64px) + 80px)}}
+  @keyframes fade-out{to{opacity:0}}
 
   /* ====== DASHBOARD ====== */
-  .dashboard { position: fixed; top: 80px; right: 20px; background: var(--card-2); border: 1px solid var(--line); border-radius: 50%; width: 180px; height: 180px; padding: 20px; z-index: 100; display: none; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
-  .dashboard.active { display: block; }
-  .dashboard h4 { margin: 0 0 8px; font-size: 14px; }
-  .dashboard .stat { color: var(--muted); font-size: 12px; }
-  .dashboard .close { position: absolute; top: 5px; right: 10px; cursor: pointer; color: var(--muted); }
+  .dashboard{position:fixed;top:80px;right:20px;background:var(--card-2);border:1px solid var(--line);border-radius:50%;width:180px;height:180px;padding:20px;z-index:100;display:none;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .dashboard.active{display:block}
+  .dashboard h4{margin:0 0 8px;font-size:14px}
+  .dashboard .stat{color:var(--muted);font-size:12px}
+  .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
 
-  /* ====== GLITCH EFFECT ====== */
-  body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, transparent 0, rgba(255, 0, 0, 0.1) 1px, transparent 2px); animation: glitch 0.5s ease-out; z-index: -1; opacity: 0; }
-  @keyframes glitch { 0% { opacity: 0.5; } 100% { opacity: 0; } }
-
-  /* ====== MEDIA QUERIES ====== */
-  @media (max-width: 480px) {
-    .wrap { padding: 10px calc(14px + env(safe-area-inset-left, 0px)) calc(60px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-right, 0px)); }
-    .topbar { padding-left: calc(14px + env(safe-area-inset-left, 0px)); padding-right: calc(14px + env(safe-area-inset-right, 0px)); }
-    .nav { padding-left: calc(12px + env(safe-area-inset-left, 0px)); padding-right: calc(12px + env(safe-area-inset-right, 0px)); }
-    .grid { grid-template-columns: repeat(2, 1fr); }
+  /* ====== BADGE ====== */
+  .credit{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 10px);
+    z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;
+    background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);
+    box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
+    backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;
   }
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
+
+  /* ====== GLITCH (sutil) ====== */
+  body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(45deg,transparent 0,rgba(255,0,0,0.1) 1px,transparent 2px);animation:glitch .5s ease-out;z-index:-1;opacity:0}
+  @keyframes glitch{0%{opacity:.5}100%{opacity:0}}
+
+  /* ====== MEDIA ====== */
+  @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-  <!-- ====== BACKGROUND 3D ====== -->
   <div class="background-3d"></div>
 
-  <!-- ====== HEADER ====== -->
+  <!-- HEADER -->
   <header class="topbar">
     <div class="brand">
-      <svg class="robot" viewBox="0 0 64 64" aria-hidden="true">
-        <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs>
-        <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g)"/>
-        <rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/>
-        <circle cx="22" cy="32" r="6" fill="#19c2ff"/>
-        <circle cx="42" cy="32" r="6" fill="#19c2ff"/>
-        <rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/>
-      </svg>
+      <svg class="robot" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs><rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g)"/><rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/><circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/><rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/></svg>
       <span class="name">KraveAI</span>
     </div>
     <div class="right-head">
       <div class="pill"><span class="dot"></span> <span id="conn">Sin conexión</span></div>
       <button id="themeToggle" class="toggle" title="Cambiar tema">🌙</button>
       <button id="micToggle" class="mic-btn" title="Activar voz">🎙️</button>
-      <!-- Botón de instalación PWA (se muestra solo si Chrome lo permite) -->
       <button id="installBtn" class="toggle hidden" title="Instalar app">⬇️ Instalar</button>
     </div>
   </header>
 
-  <!-- ====== CONTENIDO ====== -->
+  <!-- CONTENIDO -->
   <main class="wrap">
     <div class="content-flex">
       <!-- Home -->
@@ -365,7 +221,7 @@
         <div class="section-title">Clientes recientes</div>
         <div class="list" id="recentList"></div>
 
-        <div style="display: flex; gap: 10px; margin-top: 14px">
+        <div style="display:flex;gap:10px;margin-top:14px">
           <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
           <button class="btn primary" onclick="sendAction()">Enviar</button>
         </div>
@@ -374,8 +230,7 @@
       <!-- Clientes -->
       <section id="view-clients" class="view">
         <h1>Clientes</h1>
-        <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin: 12px 0 16px"/>
-        <!-- SOLO TARJETAS (responsivo) -->
+        <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:12px 0 16px"/>
         <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
       </section>
 
@@ -390,12 +245,12 @@
       <section id="view-accounts" class="view">
         <h1>Cuentas</h1>
         <div class="sub">Gestión de sesión y cuentas manuales</div>
-        <div class="stack" style="max-width: 560px">
+        <div class="stack" style="max-width:560px">
           <div class="svc">
             <h4>Iniciar sesión</h4>
             <input class="input" placeholder="Usuario" />
             <input class="input" placeholder="Contraseña" type="password"/>
-            <div style="display: flex; gap: 10px">
+            <div style="display:flex;gap:10px">
               <button class="btn primary">Iniciar sesión</button>
               <button class="btn">Cerrar sesión</button>
             </div>
@@ -419,7 +274,7 @@
     </div>
   </main>
 
-  <!-- ====== DASHBOARD ====== -->
+  <!-- DASHBOARD -->
   <div class="dashboard" id="dashboard">
     <h4>Panel Rápido</h4>
     <div class="stat">Acciones hoy: <span id="actions">0</span></div>
@@ -427,10 +282,10 @@
     <span class="close" onclick="document.getElementById('dashboard').classList.remove('active')">✕</span>
   </div>
 
-  <!-- ====== BADGE ====== -->
+  <!-- BADGE -->
   <div class="credit">Created by Karmean Gómez</div>
 
-  <!-- ====== NAV ====== -->
+  <!-- NAV -->
   <nav class="nav">
     <div class="item" data-go="home">Inicio</div>
     <div class="item" data-go="clients">Clientes</div>
@@ -438,14 +293,14 @@
     <div class="item" data-go="accounts">Cuentas</div>
   </nav>
 
-  <!-- ====== MODAL FICHA ====== -->
+  <!-- MODAL -->
   <div class="modal" id="clientModal" role="dialog" aria-modal="true" aria-label="Ficha del cliente">
     <div class="sheet">
-      <div class="close" onclick="closeModal()">✕</div>
+      <div class="close" data-close-modal>✕</div>
       <div class="top">
         <img id="mAvatar" class="avatar" alt="avatar"/>
         <div>
-          <div id="mUser" style="font-weight: 800"></div>
+          <div id="mUser" style="font-weight:800"></div>
           <div class="muted" id="mName"></div>
           <div class="meta">
             <div><b id="mPosts"></b> posts</div>
@@ -454,24 +309,22 @@
           </div>
         </div>
       </div>
-      <div style="margin-top: 14px; display: flex; gap: 10px">
+      <div style="margin-top:14px;display:flex;gap:10px">
         <button class="btn">Abrir Instagram</button>
         <button class="btn primary">Crear campaña</button>
       </div>
     </div>
   </div>
 
-  <!-- ====== SVGs ====== -->
-  <svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+  <!-- SVGs -->
+  <svg style="position:absolute;width:0;height:0;overflow:hidden">
     <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
       <defs><radialGradient id="metaBlue" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#67B7FF"/><stop offset="1" stop-color="#0B65FF"/></radialGradient></defs>
       <path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
       <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
-    <symbol id="beastIcon" viewBox="0 0 24 24">
-      <path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/>
-    </symbol>
-    <!-- Redes (ig, tiktok, yt, threads, x, fb, li, sp, tg, wa) idénticas a tu versión -->
+    <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
+    <!-- redes (ig,tiktok,yt,threads,x,fb,li,sp,tg,wa) -->
     <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
     <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
     <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
@@ -486,354 +339,235 @@
 
 <script>
 /* ====== TEMA ====== */
-const themeToggle = document.getElementById('themeToggle');
-const savedTheme = localStorage.getItem('krave-theme');
-if (savedTheme === 'light') document.body.classList.add('light');
-if (savedTheme === 'neon') document.body.classList.add('neon-theme');
-themeToggle.textContent = document.body.classList.contains('light') ? '🌞' : document.body.classList.contains('neon-theme') ? '💡' : '🌙';
-themeToggle.onclick = (e) => {
-  const menu = document.createElement('div');
-  menu.className = 'theme-menu';
+const themeToggle=document.getElementById('themeToggle');
+const savedTheme=localStorage.getItem('krave-theme');
+if(savedTheme==='light')document.body.classList.add('light');
+if(savedTheme==='neon')document.body.classList.add('neon-theme');
+themeToggle.textContent=document.body.classList.contains('light')?'🌞':document.body.classList.contains('neon-theme')?'💡':'🌙';
+themeToggle.onclick=(e)=>{
+  const menu=document.createElement('div');
   Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:'var(--card)',border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
-  menu.innerHTML = `
-    <div style="padding:6px 10px;cursor:pointer">Claro</div>
-    <div style="padding:6px 10px;cursor:pointer">Neón</div>
-    <div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
-  const [op1, op2, op3] = menu.children;
-  op1.onclick = () => { document.body.classList.add('light'); document.body.classList.remove('neon-theme'); localStorage.setItem('krave-theme','light'); themeToggle.textContent='🌞'; menu.remove(); };
-  op2.onclick = () => { document.body.classList.add('neon-theme'); document.body.classList.remove('light'); localStorage.setItem('krave-theme','neon'); themeToggle.textContent='💡'; menu.remove(); };
-  op3.onclick = () => { document.body.classList.remove('light','neon-theme'); localStorage.setItem('krave-theme','dark'); themeToggle.textContent='🌙'; menu.remove(); };
+  menu.innerHTML=`<div style="padding:6px 10px;cursor:pointer">Claro</div><div style="padding:6px 10px;cursor:pointer">Neón</div><div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
+  const [op1,op2,op3]=menu.children;
+  op1.onclick=()=>{document.body.classList.add('light');document.body.classList.remove('neon-theme');localStorage.setItem('krave-theme','light');themeToggle.textContent='🌞';menu.remove()};
+  op2.onclick=()=>{document.body.classList.add('neon-theme');document.body.classList.remove('light');localStorage.setItem('krave-theme','neon');themeToggle.textContent='💡';menu.remove()};
+  op3.onclick=()=>{document.body.classList.remove('light','neon-theme');localStorage.setItem('krave-theme','dark');themeToggle.textContent='🌙';menu.remove()};
   e.currentTarget.appendChild(menu);
 };
 
 /* ====== NAV ====== */
-const views = {
-  home: document.getElementById('view-home'),
-  clients: document.getElementById('view-clients'),
-  farm: document.getElementById('view-farm'),
-  accounts: document.getElementById('view-accounts'),
-  network: document.getElementById('view-network')
-};
-function showView(key) {
-  Object.entries(views).forEach(([k, v]) => {
-    if (k === key) { v.style.display = 'block'; v.offsetHeight; v.classList.add('active'); }
-    else { v.classList.remove('active'); v.style.display = 'none'; }
-  });
-  document.querySelectorAll('.nav .item').forEach(i => i.classList.toggle('active', i.getAttribute('data-go') === key));
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+const views={home:document.getElementById('view-home'),clients:document.getElementById('view-clients'),farm:document.getElementById('view-farm'),accounts:document.getElementById('view-accounts'),network:document.getElementById('view-network')};
+function showView(key){
+  Object.entries(views).forEach(([k,v])=>{if(k===key){v.style.display='block';v.offsetHeight;v.classList.add('active')}else{v.classList.remove('active');v.style.display='none'}});
+  document.querySelectorAll('.nav .item').forEach(i=>i.classList.toggle('active',i.getAttribute('data-go')===key));
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-document.querySelectorAll('.nav .item').forEach(el => el.addEventListener('click', () => showView(el.getAttribute('data-go'))));
-function goHome(){ showView('home'); }
-showView('home');
+document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',()=>showView(el.getAttribute('data-go'))));
+function goHome(){showView('home')} showView('home');
 
-/* ====== Ajuste dinámico para el badge ====== */
-const navEl = document.querySelector('.nav');
-function setNavHeight() { document.documentElement.style.setProperty('--nav-h', navEl.offsetHeight + 'px'); }
-setNavHeight(); addEventListener('resize', setNavHeight); addEventListener('orientationchange', setNavHeight);
+/* ====== Ajuste badge ====== */
+const navEl=document.querySelector('.nav');
+function setNavHeight(){document.documentElement.style.setProperty('--nav-h',navEl.offsetHeight+'px')}
+setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orientationchange',setNavHeight);
 
-/* ====== DATA: REDES ====== */
-const networks = [
-  { key: 'instagram', name: 'Instagram', icon: '#ig', color: '#E1306C', services: ['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views'] },
-  { key: 'tiktok', name: 'TikTok', icon: '#tiktok', color: '#000000', services: ['Likes','Comentarios','Seguidores','Views','Shares','Live Views'] },
-  { key: 'youtube', name: 'YouTube', icon: '#yt', color: '#FF0000', services: ['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos'] },
-  { key: 'threads', name: 'Threads', icon: '#threads', color: '#000000', services: ['Likes','Respuestas','Seguidores','Vistas','Reposts'] },
-  { key: 'x', name: 'X', icon: '#x', color: '#ffffff', services: ['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas'] },
-  { key: 'facebook', name: 'Facebook', icon: '#fb', color: '#1877F2', services: ['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views'] },
-  { key: 'linkedin', name: 'LinkedIn', icon: '#li', color: '#0A66C2', services: ['Reacciones','Comentarios','Seguidores','Vistas','Compartidos'] },
-  { key: 'spotify', name: 'Spotify', icon: '#sp', color: '#1DB954', services: ['Streams','Saves','Oyentes mensuales','Playlist adds'] },
-  { key: 'telegram', name: 'Telegram', icon: '#tg', color: '#229ED9', services: ['Miembros','Vistas post','Forwards/Repost'] },
-  { key: 'whatsapp', name: 'WhatsApp', icon: '#wa', color: '#25D366', services: ['Vistas de estado','Clicks','Mensajes masivos'] },
-  { key: 'beast-mode', name: 'Modo Bestia', icon: '#beastIcon', color: 'var(--brand)', services: [] }
-];
+/* ====== DATA REDES ====== */
+const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#li',color:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
 
-/* ====== RENDER: GRID REDES ====== */
-const socialGrid = document.getElementById('socialGrid');
-socialGrid.innerHTML = networks.map(n => {
-  if (n.key === 'beast-mode') {
-    return `
-      <div class="beast-mode-card" onclick="activateBeastMode(event)">
-        <div class="logo-wrap"><svg class="beast-icon" viewBox="0 0 24 24"><use href="#beastIcon"></use></svg></div>
-        <div class="title">${n.name}</div>
-      </div>
-    `;
-  }
-  return `
-    <div class="card" onclick="openNetwork('${n.key}')">
-      <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
+/* ====== RENDER GRID REDES ====== */
+const socialGrid=document.getElementById('socialGrid');
+socialGrid.innerHTML=networks.map(n=>{
+  if(n.key==='beast-mode'){
+    return `<div class="beast-mode-card" data-beast>
+      <div class="logo-wrap"><svg class="beast-icon" viewBox="0 0 24 24"><use href="#beastIcon"></use></svg></div>
       <div class="title">${n.name}</div>
-    </div>
-  `;
+    </div>`;
+  }
+  return `<div class="card" data-net="${n.key}">
+    <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
+    <div class="title">${n.name}</div>
+  </div>`;
 }).join('');
-setTimeout(() => socialGrid.querySelectorAll('.card').forEach(el => el.classList.add('visible')), 100);
+setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),100);
 
-/* ====== VIEW NETWORK ====== */
-const netTitle = document.getElementById('networkTitle');
-const netSub = document.getElementById('networkSub');
-const netServices = document.getElementById('networkServices');
-function openNetwork(key) {
-  const net = networks.find(x => x.key === key);
-  if (!net) return;
-  netTitle.textContent = `Servicios · ${net.name}`;
-  netSub.textContent = `Automatiza ${net.name} con IA`;
-  netServices.innerHTML = net.services.map(svc => `
+/* ====== NETWORK VIEW ====== */
+const netTitle=document.getElementById('networkTitle');
+const netSub=document.getElementById('networkSub');
+const netServices=document.getElementById('networkServices');
+function openNetwork(key){
+  const net=networks.find(x=>x.key===key); if(!net) return;
+  netTitle.textContent=`Servicios · ${net.name}`;
+  netSub.textContent=`Automatiza ${net.name} con IA`;
+  netServices.innerHTML=net.services.map(svc=>`
     <div class="svc">
       <h4>${svc}</h4>
       <input class="input" placeholder="${svc.includes('Seguidores') ? '@usuario' : 'URL / ID / Nota'}" />
       <input class="input" placeholder="Cantidad" type="number" min="10" />
       <button class="btn primary">Ordenar</button>
-    </div>
-  `).join('');
+    </div>`).join('');
   showView('network');
 }
 
 /* ====== VERIFIED SVG ====== */
-function verifiedSvg() { return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`; }
+function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
-/* ====== DATA: CLIENTES ====== */
-const clients = [
-  { user: 'aaronmercury', name: 'Aaron Mercurio', followers: '5.4M', posts: '543', following: '924', verified: true },
-  { user: 'televisadigital', name: 'Televisa Digital', followers: '246K', posts: '5,779', following: '617', verified: true },
-  { user: 'joscanela', name: 'Jos Canela', followers: '722K', posts: '63', following: '425', verified: true },
-  { user: 'jimenagallegotv', name: 'Jimena Gállego', followers: '544K', posts: '3,328', following: '1,608', verified: true },
-  { user: 'elmalilla_', name: 'MALI EL MALILLAA!!🇲🇽', followers: '3.6M', posts: '675', following: '2,006', verified: true },
-  { user: 'mariobautista', name: 'Mario Bautista (MB)', followers: '6.7M', posts: '515', following: '3,371', verified: true },
-  { user: 'aldotdenigris', name: 'Aldo Tamez De Nigris', followers: '1.5M', posts: '607', following: '2,748', verified: true },
-  { user: 'sonymusiclatin', name: 'Sony Music Latin', followers: '1.1M', posts: '43.3K', following: '535', verified: true },
-  { user: 'lacasafamososmx', name: 'La Casa de los Famosos MX', followers: '3.3M', posts: '6,632', following: '90', verified: true },
-  { user: 'manuelturizo', name: 'Manuel Turizo - MTZ', followers: '14.6M', posts: '127', following: '1,298', verified: true },
-  { user: 'pesopluma', name: 'La Doble P', followers: '15.4M', posts: '44', following: '1,195', verified: true },
-  { user: 'oscar_maydonn', name: 'Oscar Maydon', followers: '2.5M', posts: '20', following: '1,203', verified: true }
-];
-const avatars = {};
+/* ====== CLIENTES ====== */
+const clients=[{user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},{user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},{user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},{user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},{user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},{user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},{user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},{user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},{user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},{user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},{user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},{user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}];
+const avatars={};
 
-/* ====== HOME: Clientes recientes (lista) ====== */
-const recentList = document.getElementById('recentList');
-recentList.innerHTML = clients.slice(0, 12).map(c => `
+/* HOME - recientes */
+const recentList=document.getElementById('recentList');
+recentList.innerHTML=clients.slice(0,12).map(c=>`
   <div class="row">
-    <img class="avatar" alt="" src="${avatars[c.user] || ''}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+    <img class="avatar" alt="" src="${avatars[c.user]||''}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
     <div class="grow">
-      <div class="user">@${c.user} ${c.verified ? verifiedSvg() : ''}</div>
+      <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
       <div class="muted">${c.name} · ${c.followers} seguidores</div>
     </div>
-    <a class="chip" href="javascript:void(0)" onclick="openCard('${c.user}')">Ver ficha</a>
-  </div>
-`).join('');
-setTimeout(() => recentList.querySelectorAll('.row').forEach(el => el.classList.add('visible')), 100);
-const summary = document.createElement('div');
-summary.className = 'summary';
-summary.style.marginTop = '8px';
-const totalFollowers = clients.reduce((sum, c) => {
-  const n = parseFloat(c.followers);
-  return sum + (c.followers.includes('M') ? n*1_000_000 : c.followers.includes('K') ? n*1_000 : n);
-}, 0);
-summary.textContent = `Total seguidores: ${totalFollowers.toLocaleString()}`;
-recentList.after(summary);
+    <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
+  </div>`).join('');
+setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),100);
+const summary=document.createElement('div'); summary.className='summary'; summary.style.marginTop='8px';
+const totalFollowers=clients.reduce((sum,c)=>{const n=parseFloat(c.followers);return sum+(c.followers.includes('M')?n*1_000_000:c.followers.includes('K')?n*1_000:n)},0);
+summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; recentList.after(summary);
 
-/* ====== CLIENTES (TARJETAS) ====== */
-const clientsGrid = document.getElementById('clientsGrid');
-function cardHtml(c) {
-  const avatarUrl = avatars[c.user] || '';
-  return `
-    <div class="client-card" onclick="openCard('${c.user}')">
-      <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
-      <div class="grow">
-        <div style="font-weight:800">@${c.user} ${c.verified ? verifiedSvg() : ''}</div>
-        <div class="muted">${c.name}</div>
-        <div class="muted" style="font-size:12px">${c.followers} seguidores · ${c.posts} posts</div>
-      </div>
-      <span class="chip">Ver ficha</span>
+/* CLIENTES (grid) */
+const clientsGrid=document.getElementById('clientsGrid');
+function cardHtml(c){
+  const avatarUrl=avatars[c.user]||'';
+  return `<div class="client-card" data-open="${c.user}">
+    <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+    <div class="grow">
+      <div style="font-weight:800">@${c.user} ${c.verified?verifiedSvg():''}</div>
+      <div class="muted">${c.name}</div>
+      <div class="muted" style="font-size:12px">${c.followers} seguidores · ${c.posts} posts</div>
     </div>
-  `;
+    <span class="chip">Ver ficha</span>
+  </div>`;
 }
-function paintClientsGrid(arr) {
-  clientsGrid.innerHTML = arr.map(cardHtml).join('');
-  requestAnimationFrame(() => {
-    clientsGrid.querySelectorAll('.client-card').forEach(el => el.classList.add('visible'));
-  });
-}
+function paintClientsGrid(arr){clientsGrid.innerHTML=arr.map(cardHtml).join(''); requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))}
 paintClientsGrid(clients);
 
-/* ====== BUSCADOR CLIENTES (filtra SOLO tarjetas) ====== */
-document.getElementById('clientSearch').addEventListener('input', e => {
-  const q = e.target.value.toLowerCase().trim();
-  const filtered = clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q));
-  paintClientsGrid(filtered);
+/* BUSCADOR (tarjetas) */
+document.getElementById('clientSearch').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase().trim();
+  paintClientsGrid(clients.filter(c=>c.user.toLowerCase().includes(q)||c.name.toLowerCase().includes(q)));
 });
 
-/* ====== MODAL FICHA ====== */
-const modal = document.getElementById('clientModal');
-function openCard(user) {
-  const c = clients.find(x => x.user === user);
-  if (!c) return;
-  document.getElementById('mAvatar').src = avatars[c.user] || '';
-  document.getElementById('mAvatar').onerror = function() { this.style.background = '#2a3442'; this.removeAttribute('src'); };
-  document.getElementById('mUser').innerHTML = `@${c.user} ${c.verified ? verifiedSvg() : ''}`;
-  document.getElementById('mName').textContent = c.name;
-  document.getElementById('mPosts').textContent = c.posts;
-  document.getElementById('mFollowers').textContent = c.followers;
-  document.getElementById('mFollowing').textContent = c.following;
+/* MODAL (delegación robusta) */
+const modal=document.getElementById('clientModal');
+function openCard(user){
+  const c=clients.find(x=>x.user===user); if(!c) return;
+  const av=document.getElementById('mAvatar'); av.src=avatars[c.user]||''; av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
+  document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
+  document.getElementById('mName').textContent=c.name;
+  document.getElementById('mPosts').textContent=c.posts;
+  document.getElementById('mFollowers').textContent=c.followers;
+  document.getElementById('mFollowing').textContent=c.following;
   modal.classList.add('show');
 }
-function closeModal() { modal.classList.remove('show'); }
-modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+function closeModal(){modal.classList.remove('show')}
+modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) closeModal(); });
 
-/* ====== FARM ====== */
-const farmGrid = document.getElementById('farmGrid');
-const devices = [
-  { name: 'iPhone 14 Pro · iOS', id: '10.0.0.8' },
-  { name: 'Galaxy S23 · Android', id: '10.0.0.9' },
-  { name: 'iPhone 13 · iOS', id: '10.0.0.10' },
-  { name: 'Pixel 8 · Android', id: '10.0.0.11' },
-  { name: 'iPhone 12 mini · iOS', id: '10.0.0.12' },
-  { name: 'Galaxy A54 · Android', id: '10.0.0.13' }
-];
-farmGrid.innerHTML = devices.map(d => `
+/* Delegación click: redes, ver ficha y beast */
+document.addEventListener('click',(e)=>{
+  const netEl=e.target.closest('[data-net]'); if(netEl){openNetwork(netEl.getAttribute('data-net')); return;}
+  const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); return;}
+  const beastEl=e.target.closest('[data-beast]'); if(beastEl){activateBeastMode(e); return;}
+});
+
+/* FARM */
+const farmGrid=document.getElementById('farmGrid');
+const devices=[{name:'iPhone 14 Pro · iOS',id:'10.0.0.8'},{name:'Galaxy S23 · Android',id:'10.0.0.9'},{name:'iPhone 13 · iOS',id:'10.0.0.10'},{name:'Pixel 8 · Android',id:'10.0.0.11'},{name:'iPhone 12 mini · iOS',id:'10.0.0.12'},{name:'Galaxy A54 · Android',id:'10.0.0.13'}];
+farmGrid.innerHTML=devices.map(d=>`
   <div class="device">
     <div class="thumb"></div>
-    <div style="font-weight: 700">${d.name}</div>
+    <div style="font-weight:700">${d.name}</div>
     <div class="muted">${d.id}</div>
-    <div style="display: flex; gap: 8px; margin-top: 10px">
+    <div style="display:flex;gap:8px;margin-top:10px">
       <button class="btn primary" onclick="alert('Asignar stream a ${d.name}')">Asignar stream</button>
       <button class="btn" onclick="alert('Limpiar ${d.name}')">Limpiar</button>
     </div>
-  </div>
-`).join('');
+  </div>`).join('');
 
-/* ====== MODO BESTIA ====== */
-let beastCanvas = null;
-let beastRAF = null;
-function activateBeastMode(event) {
-  const beastCard = event.currentTarget;
-  if (beastCard.classList.contains('beast-mode-active')) return;
-
+/* MODO BESTIA: botón rojo + flash circular en pantalla */
+let beastCanvas=null, beastRAF=null;
+function activateBeastMode(event){
+  const beastCard=event.target.closest('[data-beast]'); if(!beastCard) return;
+  if(beastCard.classList.contains('beast-mode-active')) return;
   beastCard.classList.add('beast-mode-active');
 
-  // efecto radial dentro del botón
-  const radial = document.createElement('div');
-  radial.classList.add('radial-effect');
-  beastCard.appendChild(radial);
+  // halo interno del botón
+  const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial);
 
-  // Luz roja a pantalla completa
-  const flash = document.createElement('div');
-  flash.className = 'screen-flash';
-  document.body.appendChild(flash);
-  flash.addEventListener('animationend', () => flash.remove());
+  // flash circular desde el punto del click
+  const circle=document.createElement('div'); circle.className='screen-circle';
+  const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`;
+  document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
 
-  // Partículas canvas (tu efecto)
-  if (!beastCanvas) {
-    beastCanvas = document.createElement('canvas');
-    beastCanvas.width = window.innerWidth;
-    beastCanvas.height = window.innerHeight;
-    Object.assign(beastCanvas.style, { position:'absolute', top:0, left:0, zIndex:99, pointerEvents:'none' });
-    document.body.appendChild(beastCanvas);
+  // partículas con canvas
+  if(!beastCanvas){
+    beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
+    Object.assign(beastCanvas.style,{position:'absolute',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
   }
-  const ctx = beastCanvas.getContext('2d');
-  let start = null;
-  function drawParticles(ts) {
-    if (!start) start = ts;
-    const elapsed = ts - start;
-    ctx.clearRect(0,0,beastCanvas.width,beastCanvas.height);
-    const rect = beastCard.getBoundingClientRect();
-    const cx = rect.left + rect.width/2;
-    const cy = rect.top + rect.height/2;
-    for (let i = 0; i < 24; i++) {
-      const angle = (i/24)*Math.PI*2 + (elapsed/400);
-      const dist = Math.min(120, elapsed/6);
-      const x = cx + Math.cos(angle)*dist;
-      const y = cy + Math.sin(angle)*dist;
-      ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2);
-      ctx.fillStyle = `rgba(255,0,0,${1 - elapsed/1000})`; ctx.fill();
+  const ctx=beastCanvas.getContext('2d'); let start=null;
+  function drawParticles(ts){
+    if(!start) start=ts;
+    const elapsed=ts-start; ctx.clearRect(0,0,beastCanvas.width,beastCanvas.height);
+    const rect=beastCard.getBoundingClientRect(); const cx=rect.left+rect.width/2; const cy=rect.top+rect.height/2;
+    for(let i=0;i<24;i++){
+      const angle=(i/24)*Math.PI*2 + (elapsed/400); const dist=Math.min(120, elapsed/6);
+      const px=cx+Math.cos(angle)*dist, py=cy+Math.sin(angle)*dist;
+      ctx.beginPath(); ctx.arc(px,py,2,0,Math.PI*2); ctx.fillStyle=`rgba(255,0,0,${1-elapsed/1000})`; ctx.fill();
     }
-    if (elapsed < 900) { beastRAF = requestAnimationFrame(drawParticles); }
-    else { cleanupParticles(); }
+    if(elapsed<900){beastRAF=requestAnimationFrame(drawParticles)} else {cleanup()}
   }
-  function cleanupParticles() {
-    if (beastRAF) cancelAnimationFrame(beastRAF);
-    if (beastCanvas) { const c = beastCanvas.getContext('2d'); c.clearRect(0,0,beastCanvas.width,beastCanvas.height); beastCanvas.remove(); beastCanvas = null; }
-    beastCard.classList.remove('beast-mode-active');
-    radial.remove();
-    showToast('Modo Bestia desactivado');
+  function cleanup(){
+    if(beastRAF) cancelAnimationFrame(beastRAF);
+    if(beastCanvas){const c=beastCanvas.getContext('2d'); c.clearRect(0,0,beastCanvas.width,beastCanvas.height); beastCanvas.remove(); beastCanvas=null;}
+    beastCard.classList.remove('beast-mode-active'); radial.remove(); showToast('Modo Bestia desactivado');
   }
-  beastRAF = requestAnimationFrame(drawParticles);
+  beastRAF=requestAnimationFrame(drawParticles);
 }
 
-/* ====== LOADING ACTION ====== */
-function sendAction() {
-  const button = document.querySelector('.btn.primary');
-  button.innerHTML = 'Enviando <span class="spinner"></span>';
-  button.classList.add('loading');
-  setTimeout(() => { button.innerHTML = 'Enviar'; button.classList.remove('loading'); showToast('Acción enviada'); }, 2000);
+/* ACTION BTN */
+function sendAction(){
+  const button=document.querySelector('.btn.primary'); button.innerHTML='Enviando <span class="spinner"></span>'; button.classList.add('loading');
+  setTimeout(()=>{button.innerHTML='Enviar'; button.classList.remove('loading'); showToast('Acción enviada')},2000);
 }
 
-/* ====== TOAST ====== */
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
+/* TOAST */
+function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
 
-/* ====== VOICE MODE ====== */
-const micToggle = document.getElementById('micToggle');
-if ('webkitSpeechRecognition' in window) {
-  const recognition = new webkitSpeechRecognition();
-  recognition.continuous = false; recognition.interimResults = false; recognition.lang = 'es-ES';
-  micToggle.addEventListener('click', () => { recognition.start(); micToggle.textContent = '🎙️ (Escuchando)'; micToggle.classList.add('recording'); });
-  recognition.onresult = (event) => {
-    const command = event.results[0][0].transcript.toLowerCase();
-    micToggle.textContent = '🎙️'; micToggle.classList.remove('recording');
-    if (command.includes('ir a clientes')) { showView('clients'); showToast('Navegando a Clientes'); }
-    else if (command.includes('activar modo bestia')) { document.querySelector('.beast-mode-card').click(); showToast('Modo Bestia activado'); }
+/* VOICE MODE */
+const micToggle=document.getElementById('micToggle');
+if('webkitSpeechRecognition' in window){
+  const recognition=new webkitSpeechRecognition(); recognition.continuous=false; recognition.interimResults=false; recognition.lang='es-ES';
+  micToggle.addEventListener('click',()=>{recognition.start(); micToggle.textContent='🎙️ (Escuchando)'; micToggle.classList.add('recording')});
+  recognition.onresult=(event)=>{const cmd=event.results[0][0].transcript.toLowerCase(); micToggle.textContent='🎙️'; micToggle.classList.remove('recording');
+    if(cmd.includes('ir a clientes')){showView('clients'); showToast('Navegando a Clientes')}
+    else if(cmd.includes('activar modo bestia')){document.querySelector('[data-beast]').click(); showToast('Modo Bestia activado')}
   };
-  recognition.onerror = () => { micToggle.textContent = '🎙️'; micToggle.classList.remove('recording'); showToast('Error en reconocimiento de voz'); };
-} else { micToggle.style.display = 'none'; }
+  recognition.onerror=()=>{micToggle.textContent='🎙️'; micToggle.classList.remove('recording'); showToast('Error en reconocimiento de voz')};
+}else{micToggle.style.display='none'}
 
-/* ====== DASHBOARD TOGGLE ====== */
-document.querySelector('.brand').addEventListener('click', () => {
-  document.getElementById('dashboard').classList.toggle('active');
-});
+/* DASHBOARD */
+document.querySelector('.brand').addEventListener('click',()=>document.getElementById('dashboard').classList.toggle('active'));
 
-/* ====== CREATE NODES ====== */
-function createNodes(count) {
-  const bg = document.querySelector('.background-3d');
-  for (let i = 0; i < count; i++) {
-    const node = document.createElement('div');
-    node.className = 'node';
-    node.style.left = `${Math.random() * 100}vw`;
-    node.style.top = `${Math.random() * 100}vh`;
-    node.style.animationDuration = `${10 + Math.random() * 10}s`;
-    node.style.animationDelay = `${Math.random() * 5}s`;
-    bg.appendChild(node);
-  }
-}
-createNodes(15);
+/* NODOS BACKGROUND */
+(function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
-/* ====== PWA: SW + Install Prompt ====== */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
-let deferredPrompt = null;
-const installBtn = document.getElementById('installBtn');
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.classList.remove('hidden'); // botón manual
-  // Prompt automático al abrir (como pediste)
-  setTimeout(async () => {
-    try {
-      if (deferredPrompt) { await deferredPrompt.prompt(); deferredPrompt = null; installBtn.classList.add('hidden'); }
-    } catch (err) {}
-  }, 200);
+/* ====== PWA: Service Worker + Install Prompt ====== */
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
+let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');
+  setTimeout(async()=>{try{if(deferredPrompt){await deferredPrompt.prompt(); deferredPrompt=null; installBtn.classList.add('hidden');}}catch(_){}} , 300);
 });
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  await deferredPrompt.prompt();
-  deferredPrompt = null; installBtn.classList.add('hidden');
-});
-window.addEventListener('appinstalled', () => showToast('App instalada'));
+installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; await deferredPrompt.prompt(); deferredPrompt=null; installBtn.classList.add('hidden')});
+window.addEventListener('appinstalled',()=>showToast('App instalada'));
+
+/* extra: si Chrome no muestra el botón de instalar, damos pista */
+setTimeout(()=>{ if(installBtn.classList.contains('hidden')) { /* en escritorio suele aparecer icono en omnibar */ } }, 2000);
 </script>
 </body>
 </html>
