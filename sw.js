@@ -1,8 +1,3 @@
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
-self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
-});
-// Tener un fetch handler activo ayuda a cumplir criterios de instalación
-self.addEventListener('fetch', () => {});
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+self.addEventListener('fetch', () => {}); // cumplir criterios de PWA
