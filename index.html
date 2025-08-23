@@ -9,6 +9,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0b1220">
 
+<!-- Favicon / iOS icon (robot) -->
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/robot-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/robot-16.png">
+<link rel="apple-touch-icon" href="/icons/robot-180.png">
+
 <style>
   /* ====== THEME ====== */
   :root{
@@ -208,6 +213,16 @@
 
   /* ====== MEDIA ====== */
   @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
+
+  /* —— Ajuste quirúrgico de columnas para #view-clients —— */
+  /* Teléfonos (Pixel 6a, iPhone 16 Pro, etc.): 2 columnas */
+  @media (max-width: 1023px){
+    .clients-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  }
+  /* Tablet: 3 columnas */
+  @media (min-width: 1024px) and (max-width: 1399px){
+    .clients-grid{ grid-template-columns: repeat(3, 1fr) !important; }
+  }
 </style>
 </head>
 <body>
@@ -576,18 +591,38 @@ document.querySelector('.brand').addEventListener('click',()=>document.getElemen
 /* NODOS BACKGROUND */
 (function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
-/* ====== PWA: Service Worker + Install Prompt ====== */
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
-let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
-window.addEventListener('beforeinstallprompt',(e)=>{
-  e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');
-  setTimeout(async()=>{try{if(deferredPrompt){await deferredPrompt.prompt(); deferredPrompt=null; installBtn.classList.add('hidden');}}catch(_){}} , 300);
-});
-installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; await deferredPrompt.prompt(); deferredPrompt=null; installBtn.classList.add('hidden')});
-window.addEventListener('appinstalled',()=>showToast('App instalada'));
+/* ====== PWA: Service Worker + Install Prompt (solo por gesto del usuario) ====== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  });
+}
 
-/* extra: si Chrome no muestra el botón de instalar, damos pista */
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.classList.remove('hidden'); // mostramos el botón, sin autoprompt
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  try {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') installBtn.classList.add('hidden');
+  } catch (_) {}
+  deferredPrompt = null;
+});
+
+window.addEventListener('appinstalled', () => {
+  installBtn.classList.add('hidden');
+});
+
+/* extra: si Chrome no muestra el botón de instalar, damos pista (no hace nada en iOS) */
 setTimeout(()=>{ if(installBtn.classList.contains('hidden')) { /* en escritorio suele aparecer icono en omnibar */ } }, 2000);
 </script>
 </body>
-</html> 
+</html>
