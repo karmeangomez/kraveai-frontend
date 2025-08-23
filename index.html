@@ -223,9 +223,18 @@
   @media (min-width: 1024px) and (max-width: 1399px){
     .clients-grid{ grid-template-columns: repeat(3, 1fr) !important; }
   }
+
+  /* ====== BLOQUEO INICIAL (quirúrgico) ====== */
+  body.locked { overflow: hidden; }
+  body.locked main,
+  body.locked header,
+  body.locked nav,
+  body.locked .dashboard,
+  body.locked .credit { display: none !important; }
+  #passwordModal { z-index: 999; } /* por encima de todo */
 </style>
 </head>
-<body>
+<body class="locked">
   <div class="background-3d"></div>
 
   <!-- HEADER -->
@@ -328,7 +337,7 @@
     <div class="item" data-go="accounts">Cuentas</div>
   </nav>
 
-  <!-- MODAL -->
+  <!-- MODAL FICHA CLIENTE -->
   <div class="modal" id="clientModal" role="dialog" aria-modal="true" aria-label="Ficha del cliente">
     <div class="sheet">
       <div class="close" data-close-modal>✕</div>
@@ -348,6 +357,19 @@
         <button class="btn">Abrir Instagram</button>
         <button class="btn primary">Crear campaña</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONTRASEÑA -->
+  <div class="modal show" id="passwordModal" role="dialog" aria-modal="true" aria-label="Ingresar contraseña">
+    <div class="sheet" style="max-width: 400px;">
+      <h3 style="margin: 0 0 12px; font-weight: 800;">Ingresa la contraseña</h3>
+      <input id="passwordInput" class="input" type="password" placeholder="Contraseña" />
+      <div style="display: flex; gap: 10px; margin-top: 12px;">
+        <button class="btn primary" onclick="checkPassword()">Ingresar</button>
+        <button class="btn ghost" onclick="document.getElementById('passwordInput').value = ''">Limpiar</button>
+      </div>
+      <div id="errorMessage" class="muted" style="margin-top: 10px; display: none; color: #e0565b;">Contraseña incorrecta</div>
     </div>
   </div>
 
@@ -623,6 +645,38 @@ window.addEventListener('appinstalled', () => {
 
 /* extra: si Chrome no muestra el botón de instalar, damos pista (no hace nada en iOS) */
 setTimeout(()=>{ if(installBtn.classList.contains('hidden')) { /* en escritorio suele aparecer icono en omnibar */ } }, 2000);
+
+/* ====== CONTROL DE CONTRASEÑA (quirúrgico) ====== */
+const correctPassword = 'Andrick99'; // <- tu contraseña
+(function initPasswordGate(){
+  // El body ya trae class="locked" para evitar parpadeo
+  const modalPw = document.getElementById('passwordModal');
+  const inputPw = document.getElementById('passwordInput');
+  const errorMessage = document.getElementById('errorMessage');
+
+  function unlock(){
+    modalPw.classList.remove('show');
+    document.body.classList.remove('locked');
+    showToast('Acceso concedido');
+  }
+  function wrong(){
+    errorMessage.style.display = 'block';
+    inputPw.value = '';
+    inputPw.focus();
+    showToast('Contraseña incorrecta');
+  }
+
+  window.checkPassword = function checkPassword(){
+    const value = inputPw.value;
+    if (value === correctPassword) unlock(); else wrong();
+  };
+
+  // Enter para enviar
+  inputPw.addEventListener('keypress', (e)=>{ if(e.key==='Enter') window.checkPassword(); });
+
+  // Autofocus
+  setTimeout(()=>{ try{ inputPw.focus(); }catch(_){ } }, 0);
+})();
 </script>
 </body>
 </html>
