@@ -6,8 +6,19 @@
 <title>KraveAI</title>
 
 <!-- PWA -->
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0b1220">
+
+<!-- FAVICON + PWA ICONS -->
+<link rel="icon" href="/icons/robot-192.png" sizes="192x192">
+<link rel="icon" href="/icons/robot-512.png" sizes="512x512">
+<link rel="apple-touch-icon" href="/icons/robot-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/robot-192.png">
+
+<!-- iOS PWA (standalone) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="KraveAI">
 
 <style>
   /* ====== THEME ====== */
@@ -79,11 +90,17 @@
   /* ====== CLIENTES (tarjetas) ====== */
   .clients-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
     gap:12px;
     max-width:1200px;
     margin:0 auto;
+    grid-template-columns: repeat(4, 1fr); /* default desktop */
   }
+  /* control fino por device para evitar roturas */
+  @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr; } }
+  @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr); } }
+  @media (min-width:901px) and (max-width:1200px){ .clients-grid{ grid-template-columns: repeat(3,1fr); } }
+  @media (min-width:1201px){ .clients-grid{ grid-template-columns: repeat(4,1fr); } }
+
   .client-card{
     background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;
     display:flex;gap:12px;align-items:center;
@@ -181,7 +198,7 @@
   .spinner{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top:2px solid var(--brand);border-left:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-left:8px;vertical-align:middle}
   @keyframes spin{100%{transform:rotate(360deg)}}
   .btn.loading{opacity:.7;pointer-events:none}
-  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
+  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:200;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
   @keyframes slide-up{from{bottom:-50px}to{bottom:calc(var(--nav-h,64px) + 80px)}}
   @keyframes fade-out{to{opacity:0}}
 
@@ -192,18 +209,18 @@
   .dashboard .stat{color:var(--muted);font-size:12px}
   .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
 
-  /* ====== BADGE ====== */
+  /* ====== BADGE (ENGLISH + estabilidad) ====== */
   .credit{
-    position:fixed;
-    /* centrado robusto y sin encimarse */
-    left:auto; right:auto;
-    margin:0 auto;
-    width:fit-content;
-    bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 10px);
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 16px);
     z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;
     background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);
     box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
     backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;
+    max-width:90vw;text-align:center;white-space:nowrap;
+  }
+  @media (max-height:680px){
+    .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;}
   }
   @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
@@ -211,28 +228,20 @@
   body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(45deg,transparent 0,rgba(255,0,0,0.1) 1px,transparent 2px);animation:glitch .5s ease-out;z-index:-1;opacity:0}
   @keyframes glitch{0%{opacity:.5}100%{opacity:0}}
 
+  /* ====== BLOQUEO INICIAL (password) ====== */
+  body.locked { overflow: hidden; }
+  body.locked main, body.locked header, body.locked nav, body.locked .dashboard { display:none !important; }
+  /* Permitimos que el badge quede oculto mientras está el modal */
+  body.locked .credit{ display:none !important; }
+
+  /* Robot animado en lock */
+  .lock-robot-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .lock-robot{width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(25,194,255,.6))}
+  @keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+  .lock-robot{animation:floatY 3s ease-in-out infinite}
+
   /* ====== MEDIA ====== */
   @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
-
-  /* ====== BLOQUEO INICIAL (lock screen) ====== */
-  body.locked{overflow:hidden}
-  body.locked main,
-  body.locked header,
-  body.locked nav,
-  body.locked .dashboard,
-  body.locked .credit{display:none!important}
-
-  /* ====== Password modal + robot animado ====== */
-  #passwordModal{position:fixed;overflow:hidden}
-  #passwordModal .lock-robot{
-    position:absolute; inset:0; display:grid; place-items:center;
-    pointer-events:none; opacity:.18;
-  }
-  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
-  #passwordModal .lock-robot svg{
-    width:min(320px,70vw); height:auto; animation:floaty 6s ease-in-out infinite;
-    filter: drop-shadow(0 0 12px rgba(25,194,255,.35));
-  }
 </style>
 </head>
 <body>
@@ -328,7 +337,7 @@
   </div>
 
   <!-- BADGE -->
-  <div class="credit">Created by Karmean Gómez</div>
+  <div class="credit">Created by Karmean Gomez</div>
 
   <!-- NAV -->
   <nav class="nav">
@@ -338,7 +347,7 @@
     <div class="item" data-go="accounts">Cuentas</div>
   </nav>
 
-  <!-- MODAL FICHA CLIENTE -->
+  <!-- MODAL -->
   <div class="modal" id="clientModal" role="dialog" aria-modal="true" aria-label="Ficha del cliente">
     <div class="sheet">
       <div class="close" data-close-modal>✕</div>
@@ -361,27 +370,26 @@
     </div>
   </div>
 
-  <!-- MODAL DE CONTRASEÑA (LOCK SCREEN) -->
+  <!-- MODAL DE CONTRASEÑA -->
   <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-label="Ingresar contraseña">
-    <!-- Fondo animado del robot -->
-    <div class="lock-robot" aria-hidden="true">
-      <svg viewBox="0 0 64 64" role="img" aria-label="KraveAI bot">
-        <defs><linearGradient id="lockG" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs>
-        <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#lockG)"/>
-        <rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/>
-        <circle cx="22" cy="32" r="6" fill="#19c2ff" opacity=".9"/>
-        <circle cx="42" cy="32" r="6" fill="#19c2ff" opacity=".9"/>
-        <rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/>
-      </svg>
-    </div>
-    <div class="sheet" style="max-width: 400px;">
-      <h3 style="margin: 0 0 12px; font-weight: 800;">Ingresa la contraseña</h3>
-      <input id="passwordInput" class="input" type="password" placeholder="Contraseña" />
-      <div style="display: flex; gap: 10px; margin-top: 12px;">
-        <button class="btn primary" onclick="checkPassword()">Ingresar</button>
-        <button class="btn ghost" onclick="document.getElementById('passwordInput').value = ''">Limpiar</button>
+    <div class="sheet" style="max-width: 420px;">
+      <div class="lock-robot-wrap">
+        <!-- Robot animado (mismo diseño del header) -->
+        <svg class="lock-robot" viewBox="0 0 64 64" aria-hidden="true">
+          <defs><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs>
+          <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g2)"/>
+          <rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/>
+          <circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/>
+          <rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/>
+        </svg>
+        <h3 style="margin: 0; font-weight: 800;">Enter password</h3>
       </div>
-      <div id="errorMessage" class="muted" style="margin-top: 10px; display: none; color: #e0565b;">Contraseña incorrecta</div>
+      <input id="passwordInput" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
+      <div style="display: flex; gap: 10px; margin-top: 12px;">
+        <button class="btn primary" onclick="checkPassword()">Enter</button>
+        <button class="btn ghost" onclick="document.getElementById('passwordInput').value = ''">Clear</button>
+      </div>
+      <div id="errorMessage" class="muted" style="margin-top: 10px; display: none; color: #e0565b;">Wrong password</div>
     </div>
   </div>
 
@@ -593,7 +601,8 @@ function activateBeastMode(event){
   function cleanup(){
     if(beastRAF) cancelAnimationFrame(beastRAF);
     if(beastCanvas){const c=beastCanvas.getContext('2d'); c.clearRect(0,0,beastCanvas.width,beastCanvas.height); beastCanvas.remove(); beastCanvas=null;}
-    beastCard.classList.remove('beast-mode-active'); radial.remove(); showToast('Modo Bestia desactivado');
+    const radialEl=beastCard.querySelector('.radial-effect'); if(radialEl) radialEl.remove();
+    beastCard.classList.remove('beast-mode-active'); showToast('Modo Bestia desactivado');
   }
   beastRAF=requestAnimationFrame(drawParticles);
 }
@@ -630,36 +639,34 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{
   e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');
-  setTimeout(async()=>{try{if(deferredPrompt){await deferredPrompt.prompt(); deferredPrompt=null; installBtn.classList.add('hidden');}}catch(_){}} , 300);
 });
-installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; await deferredPrompt.prompt(); deferredPrompt=null; installBtn.classList.add('hidden')});
+installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt();}catch(_){} deferredPrompt=null; installBtn.classList.add('hidden')});
 window.addEventListener('appinstalled',()=>showToast('App instalada'));
 
-/* ====== CONTROL DE CONTRASEÑA (dos claves) ====== */
-const VALID_PASSWORDS = new Set(['Andrick99','invitado25']); // <- tus dos contraseñas
-document.body.classList.add('locked'); // bloquea UI al cargar
+/* ====== CONTROL DE CONTRASEÑA (doble) ====== */
+const validPasswords = new Set(['Andrick99','invitado25']); // <- Tus dos contraseñas
+document.body.classList.add('locked'); // Bloquea la página al cargar
 
 function checkPassword() {
   const input = document.getElementById('passwordInput').value;
   const errorMessage = document.getElementById('errorMessage');
-  if (VALID_PASSWORDS.has(input)) {
+  if (validPasswords.has(input)) {
     document.getElementById('passwordModal').classList.remove('show');
     document.body.classList.remove('locked');
-    showToast('Acceso concedido');
+    showToast('Access granted');
+    document.getElementById('passwordInput').value='';
   } else {
     errorMessage.style.display = 'block';
     document.getElementById('passwordInput').value = '';
-    showToast('Contraseña incorrecta');
+    showToast('Wrong password');
   }
 }
-
-// Mostrar el modal de password al cargar
+// Mostrar modal de contraseña al cargar
 document.getElementById('passwordModal').classList.add('show');
-// Enter para enviar
-document.getElementById('passwordInput').addEventListener('keypress',(e)=>{ if(e.key==='Enter') checkPassword(); });
-
-/* extra: si Chrome no muestra el botón de instalar, damos pista */
-setTimeout(()=>{ if(installBtn.classList.contains('hidden')) { /* en escritorio suele aparecer icono en omnibar */ } }, 2000);
+// Permitir Enter
+document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') checkPassword();
+});
 </script>
 </body>
 </html>
