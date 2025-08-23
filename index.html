@@ -52,9 +52,9 @@
     padding:10px calc(14px + env(safe-area-inset-left,0px)) calc(60px + env(safe-area-inset-bottom,0px)) calc(14px + env(safe-area-inset-right,0px));
     width:100vw;box-sizing:border-box;overflow-y:auto}
   .content-flex{flex:1 0 auto}
-  h1{margin:8px 0 0;font-size:28px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
-  .section-title{margin:22px 0 12px;font-weight:800;letter-spacing:.4px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
-  @keyframes neon-pulse{0%{text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}100%{text-shadow:0 0 12px var(--brand),0 0 20px var(--accent)}}
+  /* TITULOS sin neón */
+  h1{margin:8px 0 0;font-size:28px;font-weight:800;text-shadow:none;animation:none}
+  .section-title{margin:22px 0 12px;font-weight:800;letter-spacing:.4px;text-shadow:none;animation:none}
 
   /* ====== GRID SOCIAL ====== */
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -76,30 +76,46 @@
   .grow{flex:1}
   .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
 
-  /* ====== CLIENTES (tarjetas) ====== */
-  .clients-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  /* ====== CLIENTES (tarjetas dentro de #view-clients) ====== */
+  .clients-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:12px;
+    max-width:1200px;
+    margin:0 auto;
+  }
   .client-card{
     background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;
-    display:flex;gap:12px;align-items:flex-start;
-    opacity:0;transform:translateY(4px);transition:opacity .3s ease,transform .3s ease
+    display:flex;gap:12px;align-items:center;
+    opacity:0;transform:translateY(4px);transition:opacity .3s ease,transform .3s ease;
+    min-height:88px;box-sizing:border-box;
   }
   .client-card.visible{opacity:1;transform:translateY(0)}
-  .client-card .avatar{width:44px;height:44px;border-radius:999px}
-  .client-card .meta{flex:1;min-width:0}
-  .client-card .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
-  .client-card .u{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .client-card .name{color:var(--text)}
-  .client-card .stats{color:var(--muted);font-size:12px}
-  /* verificación SOLO aquí: pegada y proporcionada */
-  .client-card .ig-verified{width:1em;height:1em;vertical-align:-.18em;margin-left:4px}
-  .client-card .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px;flex:none}
+  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0}
+  .client-card .grow{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .client-title{display:flex;align-items:center;gap:4px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .client-sub{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .client-meta{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .client-card .chip{white-space:nowrap;flex-shrink:0}
+
+  /* Verificación: tamaño y pegada al texto */
+  .ig-verified{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;margin-left:2px;shape-rendering:geometricPrecision}
+
+  @media (max-width:480px){
+    .clients-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+    .client-card{padding:12px}
+    .client-card .avatar{width:40px;height:40px}
+  }
+  @media (min-width:1200px){
+    .clients-grid{grid-template-columns:repeat(4,1fr)}
+  }
 
   /* ====== NAV ====== */
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--card-2);border-top:1px solid var(--line);display:flex;gap:10px;
     padding:12px calc(12px + env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) calc(12px + env(safe-area-inset-right,0px));
     justify-content:space-around;width:100vw;box-sizing:border-box}
   .nav .item{flex:1;text-align:center;padding:12px 10px;border-radius:14px;color:var(--muted);font-size:13.5px;cursor:pointer;min-height:48px;line-height:1;-webkit-tap-highlight-color:transparent}
-  .nav .item.active{color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--line);text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
+  .nav .item.active{color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--line)}
 
   /* ====== VISTAS ====== */
   .view{display:none;opacity:0;transform:scale(.98);transition:opacity .4s ease,transform .4s ease}
@@ -121,7 +137,9 @@
   .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
   .thumb{
     position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);
-    overflow:hidden; aspect-ratio: 9 / 19.5; box-shadow: inset 0 0 0 8px rgba(255,255,255,.02);
+    overflow:hidden; /* teléfono */
+    aspect-ratio: 9 / 19.5; /* proporción de móvil */
+    box-shadow: inset 0 0 0 8px rgba(255,255,255,.02);
   }
   .thumb::before{
     content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
@@ -145,13 +163,14 @@
     background:linear-gradient(45deg,var(--accent),var(--brand));border:1px solid rgba(25,194,255,.5);
     border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;
     transition:transform .12s ease, box-shadow .2s ease;box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent);
-    animation:beast-glow 3s ease-in-out infinite;position:relative;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)
+    animation:beast-glow 3s ease-in-out infinite;position:relative
   }
   .beast-mode-card:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 0 30px var(--brand),0 0 50px var(--accent)}
   @keyframes beast-glow{0%,100%{box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent)}50%{box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--brand)}}
   .beast-mode-card .beast-icon{width:24px;height:24px;fill:#fff}
   .beast-mode-active{background:#FF0000!important;border-color:#ff6b6b!important;box-shadow:0 0 30px #ff2d2d, inset 0 0 18px #ff9a9a!important}
-  /* (quitamos halo interno; dejamos solo círculo de pantalla) */
+
+  /* Flash circular (único) */
   @keyframes circle-flash{0%{transform:scale(0);opacity:.35}100%{transform:scale(80);opacity:0}}
   .screen-circle{position:fixed;width:24px;height:24px;border-radius:999px;background:rgba(255,0,0,.35);pointer-events:none;z-index:110;animation:circle-flash .8s ease-out forwards}
 
@@ -191,10 +210,6 @@
 
   /* ====== MEDIA ====== */
   @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
-
-  /* ====== OVERRIDES QUIRÚRGICOS ====== */
-  /* títulos sin neón */
-  h1,.section-title{ text-shadow:none !important; animation:none !important; }
 </style>
 </head>
 <body>
@@ -331,7 +346,7 @@
       <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
     <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
-    <!-- redes (ig,tiktok,yt,threads,x,fb,li,sp,tg,wa) -->
+    <!-- redes -->
     <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
     <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
     <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
@@ -369,6 +384,7 @@ function showView(key){
   document.querySelectorAll('.nav .item').forEach(i=>i.classList.toggle('active',i.getAttribute('data-go')===key));
   window.scrollTo({top:0,behavior:'smooth'});
 }
+document.querySelectorAll('.nav . item'); // noop to keep format
 document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',()=>showView(el.getAttribute('data-go'))));
 function goHome(){showView('home')} showView('home');
 
@@ -380,6 +396,7 @@ setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orienta
 /* ====== DATA REDES ====== */
 const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#li',color:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
 
+/* ====== RENDER GRID REDES ====== */
 const socialGrid=document.getElementById('socialGrid');
 socialGrid.innerHTML=networks.map(n=>{
   if(n.key==='beast-mode'){
@@ -420,7 +437,7 @@ function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria
 const clients=[{user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},{user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},{user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},{user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},{user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},{user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},{user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},{user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},{user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},{user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},{user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},{user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}];
 const avatars={};
 
-/* HOME - recientes */
+/* HOME - recientes (no se toca) */
 const recentList=document.getElementById('recentList');
 recentList.innerHTML=clients.slice(0,12).map(c=>`
   <div class="row">
@@ -436,20 +453,18 @@ const summary=document.createElement('div'); summary.className='summary'; summar
 const totalFollowers=clients.reduce((sum,c)=>{const n=parseFloat(c.followers);return sum+(c.followers.includes('M')?n*1_000_000:c.followers.includes('K')?n*1_000:n)},0);
 summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; recentList.after(summary);
 
-/* CLIENTES (grid) */
+/* CLIENTES (grid) — verificación al lado del NOMBRE */
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
   const avatarUrl=avatars[c.user]||'';
   return `<div class="client-card" data-open="${c.user}">
     <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
-    <div class="meta">
-      <div class="top">
-        <div class="u">@${c.user} ${c.verified?verifiedSvg():''}</div>
-        <span class="chip" onclick="event.stopPropagation(); openCard('${c.user}')">Ver ficha</span>
-      </div>
-      <div class="name muted">${c.name}</div>
-      <div class="stats">${c.followers} seguidores · ${c.posts} posts</div>
+    <div class="grow">
+      <div class="client-title">${c.name}${c.verified?verifiedSvg():''}</div>
+      <div class="client-sub">@${c.user}</div>
+      <div class="client-meta">${c.followers} seguidores · ${c.posts} posts</div>
     </div>
+    <span class="chip">Ver ficha</span>
   </div>`;
 }
 function paintClientsGrid(arr){clientsGrid.innerHTML=arr.map(cardHtml).join(''); requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))}
@@ -504,12 +519,13 @@ function activateBeastMode(event){
   if(beastCard.classList.contains('beast-mode-active')) return;
   beastCard.classList.add('beast-mode-active');
 
-  /* Flash circular desde el punto del click (único efecto luminoso) */
+  // (Eliminado) halo interno: NO creamos radial-effect
+  // Flash circular desde el punto del click (único)
   const circle=document.createElement('div'); circle.className='screen-circle';
   const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`;
   document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
 
-  /* partículas */
+  // partículas sutiles alrededor del botón
   if(!beastCanvas){
     beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
     Object.assign(beastCanvas.style,{position:'absolute',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
@@ -570,8 +586,6 @@ window.addEventListener('beforeinstallprompt',(e)=>{
 });
 installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; await deferredPrompt.prompt(); deferredPrompt=null; installBtn.classList.add('hidden')});
 window.addEventListener('appinstalled',()=>showToast('App instalada'));
-
-/* pista si no aparece el botón de instalar (no hacemos nada para no romper) */
 </script>
 </body>
 </html>
