@@ -1,634 +1,712 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>KraveAI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KraveAI - Gestión de Clientes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0066ff;
+            --secondary-color: #00c2ff;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --text-light: #6c757d;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
 
-<!-- PWA -->
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b1220">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<!-- FAVICON + PWA ICONS -->
-<link rel="icon" href="icons/robot-192.png" sizes="192x192">
-<link rel="icon" href="icons/robot-512.png" sizes="512x512">
-<link rel="apple-touch-icon" href="icons/robot-192.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/robot-192.png">
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
 
-<!-- iOS PWA (standalone) -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="KraveAI">
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-<style>
-  /* ====== THEME ====== */
-  :root{
-    --bg:#0f1419;--card:#141a21;--card-2:#11171d;--muted:#8ea0b2;--text:#e9eef5;--line:#1f2833;
-    --brand:#19c2ff;--accent:#0077ff;--chip:#1b2430;--chip-text:#dfe7ef;--success:#25d366;
-  }
-  .light{--bg:#f6f8fb;--card:#fff;--card-2:#fff;--muted:#5c6b7a;--text:#0b1220;--line:#e7edf4;--brand:#0077ff;--accent:#0057d6;--chip:#eef3f8;--chip-text:#0b1220}
-  .neon-theme{--bg:#0a0f14;--card:#1a2430;--text:#e0f7ff;--brand:#00ffcc;--accent:#ff00ff;--line:#2a3442}
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;padding:0}
-  body{
-    background:var(--bg);color:var(--text);
-    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-    overflow-x:hidden;position:relative;-webkit-text-size-adjust:100%;
-    touch-action:manipulation;
-  }
-  a{color:inherit;text-decoration:none}
-  .hidden{display:none!important}
-  .muted{color:var(--muted)}
-  .btn{background:var(--card);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:12px;cursor:pointer}
-  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--brand));border-color:transparent;color:#fff}
-  .btn.ghost{background:transparent}
-  .input{width:100%;background:var(--card);color:var(--text);border:1px solid var(--line);padding:12px 14px;border-radius:14px;outline:none}
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-  /* ====== HEADER ====== */
-  .topbar{position:sticky;top:0;z-index:80;background:var(--card-2);border-bottom:1px solid var(--line);
-    padding:14px calc(14px + env(safe-area-inset-left,0px)) 14px calc(14px + env(safe-area-inset-right,0px));
-    display:flex;align-items:center;gap:12px;justify-content:space-between;width:100vw}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
-  .robot{width:28px;height:28px;display:block}
-  .right-head{display:flex;align-items:center;gap:12px}
-  .pill{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
-  .dot{width:8px;height:8px;border-radius:999px;background:#e0565b}
-  .toggle,.mic-btn{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 10px;border-radius:10px;cursor:pointer}
-  .mic-btn{padding:8px}
-  .mic-btn.recording{animation:pulse 1s infinite}
-  @keyframes pulse{50%{box-shadow:0 0 10px var(--brand)}}
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-  /* ====== LAYOUT ====== */
-  .wrap{display:flex;flex-direction:column;min-height:100vh;
-    padding:10px calc(14px + env(safe-area-inset-left,0px)) calc(60px + env(safe-area-inset-bottom,0px)) calc(14px + env(safe-area-inset-right,0px));
-    width:100vw;box-sizing:border-box;overflow-y:auto}
-  .content-flex{flex:1 0 auto}
-  h1{margin:8px 0 0;font-size:28px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
-  .section-title{margin:22px 0 12px;font-weight:800;letter-spacing:.4px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
-  @keyframes neon-pulse{0%{text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}100%{text-shadow:0 0 12px var(--brand),0 0 20px var(--accent)}}
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
 
-  /* ====== GRID SOCIAL ====== */
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  @media(min-width:760px){.grid{grid-template-columns:repeat(4,1fr)}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;
-    opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
-  .card.visible{opacity:1;transform:scale(1)}
-  .card:hover{transform:translateY(-1px)}
-  .logo-wrap{width:28px;height:28px;display:grid;place-items:center}
-  .card .title{font-weight:700}
+        .logo i {
+            margin-right: 10px;
+        }
 
-  /* ====== HOME LIST ====== */
-  .list{display:flex;flex-direction:column;gap:12px;margin-bottom:0}
-  .row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;
-    opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
-  .row.visible{opacity:1;transform:scale(1)}
-  .avatar{width:36px;height:36px;border-radius:999px;background:#2a3442;flex:none;overflow:hidden}
-  .row .user{font-weight:700;font-size:16px}
-  .grow{flex:1}
-  .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
 
-  /* ====== CLIENTES (tarjetas) ====== */
-  .clients-grid{
-    display:grid;
-    gap:12px;
-    max-width:1200px;
-    margin:0 auto;
-    grid-template-columns: repeat(4, 1fr); /* desktop */
-  }
-  @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr; } }
-  @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr); } }
-  @media (min-width:901px) and (max-width:1200px){ .clients-grid{ grid-template-columns: repeat(3,1fr); } }
-  @media (min-width:1201px){ .clients-grid{ grid-template-columns: repeat(4,1fr); } }
+        .header-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
 
-  .client-card{
-    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;
-    display:flex;gap:12px;align-items:center;
-    opacity:0;transform:translateY(4px);transition:opacity .3s ease,transform .3s ease;
-    min-height:88px;box-sizing:border-box;
-  }
-  .client-card.visible{opacity:1;transform:translateY(0)}
-  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0;object-fit:cover}
-  .client-card .grow{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
-  .client-title{display:flex;align-items:center;gap:4px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .client-sub,.client-meta{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .client-meta{font-size:12px}
-  .client-card .chip{white-space:nowrap;flex-shrink:0}
-  .ig-verified{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;margin-left:2px;shape-rendering:geometricPrecision}
+        .header-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
 
-  /* ====== NAV ====== */
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--card-2);border-top:1px solid var(--line);display:flex;gap:10px;
-    padding:12px calc(12px + env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) calc(12px + env(safe-area-inset-right,0px));
-    justify-content:space-around;width:100vw;box-sizing:border-box}
-  .nav .item{flex:1;text-align:center;padding:12px 10px;border-radius:14px;color:var(--muted);font-size:13.5px;cursor:pointer;min-height:48px;line-height:1;-webkit-tap-highlight-color:transparent}
-  .nav .item.active{color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--line);text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
+        /* Navigation */
+        nav {
+            background-color: var(--card-color);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
 
-  /* ====== VISTAS ====== */
-  .view{display:none;opacity:0;transform:scale(.98);transition:opacity .4s ease,transform .4s ease}
-  .view.active{display:block;opacity:1;transform:scale(1);animation:holographic-enter .4s ease-out}
-  @keyframes holographic-enter{0%{filter:blur(2px);opacity:0}100%{filter:blur(0);opacity:1}}
+        .nav-container {
+            display: flex;
+            justify-content: center;
+        }
 
-  /* ====== NETWORK ====== */
-  .back{margin:6px 0 16px;display:inline-flex;gap:8px;align-items:center;color:var(--muted);cursor:pointer}
-  .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  @media(min-width:860px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
-  .svc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
-  .svc h4{margin:0 0 10px;font-size:14px}
-  .svc .input{margin:6px 0}
-  .svc .btn{width:100%;margin-top:8px}
+        .nav-link {
+            padding: 18px 25px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
 
-  /* ====== FARM (marcos de celulares) ====== */
-  .devices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  @media(min-width:820px){.devices{grid-template-columns:repeat(3,1fr)}}
-  .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
-  .thumb{position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);overflow:hidden;aspect-ratio: 9 / 19.5;box-shadow: inset 0 0 0 8px rgba(255,255,255,.02)}
-  .thumb::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;box-shadow:0 1px 0 rgba(255,255,255,.06)}
-  .device .btn{width:48%}
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
 
-  /* ====== MODAL ====== */
-  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:120}
-  .modal.show{display:flex}
-  .sheet{width:min(560px,92vw);background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:16px}
-  .sheet .top{display:flex;gap:12px;align-items:center}
-  .sheet .top .avatar{width:56px;height:56px}
-  .meta{display:flex;gap:14px;margin-top:6px;color:var(--muted);font-size:12px}
-  .meta b{color:var(--text)}
-  .close{float:right;cursor:pointer;color:var(--muted)}
+        .nav-link.active {
+            color: var(--primary-color);
+        }
 
-  /* ====== MODO BESTIA ====== */
-  .beast-mode-card{background:linear-gradient(45deg,var(--accent),var(--brand));border:1px solid rgba(25,194,255,.5);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .12s ease, box-shadow .2s ease;box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent);animation:beast-glow 3s ease-in-out infinite;position:relative;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
-  .beast-mode-card:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 0 30px var(--brand),0 0 50px var(--accent)}
-  @keyframes beast-glow{0%,100%{box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent)}50%{box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--brand)}}
-  .beast-mode-card .beast-icon{width:24px;height:24px;fill:#fff}
-  .beast-mode-active{background:#FF0000!important;border-color:#ff6b6b!important;box-shadow:0 0 30px #ff2d2d, inset 0 0 18px #ff9a9a!important}
-  @keyframes radial-flash{0%{transform:scale(0);opacity:.85}100%{transform:scale(18);opacity:0}}
-  .radial-effect{position:absolute;inset:0;border-radius:inherit;background:rgba(255,0,0,.35);animation:radial-flash .7s ease-out forwards;pointer-events:none}
-  @keyframes circle-flash{0%{transform:scale(0);opacity:.35}100%{transform:scale(80);opacity:0}}
-  .screen-circle{position:fixed;width:24px;height:24px;border-radius:999px;background:rgba(255,0,0,.35);pointer-events:none;z-index:110;animation:circle-flash .8s ease-out forwards}
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 3px 3px 0 0;
+        }
 
-  /* ====== BACKGROUND 3D ====== */
-  .background-3d{position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle,rgba(25,194,255,.05) 0%,rgba(0,119,255,.05) 100%);z-index:-1;overflow:hidden}
-  .node{position:absolute;width:4px;height:4px;background:var(--brand);border-radius:50%;animation:float 15s infinite linear}
-  @keyframes float{0%{transform:translate(0,0)}100%{transform:translate(50vw,50vh)}}
+        /* Main Content */
+        .main-content {
+            padding: 20px 0 50px;
+        }
 
-  /* ====== LOADING / TOAST ====== */
-  .spinner{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top:2px solid var(--brand);border-left:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-left:8px;vertical-align:middle}
-  @keyframes spin{100%{transform:rotate(360deg)}}
-  .btn.loading{opacity:.7;pointer-events:none}
-  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:200;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
-  @keyframes slide-up{from{bottom:-50px}to{bottom:calc(var(--nav-h,64px) + 80px)}}
-  @keyframes fade-out{to{opacity:0}}
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-  /* ====== DASHBOARD ====== */
-  .dashboard{position:fixed;top:80px;right:20px;background:var(--card-2);border:1px solid var(--line);border-radius:50%;width:180px;height:180px;padding:20px;z-index:100;display:none;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-  .dashboard.active{display:block}
-  .dashboard h4{margin:0 0 8px;font-size:14px}
-  .dashboard .stat{color:var(--muted);font-size:12px}
-  .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
+        .section-title i {
+            color: var(--primary-color);
+        }
 
-  /* ====== BADGE ====== */
-  .credit{
-    position:fixed;left:50%;transform:translateX(-50%);
-    bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 16px);
-    z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;
-    background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);
-    box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
-    backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;
-    max-width:90vw;text-align:center;white-space:nowrap;
-  }
-  @media (max-height:680px){ .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;} }
-  @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
+        /* Clients Grid */
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
 
-  /* ====== GLITCH (sutil) ====== */
-  body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(45deg,transparent 0,rgba(255,0,0,0.1) 1px,transparent 2px);animation:glitch .5s ease-out;z-index:-1;opacity:0}
-  @keyframes glitch{0%{opacity:.5}100%{opacity:0}}
+        .client-card {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
 
-  /* ====== BLOQUEO INICIAL (password) ====== */
-  body.locked { overflow: hidden; }
-  body.locked main, body.locked header, body.locked nav, body.locked .dashboard { display:none !important; }
-  body.locked .credit{ display:none !important; }
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
 
-  /* Robot animado en lock */
-  .lock-robot-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-  .lock-robot{width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(25,194,255,.6));animation:floatY 3s ease-in-out infinite}
-  @keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+        .client-image-container {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(120deg, #f0f0f0, #e0e0e0);
+        }
 
-  /* ====== MEDIA ====== */
-  @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
-</style>
+        .client-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .client-initials {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .client-info {
+            padding: 20px;
+        }
+
+        .client-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .client-username {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .client-username i {
+            font-size: 14px;
+        }
+
+        .client-details {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            margin-top: 15px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .client-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .client-detail i {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .modal-image-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(120deg, #f0f0f0, #e0e0e0);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-initials {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .modal-user-info h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .modal-user-info p {
+            opacity: 0.9;
+        }
+
+        .modal-close {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-detail {
+            display: flex;
+            margin-bottom: 18px;
+        }
+
+        .modal-detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .modal-detail-content h4 {
+            font-size: 15px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+
+        .modal-detail-content p {
+            font-size: 16px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px 0;
+            margin-top: 50px;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .clients-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+            
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .nav-link {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 10px;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .modal-close {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="background-3d"></div>
-
-  <!-- HEADER -->
-  <header class="topbar">
-    <div class="brand">
-      <svg class="robot" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs><rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g)"/><rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/><circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/><rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/></svg>
-      <span class="name">KraveAI</span>
-    </div>
-    <div class="right-head">
-      <div class="pill"><span class="dot"></span> <span id="conn">Sin conexión</span></div>
-      <button id="themeToggle" class="toggle" title="Cambiar tema">🌙</button>
-      <button id="micToggle" class="mic-btn" title="Activar voz">🎙️</button>
-      <button id="installBtn" class="toggle hidden" title="Instalar app">⬇️ Instalar</button>
-    </div>
-  </header>
-
-  <!-- CONTENIDO -->
-  <main class="wrap">
-    <div class="content-flex">
-      <!-- Home -->
-      <section id="view-home" class="view">
-        <h1>Redes sociales</h1>
-        <div class="sub">Domina todas tus redes con IA</div>
-
-        <div class="section-title">Redes</div>
-        <div class="grid" id="socialGrid"></div>
-
-        <div class="section-title">Clientes recientes</div>
-        <div class="list" id="recentList"></div>
-
-        <div style="display:flex;gap:10px;margin-top:14px">
-          <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
-          <button class="btn primary" onclick="sendAction()">Enviar</button>
-        </div>
-      </section>
-
-      <!-- Clientes -->
-      <section id="view-clients" class="view">
-        <h1>Clientes</h1>
-        <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:12px 0 16px"/>
-        <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
-      </section>
-
-      <!-- Farm -->
-      <section id="view-farm" class="view">
-        <h1>Device Farm</h1>
-        <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
-        <div class="devices" id="farmGrid"></div>
-      </section>
-
-      <!-- Cuentas -->
-      <section id="view-accounts" class="view">
-        <h1>Cuentas</h1>
-        <div class="sub">Gestión de sesión y cuentas manuales</div>
-        <div class="stack" style="max-width:560px">
-          <div class="svc">
-            <h4>Iniciar sesión</h4>
-            <input class="input" placeholder="Usuario" />
-            <input class="input" placeholder="Contraseña" type="password"/>
-            <div style="display:flex;gap:10px">
-              <button class="btn primary">Iniciar sesión</button>
-              <button class="btn">Cerrar sesión</button>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <span>KraveAI</span>
             </div>
-          </div>
-          <div class="svc">
-            <h4>Agregar cuenta manual</h4>
-            <input class="input" placeholder="@usuario"/>
-            <input class="input" placeholder="Token / Contraseña" type="password"/>
-            <button class="btn primary">Guardar cuenta</button>
-          </div>
+            <div class="header-actions">
+                <button class="header-action-btn" title="Estado de conexión">
+                    <i class="fas fa-wifi"></i>
+                </button>
+                <button class="header-action-btn" title="Modo oscuro">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="header-action-btn" title="Búsqueda por voz">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
         </div>
-      </section>
+    </header>
 
-      <!-- Network -->
-      <section id="view-network" class="view">
-        <div class="back" onclick="goHome()">← Atrás</div>
-        <h1 id="networkTitle">Servicios</h1>
-        <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
-        <div class="svc-grid" id="networkServices"></div>
-      </section>
-    </div>
-  </main>
-
-  <!-- DASHBOARD -->
-  <div class="dashboard" id="dashboard">
-    <h4>Panel Rápido</h4>
-    <div class="stat">Acciones hoy: <span id="actions">0</span></div>
-    <div class="stat">Dispositivos activos: <span id="devices">4</span></div>
-    <span class="close" onclick="document.getElementById('dashboard').classList.remove('active')">✕</span>
-  </div>
-
-  <!-- BADGE -->
-  <div class="credit">Created by Karmean Gomez</div>
-
-  <!-- NAV -->
-  <nav class="nav">
-    <div class="item" data-go="home">Inicio</div>
-    <div class="item" data-go="clients">Clientes</div>
-    <div class="item" data-go="farm">Farm</div>
-    <div class="item" data-go="accounts">Cuentas</div>
-  </nav>
-
-  <!-- MODAL -->
-  <div class="modal" id="clientModal" role="dialog" aria-modal="true" aria-label="Ficha del cliente">
-    <div class="sheet">
-      <div class="close" data-close-modal>✕</div>
-      <div class="top">
-        <img id="mAvatar" class="avatar" alt="avatar"/>
-        <div>
-          <div id="mUser" style="font-weight:800"></div>
-          <div class="muted" id="mName"></div>
-          <div class="meta">
-            <div><b id="mPosts"></b> posts</div>
-            <div><b id="mFollowers"></b> seguidores</div>
-            <div><b id="mFollowing"></b> siguiendo</div>
-          </div>
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <a href="#" class="nav-link active">Inicio</a>
+            <a href="#" class="nav-link">Clientes</a>
+            <a href="#" class="nav-link">Farm</a>
+            <a href="#" class="nav-link">Cuentas</a>
         </div>
-      </div>
-      <div style="margin-top:14px;display:flex;gap:10px">
-        <button class="btn">Abrir Instagram</button>
-        <button class="btn primary">Crear campaña</button>
-      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container main-content">
+        <h1 class="section-title">
+            <i class="fas fa-users"></i>
+            Nuestros Clientes
+        </h1>
+        
+        <div class="clients-grid" id="clients-grid">
+            <!-- Los clientes se cargarán aquí con JavaScript -->
+        </div>
+    </main>
+
+    <!-- Modal para detalles del cliente -->
+    <div class="modal" id="client-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-image-container" id="modal-image-container">
+                    <div class="modal-initials" id="modal-initials"></div>
+                    <img class="modal-image" id="modal-image" alt="Foto del cliente">
+                </div>
+                <div class="modal-user-info">
+                    <h2 id="modal-name"></h2>
+                    <p id="modal-username"></p>
+                </div>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-detail">
+                    <div class="modal-detail-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="modal-detail-content">
+                        <h4>Teléfono</h4>
+                        <p id="modal-phone"></p>
+                    </div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-detail-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="modal-detail-content">
+                        <h4>Email</h4>
+                        <p id="modal-email"></p>
+                    </div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-detail-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="modal-detail-content">
+                        <h4>Ubicación</h4>
+                        <p id="modal-location"></p>
+                    </div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-detail-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="modal-detail-content">
+                        <h4>Registro</h4>
+                        <p id="modal-joined"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- MODAL DE CONTRASEÑA -->
-  <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-label="Ingresar contraseña">
-    <div class="sheet" style="max-width: 420px;">
-      <div class="lock-robot-wrap">
-        <svg class="lock-robot" viewBox="0 0 64 64" aria-hidden="true">
-          <defs><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs>
-          <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g2)"/>
-          <rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/>
-          <circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/>
-          <rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/>
-        </svg>
-        <h3 style="margin: 0; font-weight: 800;">Enter password</h3>
-      </div>
-      <input id="passwordInput" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
-      <div style="display: flex; gap: 10px; margin-top: 12px;">
-        <button class="btn primary" onclick="checkPassword()">Enter</button>
-        <button class="btn ghost" onclick="document.getElementById('passwordInput').value = ''">Clear</button>
-      </div>
-      <div id="errorMessage" class="muted" style="margin-top: 10px; display: none; color: #e0565b;">Wrong password</div>
-    </div>
-  </div>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Created by Karmean Gomez</p>
+        </div>
+    </footer>
 
-  <!-- SVGs (sprite) -->
-  <svg style="position:absolute;width:0;height:0;overflow:hidden">
-    <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
-      <defs><radialGradient id="metaBlue" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#67B7FF"/><stop offset="1" stop-color="#0B65FF"/></radialGradient></defs>
-      <path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
-      <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
-    </symbol>
-    <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
-    <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
-    <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
-    <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
-    <symbol id="threads" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#000"/><path fill="#fff" d="M8.5 12c0 2.2 1.8 3.5 3.7 3.5 2.3 0 3.8-1.4 3.8-3.8 0-2.7-1.8-4.2-4.8-4.2h-.9V6h.8c3.9 0 6.5 2.2 6.5 5.9 0 3.2-2.4 5.3-5.6 5.3-3.2 0-5.5-2.1-5.5-5.2h1z"/></symbol>
-    <symbol id="x" viewBox="0 0 24 24"><path fill="#fff" d="M17.5 4H20l-5.5 6 6 10h-5l-3.5-6-4 4-3-2 5-5-5-7h5l3 5 4.5-5z"/></symbol>
-    <symbol id="fb" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12a10 10 0 008.5 9.87v-6.98H8.07v-2.9h2.43V9.41c0-2.4 1.43-3.73 3.63-3.73 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.19 0-1.56.74-1.56 1.49v1.79h2.65l-.42 2.9h-2.23V21.9A10 10 0 0022 12z"/></symbol>
-    <symbol id="li" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.45 20.45H17V14.6c0-1.39-.5-2.34-1.75-2.34-.95 0-1.52.64-1.77 1.26-.09.22-.11.52-.11.82v6.11H9.89s.05-9.92 0-10.95h3.48v1.55c.46-.71 1.29-1.72 3.13-1.72 2.28 0 3.95 1.49 3.95 4.69v6.43zM7.34 8.94a2.02 2.02 0 110-4.04 2.02 2.02 0 010 4.04zM5.57 20.45h3.54V9.5H5.57v10.95z"/></symbol>
-    <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path fill="#fff" d="M7 9c4-1 8 0 10 1 .5.2.7.8.5 1.3-.3.5-.9.6-1.4.4-1.8-.9-5-1.7-8.7-.7-.6.2-1.1-.2-1.3-.8-.2-.6.2-1.1.9-1.2zM7 12c3-.7 6 0 8 .7.4.1.7.6.5 1-.2.5-.7.6-1.2.4-1.6-.7-4.1-1.3-7.2-.6-.5.1-1-.2-1.1-.7-.1-.6.2-1 .9-1.2zM7 15c2-.4 4 .1 5.4.6.4.1.6.5.5.9-.1.4-.5.5-.9.4-1.2-.5-3-1-4.6-.6-.4.1-.8-.1-.9-.5-.1-.5.1-.8.5-.8z"/></symbol>
-    <symbol id="tg" viewBox="0 0 24 24"><path fill="#229ED9" d="M9.6 16.8l-.4 3.7c.6 0 .9-.3 1.2-.6l2.8-2.7 5.8 4.3c1 .6 1.6.3 1.9-.9l3.4-16c.3-1.2-.4-1.7-1.3-1.4L2.2 9.9c-1.1.4-1.1 1.1-.2 1.4l5.6 1.7L18.8 6c.7-.4 1.2-.2.7.3"/></symbol>
-    <symbol id="wa" viewBox="0 0 24 24"><path fill="#25D366" d="M20.5 3.5A10 10 0 003.6 20.4L2 22l1.8-.5a10 10 0 0014.3-14zM12 19a7 7 0 116.2-10.2A7 7 0 0112 19z"/><path fill="#25D366" d="M8.8 7.7c-.4 0-.7.3-.7.7 0 2.2 2.2 4.4 4.4 4.4.4 0 .7-.3 .7-.7 0-.2-.1-.5-.3-.6l-1.1-.6c-.1-.1-.3-.1-.4 0l-.3.2c-.6-.3-1.1-.8-1.4-1.4l.2-.3c.1-.1.1-.3 0-.4l-.6-1.1c-.1-.2-.4-.3-.6-.3z"/></symbol>
-  </svg>
+    <script>
+        // Datos de ejemplo de clientes
+        const clients = [
+            {
+                name: "María González",
+                user: "maria_gonzalez",
+                phone: "+1 234-567-8901",
+                email: "maria.gonzalez@example.com",
+                location: "Madrid, España",
+                joined: "15 Ene 2023"
+            },
+            {
+                name: "Carlos Rodríguez",
+                user: "carlos_art",
+                phone: "+1 345-678-9012",
+                email: "carlos.rodriguez@example.com",
+                location: "Bogotá, Colombia",
+                joined: "22 Feb 2023"
+            },
+            {
+                name: "Ana Martínez",
+                user: "ana_martinez",
+                phone: "+1 456-789-0123",
+                email: "ana.martinez@example.com",
+                location: "Ciudad de México, México",
+                joined: "05 Mar 2023"
+            },
+            {
+                name: "Javier López",
+                user: "javier_lopez",
+                phone: "+1 567-890-1234",
+                email: "javier.lopez@example.com",
+                location: "Buenos Aires, Argentina",
+                joined: "18 Abr 2023"
+            },
+            {
+                name: "Laura Sánchez",
+                user: "laura_sanchez",
+                phone: "+1 678-901-2345",
+                email: "laura.sanchez@example.com",
+                location: "Lima, Perú",
+                joined: "30 May 2023"
+            },
+            {
+                name: "David Fernández",
+                user: "david_fernandez",
+                phone: "+1 789-012-3456",
+                email: "david.fernandez@example.com",
+                location: "Santiago, Chile",
+                joined: "12 Jun 2023"
+            }
+        ];
 
-<script>
-/* ====== TEMA ====== */
-const themeToggle=document.getElementById('themeToggle');
-const savedTheme=localStorage.getItem('krave-theme');
-if(savedTheme==='light')document.body.classList.add('light');
-if(savedTheme==='neon')document.body.classList.add('neon-theme');
-themeToggle.textContent=document.body.classList.contains('light')?'🌞':document.body.classList.contains('neon-theme')?'💡':'🌙';
-themeToggle.onclick=(e)=>{
-  const menu=document.createElement('div');
-  Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:'var(--card)',border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
-  menu.innerHTML=`<div style="padding:6px 10px;cursor:pointer">Claro</div><div style="padding:6px 10px;cursor:pointer">Neón</div><div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
-  const [op1,op2,op3]=menu.children;
-  op1.onclick=()=>{document.body.classList.add('light');document.body.classList.remove('neon-theme');localStorage.setItem('krave-theme','light');themeToggle.textContent='🌞';menu.remove()};
-  op2.onclick=()=>{document.body.classList.add('neon-theme');document.body.classList.remove('light');localStorage.setItem('krave-theme','neon');themeToggle.textContent='💡';menu.remove()};
-  op3.onclick=()=>{document.body.classList.remove('light','neon-theme');localStorage.setItem('krave-theme','dark');themeToggle.textContent='🌙';menu.remove()};
-  e.currentTarget.appendChild(menu);
-};
+        // Función para renderizar la cuadrícula de clientes
+        function renderClientsGrid() {
+            const clientsGrid = document.getElementById('clients-grid');
+            clientsGrid.innerHTML = '';
 
-/* ====== NAV ====== */
-const views={home:document.getElementById('view-home'),clients:document.getElementById('view-clients'),farm:document.getElementById('view-farm'),accounts:document.getElementById('view-accounts'),network:document.getElementById('view-network')};
-function showView(key){
-  Object.entries(views).forEach(([k,v])=>{if(k===key){v.style.display='block';v.offsetHeight;v.classList.add('active')}else{v.classList.remove('active');v.style.display='none'}});
-  document.querySelectorAll('.nav .item').forEach(i=>i.classList.toggle('active',i.getAttribute('data-go')===key));
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',()=>showView(el.getAttribute('data-go'))));
-function goHome(){showView('home')} showView('home');
+            clients.forEach(client => {
+                const initials = client.name.split(' ').map(word => word[0]).join('').toUpperCase();
+                
+                const clientCard = document.createElement('div');
+                clientCard.className = 'client-card';
+                clientCard.innerHTML = `
+                    <div class="client-image-container">
+                        <div class="client-initials">${initials}</div>
+                        <img class="client-image" 
+                             src="https://unavatar.io/instagram/${client.user}" 
+                             alt="${client.name}"
+                             onerror="this.style.display='none'; this.previousElementSibling.style.display='flex';">
+                    </div>
+                    <div class="client-info">
+                        <h3 class="client-name">${client.name}</h3>
+                        <p class="client-username">
+                            <i class="fab fa-instagram"></i>
+                            @${client.user}
+                        </p>
+                        <div class="client-details">
+                            <div class="client-detail">
+                                <i class="fas fa-phone"></i>
+                                <span>Contactar</span>
+                            </div>
+                            <div class="client-detail">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email</span>
+                            </div>
+                            <div class="client-detail">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Detalles</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                clientCard.addEventListener('click', () => openClientModal(client));
+                clientsGrid.appendChild(clientCard);
+            });
+        }
 
-/* ====== Ajuste badge ====== */
-const navEl=document.querySelector('.nav');
-function setNavHeight(){document.documentElement.style.setProperty('--nav-h',navEl.offsetHeight+'px')}
-setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orientationchange',setNavHeight);
+        // Función para abrir el modal con los detalles del cliente
+        function openClientModal(client) {
+            const modal = document.getElementById('client-modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalInitials = document.getElementById('modal-initials');
+            const modalName = document.getElementById('modal-name');
+            const modalUsername = document.getElementById('modal-username');
+            const modalPhone = document.getElementById('modal-phone');
+            const modalEmail = document.getElementById('modal-email');
+            const modalLocation = document.getElementById('modal-location');
+            const modalJoined = document.getElementById('modal-joined');
+            
+            const initials = client.name.split(' ').map(word => word[0]).join('').toUpperCase();
+            
+            // Configurar la imagen con fallback
+            modalImage.src = `https://unavatar.io/instagram/${client.user}`;
+            modalImage.alt = client.name;
+            modalImage.onerror = function() {
+                this.style.display = 'none';
+                modalInitials.textContent = initials;
+                modalInitials.style.display = 'flex';
+            };
+            
+            // Mostrar iniciales inicialmente
+            modalInitials.textContent = initials;
+            modalInitials.style.display = 'flex';
+            modalImage.style.display = 'none';
+            
+            // Cargar la imagen y mostrarla si está disponible
+            const img = new Image();
+            img.src = `https://unavatar.io/instagram/${client.user}`;
+            img.onload = function() {
+                modalImage.style.display = 'block';
+                modalInitials.style.display = 'none';
+            };
+            
+            // Llenar la información del modal
+            modalName.textContent = client.name;
+            modalUsername.textContent = `@${client.user}`;
+            modalPhone.textContent = client.phone;
+            modalEmail.textContent = client.email;
+            modalLocation.textContent = client.location;
+            modalJoined.textContent = client.joined;
+            
+            // Mostrar el modal
+            modal.style.display = 'flex';
+            
+            // Configurar el botón de cerrar
+            document.getElementById('modal-close').onclick = function() {
+                modal.style.display = 'none';
+            };
+            
+            // Cerrar al hacer clic fuera del contenido
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
 
-/* ====== DATA REDES ====== */
-const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#li',color:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
-
-/* ====== RENDER GRID REDES ====== */
-const socialGrid=document.getElementById('socialGrid');
-socialGrid.innerHTML=networks.map(n=>{
-  if(n.key==='beast-mode'){
-    return `<div class="beast-mode-card" data-beast>
-      <div class="logo-wrap"><svg class="beast-icon" viewBox="0 0 24 24"><use href="#beastIcon"></use></svg></div>
-      <div class="title">${n.name}</div>
-    </div>`;
-  }
-  return `<div class="card" data-net="${n.key}">
-    <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
-    <div class="title">${n.name}</div>
-  </div>`;
-}).join('');
-setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),100);
-
-/* ====== VERIFIED SVG ====== */
-function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
-
-/* ====== CLIENTES ====== */
-const clients=[
-  {user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},
-  {user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},
-  {user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},
-  {user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},
-  {user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},
-  {user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},
-  {user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},
-  {user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},
-  {user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},
-  {user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},
-  {user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},
-  {user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}
-];
-
-// Base para fotos en vivo desde Instagram (Unavatar)
-const avatarBase = 'https://unavatar.io/instagram/';
-
-/* HOME - recientes */
-const recentList=document.getElementById('recentList');
-recentList.innerHTML=clients.slice(0,12).map(c=>`
-  <div class="row">
-    <img class="avatar" alt="@${c.user}" src="${avatarBase}${encodeURIComponent(c.user)}"
-         onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
-    <div class="grow">
-      <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
-      <div class="muted">${c.name} · ${c.followers} seguidores</div>
-    </div>
-    <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
-  </div>`).join('');
-setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),100);
-const summary=document.createElement('div'); summary.className='summary'; summary.style.marginTop='8px';
-const totalFollowers=clients.reduce((sum,c)=>{const n=parseFloat(c.followers);return sum+(c.followers.includes('M')?n*1_000_000:c.followers.includes('K')?n*1_000:n)},0);
-summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; recentList.after(summary);
-
-/* CLIENTES (grid) */
-const clientsGrid=document.getElementById('clientsGrid');
-function cardHtml(c){
-  const avatarUrl=`${avatarBase}${encodeURIComponent(c.user)}`;
-  return `<div class="client-card" data-open="${c.user}">
-    <img class="avatar" alt="@${c.user}" src="${avatarUrl}"
-         onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
-    <div class="grow">
-      <div class="client-title">${c.name}${c.verified?verifiedSvg():''}</div>
-      <div class="client-sub">@${c.user}</div>
-      <div class="client-meta">${c.followers} seguidores · ${c.posts} posts</div>
-    </div>
-    <span class="chip">Ver ficha</span>
-  </div>`;
-}
-function paintClientsGrid(arr){clientsGrid.innerHTML=arr.map(cardHtml).join(''); requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))}
-paintClientsGrid(clients);
-
-/* BUSCADOR (tarjetas) */
-document.getElementById('clientSearch').addEventListener('input',e=>{
-  const q=e.target.value.toLowerCase().trim();
-  paintClientsGrid(clients.filter(c=>c.user.toLowerCase().includes(q)||c.name.toLowerCase().includes(q)));
-});
-
-/* MODAL (delegación robusta) */
-const modal=document.getElementById('clientModal');
-function openCard(user){
-  const c=clients.find(x=>x.user===user); if(!c) return;
-  const av=document.getElementById('mAvatar');
-  av.src=`${avatarBase}${encodeURIComponent(c.user)}`;
-  av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
-  document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
-  document.getElementById('mName').textContent=c.name;
-  document.getElementById('mPosts').textContent=c.posts;
-  document.getElementById('mFollowers').textContent=c.followers;
-  document.getElementById('mFollowing').textContent=c.following;
-  modal.classList.add('show');
-}
-function closeModal(){modal.classList.remove('show')}
-modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) closeModal(); });
-
-/* Delegación click: redes, ver ficha y beast */
-document.addEventListener('click',(e)=>{
-  const netEl=e.target.closest('[data-net]'); if(netEl){openNetwork(netEl.getAttribute('data-net')); return;}
-  const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); return;}
-  const beastEl=e.target.closest('[data-beast]'); if(beastEl){activateBeastMode(e); return;}
-});
-
-/* FARM */
-const farmGrid=document.getElementById('farmGrid');
-const devices=[{name:'iPhone 14 Pro · iOS',id:'10.0.0.8'},{name:'Galaxy S23 · Android',id:'10.0.0.9'},{name:'iPhone 13 · iOS',id:'10.0.0.10'},{name:'Pixel 8 · Android',id:'10.0.0.11'},{name:'iPhone 12 mini · iOS',id:'10.0.0.12'},{name:'Galaxy A54 · Android',id:'10.0.0.13'}];
-farmGrid.innerHTML=devices.map(d=>`
-  <div class="device">
-    <div class="thumb"></div>
-    <div style="font-weight:700">${d.name}</div>
-    <div class="muted">${d.id}</div>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn primary" onclick="alert('Asignar stream a ${d.name}')">Asignar stream</button>
-      <button class="btn" onclick="alert('Limpiar ${d.name}')">Limpiar</button>
-    </div>
-  </div>`).join('');
-
-/* MODO BESTIA */
-let beastCanvas=null, beastRAF=null;
-function activateBeastMode(event){
-  const beastCard=event.target.closest('[data-beast]'); if(!beastCard) return;
-  if(beastCard.classList.contains('beast-mode-active')) return;
-  beastCard.classList.add('beast-mode-active');
-  const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial);
-  const circle=document.createElement('div'); circle.className='screen-circle';
-  const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`;
-  document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
-  if(!beastCanvas){
-    beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
-    Object.assign(beastCanvas.style,{position:'absolute',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
-  }
-  const ctx=beastCanvas.getContext('2d'); let start=null;
-  function drawParticles(ts){
-    if(!start) start=ts;
-    const elapsed=ts-start; ctx.clearRect(0,0,beastCanvas.width,beastCanvas.height);
-    const rect=beastCard.getBoundingClientRect(); const cx=rect.left+rect.width/2; const cy=rect.top+rect.height/2;
-    for(let i=0;i<24;i++){
-      const angle=(i/24)*Math.PI*2 + (elapsed/400); const dist=Math.min(120, elapsed/6);
-      const px=cx+Math.cos(angle)*dist, py=cy+Math.sin(angle)*dist;
-      ctx.beginPath(); ctx.arc(px,py,2,0,Math.PI*2); ctx.fillStyle=`rgba(255,0,0,${1-elapsed/1000})`; ctx.fill();
-    }
-    if(elapsed<900){beastRAF=requestAnimationFrame(drawParticles)} else {cleanup()}
-  }
-  function cleanup(){
-    if(beastRAF) cancelAnimationFrame(beastRAF);
-    if(beastCanvas){const c=beastCanvas.getContext('2d'); c.clearRect(0,0,beastCanvas.width,beastCanvas.height); beastCanvas.remove(); beastCanvas=null;}
-    const radialEl=beastCard.querySelector('.radial-effect'); if(radialEl) radialEl.remove();
-    beastCard.classList.remove('beast-mode-active'); showToast('Modo Bestia desactivado');
-  }
-  beastRAF=requestAnimationFrame(drawParticles);
-}
-
-/* ACTION BTN */
-function sendAction(){
-  const button=document.querySelector('.btn.primary'); button.innerHTML='Enviando <span class="spinner"></span>'; button.classList.add('loading');
-  setTimeout(()=>{button.innerHTML='Enviar'; button.classList.remove('loading'); showToast('Acción enviada')},2000);
-}
-
-/* TOAST */
-function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
-
-/* VOICE MODE */
-const micToggle=document.getElementById('micToggle');
-if('webkitSpeechRecognition' in window){
-  const recognition=new webkitSpeechRecognition(); recognition.continuous=false; recognition.interimResults=false; recognition.lang='es-ES';
-  micToggle.addEventListener('click',()=>{recognition.start(); micToggle.textContent='🎙️ (Escuchando)'; micToggle.classList.add('recording')});
-  recognition.onresult=(event)=>{const cmd=event.results[0][0].transcript.toLowerCase(); micToggle.textContent='🎙️'; micToggle.classList.remove('recording');
-    if(cmd.includes('ir a clientes')){showView('clients'); showToast('Navegando a Clientes')}
-    else if(cmd.includes('activar modo bestia')){document.querySelector('[data-beast]').click(); showToast('Modo Bestia activado')}
-  };
-  recognition.onerror=()=>{micToggle.textContent='🎙️'; micToggle.classList.remove('recording'); showToast('Error en reconocimiento de voz')};
-}else{micToggle.style.display='none'}
-
-/* DASHBOARD */
-document.querySelector('.brand').addEventListener('click',()=>document.getElementById('dashboard').classList.toggle('active'));
-
-/* NODOS BACKGROUND */
-(function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
-
-/* ====== PWA: Service Worker + Install Prompt ====== */
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
-let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
-window.addEventListener('beforeinstallprompt',(e)=>{
-  e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');
-});
-installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt();}catch(_){} deferredPrompt=null; installBtn.classList.add('hidden')});
-window.addEventListener('appinstalled',()=>showToast('App instalada'));
-
-/* ====== CONTROL DE CONTRASEÑA (doble) ====== */
-const validPasswords = new Set(['Andrick99','invitado25']);
-document.body.classList.add('locked');
-function checkPassword() {
-  const input = document.getElementById('passwordInput').value;
-  const errorMessage = document.getElementById('errorMessage');
-  if (validPasswords.has(input)) {
-    document.getElementById('passwordModal').classList.remove('show');
-    document.body.classList.remove('locked');
-    showToast('Access granted');
-    document.getElementById('passwordInput').value='';
-  } else {
-    errorMessage.style.display = 'block';
-    document.getElementById('passwordInput').value = '';
-    showToast('Wrong password');
-  }
-}
-document.getElementById('passwordModal').classList.add('show');
-document.getElementById('passwordInput').addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') checkPassword();
-});
-</script>
+        // Inicializar la cuadrícula de clientes cuando se cargue la página
+        document.addEventListener('DOMContentLoaded', function() {
+            renderClientsGrid();
+        });
+    </script>
 </body>
 </html>
