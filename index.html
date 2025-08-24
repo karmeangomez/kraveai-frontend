@@ -1,370 +1,467 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KraveAI - Fotos Reales</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg: #0f1419;
-            --card: #141a21;
-            --card-2: #11171d;
-            --muted: #8ea0b2;
-            --text: #e9eef5;
-            --line: #1f2833;
-            --brand: #19c2ff;
-            --accent: #0077ff;
-            --chip: #1b2430;
-            --chip-text: #dfe7ef;
-            --success: #25d366;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        h1 {
-            color: var(--brand);
-            margin-bottom: 10px;
-            font-size: 2.5rem;
-        }
-        
-        .subtitle {
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
-        
-        .avatar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        
-        .avatar-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid var(--line);
-        }
-        
-        .avatar-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .avatar-container {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 15px;
-            border-radius: 50%;
-            overflow: hidden;
-            position: relative;
-            border: 2px solid var(--brand);
-        }
-        
-        .avatar-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .avatar-initials {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--accent), var(--brand));
-            color: white;
-            font-weight: bold;
-            font-size: 24px;
-        }
-        
-        .username {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--text);
-        }
-        
-        .followers {
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
-        
-        .controls {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            border: 1px solid var(--line);
-        }
-        
-        .control-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--muted);
-        }
-        
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--line);
-            background: var(--card-2);
-            color: var(--text);
-        }
-        
-        button {
-            background: linear-gradient(90deg, var(--accent), var(--brand));
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: opacity 0.3s;
-        }
-        
-        button:hover {
-            opacity: 0.9;
-        }
-        
-        .instructions {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--line);
-        }
-        
-        .instructions h3 {
-            color: var(--brand);
-            margin-bottom: 15px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            color: var(--muted);
-        }
-        
-        .status {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            background: var(--card-2);
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
-        
-        .success {
-            color: var(--success);
-        }
-        
-        .error {
-            color: #ff6b6b;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>KraveAI</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+
+<!-- FAVICON + PWA ICONS -->
+<link rel="icon" href="icons/robot-192.png" sizes="192x192">
+<link rel="icon" href="icons/robot-512.png" sizes="512x512">
+<link rel="apple-touch-icon" href="icons/robot-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/robot-192.png">
+
+<!-- iOS PWA (standalone) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="KraveAI">
+
+<style>
+  /* ====== THEME ====== */
+  :root{
+    --bg:#0f1419;--card:#141a21;--card-2:#11171d;--muted:#8ea0b2;--text:#e9eef5;--line:#1f2833;
+    --brand:#19c2ff;--accent:#0077ff;--chip:#1b2430;--chip-text:#dfe7ef;--success:#25d366;
+  }
+  .light{--bg:#f6f8fb;--card:#fff;--card-2:#fff;--muted:#5c6b7a;--text:#0b1220;--line:#e7edf4;--brand:#0077ff;--accent:#0057d6;--chip:#eef3f8;--chip-text:#0b1220}
+  .neon-theme{--bg:#0a0f14;--card:#1a2430;--text:#e0f7ff;--brand:#00ffcc;--accent:#ff00ff;--line:#2a3442}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    overflow-x:hidden;position:relative;-webkit-text-size-adjust:100%;
+    touch-action:manipulation;
+  }
+  a{color:inherit;text-decoration:none}
+  .hidden{display:none!important}
+  .muted{color:var(--muted)}
+  .btn{background:var(--card);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:12px;cursor:pointer}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--brand));border-color:transparent;color:#fff}
+  .btn.ghost{background:transparent}
+  .input{width:100%;background:var(--card);color:var(--text);border:1px solid var(--line);padding:12px 14px;border-radius:14px;outline:none}
+
+  /* ====== HEADER ====== */
+  .topbar{position:sticky;top:0;z-index:80;background:var(--card-2);border-bottom:1px solid var(--line);
+    padding:14px calc(14px + env(safe-area-inset-left,0px)) 14px calc(14px + env(safe-area-inset-right,0px));
+    display:flex;align-items:center;gap:12px;justify-content:space-between;width:100vw}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .robot{width:28px;height:28px;display:block}
+  .right-head{display:flex;align-items:center;gap:12px}
+  .pill{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .dot{width:8px;height:8px;border-radius:999px;background:#e0565b}
+  .toggle,.mic-btn{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 10px;border-radius:10px;cursor:pointer}
+  .mic-btn{padding:8px}
+  .mic-btn.recording{animation:pulse 1s infinite}
+  @keyframes pulse{50%{box-shadow:0 0 10px var(--brand)}}
+
+  /* ====== LAYOUT ====== */
+  .wrap{display:flex;flex-direction:column;min-height:100vh;
+    padding:10px calc(14px + env(safe-area-inset-left,0px)) calc(60px + env(safe-area-inset-bottom,0px)) calc(14px + env(safe-area-inset-right,0px));
+    width:100vw;box-sizing:border-box;overflow-y:auto}
+  .content-flex{flex:1 0 auto}
+  h1{margin:8px 0 0;font-size:28px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
+  .section-title{margin:22px 0 12px;font-weight:800;letter-spacing:.4px;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);animation:neon-pulse 3s infinite alternate}
+  @keyframes neon-pulse{0%{text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}100%{text-shadow:0 0 12px var(--brand),0 0 20px var(--accent)}}
+
+  /* ====== GRID SOCIAL ====== */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(min-width:760px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;
+    opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
+  .card.visible{opacity:1;transform:scale(1)}
+  .card:hover{transform:translateY(-1px)}
+  .logo-wrap{width:28px;height:28px;display:grid;place-items:center}
+  .card .title{font-weight:700}
+
+  /* ====== HOME LIST ====== */
+  .list{display:flex;flex-direction:column;gap:12px;margin-bottom:0}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;
+    opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
+  .row.visible{opacity:1;transform:scale(1)}
+  .avatar{width:36px;height:36px;border-radius:999px;background:#2a3442;flex:none;overflow:hidden;object-fit:cover}
+  .row .user{font-weight:700;font-size:16px}
+  .grow{flex:1}
+  .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
+
+  /* ====== CLIENTES (tarjetas) ====== */
+  .clients-grid{
+    display:grid;
+    gap:12px;
+    max-width:1200px;
+    margin:0 auto;
+    grid-template-columns: repeat(4, 1fr); /* desktop */
+  }
+  @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr; } }
+  @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr); } }
+  @media (min-width:901px) and (max-width:1200px){ .clients-grid{ grid-template-columns: repeat(3,1fr); } }
+  @media (min-width:1201px){ .clients-grid{ grid-template-columns: repeat(4,1fr); } }
+
+  .client-card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;
+    display:flex;gap:12px;align-items:center;
+    opacity:0;transform:translateY(4px);transition:opacity .3s ease,transform .3s ease;
+    min-height:88px;box-sizing:border-box;
+  }
+  .client-card.visible{opacity:1;transform:translateY(0)}
+  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0;object-fit:cover}
+  .client-card .grow{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .client-title{display:flex;align-items:center;gap:4px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .client-sub,.client-meta{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .client-meta{font-size:12px}
+  .client-card .chip{white-space:nowrap;flex-shrink:0}
+  .ig-verified{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;margin-left:2px;shape-rendering:geometricPrecision}
+
+  /* ====== NAV ====== */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--card-2);border-top:1px solid var(--line);display:flex;gap:10px;
+    padding:12px calc(12px + env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) calc(12px + env(safe-area-inset-right,0px));
+    justify-content:space-around;width:100vw;box-sizing:border-box}
+  .nav .item{flex:1;text-align:center;padding:12px 10px;border-radius:14px;color:var(--muted);font-size:13.5px;cursor:pointer;min-height:48px;line-height:1;-webkit-tap-highlight-color:transparent}
+  .nav .item.active{color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--line);text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
+
+  /* ====== VISTAS ====== */
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ====== NETWORK ====== */
+  .back{margin:6px 0 16px;display:inline-flex;gap:8px;align-items:center;color:var(--muted);cursor:pointer}
+  .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:860px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .svc h4{margin:0 0 10px;font-size:14px}
+  .svc .input{margin:6px 0}
+  .svc .btn{width:100%;margin-top:8px}
+
+  /* ====== FARM (marcos de celulares) ====== */
+  .devices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:820px){.devices{grid-template-columns:repeat(3,1fr)}}
+  .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .thumb{position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);overflow:hidden;aspect-ratio: 9 / 19.5;box-shadow: inset 0 0 0 8px rgba(255,255,255,.02)}
+  .thumb::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;box-shadow:0 1px 0 rgba(255,255,255,.06)}
+  .device .btn{width:48%}
+
+  /* ====== MODAL ====== */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:70}
+  .modal.show{display:flex}
+  .sheet{width:min(560px,92vw);background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .sheet .top{display:flex;gap:12px;align-items:center}
+  .sheet .top .avatar{width:56px;height:56px}
+  .meta{display:flex;gap:14px;margin-top:6px;color:var(--muted);font-size:12px}
+  .meta b{color:var(--text)}
+  .close{float:right;cursor:pointer;color:var(--muted)}
+
+  /* ====== MODO BESTIA ====== */
+  .beast-mode-card{background:linear-gradient(45deg,var(--accent),var(--brand));border:1px solid rgba(25,194,255,.5);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .12s ease, box-shadow .2s ease;box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent);animation:beast-glow 3s ease-in-out infinite;position:relative;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
+  .beast-mode-card:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 0 30px var(--brand),0 0 50px var(--accent)}
+  @keyframes beast-glow{0%,100%{box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent)}50%{box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--brand)}}
+  .beast-mode-card .beast-icon{width:24px;height:24px;fill:#fff}
+  .beast-mode-active{background:#FF0000!important;border-color:#ff6b6b!important;box-shadow:0 0 30px #ff2d2d, inset 0 0 18px #ff9a9a!important}
+  @keyframes radial-flash{0%{transform:scale(0);opacity:.85}100%{transform:scale(18);opacity:0}}
+  .radial-effect{position:absolute;inset:0;border-radius:inherit;background:rgba(255,0,0,.35);animation:radial-flash .7s ease-out forwards;pointer-events:none}
+  @keyframes circle-flash{0%{transform:scale(0);opacity:.35}100%{transform:scale(80);opacity:0}}
+  .screen-circle{position:fixed;width:24px;height:24px;border-radius:999px;background:rgba(255,0,0,.35);pointer-events:none;z-index:110;animation:circle-flash .8s ease-out forwards}
+
+  /* ====== BACKGROUND 3D ====== */
+  .background-3d{position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle,rgba(25,194,255,.05) 0%,rgba(0,119,255,.05) 100%);z-index:-1;overflow:hidden}
+  .node{position:absolute;width:4px;height:4px;background:var(--brand);border-radius:50%;animation:float 15s infinite linear}
+  @keyframes float{0%{transform:translate(0,0)}100%{transform:translate(50vw,50vh)}}
+
+  /* ====== LOADING / TOAST ====== */
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top:2px solid var(--brand);border-left:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-left:8px;vertical-align:middle}
+  @keyframes spin{100%{transform:rotate(360deg)}}
+  .btn.loading{opacity:.7;pointer-events:none}
+  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
+  @keyframes slide-up{from{bottom:-50px}to{bottom:calc(var(--nav-h,64px) + 80px)}}
+  @keyframes fade-out{to{opacity:0}}
+
+  /* ====== DASHBOARD ====== */
+  .dashboard{position:fixed;top:80px;right:20px;background:var(--card-2);border:1px solid var(--line);border-radius:50%;width:180px;height:180px;padding:20px;z-index:100;display:none;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .dashboard.active{display:block}
+  .dashboard h4{margin:0 0 8px;font-size:14px}
+  .dashboard .stat{color:var(--muted);font-size:12px}
+  .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
+
+  /* ====== BADGE ====== */
+  .credit{
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 16px);
+    z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;
+    background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);
+    box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
+    backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;
+    max-width:90vw;text-align:center;white-space:nowrap;
+  }
+  @media (max-height:680px){ .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;} }
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
+
+  /* ====== GLITCH (sutil) ====== */
+  body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(45deg,transparent 0,rgba(255,0,0,0.1) 1px,transparent 2px);animation:glitch .5s ease-out;z-index:-1;opacity:0}
+  @keyframes glitch{0%{opacity:.5}100%{opacity:0}}
+
+  /* ====== BLOQUEO INICIAL (password) ====== */
+  body.locked { overflow: hidden; }
+  body.locked main, body.locked header, body.locked nav, body.locked .dashboard { display:none !important; }
+  body.locked .credit{ display:none !important; }
+
+  /* Robot animado en lock */
+  .lock-robot-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .lock-robot{width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(25,194,255,.6));animation:floatY 3s ease-in-out infinite}
+  @keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+
+  /* ====== MEDIA ====== */
+  @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>KraveAI - Fotos Reales de Instagram</h1>
-        <p class="subtitle">Solución para mostrar avatares reales de usuarios de Instagram</p>
+  <div class="background-3d"></div>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="robot" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs><rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g)"/><rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/><circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/><rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/></svg>
+      <span class="name">KraveAI</span>
     </div>
-    
-    <div class="controls">
-        <div class="control-group">
-            <label for="usernameInput">Agregar usuario de Instagram</label>
-            <input type="text" id="usernameInput" placeholder="Ej: instagram">
-            <button id="addUserBtn">Agregar Usuario</button>
+    <div class="right-head">
+      <div class="pill"><span class="dot"></span> <span id="conn">Sin conexión</span></div>
+      <button id="themeToggle" class="toggle" title="Cambiar tema">🌙</button>
+      <button id="micToggle" class="mic-btn" title="Activar voz">🎙️</button>
+      <button id="installBtn" class="toggle hidden" title="Instalar app">⬇️ Instalar</button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="wrap">
+    <div class="content-flex">
+      <!-- Home -->
+      <section id="view-home" class="view">
+        <h1>Redes sociales</h1>
+        <div class="sub">Domina todas tus redes con IA</div>
+
+        <div class="section-title">Redes</div>
+        <div class="grid" id="socialGrid"></div>
+
+        <div class="section-title">Clientes recientes</div>
+        <div class="list" id="recentList"></div>
+
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
+          <button class="btn primary" onclick="sendAction()">Enviar</button>
         </div>
+      </section>
+
+      <!-- Clientes -->
+      <section id="view-clients" class="view">
+        <h1>Clientes</h1>
+        <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:12px 0 16px"/>
+        <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
+      </section>
+
+      <!-- Farm -->
+      <section id="view-farm" class="view">
+        <h1>Device Farm</h1>
+        <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
+        <div class="devices" id="farmGrid"></div>
+      </section>
+
+      <!-- Cuentas -->
+      <section id="view-accounts" class="view">
+        <h1>Cuentas</h1>
+        <div class="sub">Gestión de sesión y cuentas manuales</div>
+        <div class="stack" style="max-width:560px">
+          <div class="svc">
+            <h4>Iniciar sesión</h4>
+            <input class="input" placeholder="Usuario" />
+            <input class="input" placeholder="Contraseña" type="password"/>
+            <div style="display:flex;gap:10px">
+              <button class="btn primary">Iniciar sesión</button>
+              <button class="btn">Cerrar sesión</button>
+            </div>
+          </div>
+          <div class="svc">
+            <h4>Agregar cuenta manual</h4>
+            <input class="input" placeholder="@usuario"/>
+            <input class="input" placeholder="Token / Contraseña" type="password"/>
+            <button class="btn primary">Guardar cuenta</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Network -->
+      <section id="view-network" class="view">
+        <div class="back" onclick="goHome()">← Atrás</div>
+        <h1 id="networkTitle">Servicios</h1>
+        <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
+        <div class="svc-grid" id="networkServices"></div>
+      </section>
     </div>
-    
-    <div class="avatar-grid" id="avatarGrid">
-        <!-- Los avatares se cargarán aquí -->
+  </main>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+    <h4>Panel Rápido</h4>
+    <div class="stat">Acciones hoy: <span id="actions">0</span></div>
+    <div class="stat">Dispositivos activos: <span id="devices">4</span></div>
+    <span class="close" onclick="document.getElementById('dashboard').classList.remove('active')">✕</span>
+  </div>
+
+  <!-- BADGE -->
+  <div class="credit">Created by Karmean Gomez</div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="item" data-go="home">Inicio</div>
+    <div class="item" data-go="clients">Clientes</div>
+    <div class="item" data-go="farm">Farm</div>
+    <div class="item" data-go="accounts">Cuentas</div>
+  </nav>
+
+  <!-- MODAL -->
+  <div class="modal" id="clientModal" role="dialog" aria-modal="true" aria-label="Ficha del cliente">
+    <div class="sheet">
+      <div class="close" data-close-modal>✕</div>
+      <div class="top">
+        <img id="mAvatar" class="avatar" alt="avatar"/>
+        <div>
+          <div id="mUser" style="font-weight:800"></div>
+          <div class="muted" id="mName"></div>
+          <div class="meta">
+            <div><b id="mPosts"></b> posts</div>
+            <div><b id="mFollowers"></b> seguidores</div>
+            <div><b id="mFollowing"></b> siguiendo</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button class="btn">Abrir Instagram</button>
+        <button class="btn primary">Crear campaña</button>
+      </div>
     </div>
-    
-    <div class="instructions">
-        <h3>¿Cómo funciona?</h3>
-        <ul>
-            <li>El sistema utiliza <strong>unavatar.io</strong> para obtener las fotos reales de Instagram</li>
-            <li>Si la imagen no está disponible, se muestra un avatar con las iniciales del usuario</li>
-            <li>Las imágenes se cargan automáticamente al agregar un usuario</li>
-            <li>Para mejores resultados, asegúrate de que el perfil de Instagram sea público</li>
-        </ul>
-        <div class="status" id="statusMessage">Listo para cargar avatares de Instagram</div>
+  </div>
+
+  <!-- MODAL DE CONTRASEÑA -->
+  <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-label="Ingresar contraseña">
+    <div class="sheet" style="max-width: 420px;">
+      <div class="lock-robot-wrap">
+        <svg class="lock-robot" viewBox="0 0 64 64" aria-hidden="true">
+          <defs><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs>
+          <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g2)"/>
+          <rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/>
+          <circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/>
+          <rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/>
+        </svg>
+        <h3 style="margin: 0; font-weight: 800;">Enter password</h3>
+      </div>
+      <input id="passwordInput" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
+      <div style="display: flex; gap: 10px; margin-top: 12px;">
+        <button class="btn primary" onclick="checkPassword()">Enter</button>
+        <button class="btn ghost" onclick="document.getElementById('passwordInput').value = ''">Clear</button>
+      </div>
+      <div id="errorMessage" class="muted" style="margin-top: 10px; display: none; color: #e0565b;">Wrong password</div>
     </div>
+  </div>
 
-    <script>
-        // Datos de ejemplo de usuarios
-        const defaultUsers = [
-            {user: 'instagram', name: 'Instagram'},
-            {user: 'meta', name: 'Meta'},
-            {user: 'apple', name: 'Apple'},
-            {user: 'nike', name: 'Nike'},
-            {user: 'adidas', name: 'Adidas'},
-            {user: 'sony', name: 'Sony'},
-            {user: 'starbucks', name: 'Starbucks'},
-            {user: 'netflix', name: 'Netflix'}
-        ];
+  <script>
+    // Inicialización de variables
+    const views = document.querySelectorAll('.view');
+    const navItems = document.querySelectorAll('.nav .item');
+    const beastCanvas = document.getElementById('beastCanvas');
+    const ctx = beastCanvas.getContext('2d');
+    let particles = [];
+    let animationFrameId = null;
 
-        const avatarGrid = document.getElementById('avatarGrid');
-        const usernameInput = document.getElementById('usernameInput');
-        const addUserBtn = document.getElementById('addUserBtn');
-        const statusMessage = document.getElementById('statusMessage');
+    // Funciones de navegación
+    function goToView(viewId) {
+      views.forEach(view => view.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+      navItems.forEach(item => item.classList.remove('active'));
+      document.querySelector(`.nav .item[data-go="${viewId}"]`).classList.add('active');
+      stopBeastMode(); // Detener Modo Bestia al cambiar de vista
+    }
 
-        // Función para mostrar un mensaje de estado
-        function showStatus(message, type = '') {
-            statusMessage.textContent = message;
-            statusMessage.className = 'status ' + type;
-            setTimeout(() => {
-                statusMessage.textContent = '';
-                statusMessage.className = 'status';
-            }, 3000);
-        }
+    function goHome() {
+      goToView('view-home');
+      document.getElementById('networkTitle').textContent = 'Servicios';
+      document.getElementById('networkSub').textContent = 'Selecciona un servicio para esta red';
+    }
 
-        // Función para obtener las iniciales de un nombre
-        function getInitials(name) {
-            return name.split(' ')
-                .map(word => word[0])
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
-        }
+    function goNetwork(network) {
+      goToView('view-network');
+      document.getElementById('networkTitle').textContent = network.charAt(0).toUpperCase() + network.slice(1);
+      document.getElementById('networkSub').textContent = `Configura servicios para ${network}`;
+    }
 
-        // Función para crear una tarjeta de avatar
-        function createAvatarCard(userData) {
-            const card = document.createElement('div');
-            card.className = 'avatar-card';
-            
-            const avatarContainer = document.createElement('div');
-            avatarContainer.className = 'avatar-container';
-            
-            const avatarImage = document.createElement('img');
-            avatarImage.className = 'avatar-image';
-            avatarImage.alt = `@${userData.user}`;
-            
-            const avatarInitials = document.createElement('div');
-            avatarInitials.className = 'avatar-initials';
-            avatarInitials.textContent = getInitials(userData.name);
-            
-            // Cargar la imagen desde unavatar.io
-            avatarImage.src = `https://unavatar.io/instagram/${userData.user}`;
-            
-            // Manejar errores de carga de imagen
-            avatarImage.onerror = function() {
-                this.style.display = 'none';
-                avatarInitials.style.display = 'flex';
-            };
-            
-            avatarImage.onload = function() {
-                avatarInitials.style.display = 'none';
-                this.style.display = 'block';
-            };
-            
-            avatarContainer.appendChild(avatarImage);
-            avatarContainer.appendChild(avatarInitials);
-            
-            const username = document.createElement('div');
-            username.className = 'username';
-            username.textContent = `@${userData.user}`;
-            
-            const name = document.createElement('div');
-            name.className = 'name';
-            name.textContent = userData.name;
-            
-            card.appendChild(avatarContainer);
-            card.appendChild(username);
-            card.appendChild(name);
-            
-            return card;
-        }
+    // Manejo de navegación por botones
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const viewId = item.getAttribute('data-go');
+        goToView(viewId);
+      });
+    });
 
-        // Función para cargar todos los avatares
-        function loadAllAvatars() {
-            avatarGrid.innerHTML = '';
-            
-            // Cargar usuarios por defecto
-            defaultUsers.forEach(userData => {
-                const card = createAvatarCard(userData);
-                avatarGrid.appendChild(card);
-            });
-            
-            // Cargar usuarios personalizados desde localStorage
-            const customUsers = JSON.parse(localStorage.getItem('customUsers')) || [];
-            customUsers.forEach(userData => {
-                const card = createAvatarCard(userData);
-                avatarGrid.appendChild(card);
-            });
-        }
-
-        // Agregar un nuevo usuario
-        addUserBtn.addEventListener('click', function() {
-            const username = usernameInput.value.trim();
-            
-            if (!username) {
-                showStatus('Por favor, ingresa un nombre de usuario', 'error');
-                return;
-            }
-            
-            // Crear objeto de usuario
-            const userData = {
-                user: username,
-                name: username.charAt(0).toUpperCase() + username.slice(1)
-            };
-            
-            // Guardar en localStorage
-            const customUsers = JSON.parse(localStorage.getItem('customUsers')) || [];
-            customUsers.push(userData);
-            localStorage.setItem('customUsers', JSON.stringify(customUsers));
-            
-            // Agregar a la cuadrícula
-            const card = createAvatarCard(userData);
-            avatarGrid.appendChild(card);
-            
-            // Limpiar el campo de entrada
-            usernameInput.value = '';
-            
-            showStatus(`Usuario @${username} agregado correctamente`, 'success');
+    // Modo Bestia
+    function initBeastMode() {
+      beastCanvas.style.display = 'block';
+      beastCanvas.width = window.innerWidth;
+      beastCanvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: Math.random() * beastCanvas.width,
+          y: Math.random() * beastCanvas.height,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          size: Math.random() * 3 + 1,
+          color: `hsl(${Math.random() * 360}, 70%, 50%)`
         });
+      }
+      animateBeast();
+    }
 
-        // Permitir agregar con la tecla Enter
-        usernameInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addUserBtn.click();
-            }
-        });
+    function animateBeast() {
+      ctx.clearRect(0, 0, beastCanvas.width, beastCanvas.height);
+      particles.forEach(particle => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        if (particle.x < 0 || particle.x > beastCanvas.width) particle.vx *= -1;
+        if (particle.y < 0 || particle.y > beastCanvas.height) particle.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = particle.color;
+        ctx.fill();
+      });
+      animationFrameId = requestAnimationFrame(animateBeast);
+    }
 
-        // Cargar todos los avatares al iniciar
-        document.addEventListener('DOMContentLoaded', loadAllAvatars);
-    </script>
+    function stopBeastMode() {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      if (beastCanvas) {
+        ctx.clearRect(0, 0, beastCanvas.width, beastCanvas.height);
+        beastCanvas.style.display = 'none';
+      }
+    }
+
+    // Inicialización
+    goToView('view-home');
+
+    // Resto del código para renderizar clientes
+    const clientsGrid = document.getElementById('clientsGrid');
+    function paintClientsGrid(arr) {
+      clientsGrid.innerHTML = arr.map(c => cardHtml(c)).join('');
+      requestAnimationFrame(() => clientsGrid.querySelectorAll('.client-card').forEach(el => el.classList.add('visible')));
+    }
+    paintClientsGrid(clients);
+
+    // Buscador
+    document.getElementById('clientSearch').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase().trim();
+      paintClientsGrid(clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)));
+    });
+  </script>
 </body>
 </html>
