@@ -3,710 +3,368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KraveAI - Gestión de Clientes</title>
+    <title>KraveAI - Fotos Reales</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #0066ff;
-            --secondary-color: #00c2ff;
-            --background-color: #f8f9fa;
-            --card-color: #ffffff;
-            --text-color: #333333;
-            --text-light: #6c757d;
-            --border-color: #e0e0e0;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
+            --bg: #0f1419;
+            --card: #141a21;
+            --card-2: #11171d;
+            --muted: #8ea0b2;
+            --text: #e9eef5;
+            --line: #1f2833;
+            --brand: #19c2ff;
+            --accent: #0077ff;
+            --chip: #1b2430;
+            --chip-text: #dfe7ef;
+            --success: #25d366;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background-color: var(--bg);
+            color: var(--text);
             line-height: 1.6;
-        }
-
-        .container {
+            padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
         }
-
-        /* Header Styles */
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 15px 0;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo i {
-            margin-right: 10px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .header-action-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .header-action-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Navigation */
-        nav {
-            background-color: var(--card-color);
-            box-shadow: var(--shadow);
+        
+        .header {
+            text-align: center;
             margin-bottom: 30px;
         }
-
-        .nav-container {
-            display: flex;
-            justify-content: center;
-        }
-
-        .nav-link {
-            padding: 18px 25px;
-            text-decoration: none;
-            color: var(--text-light);
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        .nav-link.active {
-            color: var(--primary-color);
-        }
-
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 3px 3px 0 0;
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 20px 0 50px;
-        }
-
-        .section-title {
-            font-size: 24px;
-            margin-bottom: 25px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title i {
-            color: var(--primary-color);
-        }
-
-        /* Clients Grid */
-        .clients-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .client-card {
-            background-color: var(--card-color);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .client-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-        }
-
-        .client-image-container {
-            position: relative;
-            height: 180px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(120deg, #f0f0f0, #e0e0e0);
-        }
-
-        .client-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .client-initials {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .client-info {
-            padding: 20px;
-        }
-
-        .client-name {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-color);
-        }
-
-        .client-username {
-            color: var(--primary-color);
-            font-weight: 500;
+        
+        h1 {
+            color: var(--brand);
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-size: 2.5rem;
         }
-
-        .client-username i {
-            font-size: 14px;
+        
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 20px;
         }
-
-        .client-details {
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-            margin-top: 15px;
-            color: var(--text-light);
-            font-size: 14px;
+        
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
-
-        .client-detail {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .client-detail i {
-            margin-bottom: 5px;
-            font-size: 16px;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background-color: var(--card-color);
+        
+        .avatar-card {
+            background: var(--card);
             border-radius: 12px;
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            animation: modalFadeIn 0.3s;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--line);
         }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        .avatar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-
-        .modal-header {
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-        }
-
-        .modal-image-container {
+        
+        .avatar-container {
             width: 80px;
             height: 80px;
+            margin: 0 auto 15px;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(120deg, #f0f0f0, #e0e0e0);
+            position: relative;
+            border: 2px solid var(--brand);
         }
-
-        .modal-image {
+        
+        .avatar-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
-        .modal-initials {
+        
+        .avatar-initials {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, var(--accent), var(--brand));
             color: white;
-            font-size: 28px;
             font-weight: bold;
+            font-size: 24px;
         }
-
-        .modal-user-info h2 {
-            font-size: 20px;
+        
+        .username {
+            font-weight: bold;
             margin-bottom: 5px;
+            color: var(--text);
         }
-
-        .modal-user-info p {
+        
+        .followers {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        
+        .controls {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid var(--line);
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted);
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: var(--card-2);
+            color: var(--text);
+        }
+        
+        button {
+            background: linear-gradient(90deg, var(--accent), var(--brand));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        
+        button:hover {
             opacity: 0.9;
         }
-
-        .modal-close {
-            margin-left: auto;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
+        
+        .instructions {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
         }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
+        
+        .instructions h3 {
+            color: var(--brand);
+            margin-bottom: 15px;
         }
-
-        .modal-body {
-            padding: 25px;
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
         }
-
-        .modal-detail {
-            display: flex;
-            margin-bottom: 18px;
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: var(--muted);
         }
-
-        .modal-detail-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin-right: 15px;
-            flex-shrink: 0;
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--card-2);
+            color: var(--muted);
+            font-size: 0.9rem;
         }
-
-        .modal-detail-content h4 {
-            font-size: 15px;
-            color: var(--text-light);
-            margin-bottom: 3px;
+        
+        .success {
+            color: var(--success);
         }
-
-        .modal-detail-content p {
-            font-size: 16px;
-            color: var(--text-color);
-            font-weight: 500;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 25px 0;
-            margin-top: 50px;
-            color: var(--text-light);
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .clients-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            }
-            
-            .nav-container {
-                flex-wrap: wrap;
-            }
-            
-            .nav-link {
-                padding: 12px 15px;
-                font-size: 14px;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .clients-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-content {
-                margin: 10px;
-            }
-            
-            .modal-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .modal-close {
-                position: absolute;
-                top: 15px;
-                right: 15px;
-            }
+        
+        .error {
+            color: #ff6b6b;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-brain"></i>
-                <span>KraveAI</span>
-            </div>
-            <div class="header-actions">
-                <button class="header-action-btn" title="Estado de conexión">
-                    <i class="fas fa-wifi"></i>
-                </button>
-                <button class="header-action-btn" title="Modo oscuro">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="header-action-btn" title="Búsqueda por voz">
-                    <i class="fas fa-microphone"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Navigation -->
-    <nav>
-        <div class="container nav-container">
-            <a href="#" class="nav-link active">Inicio</a>
-            <a href="#" class="nav-link">Clientes</a>
-            <a href="#" class="nav-link">Farm</a>
-            <a href="#" class="nav-link">Cuentas</a>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container main-content">
-        <h1 class="section-title">
-            <i class="fas fa-users"></i>
-            Nuestros Clientes
-        </h1>
-        
-        <div class="clients-grid" id="clients-grid">
-            <!-- Los clientes se cargarán aquí con JavaScript -->
-        </div>
-    </main>
-
-    <!-- Modal para detalles del cliente -->
-    <div class="modal" id="client-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-image-container" id="modal-image-container">
-                    <div class="modal-initials" id="modal-initials"></div>
-                    <img class="modal-image" id="modal-image" alt="Foto del cliente">
-                </div>
-                <div class="modal-user-info">
-                    <h2 id="modal-name"></h2>
-                    <p id="modal-username"></p>
-                </div>
-                <button class="modal-close" id="modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-detail">
-                    <div class="modal-detail-icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
-                    <div class="modal-detail-content">
-                        <h4>Teléfono</h4>
-                        <p id="modal-phone"></p>
-                    </div>
-                </div>
-                <div class="modal-detail">
-                    <div class="modal-detail-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="modal-detail-content">
-                        <h4>Email</h4>
-                        <p id="modal-email"></p>
-                    </div>
-                </div>
-                <div class="modal-detail">
-                    <div class="modal-detail-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div class="modal-detail-content">
-                        <h4>Ubicación</h4>
-                        <p id="modal-location"></p>
-                    </div>
-                </div>
-                <div class="modal-detail">
-                    <div class="modal-detail-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="modal-detail-content">
-                        <h4>Registro</h4>
-                        <p id="modal-joined"></p>
-                    </div>
-                </div>
-            </div>
+    <div class="header">
+        <h1>KraveAI - Fotos Reales de Instagram</h1>
+        <p class="subtitle">Solución para mostrar avatares reales de usuarios de Instagram</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label for="usernameInput">Agregar usuario de Instagram</label>
+            <input type="text" id="usernameInput" placeholder="Ej: instagram">
+            <button id="addUserBtn">Agregar Usuario</button>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>Created by Karmean Gomez</p>
-        </div>
-    </footer>
+    
+    <div class="avatar-grid" id="avatarGrid">
+        <!-- Los avatares se cargarán aquí -->
+    </div>
+    
+    <div class="instructions">
+        <h3>¿Cómo funciona?</h3>
+        <ul>
+            <li>El sistema utiliza <strong>unavatar.io</strong> para obtener las fotos reales de Instagram</li>
+            <li>Si la imagen no está disponible, se muestra un avatar con las iniciales del usuario</li>
+            <li>Las imágenes se cargan automáticamente al agregar un usuario</li>
+            <li>Para mejores resultados, asegúrate de que el perfil de Instagram sea público</li>
+        </ul>
+        <div class="status" id="statusMessage">Listo para cargar avatares de Instagram</div>
+    </div>
 
     <script>
-        // Datos de ejemplo de clientes
-        const clients = [
-            {
-                name: "María González",
-                user: "maria_gonzalez",
-                phone: "+1 234-567-8901",
-                email: "maria.gonzalez@example.com",
-                location: "Madrid, España",
-                joined: "15 Ene 2023"
-            },
-            {
-                name: "Carlos Rodríguez",
-                user: "carlos_art",
-                phone: "+1 345-678-9012",
-                email: "carlos.rodriguez@example.com",
-                location: "Bogotá, Colombia",
-                joined: "22 Feb 2023"
-            },
-            {
-                name: "Ana Martínez",
-                user: "ana_martinez",
-                phone: "+1 456-789-0123",
-                email: "ana.martinez@example.com",
-                location: "Ciudad de México, México",
-                joined: "05 Mar 2023"
-            },
-            {
-                name: "Javier López",
-                user: "javier_lopez",
-                phone: "+1 567-890-1234",
-                email: "javier.lopez@example.com",
-                location: "Buenos Aires, Argentina",
-                joined: "18 Abr 2023"
-            },
-            {
-                name: "Laura Sánchez",
-                user: "laura_sanchez",
-                phone: "+1 678-901-2345",
-                email: "laura.sanchez@example.com",
-                location: "Lima, Perú",
-                joined: "30 May 2023"
-            },
-            {
-                name: "David Fernández",
-                user: "david_fernandez",
-                phone: "+1 789-012-3456",
-                email: "david.fernandez@example.com",
-                location: "Santiago, Chile",
-                joined: "12 Jun 2023"
-            }
+        // Datos de ejemplo de usuarios
+        const defaultUsers = [
+            {user: 'instagram', name: 'Instagram'},
+            {user: 'meta', name: 'Meta'},
+            {user: 'apple', name: 'Apple'},
+            {user: 'nike', name: 'Nike'},
+            {user: 'adidas', name: 'Adidas'},
+            {user: 'sony', name: 'Sony'},
+            {user: 'starbucks', name: 'Starbucks'},
+            {user: 'netflix', name: 'Netflix'}
         ];
 
-        // Función para renderizar la cuadrícula de clientes
-        function renderClientsGrid() {
-            const clientsGrid = document.getElementById('clients-grid');
-            clientsGrid.innerHTML = '';
+        const avatarGrid = document.getElementById('avatarGrid');
+        const usernameInput = document.getElementById('usernameInput');
+        const addUserBtn = document.getElementById('addUserBtn');
+        const statusMessage = document.getElementById('statusMessage');
 
-            clients.forEach(client => {
-                const initials = client.name.split(' ').map(word => word[0]).join('').toUpperCase();
-                
-                const clientCard = document.createElement('div');
-                clientCard.className = 'client-card';
-                clientCard.innerHTML = `
-                    <div class="client-image-container">
-                        <div class="client-initials">${initials}</div>
-                        <img class="client-image" 
-                             src="https://unavatar.io/instagram/${client.user}" 
-                             alt="${client.name}"
-                             onerror="this.style.display='none'; this.previousElementSibling.style.display='flex';">
-                    </div>
-                    <div class="client-info">
-                        <h3 class="client-name">${client.name}</h3>
-                        <p class="client-username">
-                            <i class="fab fa-instagram"></i>
-                            @${client.user}
-                        </p>
-                        <div class="client-details">
-                            <div class="client-detail">
-                                <i class="fas fa-phone"></i>
-                                <span>Contactar</span>
-                            </div>
-                            <div class="client-detail">
-                                <i class="fas fa-envelope"></i>
-                                <span>Email</span>
-                            </div>
-                            <div class="client-detail">
-                                <i class="fas fa-info-circle"></i>
-                                <span>Detalles</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                clientCard.addEventListener('click', () => openClientModal(client));
-                clientsGrid.appendChild(clientCard);
-            });
+        // Función para mostrar un mensaje de estado
+        function showStatus(message, type = '') {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status ' + type;
+            setTimeout(() => {
+                statusMessage.textContent = '';
+                statusMessage.className = 'status';
+            }, 3000);
         }
 
-        // Función para abrir el modal con los detalles del cliente
-        function openClientModal(client) {
-            const modal = document.getElementById('client-modal');
-            const modalImage = document.getElementById('modal-image');
-            const modalInitials = document.getElementById('modal-initials');
-            const modalName = document.getElementById('modal-name');
-            const modalUsername = document.getElementById('modal-username');
-            const modalPhone = document.getElementById('modal-phone');
-            const modalEmail = document.getElementById('modal-email');
-            const modalLocation = document.getElementById('modal-location');
-            const modalJoined = document.getElementById('modal-joined');
+        // Función para obtener las iniciales de un nombre
+        function getInitials(name) {
+            return name.split(' ')
+                .map(word => word[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        }
+
+        // Función para crear una tarjeta de avatar
+        function createAvatarCard(userData) {
+            const card = document.createElement('div');
+            card.className = 'avatar-card';
             
-            const initials = client.name.split(' ').map(word => word[0]).join('').toUpperCase();
+            const avatarContainer = document.createElement('div');
+            avatarContainer.className = 'avatar-container';
             
-            // Configurar la imagen con fallback
-            modalImage.src = `https://unavatar.io/instagram/${client.user}`;
-            modalImage.alt = client.name;
-            modalImage.onerror = function() {
+            const avatarImage = document.createElement('img');
+            avatarImage.className = 'avatar-image';
+            avatarImage.alt = `@${userData.user}`;
+            
+            const avatarInitials = document.createElement('div');
+            avatarInitials.className = 'avatar-initials';
+            avatarInitials.textContent = getInitials(userData.name);
+            
+            // Cargar la imagen desde unavatar.io
+            avatarImage.src = `https://unavatar.io/instagram/${userData.user}`;
+            
+            // Manejar errores de carga de imagen
+            avatarImage.onerror = function() {
                 this.style.display = 'none';
-                modalInitials.textContent = initials;
-                modalInitials.style.display = 'flex';
+                avatarInitials.style.display = 'flex';
             };
             
-            // Mostrar iniciales inicialmente
-            modalInitials.textContent = initials;
-            modalInitials.style.display = 'flex';
-            modalImage.style.display = 'none';
-            
-            // Cargar la imagen y mostrarla si está disponible
-            const img = new Image();
-            img.src = `https://unavatar.io/instagram/${client.user}`;
-            img.onload = function() {
-                modalImage.style.display = 'block';
-                modalInitials.style.display = 'none';
+            avatarImage.onload = function() {
+                avatarInitials.style.display = 'none';
+                this.style.display = 'block';
             };
             
-            // Llenar la información del modal
-            modalName.textContent = client.name;
-            modalUsername.textContent = `@${client.user}`;
-            modalPhone.textContent = client.phone;
-            modalEmail.textContent = client.email;
-            modalLocation.textContent = client.location;
-            modalJoined.textContent = client.joined;
+            avatarContainer.appendChild(avatarImage);
+            avatarContainer.appendChild(avatarInitials);
             
-            // Mostrar el modal
-            modal.style.display = 'flex';
+            const username = document.createElement('div');
+            username.className = 'username';
+            username.textContent = `@${userData.user}`;
             
-            // Configurar el botón de cerrar
-            document.getElementById('modal-close').onclick = function() {
-                modal.style.display = 'none';
-            };
+            const name = document.createElement('div');
+            name.className = 'name';
+            name.textContent = userData.name;
             
-            // Cerrar al hacer clic fuera del contenido
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
+            card.appendChild(avatarContainer);
+            card.appendChild(username);
+            card.appendChild(name);
+            
+            return card;
+        }
+
+        // Función para cargar todos los avatares
+        function loadAllAvatars() {
+            avatarGrid.innerHTML = '';
+            
+            // Cargar usuarios por defecto
+            defaultUsers.forEach(userData => {
+                const card = createAvatarCard(userData);
+                avatarGrid.appendChild(card);
+            });
+            
+            // Cargar usuarios personalizados desde localStorage
+            const customUsers = JSON.parse(localStorage.getItem('customUsers')) || [];
+            customUsers.forEach(userData => {
+                const card = createAvatarCard(userData);
+                avatarGrid.appendChild(card);
             });
         }
 
-        // Inicializar la cuadrícula de clientes cuando se cargue la página
-        document.addEventListener('DOMContentLoaded', function() {
-            renderClientsGrid();
+        // Agregar un nuevo usuario
+        addUserBtn.addEventListener('click', function() {
+            const username = usernameInput.value.trim();
+            
+            if (!username) {
+                showStatus('Por favor, ingresa un nombre de usuario', 'error');
+                return;
+            }
+            
+            // Crear objeto de usuario
+            const userData = {
+                user: username,
+                name: username.charAt(0).toUpperCase() + username.slice(1)
+            };
+            
+            // Guardar en localStorage
+            const customUsers = JSON.parse(localStorage.getItem('customUsers')) || [];
+            customUsers.push(userData);
+            localStorage.setItem('customUsers', JSON.stringify(customUsers));
+            
+            // Agregar a la cuadrícula
+            const card = createAvatarCard(userData);
+            avatarGrid.appendChild(card);
+            
+            // Limpiar el campo de entrada
+            usernameInput.value = '';
+            
+            showStatus(`Usuario @${username} agregado correctamente`, 'success');
         });
+
+        // Permitir agregar con la tecla Enter
+        usernameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addUserBtn.click();
+            }
+        });
+
+        // Cargar todos los avatares al iniciar
+        document.addEventListener('DOMContentLoaded', loadAllAvatars);
     </script>
 </body>
 </html>
