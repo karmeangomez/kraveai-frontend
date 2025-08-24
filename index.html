@@ -6,19 +6,20 @@
 <title>KraveAI</title>
 
 <!-- PWA -->
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0b1220">
 
 <!-- FAVICON + PWA ICONS -->
-<link rel="icon" href="icons/robot-192.png" sizes="192x192">
-<link rel="icon" href="icons/robot-512.png" sizes="512x512">
-<link rel="apple-touch-icon" href="icons/robot-192.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/robot-192.png">
+<link rel="icon" href="/icons/robot-192.png" sizes="192x192">
+<link rel="icon" href="/icons/robot-512.png" sizes="512x512">
+<link rel="apple-touch-icon" href="/icons/robot-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/robot-192.png">
 
 <!-- iOS PWA (standalone) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="KraveAI">
+
 <style>
   /* ====== THEME ====== */
   :root{
@@ -81,7 +82,7 @@
   .row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;
     opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
   .row.visible{opacity:1;transform:scale(1)}
-  .avatar{width:36px;height:36px;border-radius:999px;background:#2a3442;flex:none;overflow:hidden;object-fit:cover}
+  .avatar{width:36px;height:36px;border-radius:999px;background:#2a3442;flex:none;overflow:hidden}
   .row .user{font-weight:700;font-size:16px}
   .grow{flex:1}
   .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
@@ -92,8 +93,9 @@
     gap:12px;
     max-width:1200px;
     margin:0 auto;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* default desktop */
   }
+  /* control fino por device para evitar roturas */
   @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr; } }
   @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr); } }
   @media (min-width:901px) and (max-width:1200px){ .clients-grid{ grid-template-columns: repeat(3,1fr); } }
@@ -106,12 +108,18 @@
     min-height:88px;box-sizing:border-box;
   }
   .client-card.visible{opacity:1;transform:translateY(0)}
-  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0;object-fit:cover}
+  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0;background:#2a3442}
   .client-card .grow{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
-  .client-title{display:flex;align-items:center;gap:4px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .client-sub,.client-meta{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .client-title{
+    display:flex;align-items:center;gap:4px;font-weight:800;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .client-sub,.client-meta{
+    color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
   .client-meta{font-size:12px}
   .client-card .chip{white-space:nowrap;flex-shrink:0}
+  /* Verified más grande y pegado */
   .ig-verified{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;margin-left:2px;shape-rendering:geometricPrecision}
 
   /* ====== NAV ====== */
@@ -139,8 +147,18 @@
   .devices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   @media(min-width:820px){.devices{grid-template-columns:repeat(3,1fr)}}
   .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
-  .thumb{position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);overflow:hidden;aspect-ratio: 9 / 19.5;box-shadow: inset 0 0 0 8px rgba(255,255,255,.02)}
-  .thumb::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;box-shadow:0 1px 0 rgba(255,255,255,.06)}
+  .thumb{
+    position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);
+    overflow:hidden; /* teléfono */
+    aspect-ratio: 9 / 19.5; /* proporción de pantalla de móvil */
+    box-shadow: inset 0 0 0 8px rgba(255,255,255,.02);
+  }
+  /* notch */
+  .thumb::before{
+    content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;
+    box-shadow:0 1px 0 rgba(255,255,255,.06);
+  }
   .device .btn{width:48%}
 
   /* ====== MODAL ====== */
@@ -154,13 +172,20 @@
   .close{float:right;cursor:pointer;color:var(--muted)}
 
   /* ====== MODO BESTIA ====== */
-  .beast-mode-card{background:linear-gradient(45deg,var(--accent),var(--brand));border:1px solid rgba(25,194,255,.5);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .12s ease, box-shadow .2s ease;box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent);animation:beast-glow 3s ease-in-out infinite;position:relative;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
+  .beast-mode-card{
+    background:linear-gradient(45deg,var(--accent),var(--brand));border:1px solid rgba(25,194,255,.5);
+    border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;
+    transition:transform .12s ease, box-shadow .2s ease;box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent);
+    animation:beast-glow 3s ease-in-out infinite;position:relative;text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)
+  }
   .beast-mode-card:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 0 30px var(--brand),0 0 50px var(--accent)}
   @keyframes beast-glow{0%,100%{box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent)}50%{box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--brand)}}
   .beast-mode-card .beast-icon{width:24px;height:24px;fill:#fff}
   .beast-mode-active{background:#FF0000!important;border-color:#ff6b6b!important;box-shadow:0 0 30px #ff2d2d, inset 0 0 18px #ff9a9a!important}
+  /* halo interno del botón */
   @keyframes radial-flash{0%{transform:scale(0);opacity:.85}100%{transform:scale(18);opacity:0}}
   .radial-effect{position:absolute;inset:0;border-radius:inherit;background:rgba(255,0,0,.35);animation:radial-flash .7s ease-out forwards;pointer-events:none}
+  /* flash circular de pantalla (nace donde haces click) */
   @keyframes circle-flash{0%{transform:scale(0);opacity:.35}100%{transform:scale(80);opacity:0}}
   .screen-circle{position:fixed;width:24px;height:24px;border-radius:999px;background:rgba(255,0,0,.35);pointer-events:none;z-index:110;animation:circle-flash .8s ease-out forwards}
 
@@ -210,8 +235,9 @@
 
   /* Robot animado en lock */
   .lock-robot-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-  .lock-robot{width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(25,194,255,.6));animation:floatY 3s ease-in-out infinite}
+  .lock-robot{width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(25,194,255,.6))}
   @keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+  .lock-robot{animation:floatY 3s ease-in-out infinite}
 
   /* ====== MEDIA ====== */
   @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
@@ -347,6 +373,7 @@
   <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-label="Ingresar contraseña">
     <div class="sheet" style="max-width: 420px;">
       <div class="lock-robot-wrap">
+        <!-- Robot animado (mismo diseño del header) -->
         <svg class="lock-robot" viewBox="0 0 64 64" aria-hidden="true">
           <defs><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs>
           <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g2)"/>
@@ -365,7 +392,7 @@
     </div>
   </div>
 
-  <!-- SVGs (sprite) -->
+  <!-- SVGs -->
   <svg style="position:absolute;width:0;height:0;overflow:hidden">
     <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
       <defs><radialGradient id="metaBlue" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#67B7FF"/><stop offset="1" stop-color="#0B65FF"/></radialGradient></defs>
@@ -373,6 +400,7 @@
       <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
     <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
+    <!-- redes (ig,tiktok,yt,threads,x,fb,li,sp,tg,wa) -->
     <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
     <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
     <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
@@ -419,7 +447,7 @@ function setNavHeight(){document.documentElement.style.setProperty('--nav-h',nav
 setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orientationchange',setNavHeight);
 
 /* ====== DATA REDES ====== */
-const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
+const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#li',color:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
 
 /* ====== RENDER GRID REDES ====== */
 const socialGrid=document.getElementById('socialGrid');
@@ -460,13 +488,60 @@ function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria
 
 /* ====== CLIENTES ====== */
 const clients=[{user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},{user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},{user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},{user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},{user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},{user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},{user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},{user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},{user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},{user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},{user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},{user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}];
-const avatars={};
+
+/* ====== AVATARES REALES: AllOrigins -> Unavatar (fallback) ====== */
+const avatarCache = new Map();
+
+async function fetchAvatarFromAllOrigins(username){
+  const apiUrl = 'https://www.instagram.com/'+encodeURIComponent(username)+'/';
+  const proxied = 'https://api.allorigins.win/get?url=' + encodeURIComponent(apiUrl + '?__a=1&__d=dis');
+  const res = await fetch(proxied, {cache:'no-store'});
+  if(!res.ok) throw new Error('allorigins error');
+  const data = await res.json();
+  const raw = data && data.contents ? data.contents : '';
+
+  // Intento: JSON puro
+  try{
+    const j = JSON.parse(raw);
+    let url =
+      j?.graphql?.user?.profile_pic_url_hd ||
+      j?.graphql?.user?.profile_pic_url ||
+      j?.data?.user?.profile_pic_url_hd ||
+      j?.data?.user?.profile_pic_url ||
+      j?.user?.hd_profile_pic_url_info?.url ||
+      j?.user?.profile_pic_url;
+    if(url) return url.replace(/\\u0026/g,'&');
+  }catch(_){}
+
+  // Intento: regex desde HTML
+  const m = raw.match(/"profile_pic_url_hd"\s*:\s*"([^"]+)"/) ||
+            raw.match(/"profile_pic_url"\s*:\s*"([^"]+)"/);
+  if(m && m[1]){
+    return m[1].replace(/\\u0026/g,'&').replace(/\\\//g,'/');
+  }
+  throw new Error('no avatar in allorigins');
+}
+function unavatarUrl(username){
+  return `https://unavatar.io/instagram/${encodeURIComponent(username)}?fallback=false`;
+}
+async function getAvatarUrl(username){
+  if(avatarCache.has(username)) return avatarCache.get(username);
+  try{
+    const u = await fetchAvatarFromAllOrigins(username);
+    avatarCache.set(username, u);
+    return u;
+  }catch(_){
+    const u2 = unavatarUrl(username);
+    avatarCache.set(username, u2);
+    return u2;
+  }
+}
 
 /* HOME - recientes */
 const recentList=document.getElementById('recentList');
 recentList.innerHTML=clients.slice(0,12).map(c=>`
   <div class="row">
-    <img class="avatar" alt="${c.name}'s avatar" src="https://unavatar.io/instagram/${encodeURIComponent(c.user)}" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(c.user)}'" />
+    <img class="avatar" alt="" data-ig="${c.user}" />
     <div class="grow">
       <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
       <div class="muted">${c.name} · ${c.followers} seguidores</div>
@@ -482,7 +557,7 @@ summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; rece
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
   return `<div class="client-card" data-open="${c.user}">
-    <img class="avatar" alt="${c.name}'s avatar" src="https://unavatar.io/instagram/${encodeURIComponent(c.user)}" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(c.user)}'" />
+    <img class="avatar" alt="" data-ig="${c.user}"/>
     <div class="grow">
       <div class="client-title">${c.name}${c.verified?verifiedSvg():''}</div>
       <div class="client-sub">@${c.user}</div>
@@ -491,7 +566,11 @@ function cardHtml(c){
     <span class="chip">Ver ficha</span>
   </div>`;
 }
-function paintClientsGrid(arr){clientsGrid.innerHTML=arr.map(cardHtml).join(''); requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))}
+function paintClientsGrid(arr){
+  clientsGrid.innerHTML=arr.map(cardHtml).join('');
+  requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')));
+  hydrateAvatars();
+}
 paintClientsGrid(clients);
 
 /* BUSCADOR (tarjetas) */
@@ -500,11 +579,30 @@ document.getElementById('clientSearch').addEventListener('input',e=>{
   paintClientsGrid(clients.filter(c=>c.user.toLowerCase().includes(q)||c.name.toLowerCase().includes(q)));
 });
 
+/* Cargar/Actualizar avatares (recientes + grid) */
+async function hydrateAvatars(){
+  const imgs = document.querySelectorAll('img.avatar[data-ig]');
+  imgs.forEach(img=>{
+    img.style.background='#2a3442';
+    img.style.borderRadius='999px';
+    img.style.overflow='hidden';
+    img.onerror = ()=>{ img.removeAttribute('src'); };
+  });
+  for(const img of imgs){
+    const u = img.getAttribute('data-ig');
+    try{
+      const url = await getAvatarUrl(u);
+      img.src = url;
+    }catch(_){}
+  }
+}
+
 /* MODAL (delegación robusta) */
 const modal=document.getElementById('clientModal');
 function openCard(user){
   const c=clients.find(x=>x.user===user); if(!c) return;
-  const av=document.getElementById('mAvatar'); av.src=`https://unavatar.io/instagram/${encodeURIComponent(c.user)}`; av.onerror=function(){this.src=`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(c.user)}`};
+  const av=document.getElementById('mAvatar'); av.removeAttribute('src'); av.style.background='#2a3442'; av.style.borderRadius='999px';
+  getAvatarUrl(c.user).then(url=>{ av.src=url; }).catch(()=>{});
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent=c.name;
   document.getElementById('mPosts').textContent=c.posts;
@@ -536,16 +634,19 @@ farmGrid.innerHTML=devices.map(d=>`
     </div>
   </div>`).join('');
 
-/* MODO BESTIA */
+/* MODO BESTIA: botón rojo + flash circular en pantalla */
 let beastCanvas=null, beastRAF=null;
 function activateBeastMode(event){
   const beastCard=event.target.closest('[data-beast]'); if(!beastCard) return;
   if(beastCard.classList.contains('beast-mode-active')) return;
   beastCard.classList.add('beast-mode-active');
+
   const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial);
+
   const circle=document.createElement('div'); circle.className='screen-circle';
   const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`;
   document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
+
   if(!beastCanvas){
     beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
     Object.assign(beastCanvas.style,{position:'absolute',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
@@ -599,7 +700,7 @@ document.querySelector('.brand').addEventListener('click',()=>document.getElemen
 (function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
 /* ====== PWA: Service Worker + Install Prompt ====== */
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{
   e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');
@@ -608,8 +709,9 @@ installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{aw
 window.addEventListener('appinstalled',()=>showToast('App instalada'));
 
 /* ====== CONTROL DE CONTRASEÑA (doble) ====== */
-const validPasswords = new Set(['Andrick99','invitado25']);
-document.body.classList.add('locked');
+const validPasswords = new Set(['Andrick99','invitado25']); // <- Tus dos contraseñas
+document.body.classList.add('locked'); // Bloquea la página al cargar
+
 function checkPassword() {
   const input = document.getElementById('passwordInput').value;
   const errorMessage = document.getElementById('errorMessage');
@@ -624,7 +726,9 @@ function checkPassword() {
     showToast('Wrong password');
   }
 }
+// Mostrar modal de contraseña al cargar
 document.getElementById('passwordModal').classList.add('show');
+// Permitir Enter
 document.getElementById('passwordInput').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') checkPassword();
 });
