@@ -19,7 +19,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="KraveAI">
-
 <style>
   /* ====== THEME ====== */
   :root{
@@ -93,7 +92,7 @@
     gap:12px;
     max-width:1200px;
     margin:0 auto;
-    grid-template-columns: repeat(4, 1fr); /* desktop */
+    grid-template-columns: repeat(4, 1fr);
   }
   @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr; } }
   @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr); } }
@@ -123,8 +122,9 @@
   .nav .item.active{color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--line);text-shadow:0 0 8px var(--brand),0 0 16px var(--accent)}
 
   /* ====== VISTAS ====== */
-  .view{display:none}
-  .view.active{display:block}
+  .view{display:none;opacity:0;transform:scale(.98);transition:opacity .4s ease,transform .4s ease}
+  .view.active{display:block;opacity:1;transform:scale(1);animation:holographic-enter .4s ease-out}
+  @keyframes holographic-enter{0%{filter:blur(2px);opacity:0}100%{filter:blur(0);opacity:1}}
 
   /* ====== NETWORK ====== */
   .back{margin:6px 0 16px;display:inline-flex;gap:8px;align-items:center;color:var(--muted);cursor:pointer}
@@ -144,7 +144,7 @@
   .device .btn{width:48%}
 
   /* ====== MODAL ====== */
-  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:70}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:120}
   .modal.show{display:flex}
   .sheet{width:min(560px,92vw);background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:16px}
   .sheet .top{display:flex;gap:12px;align-items:center}
@@ -173,7 +173,7 @@
   .spinner{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top:2px solid var(--brand);border-left:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-left:8px;vertical-align:middle}
   @keyframes spin{100%{transform:rotate(360deg)}}
   .btn.loading{opacity:.7;pointer-events:none}
-  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
+  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:200;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
   @keyframes slide-up{from{bottom:-50px}to{bottom:calc(var(--nav-h,64px) + 80px)}}
   @keyframes fade-out{to{opacity:0}}
 
@@ -184,7 +184,7 @@
   .dashboard .stat{color:var(--muted);font-size:12px}
   .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
 
-  /* ====== BADGE ====== */
+  /* ====== BADGE (ENGLISH + estabilidad) ====== */
   .credit{
     position:fixed;left:50%;transform:translateX(-50%);
     bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 16px);
@@ -194,7 +194,9 @@
     backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;
     max-width:90vw;text-align:center;white-space:nowrap;
   }
-  @media (max-height:680px){ .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;} }
+  @media (max-height:680px){
+    .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;}
+  }
   @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
   /* ====== GLITCH (sutil) ====== */
@@ -363,105 +365,269 @@
     </div>
   </div>
 
-  <script>
-    // Inicialización de variables
-    const views = document.querySelectorAll('.view');
-    const navItems = document.querySelectorAll('.nav .item');
-    const beastCanvas = document.getElementById('beastCanvas');
-    const ctx = beastCanvas.getContext('2d');
-    let particles = [];
-    let animationFrameId = null;
+  <!-- SVGs (sprite) -->
+  <svg style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+      <defs><radialGradient id="metaBlue" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#67B7FF"/><stop offset="1" stop-color="#0B65FF"/></radialGradient></defs>
+      <path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
+      <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
+    </symbol>
+    <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
+    <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
+    <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
+    <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
+    <symbol id="threads" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#000"/><path fill="#fff" d="M8.5 12c0 2.2 1.8 3.5 3.7 3.5 2.3 0 3.8-1.4 3.8-3.8 0-2.7-1.8-4.2-4.8-4.2h-.9V6h.8c3.9 0 6.5 2.2 6.5 5.9 0 3.2-2.4 5.3-5.6 5.3-3.2 0-5.5-2.1-5.5-5.2h1z"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path fill="#fff" d="M17.5 4H20l-5.5 6 6 10h-5l-3.5-6-4 4-3-2 5-5-5-7h5l3 5 4.5-5z"/></symbol>
+    <symbol id="fb" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12a10 10 0 008.5 9.87v-6.98H8.07v-2.9h2.43V9.41c0-2.4 1.43-3.73 3.63-3.73 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.19 0-1.56.74-1.56 1.49v1.79h2.65l-.42 2.9h-2.23V21.9A10 10 0 0022 12z"/></symbol>
+    <symbol id="li" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.45 20.45H17V14.6c0-1.39-.5-2.34-1.75-2.34-.95 0-1.52.64-1.77 1.26-.09.22-.11.52-.11.82v6.11H9.89s.05-9.92 0-10.95h3.48v1.55c.46-.71 1.29-1.72 3.13-1.72 2.28 0 3.95 1.49 3.95 4.69v6.43zM7.34 8.94a2.02 2.02 0 110-4.04 2.02 2.02 0 010 4.04zM5.57 20.45h3.54V9.5H5.57v10.95z"/></symbol>
+    <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path fill="#fff" d="M7 9c4-1 8 0 10 1 .5.2.7.8.5 1.3-.3.5-.9.6-1.4.4-1.8-.9-5-1.7-8.7-.7-.6.2-1.1-.2-1.3-.8-.2-.6.2-1.1.9-1.2zM7 12c3-.7 6 0 8 .7.4.1.7.6.5 1-.2.5-.7.6-1.2.4-1.6-.7-4.1-1.3-7.2-.6-.5.1-1-.2-1.1-.7-.1-.6.2-1 .9-1.2zM7 15c2-.4 4 .1 5.4.6.4.1.6.5.5.9-.1.4-.5.5-.9.4-1.2-.5-3-1-4.6-.6-.4.1-.8-.1-.9-.5-.1-.5.1-.8.5-.8z"/></symbol>
+    <symbol id="tg" viewBox="0 0 24 24"><path fill="#229ED9" d="M9.6 16.8l-.4 3.7c.6 0 .9-.3 1.2-.6l2.8-2.7 5.8 4.3c1 .6 1.6.3 1.9-.9l3.4-16c.3-1.2-.4-1.7-1.3-1.4L2.2 9.9c-1.1.4-1.1 1.1-.2 1.4l5.6 1.7L18.8 6c.7-.4 1.2-.2.7.3"/></symbol>
+    <symbol id="wa" viewBox="0 0 24 24"><path fill="#25D366" d="M20.5 3.5A10 10 0 003.6 20.4L2 22l1.8-.5a10 10 0 0014.3-14zM12 19a7 7 0 116.2-10.2A7 7 0 0112 19z"/><path fill="#25D366" d="M8.8 7.7c-.4 0-.7.3-.7.7 0 2.2 2.2 4.4 4.4 4.4.4 0 .7-.3 .7-.7 0-.2-.1-.5-.3-.6l-1.1-.6c-.1-.1-.3-.1-.4 0l-.3.2c-.6-.3-1.1-.8-1.4-1.4l.2-.3c.1-.1.1-.3 0-.4l-.6-1.1c-.1-.2-.4-.3-.6-.3z"/></symbol>
+  </svg>
 
-    // Funciones de navegación
-    function goToView(viewId) {
-      views.forEach(view => view.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active');
-      navItems.forEach(item => item.classList.remove('active'));
-      document.querySelector(`.nav .item[data-go="${viewId}"]`).classList.add('active');
-      stopBeastMode(); // Detener Modo Bestia al cambiar de vista
+<script>
+/* ====== TEMA ====== */
+const themeToggle=document.getElementById('themeToggle');
+const savedTheme=localStorage.getItem('krave-theme');
+if(savedTheme==='light')document.body.classList.add('light');
+if(savedTheme==='neon')document.body.classList.add('neon-theme');
+themeToggle.textContent=document.body.classList.contains('light')?'🌞':document.body.classList.contains('neon-theme')?'💡':'🌙';
+themeToggle.onclick=(e)=>{
+  const menu=document.createElement('div');
+  Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:'var(--card)',border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
+  menu.innerHTML=`<div style="padding:6px 10px;cursor:pointer">Claro</div><div style="padding:6px 10px;cursor:pointer">Neón</div><div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
+  const [op1,op2,op3]=menu.children;
+  op1.onclick=()=>{document.body.classList.add('light');document.body.classList.remove('neon-theme');localStorage.setItem('krave-theme','light');themeToggle.textContent='🌞';menu.remove()};
+  op2.onclick=()=>{document.body.classList.add('neon-theme');document.body.classList.remove('light');localStorage.setItem('krave-theme','neon');themeToggle.textContent='💡';menu.remove()};
+  op3.onclick=()=>{document.body.classList.remove('light','neon-theme');localStorage.setItem('krave-theme','dark');themeToggle.textContent='🌙';menu.remove()};
+  e.currentTarget.appendChild(menu);
+};
+
+/* ====== NAV ====== */
+const views={home:document.getElementById('view-home'),clients:document.getElementById('view-clients'),farm:document.getElementById('view-farm'),accounts:document.getElementById('view-accounts'),network:document.getElementById('view-network')};
+function showView(key){
+  Object.entries(views).forEach(([k,v])=>{if(k===key){v.style.display='block';v.offsetHeight;v.classList.add('active')}else{v.classList.remove('active');v.style.display='none'}});
+  document.querySelectorAll('.nav .item').forEach(i=>i.classList.toggle('active',i.getAttribute('data-go')===key));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',()=>showView(el.getAttribute('data-go'))));
+function goHome(){showView('home')} showView('home');
+
+/* ====== Ajuste badge ====== */
+const navEl=document.querySelector('.nav');
+function setNavHeight(){document.documentElement.style.setProperty('--nav-h',navEl.offsetHeight+'px')}
+setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orientationchange',setNavHeight);
+
+/* ====== DATA REDES ====== */
+const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
+
+/* ====== RENDER GRID REDES ====== */
+const socialGrid=document.getElementById('socialGrid');
+socialGrid.innerHTML=networks.map(n=>{
+  if(n.key==='beast-mode'){
+    return `<div class="beast-mode-card" data-beast>
+      <div class="logo-wrap"><svg class="beast-icon" viewBox="0 0 24 24"><use href="#beastIcon"></use></svg></div>
+      <div class="title">${n.name}</div>
+    </div>`;
+  }
+  return `<div class="card" data-net="${n.key}">
+    <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
+    <div class="title">${n.name}</div>
+  </div>`;
+}).join('');
+setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),100);
+
+/* ====== NETWORK VIEW ====== */
+const netTitle=document.getElementById('networkTitle');
+const netSub=document.getElementById('networkSub');
+const netServices=document.getElementById('networkServices');
+function openNetwork(key){
+  const net=networks.find(x=>x.key===key); if(!net) return;
+  netTitle.textContent=`Servicios · ${net.name}`;
+  netSub.textContent=`Automatiza ${net.name} con IA`;
+  netServices.innerHTML=net.services.map(svc=>`
+    <div class="svc">
+      <h4>${svc}</h4>
+      <input class="input" placeholder="${svc.includes('Seguidores') ? '@usuario' : 'URL / ID / Nota'}" />
+      <input class="input" placeholder="Cantidad" type="number" min="10" />
+      <button class="btn primary">Ordenar</button>
+    </div>`).join('');
+  showView('network');
+}
+
+/* ====== VERIFIED SVG ====== */
+function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
+
+/* ====== CLIENTES ====== */
+const clients=[{user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},{user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},{user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},{user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},{user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},{user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},{user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},{user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},{user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},{user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},{user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},{user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}];
+const avatars={};
+
+/* HOME - recientes */
+const recentList=document.getElementById('recentList');
+recentList.innerHTML=clients.slice(0,12).map(c=>`
+  <div class="row">
+    <img class="avatar" alt="${c.name}'s avatar" src="https://unavatar.io/instagram/${encodeURIComponent(c.user)}" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(c.user)}'" />
+    <div class="grow">
+      <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
+      <div class="muted">${c.name} · ${c.followers} seguidores</div>
+    </div>
+    <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
+  </div>`).join('');
+setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),100);
+const summary=document.createElement('div'); summary.className='summary'; summary.style.marginTop='8px';
+const totalFollowers=clients.reduce((sum,c)=>{const n=parseFloat(c.followers);return sum+(c.followers.includes('M')?n*1_000_000:c.followers.includes('K')?n*1_000:n)},0);
+summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; recentList.after(summary);
+
+/* CLIENTES (grid) */
+const clientsGrid=document.getElementById('clientsGrid');
+function cardHtml(c){
+  return `<div class="client-card" data-open="${c.user}">
+    <img class="avatar" alt="${c.name}'s avatar" src="https://unavatar.io/instagram/${encodeURIComponent(c.user)}" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(c.user)}'" />
+    <div class="grow">
+      <div class="client-title">${c.name}${c.verified?verifiedSvg():''}</div>
+      <div class="client-sub">@${c.user}</div>
+      <div class="client-meta">${c.followers} seguidores · ${c.posts} posts</div>
+    </div>
+    <span class="chip">Ver ficha</span>
+  </div>`;
+}
+function paintClientsGrid(arr){clientsGrid.innerHTML=arr.map(cardHtml).join(''); requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))}
+paintClientsGrid(clients);
+
+/* BUSCADOR (tarjetas) */
+document.getElementById('clientSearch').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase().trim();
+  paintClientsGrid(clients.filter(c=>c.user.toLowerCase().includes(q)||c.name.toLowerCase().includes(q)));
+});
+
+/* MODAL (delegación robusta) */
+const modal=document.getElementById('clientModal');
+function openCard(user){
+  const c=clients.find(x=>x.user===user); if(!c) return;
+  const av=document.getElementById('mAvatar'); av.src=`https://unavatar.io/instagram/${encodeURIComponent(c.user)}`; av.onerror=function(){this.src=`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(c.user)}`};
+  document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
+  document.getElementById('mName').textContent=c.name;
+  document.getElementById('mPosts').textContent=c.posts;
+  document.getElementById('mFollowers').textContent=c.followers;
+  document.getElementById('mFollowing').textContent=c.following;
+  modal.classList.add('show');
+}
+function closeModal(){modal.classList.remove('show')}
+modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) closeModal(); });
+
+/* Delegación click: redes, ver ficha y beast */
+document.addEventListener('click',(e)=>{
+  const netEl=e.target.closest('[data-net]'); if(netEl){openNetwork(netEl.getAttribute('data-net')); return;}
+  const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); return;}
+  const beastEl=e.target.closest('[data-beast]'); if(beastEl){activateBeastMode(e); return;}
+});
+
+/* FARM */
+const farmGrid=document.getElementById('farmGrid');
+const devices=[{name:'iPhone 14 Pro · iOS',id:'10.0.0.8'},{name:'Galaxy S23 · Android',id:'10.0.0.9'},{name:'iPhone 13 · iOS',id:'10.0.0.10'},{name:'Pixel 8 · Android',id:'10.0.0.11'},{name:'iPhone 12 mini · iOS',id:'10.0.0.12'},{name:'Galaxy A54 · Android',id:'10.0.0.13'}];
+farmGrid.innerHTML=devices.map(d=>`
+  <div class="device">
+    <div class="thumb"></div>
+    <div style="font-weight:700">${d.name}</div>
+    <div class="muted">${d.id}</div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn primary" onclick="alert('Asignar stream a ${d.name}')">Asignar stream</button>
+      <button class="btn" onclick="alert('Limpiar ${d.name}')">Limpiar</button>
+    </div>
+  </div>`).join('');
+
+/* MODO BESTIA */
+let beastCanvas=null, beastRAF=null;
+function activateBeastMode(event){
+  const beastCard=event.target.closest('[data-beast]'); if(!beastCard) return;
+  if(beastCard.classList.contains('beast-mode-active')) return;
+  beastCard.classList.add('beast-mode-active');
+  const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial);
+  const circle=document.createElement('div'); circle.className='screen-circle';
+  const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`;
+  document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
+  if(!beastCanvas){
+    beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
+    Object.assign(beastCanvas.style,{position:'absolute',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
+  }
+  const ctx=beastCanvas.getContext('2d'); let start=null;
+  function drawParticles(ts){
+    if(!start) start=ts;
+    const elapsed=ts-start; ctx.clearRect(0,0,beastCanvas.width,beastCanvas.height);
+    const rect=beastCard.getBoundingClientRect(); const cx=rect.left+rect.width/2; const cy=rect.top+rect.height/2;
+    for(let i=0;i<24;i++){
+      const angle=(i/24)*Math.PI*2 + (elapsed/400); const dist=Math.min(120, elapsed/6);
+      const px=cx+Math.cos(angle)*dist, py=cy+Math.sin(angle)*dist;
+      ctx.beginPath(); ctx.arc(px,py,2,0,Math.PI*2); ctx.fillStyle=`rgba(255,0,0,${1-elapsed/1000})`; ctx.fill();
     }
+    if(elapsed<900){beastRAF=requestAnimationFrame(drawParticles)} else {cleanup()}
+  }
+  function cleanup(){
+    if(beastRAF) cancelAnimationFrame(beastRAF);
+    if(beastCanvas){const c=beastCanvas.getContext('2d'); c.clearRect(0,0,beastCanvas.width,beastCanvas.height); beastCanvas.remove(); beastCanvas=null;}
+    const radialEl=beastCard.querySelector('.radial-effect'); if(radialEl) radialEl.remove();
+    beastCard.classList.remove('beast-mode-active'); showToast('Modo Bestia desactivado');
+  }
+  beastRAF=requestAnimationFrame(drawParticles);
+}
 
-    function goHome() {
-      goToView('view-home');
-      document.getElementById('networkTitle').textContent = 'Servicios';
-      document.getElementById('networkSub').textContent = 'Selecciona un servicio para esta red';
-    }
+/* ACTION BTN */
+function sendAction(){
+  const button=document.querySelector('.btn.primary'); button.innerHTML='Enviando <span class="spinner"></span>'; button.classList.add('loading');
+  setTimeout(()=>{button.innerHTML='Enviar'; button.classList.remove('loading'); showToast('Acción enviada')},2000);
+}
 
-    function goNetwork(network) {
-      goToView('view-network');
-      document.getElementById('networkTitle').textContent = network.charAt(0).toUpperCase() + network.slice(1);
-      document.getElementById('networkSub').textContent = `Configura servicios para ${network}`;
-    }
+/* TOAST */
+function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
 
-    // Manejo de navegación por botones
-    navItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const viewId = item.getAttribute('data-go');
-        goToView(viewId);
-      });
-    });
+/* VOICE MODE */
+const micToggle=document.getElementById('micToggle');
+if('webkitSpeechRecognition' in window){
+  const recognition=new webkitSpeechRecognition(); recognition.continuous=false; recognition.interimResults=false; recognition.lang='es-ES';
+  micToggle.addEventListener('click',()=>{recognition.start(); micToggle.textContent='🎙️ (Escuchando)'; micToggle.classList.add('recording')});
+  recognition.onresult=(event)=>{const cmd=event.results[0][0].transcript.toLowerCase(); micToggle.textContent='🎙️'; micToggle.classList.remove('recording');
+    if(cmd.includes('ir a clientes')){showView('clients'); showToast('Navegando a Clientes')}
+    else if(cmd.includes('activar modo bestia')){document.querySelector('[data-beast]').click(); showToast('Modo Bestia activado')}
+  };
+  recognition.onerror=()=>{micToggle.textContent='🎙️'; micToggle.classList.remove('recording'); showToast('Error en reconocimiento de voz')};
+}else{micToggle.style.display='none'}
 
-    // Modo Bestia
-    function initBeastMode() {
-      beastCanvas.style.display = 'block';
-      beastCanvas.width = window.innerWidth;
-      beastCanvas.height = window.innerHeight;
-      particles = [];
-      for (let i = 0; i < 100; i++) {
-        particles.push({
-          x: Math.random() * beastCanvas.width,
-          y: Math.random() * beastCanvas.height,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2,
-          size: Math.random() * 3 + 1,
-          color: `hsl(${Math.random() * 360}, 70%, 50%)`
-        });
-      }
-      animateBeast();
-    }
+/* DASHBOARD */
+document.querySelector('.brand').addEventListener('click',()=>document.getElementById('dashboard').classList.toggle('active'));
 
-    function animateBeast() {
-      ctx.clearRect(0, 0, beastCanvas.width, beastCanvas.height);
-      particles.forEach(particle => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-        if (particle.x < 0 || particle.x > beastCanvas.width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > beastCanvas.height) particle.vy *= -1;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = particle.color;
-        ctx.fill();
-      });
-      animationFrameId = requestAnimationFrame(animateBeast);
-    }
+/* NODOS BACKGROUND */
+(function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
-    function stopBeastMode() {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-      }
-      if (beastCanvas) {
-        ctx.clearRect(0, 0, beastCanvas.width, beastCanvas.height);
-        beastCanvas.style.display = 'none';
-      }
-    }
+/* ====== PWA: Service Worker + Install Prompt ====== */
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');
+});
+installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt();}catch(_){} deferredPrompt=null; installBtn.classList.add('hidden')});
+window.addEventListener('appinstalled',()=>showToast('App instalada'));
 
-    // Inicialización
-    goToView('view-home');
-
-    // Resto del código para renderizar clientes
-    const clientsGrid = document.getElementById('clientsGrid');
-    function paintClientsGrid(arr) {
-      clientsGrid.innerHTML = arr.map(c => cardHtml(c)).join('');
-      requestAnimationFrame(() => clientsGrid.querySelectorAll('.client-card').forEach(el => el.classList.add('visible')));
-    }
-    paintClientsGrid(clients);
-
-    // Buscador
-    document.getElementById('clientSearch').addEventListener('input', e => {
-      const q = e.target.value.toLowerCase().trim();
-      paintClientsGrid(clients.filter(c => c.user.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)));
-    });
-  </script>
+/* ====== CONTROL DE CONTRASEÑA (doble) ====== */
+const validPasswords = new Set(['Andrick99','invitado25']);
+document.body.classList.add('locked');
+function checkPassword() {
+  const input = document.getElementById('passwordInput').value;
+  const errorMessage = document.getElementById('errorMessage');
+  if (validPasswords.has(input)) {
+    document.getElementById('passwordModal').classList.remove('show');
+    document.body.classList.remove('locked');
+    showToast('Access granted');
+    document.getElementById('passwordInput').value='';
+  } else {
+    errorMessage.style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+    showToast('Wrong password');
+  }
+}
+document.getElementById('passwordModal').classList.add('show');
+document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') checkPassword();
+});
+</script>
 </body>
 </html>
