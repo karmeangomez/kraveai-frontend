@@ -95,6 +95,7 @@
     margin:0 auto;
     grid-template-columns: repeat(4, 1fr); /* default desktop */
   }
+  /* control fino por device para evitar roturas */
   @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr; } }
   @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr); } }
   @media (min-width:901px) and (max-width:1200px){ .clients-grid{ grid-template-columns: repeat(3,1fr); } }
@@ -118,6 +119,7 @@
   }
   .client-meta{font-size:12px}
   .client-card .chip{white-space:nowrap;flex-shrink:0}
+  /* Verified más grande y pegado */
   .ig-verified{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;margin-left:2px;shape-rendering:geometricPrecision}
 
   /* ====== NAV ====== */
@@ -147,9 +149,11 @@
   .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
   .thumb{
     position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);
-    overflow:hidden; aspect-ratio: 9 / 19.5;
+    overflow:hidden; /* teléfono */
+    aspect-ratio: 9 / 19.5; /* proporción de pantalla de móvil */
     box-shadow: inset 0 0 0 8px rgba(255,255,255,.02);
   }
+  /* notch */
   .thumb::before{
     content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
     width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;
@@ -178,8 +182,10 @@
   @keyframes beast-glow{0%,100%{box-shadow:0 0 15px var(--brand), inset 0 0 10px var(--accent)}50%{box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--brand)}}
   .beast-mode-card .beast-icon{width:24px;height:24px;fill:#fff}
   .beast-mode-active{background:#FF0000!important;border-color:#ff6b6b!important;box-shadow:0 0 30px #ff2d2d, inset 0 0 18px #ff9a9a!important}
+  /* halo interno del botón */
   @keyframes radial-flash{0%{transform:scale(0);opacity:.85}100%{transform:scale(18);opacity:0}}
   .radial-effect{position:absolute;inset:0;border-radius:inherit;background:rgba(255,0,0,.35);animation:radial-flash .7s ease-out forwards;pointer-events:none}
+  /* flash circular de pantalla (nace donde haces click) */
   @keyframes circle-flash{0%{transform:scale(0);opacity:.35}100%{transform:scale(80);opacity:0}}
   .screen-circle{position:fixed;width:24px;height:24px;border-radius:999px;background:rgba(255,0,0,.35);pointer-events:none;z-index:110;animation:circle-flash .8s ease-out forwards}
 
@@ -203,10 +209,10 @@
   .dashboard .stat{color:var(--muted);font-size:12px}
   .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
 
-  /* ====== BADGE ====== */
+  /* ====== BADGE (ENGLISH + estable) ====== */
   .credit{
     position:fixed;left:50%;transform:translateX(-50%);
-    bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 16px);
+    bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 22px);
     z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;
     background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);
     box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);
@@ -214,7 +220,7 @@
     max-width:90vw;text-align:center;white-space:nowrap;
   }
   @media (max-height:680px){
-    .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;}
+    .credit{bottom:calc(var(--nav-h,64px) + 12px); font-size:11px;}
   }
   @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
@@ -345,8 +351,7 @@
     <div class="sheet">
       <div class="close" data-close-modal>✕</div>
       <div class="top">
-        <!-- referrerpolicy añadido -->
-        <img id="mAvatar" class="avatar" alt="avatar" referrerpolicy="no-referrer"/>
+        <img id="mAvatar" class="avatar" alt="avatar"/>
         <div>
           <div id="mUser" style="font-weight:800"></div>
           <div class="muted" id="mName"></div>
@@ -368,6 +373,7 @@
   <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-label="Ingresar contraseña">
     <div class="sheet" style="max-width: 420px;">
       <div class="lock-robot-wrap">
+        <!-- Robot animado (mismo diseño del header) -->
         <svg class="lock-robot" viewBox="0 0 64 64" aria-hidden="true">
           <defs><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs>
           <rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g2)"/>
@@ -394,6 +400,7 @@
       <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
     </symbol>
     <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
+    <!-- redes (ig,tiktok,yt,threads,x,fb,li,sp,tg,wa) -->
     <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
     <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
     <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
@@ -407,6 +414,9 @@
   </svg>
 
 <script>
+/* ====== helper: avatar desde tu backend ====== */
+function avatarSrc(u){ return `/avatar?username=${encodeURIComponent(u)}`; }
+
 /* ====== TEMA ====== */
 const themeToggle=document.getElementById('themeToggle');
 const savedTheme=localStorage.getItem('krave-theme');
@@ -483,25 +493,11 @@ function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria
 const clients=[{user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},{user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},{user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},{user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},{user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},{user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},{user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},{user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},{user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},{user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},{user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},{user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}];
 const avatars={};
 
-/* ====== AVATARES REALES: Unavatar directo (simple y estable) ====== */
-function unavatarUrl(username){
-  const v = Date.now().toString().slice(-6); // cache-buster suave
-  return `https://unavatar.io/instagram/${encodeURIComponent(username)}.jpg?fallback=true&ttl=86400&v=${v}`;
-}
-function hydrateAvatars(){
-  document.querySelectorAll('img.avatar[data-ig]').forEach(img=>{
-    img.style.background='#2a3442';
-    img.onerror=()=>{img.removeAttribute('src')};
-    const u = img.getAttribute('data-ig');
-    img.src = unavatarUrl(u);
-  });
-}
-
 /* HOME - recientes */
 const recentList=document.getElementById('recentList');
 recentList.innerHTML=clients.slice(0,12).map(c=>`
   <div class="row">
-    <img class="avatar" alt="" data-ig="${c.user}" referrerpolicy="no-referrer" />
+    <img class="avatar" alt="" src="${avatarSrc(c.user)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
     <div class="grow">
       <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
       <div class="muted">${c.name} · ${c.followers} seguidores</div>
@@ -509,8 +505,6 @@ recentList.innerHTML=clients.slice(0,12).map(c=>`
     <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
   </div>`).join('');
 setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),100);
-hydrateAvatars(); // cargar avatares recientes
-
 const summary=document.createElement('div'); summary.className='summary'; summary.style.marginTop='8px';
 const totalFollowers=clients.reduce((sum,c)=>{const n=parseFloat(c.followers);return sum+(c.followers.includes('M')?n*1_000_000:c.followers.includes('K')?n*1_000:n)},0);
 summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; recentList.after(summary);
@@ -519,7 +513,7 @@ summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; rece
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
   return `<div class="client-card" data-open="${c.user}">
-    <img class="avatar" alt="" data-ig="${c.user}" referrerpolicy="no-referrer" />
+    <img class="avatar" alt="" src="${avatarSrc(c.user)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
     <div class="grow">
       <div class="client-title">${c.name}${c.verified?verifiedSvg():''}</div>
       <div class="client-sub">@${c.user}</div>
@@ -528,13 +522,7 @@ function cardHtml(c){
     <span class="chip">Ver ficha</span>
   </div>`;
 }
-function paintClientsGrid(arr){
-  clientsGrid.innerHTML=arr.map(cardHtml).join('');
-  requestAnimationFrame(()=>{
-    clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible'));
-    hydrateAvatars(); // cargar avatares del grid
-  });
-}
+function paintClientsGrid(arr){clientsGrid.innerHTML=arr.map(cardHtml).join(''); requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))}
 paintClientsGrid(clients);
 
 /* BUSCADOR (tarjetas) */
@@ -547,10 +535,8 @@ document.getElementById('clientSearch').addEventListener('input',e=>{
 const modal=document.getElementById('clientModal');
 function openCard(user){
   const c=clients.find(x=>x.user===user); if(!c) return;
-  const av=document.getElementById('mAvatar');
-  av.removeAttribute('src');
-  av.style.background='#2a3442';
-  av.src = unavatarUrl(c.user); // misma fuente estable
+  const av=document.getElementById('mAvatar'); av.src=avatarSrc(c.user);
+  av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent=c.name;
   document.getElementById('mPosts').textContent=c.posts;
@@ -582,16 +568,22 @@ farmGrid.innerHTML=devices.map(d=>`
     </div>
   </div>`).join('');
 
-/* MODO BESTIA */
+/* MODO BESTIA: botón rojo + flash circular en pantalla */
 let beastCanvas=null, beastRAF=null;
 function activateBeastMode(event){
   const beastCard=event.target.closest('[data-beast]'); if(!beastCard) return;
   if(beastCard.classList.contains('beast-mode-active')) return;
   beastCard.classList.add('beast-mode-active');
+
+  // halo interno del botón
   const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial);
+
+  // flash circular desde el punto del click
   const circle=document.createElement('div'); circle.className='screen-circle';
   const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`;
   document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
+
+  // partículas con canvas
   if(!beastCanvas){
     beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
     Object.assign(beastCanvas.style,{position:'absolute',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
@@ -654,8 +646,9 @@ installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{aw
 window.addEventListener('appinstalled',()=>showToast('App instalada'));
 
 /* ====== CONTROL DE CONTRASEÑA (doble) ====== */
-const validPasswords = new Set(['Andrick99','invitado25']);
-document.body.classList.add('locked');
+const validPasswords = new Set(['Andrick99','invitado25']); // <- Tus dos contraseñas
+document.body.classList.add('locked'); // Bloquea la página al cargar
+
 function checkPassword() {
   const input = document.getElementById('passwordInput').value;
   const errorMessage = document.getElementById('errorMessage');
@@ -670,7 +663,9 @@ function checkPassword() {
     showToast('Wrong password');
   }
 }
+// Mostrar modal de contraseña al cargar
 document.getElementById('passwordModal').classList.add('show');
+// Permitir Enter
 document.getElementById('passwordInput').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') checkPassword();
 });
