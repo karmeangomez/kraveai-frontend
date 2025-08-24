@@ -19,6 +19,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="KraveAI">
+
 <style>
   /* ====== THEME ====== */
   :root{
@@ -92,7 +93,7 @@
     gap:12px;
     max-width:1200px;
     margin:0 auto;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* desktop */
   }
   @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr; } }
   @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr); } }
@@ -106,7 +107,7 @@
     min-height:88px;box-sizing:border-box;
   }
   .client-card.visible{opacity:1;transform:translateY(0)}
-  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0}
+  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0;object-fit:cover}
   .client-card .grow{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
   .client-title{display:flex;align-items:center;gap:4px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .client-sub,.client-meta{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -184,7 +185,7 @@
   .dashboard .stat{color:var(--muted);font-size:12px}
   .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
 
-  /* ====== BADGE (ENGLISH + estabilidad) ====== */
+  /* ====== BADGE ====== */
   .credit{
     position:fixed;left:50%;transform:translateX(-50%);
     bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 16px);
@@ -194,9 +195,7 @@
     backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;
     max-width:90vw;text-align:center;white-space:nowrap;
   }
-  @media (max-height:680px){
-    .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;}
-  }
+  @media (max-height:680px){ .credit{bottom:calc(var(--nav-h,64px) + 8px); font-size:11px;} }
   @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
   /* ====== GLITCH (sutil) ====== */
@@ -419,7 +418,7 @@ function setNavHeight(){document.documentElement.style.setProperty('--nav-h',nav
 setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orientationchange',setNavHeight);
 
 /* ====== DATA REDES ====== */
-const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
+const networks=[{key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},{key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},{key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},{key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},{key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},{key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},{key:'linkedin',name:'LinkedIn',icon:'#li',color:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},{key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},{key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},{key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},{key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}];
 
 /* ====== RENDER GRID REDES ====== */
 const socialGrid=document.getElementById('socialGrid');
@@ -437,36 +436,34 @@ socialGrid.innerHTML=networks.map(n=>{
 }).join('');
 setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),100);
 
-/* ====== NETWORK VIEW ====== */
-const netTitle=document.getElementById('networkTitle');
-const netSub=document.getElementById('networkSub');
-const netServices=document.getElementById('networkServices');
-function openNetwork(key){
-  const net=networks.find(x=>x.key===key); if(!net) return;
-  netTitle.textContent=`Servicios · ${net.name}`;
-  netSub.textContent=`Automatiza ${net.name} con IA`;
-  netServices.innerHTML=net.services.map(svc=>`
-    <div class="svc">
-      <h4>${svc}</h4>
-      <input class="input" placeholder="${svc.includes('Seguidores') ? '@usuario' : 'URL / ID / Nota'}" />
-      <input class="input" placeholder="Cantidad" type="number" min="10" />
-      <button class="btn primary">Ordenar</button>
-    </div>`).join('');
-  showView('network');
-}
-
 /* ====== VERIFIED SVG ====== */
 function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
 /* ====== CLIENTES ====== */
-const clients=[{user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},{user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},{user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},{user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},{user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},{user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},{user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},{user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},{user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},{user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},{user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},{user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}];
-const avatars={};
+const clients=[
+  {user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},
+  {user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},
+  {user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},
+  {user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},
+  {user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},
+  {user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},
+  {user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},
+  {user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},
+  {user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},
+  {user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},
+  {user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},
+  {user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}
+];
+
+// Base para fotos en vivo desde Instagram (Unavatar)
+const avatarBase = 'https://unavatar.io/instagram/';
 
 /* HOME - recientes */
 const recentList=document.getElementById('recentList');
 recentList.innerHTML=clients.slice(0,12).map(c=>`
   <div class="row">
-    <img class="avatar" alt="" src="${avatars[c.user]||''}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+    <img class="avatar" alt="@${c.user}" src="${avatarBase}${encodeURIComponent(c.user)}"
+         onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
     <div class="grow">
       <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
       <div class="muted">${c.name} · ${c.followers} seguidores</div>
@@ -481,9 +478,10 @@ summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; rece
 /* CLIENTES (grid) */
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
-  const avatarUrl=avatars[c.user]||'';
+  const avatarUrl=`${avatarBase}${encodeURIComponent(c.user)}`;
   return `<div class="client-card" data-open="${c.user}">
-    <img class="avatar" alt="" src="${avatarUrl}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+    <img class="avatar" alt="@${c.user}" src="${avatarUrl}"
+         onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
     <div class="grow">
       <div class="client-title">${c.name}${c.verified?verifiedSvg():''}</div>
       <div class="client-sub">@${c.user}</div>
@@ -505,7 +503,9 @@ document.getElementById('clientSearch').addEventListener('input',e=>{
 const modal=document.getElementById('clientModal');
 function openCard(user){
   const c=clients.find(x=>x.user===user); if(!c) return;
-  const av=document.getElementById('mAvatar'); av.src=avatars[c.user]||''; av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
+  const av=document.getElementById('mAvatar');
+  av.src=`${avatarBase}${encodeURIComponent(c.user)}`;
+  av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent=c.name;
   document.getElementById('mPosts').textContent=c.posts;
