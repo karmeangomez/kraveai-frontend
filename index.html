@@ -414,8 +414,34 @@
   </svg>
 
 <script>
-/* ====== helper: avatar desde tu backend ====== */
-function avatarSrc(u){ return `/avatar?username=${encodeURIComponent(u)}`; }
+/* ====== BACKEND BASE ====== */
+const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://api.kraveapi.xyz';
+const apiUrl = (p) => `${API_BASE}${p}`;
+
+/* ====== helper: avatar desde tu backend (API) ====== */
+function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
+
+/* ====== MONITOR CONEXIÓN /health ====== */
+const connEl=document.getElementById('conn');
+const dotEl=document.querySelector('.dot');
+async function checkBackend(){
+  try{
+    const r = await fetch(apiUrl('/health'), { cache:'no-store' });
+    if(r.ok){
+      connEl.textContent = 'Conectado';
+      dotEl.style.background = 'var(--success)';
+      return;
+    }
+    throw new Error('bad');
+  }catch(_){
+    connEl.textContent = 'Sin conexión';
+    dotEl.style.background = '#e0565b';
+  }
+}
+checkBackend();
+setInterval(checkBackend, 15000);
 
 /* ====== TEMA ====== */
 const themeToggle=document.getElementById('themeToggle');
