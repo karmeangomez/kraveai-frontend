@@ -47,11 +47,10 @@
 
   .list{display:flex;flex-direction:column;gap:12px;margin-bottom:0;max-height:420px;overflow:auto}
   .row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;opacity:0;transform:scale(.95);transition:opacity .3s,transform .3s}
-  .row.visible{opacity:1;transform:scale(1)}
-  .row .user{font-weight:700;font-size:16px}
+  .row.visible{opacity:1;transform:scale(1)} .row .user{font-weight:700;font-size:16px}
   .grow{flex:1}.chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
 
-  /* Avatar + ring historias */
+  /* Avatar + aros historias (original IG y verde CF) */
   .avatar{width:36px;height:36px;border-radius:999px;flex:none;overflow:visible;position:relative;display:inline-grid;place-items:center;padding:2px;background:transparent}
   .avatar img{width:100%;height:100%;border-radius:999px;display:block;background:#2a3442}
   .avatar.story-active{background:conic-gradient(#f77737,#e1306c,#c13584,#5851db,#405de6)}
@@ -60,7 +59,8 @@
   .avatar.story-active::before{background:conic-gradient(#f77737,#e1306c,#c13584,#5851db,#405de6)}
   .avatar.story-cf::before{background:linear-gradient(45deg,#2ecc71,#27ae60)}
 
-  .clients-grid{display:grid;gap:12px;max-width:1200px;margin:0 auto;grid-template-columns:repeat(4,1fr);max-height:480px;overflow:auto}
+  /* GRID CLIENTES (SIN SCROLL de contenedor) */
+  .clients-grid{display:grid;gap:12px;max-width:1200px;margin:0 auto;grid-template-columns:repeat(4,1fr)}
   @media(max-width:480px){.clients-grid{grid-template-columns:1fr}}
   @media(min-width:481px) and (max-width:900px){.clients-grid{grid-template-columns:repeat(2,1fr)}}
   @media(min-width:901px) and (max-width:1200px){.clients-grid{grid-template-columns:repeat(3,1fr)}}
@@ -133,11 +133,30 @@
   @media (max-height:680px){.credit{bottom:calc(var(--nav-h,64px) + 12px); font-size:11px}}
   @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
-  /* Menú contextual global (para que no lo corte el scroll) */
+  /* Menú contextual global */
   #globalMenu{position:fixed;z-index:5000;background:var(--card-2);border:1px solid var(--line);border-radius:10px;display:none;min-width:160px;overflow:hidden}
   #globalMenu.show{display:block}
   #globalMenu button{display:block;width:100%;padding:10px 12px;background:transparent;border:0;color:var(--text);text-align:left;cursor:pointer}
   #globalMenu button:hover{background:rgba(255,255,255,.04)}
+
+  /* MU card especial */
+  .mu-card{
+    background:linear-gradient(135deg,#3a2a00,#171308);
+    border:1px solid rgba(245,197,66,.45);
+    position:relative;
+    overflow:hidden;
+  }
+  .mu-card .title{display:flex;align-items:center;gap:8px}
+  .mu-card .title .mu-badge{
+    font-size:10px;padding:4px 8px;border-radius:999px;
+    background:linear-gradient(90deg,#F5C542,#E0B847);
+    color:#1a1203;font-weight:800;letter-spacing:.4px
+  }
+  .mu-card::after{
+    content:'';position:absolute;inset:-40%;background:conic-gradient(from 0deg, rgba(245,197,66,.15), transparent 30% 100%);
+    filter:blur(20px);animation:muGlow 6s linear infinite;
+  }
+  @keyframes muGlow{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -158,7 +177,6 @@
 
   <main class="wrap">
     <div class="content-flex">
-      <!-- Home -->
       <section id="view-home" class="view">
         <h1>Redes sociales</h1>
         <div class="sub">Domina todas tus redes con IA</div>
@@ -175,7 +193,6 @@
         </div>
       </section>
 
-      <!-- Clientes -->
       <section id="view-clients" class="view">
         <h1 style="display:flex;align-items:center;justify-content:space-between">Clientes
           <span id="addBtn" class="toggle" title="Agregar cliente" style="font-size:18px;line-height:1">＋</span>
@@ -184,14 +201,12 @@
         <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
       </section>
 
-      <!-- Farm -->
       <section id="view-farm" class="view">
         <h1>Device Farm</h1>
         <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
         <div class="devices" id="farmGrid"></div>
       </section>
 
-      <!-- Cuentas -->
       <section id="view-accounts" class="view">
         <h1>Cuentas</h1>
         <div class="sub">Gestión de sesión y cuentas manuales</div>
@@ -214,7 +229,6 @@
         </div>
       </section>
 
-      <!-- Network -->
       <section id="view-network" class="view">
         <div class="back" onclick="goHome()">← Atrás</div>
         <h1 id="networkTitle">Servicios</h1>
@@ -308,20 +322,21 @@
   </svg>
 
 <script>
-/* ====== Backend & conexión ====== */
+/* ====== Conexión ====== */
 const API_BASE=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:8000':'https://api.kraveapi.xyz';
 const apiUrl=(p)=>`${API_BASE}${p}`;
 const connEl=document.getElementById('conn');const dotEl=document.querySelector('.dot');
 async function checkBackend(){try{const r=await fetch(apiUrl('/health'),{cache:'no-store'}); if(r.ok){connEl.textContent='Conectado'; dotEl.style.background='var(--success)'; return;} throw 0;}catch{connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b';}}
 checkBackend(); setInterval(checkBackend,15000);
 
-/* ====== Avatar loader con fallback ====== */
+/* ====== AVATAR desde BACKEND (con fallback) ====== */
+function avatarSrc(u){ return `/avatar?username=${encodeURIComponent(u)}`; } // tu endpoint original
 function setAvatar(imgEl,user){
-  const a1=`/avatar?username=${encodeURIComponent(user)}`;
-  const a2=`https://unavatar.io/instagram/${encodeURIComponent(user)}`;
+  const primary = avatarSrc(user); // backend primero
+  const fallback = `https://unavatar.io/instagram/${encodeURIComponent(user)}`;
   const placeholder='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" rx="40" ry="40" fill="%232a3442"/></svg>';
-  imgEl.src=a1;
-  imgEl.onerror=()=>{ if(imgEl.dataset.tried==='1'){ imgEl.src=placeholder; } else { imgEl.dataset.tried='1'; imgEl.src=a2; } };
+  imgEl.src = primary;
+  imgEl.onerror = ()=>{ if(imgEl.dataset.tried==='1'){ imgEl.src = placeholder; } else { imgEl.dataset.tried='1'; imgEl.src = fallback; } };
 }
 
 /* ====== Tema & nav ====== */
@@ -338,7 +353,7 @@ document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',
 function goHome(){showView('home')} showView('home');
 const navEl=document.querySelector('.nav'); function setNavHeight(){document.documentElement.style.setProperty('--nav-h',navEl.offsetHeight+'px')} setNavHeight(); addEventListener('resize',setNavHeight); addEventListener('orientationchange',setNavHeight);
 
-/* ====== Redes (incluye Miss Universe) ====== */
+/* ====== Redes (Miss Universe especial) ====== */
 const networks=[
   {key:'instagram',name:'Instagram',icon:'#ig',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},
   {key:'tiktok',name:'TikTok',icon:'#tiktok',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},
@@ -350,7 +365,7 @@ const networks=[
   {key:'spotify',name:'Spotify',icon:'#sp',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},
   {key:'telegram',name:'Telegram',icon:'#tg',services:['Miembros','Vistas post','Forwards/Repost']},
   {key:'whatsapp',name:'WhatsApp',icon:'#wa',services:['Vistas de estado','Clicks','Mensajes masivos']},
-  {key:'miss-universe',name:'Miss Universe 2025',icon:'#crown',services:['Candidatas','Contenido','Engagement','Votaciones']},
+  {key:'miss-universe',name:'Miss Universe 2025',icon:'#crown',services:['Candidatas','Contenido','Engagement','Votaciones'],mu:true},
   {key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',services:[]}
 ];
 const socialGrid=document.getElementById('socialGrid');
@@ -358,7 +373,12 @@ socialGrid.innerHTML=networks.map(n=>{
   if(n.key==='beast-mode'){
     return `<div class="beast-mode-card" data-beast><div class="logo-wrap"><svg class="beast-icon"><use href="${n.icon}"></use></svg></div><div class="title">${n.name}</div></div>`;
   }
-  return `<div class="card" data-net="${n.key}"><div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div><div class="title">${n.name}</div></div>`;
+  const extra = n.mu ? 'mu-card' : '';
+  const badge = n.mu ? `<span class="mu-badge">MU2025</span>` : '';
+  return `<div class="card ${extra}" data-net="${n.key}">
+    <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
+    <div class="title">${n.name} ${badge}</div>
+  </div>`;
 }).join('');
 setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),60);
 
@@ -378,7 +398,7 @@ let extras=JSON.parse(localStorage.getItem(EXTRA_KEY)||'[]');
 let hidden=new Set(JSON.parse(localStorage.getItem(HIDE_KEY)||'[]'));
 let clients=[]; function rebuildClients(){clients=[...baseClients,...extras].filter(c=>!hidden.has(c.user))}
 
-/* ====== Render recientes ====== */
+/* ====== Recientes ====== */
 const recentList=document.getElementById('recentList');
 function paintRecent(){
   recentList.innerHTML=clients.slice(0,12).map(c=>`
@@ -396,7 +416,7 @@ function paintRecent(){
   if(!document.querySelector('.summary')){const s=document.createElement('div');s.className='summary';s.style.marginTop='8px';s.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`;recentList.after(s)} else {document.querySelector('.summary').textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`}
 }
 
-/* ====== Render grid ====== */
+/* ====== Grid clientes ====== */
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
   return `<div class="client-card" data-open="${c.user}" data-user="${c.user}">
@@ -427,25 +447,18 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#globalMenu')) return;
   closeMenu();
 });
-/* Long press para filas/tarjetas */
+/* Long press (móvil) */
 let lpTimer=null;
-function bindLongPress(containerSelector){
+['.row','.client-card'].forEach(sel=>{
   document.addEventListener('touchstart',e=>{
-    const el=e.target.closest(containerSelector); if(!el) return;
+    const el=e.target.closest(sel); if(!el) return;
     const user=el.getAttribute('data-user'); const r=el.getBoundingClientRect();
     lpTimer=setTimeout(()=>openMenu(r.left+20,r.top+20,user),550);
   },{passive:true});
-  ['touchend','touchmove','touchcancel'].forEach(ev=>document.addEventListener(ev,()=>{if(lpTimer) clearTimeout(lpTimer)}));
-  document.addEventListener('mousedown',e=>{
-    const el=e.target.closest(containerSelector); if(!el) return;
-    const user=el.getAttribute('data-user'); const r=el.getBoundingClientRect();
-    lpTimer=setTimeout(()=>openMenu(e.clientX,e.clientY,user),600);
-  });
-  ['mouseup','mouseleave'].forEach(ev=>document.addEventListener(ev,()=>{if(lpTimer) clearTimeout(lpTimer)}));
-}
-bindLongPress('.row'); bindLongPress('.client-card');
+});
+['touchend','touchmove','touchcancel','mouseup','mouseleave'].forEach(ev=>document.addEventListener(ev,()=>{if(lpTimer) clearTimeout(lpTimer)}));
 
-/* ====== Eliminar / ocultar ====== */
+/* Eliminar / ocultar */
 document.getElementById('gmView').onclick=()=>{ if(gmTarget){ openCard(gmTarget); closeMenu(); } };
 document.getElementById('gmDelete').onclick=()=>{
   if(!gmTarget) return;
@@ -457,7 +470,7 @@ document.getElementById('gmDelete').onclick=()=>{
   repaintAll(); closeMenu(); showToast('Actualizado');
 };
 
-/* ====== Ficha ====== */
+/* Ficha */
 const modal=document.getElementById('clientModal');
 function openCard(user){
   const c=clients.find(x=>x.user===user); if(!c) return;
@@ -473,7 +486,7 @@ function openCard(user){
 }
 modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) modal.classList.remove('show'); });
 
-/* ====== Agregar cliente (discreto en título) ====== */
+/* Agregar cliente */
 document.getElementById('addBtn').addEventListener('click',()=>{
   const user=prompt('Usuario sin @ (obligatorio)'); if(!user) return;
   const name=prompt('Nombre a mostrar', user) || user;
@@ -486,12 +499,12 @@ document.getElementById('addBtn').addEventListener('click',()=>{
   repaintAll(); showToast('Cliente agregado');
 });
 
-/* ====== Farm demo ====== */
+/* Farm demo */
 const farmGrid=document.getElementById('farmGrid');
 const devices=[{name:'iPhone 14 Pro · iOS',id:'10.0.0.8'},{name:'Galaxy S23 · Android',id:'10.0.0.9'},{name:'iPhone 13 · iOS',id:'10.0.0.10'},{name:'Pixel 8 · Android',id:'10.0.0.11'},{name:'iPhone 12 mini · iOS',id:'10.0.0.12'},{name:'Galaxy A54 · Android',id:'10.0.0.13'}];
 farmGrid.innerHTML=devices.map(d=>`<div class="device"><div class="thumb"></div><div style="font-weight:700">${d.name}</div><div class="muted">${d.id}</div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn primary" onclick="alert('Asignar stream a ${d.name}')">Asignar stream</button><button class="btn" onclick="alert('Limpiar ${d.name}')">Limpiar</button></div></div>`).join('');
 
-/* ====== Modo Bestia (click = rojo + destellos; no abre nada) ====== */
+/* Modo Bestia (solo rojo + destellos) */
 let beastCanvas=null, beastRAF=null;
 function activateBeastMode(event){
   const beastCard=event.target.closest('[data-beast]'); if(!beastCard) return;
@@ -513,7 +526,7 @@ function activateBeastMode(event){
 document.addEventListener('click',(e)=>{ if(e.target.closest('[data-beast]')) activateBeastMode(e); });
 document.addEventListener('click',(e)=>{ const netEl=e.target.closest('[data-net]'); if(netEl) openNetwork(netEl.getAttribute('data-net')); }, true);
 
-/* ====== miscelánea ====== */
+/* Miscelánea */
 function showToast(msg){const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
 const micToggle=document.getElementById('micToggle');
 if('webkitSpeechRecognition' in window){const r=new webkitSpeechRecognition(); r.continuous=false;r.interimResults=false;r.lang='es-ES';micToggle.addEventListener('click',()=>{r.start();micToggle.textContent='🎙️ (Escuchando)';micToggle.classList.add('recording')}); r.onresult=(ev)=>{const cmd=ev.results[0][0].transcript.toLowerCase(); micToggle.textContent='🎙️'; micToggle.classList.remove('recording'); if(cmd.includes('ir a clientes')){showView('clients'); showToast('Navegando a Clientes')} else if(cmd.includes('activar modo bestia')){document.querySelector('[data-beast]').click();}}; r.onerror=()=>{micToggle.textContent='🎙️';micToggle.classList.remove('recording');showToast('Error de voz')}} else {micToggle.style.display='none'}
@@ -525,9 +538,9 @@ if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceW
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 addEventListener('beforeinstallprompt',(e)=>{e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden')});
 installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt()}catch{} deferredPrompt=null; installBtn.classList.add('hidden')});
-addEventListener('appinstalled',()=>showToast('App instalada'));
+addEventListener('appinstalled',()=>showToast('App instalada')});
 
-/* Password lock (doble) */
+/* Password lock */
 const validPasswords=new Set(['Andrick99','invitado25']); document.body.classList.add('locked');
 function checkPassword(){const val=document.getElementById('passwordInput').value, err=document.getElementById('errorMessage'); if(validPasswords.has(val)){document.getElementById('passwordModal').classList.remove('show'); document.body.classList.remove('locked'); showToast('Access granted'); document.getElementById('passwordInput').value='';} else {err.style.display='block'; document.getElementById('passwordInput').value=''; showToast('Wrong password');}}
 document.getElementById('passwordModal').classList.add('show');
