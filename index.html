@@ -42,6 +42,7 @@
   .btn{background:var(--card);color:var(--text);border:1px solid var(--line);padding:10px 14px;border-radius:12px;cursor:pointer}
   .btn.primary{background:linear-gradient(90deg,var(--accent),var(--brand));border-color:transparent;color:#fff}
   .btn.ghost{background:transparent}
+  .btn.tiny{padding:4px 8px;border-radius:10px;font-size:14px;line-height:1}
   .input{width:100%;background:var(--card);color:var(--text);border:1px solid var(--line);padding:12px 14px;border-radius:14px;outline:none}
 
   /* ====== HEADER ====== */
@@ -76,6 +77,13 @@
   .card:hover{transform:translateY(-1px)}
   .logo-wrap{width:28px;height:28px;display:grid;place-items:center}
   .card .title{font-weight:700}
+  /* MU 2025 special card */
+  .mu-card{
+    background:linear-gradient(135deg,rgba(255,215,0,.14),rgba(255,255,255,.06));
+    border:1px solid rgba(255,215,0,.35);
+    box-shadow:0 0 16px rgba(255,215,0,.18), inset 0 0 12px rgba(255,215,0,.12);
+  }
+  .mu-badge{font-size:11px;background:rgba(255,215,0,.18);border:1px solid rgba(255,215,0,.35);padding:3px 8px;border-radius:999px;margin-left:auto}
 
   /* ====== HOME LIST ====== */
   .list{display:flex;flex-direction:column;gap:12px;margin-bottom:0}
@@ -83,7 +91,6 @@
     opacity:0;transform:scale(.95);transition:opacity .3s ease,transform .3s ease}
   .row.visible{opacity:1;transform:scale(1)}
   .avatar{width:36px;height:36px;border-radius:999px;background:#2a3442;flex:none;overflow:hidden}
-  .row .user{font-weight:700;font-size:16px}
   .grow{flex:1}
   .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
 
@@ -104,16 +111,28 @@
     background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;
     display:flex;gap:12px;align-items:center;
     opacity:0;transform:translateY(4px);transition:opacity .3s ease,transform .3s ease;
-    min-height:88px;box-sizing:border-box;
+    min-height:88px;box-sizing:border-box;position:relative;
   }
   .client-card.visible{opacity:1;transform:translateY(0)}
-  .client-card .avatar{width:44px;height:44px;border-radius:999px;flex-shrink:0}
   .client-card .grow{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
   .client-title{display:flex;align-items:center;gap:4px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .client-sub,.client-meta{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .client-meta{font-size:12px}
-  .client-card .chip{white-space:nowrap;flex-shrink:0}
   .ig-verified{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;margin-left:2px;shape-rendering:geometricPrecision}
+
+  /* kebab solo para extras */
+  .card-kebab{
+    position:absolute;top:8px;right:8px;opacity:0;transition:opacity .2s;
+    background:transparent;border:1px solid var(--line);border-radius:10px;padding:2px 6px;cursor:pointer;color:var(--muted)
+  }
+  .client-card:hover .card-kebab{opacity:1}
+  .card-menu{
+    position:absolute;top:34px;right:8px;background:var(--card-2);border:1px solid var(--line);
+    border-radius:12px;min-width:140px;overflow:hidden;display:none;z-index:5
+  }
+  .card-menu.show{display:block}
+  .card-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;color:var(--text);padding:10px 12px;cursor:pointer}
+  .card-menu button:hover{background:rgba(255,255,255,.04)}
 
   /* ====== NAV ====== */
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--card-2);border-top:1px solid var(--line);display:flex;gap:10px;
@@ -140,22 +159,32 @@
   .devices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   @media(min-width:820px){.devices{grid-template-columns:repeat(3,1fr)}}
   .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
-  .thumb{position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);overflow:hidden;aspect-ratio: 9 / 19.5;box-shadow: inset 0 0 0 8px rgba(255,255,255,.02)}
-  .thumb::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;box-shadow:0 1px 0 rgba(255,255,255,.06)}
+  .thumb{
+    position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);
+    overflow:hidden; aspect-ratio: 9 / 19.5; box-shadow: inset 0 0 0 8px rgba(255,255,255,.02);
+  }
+  .thumb::before{
+    content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;
+    box-shadow:0 1px 0 rgba(255,255,255,.06);
+  }
   .device .btn{width:48%}
 
-  /* ====== MODAL ====== */
+  /* ====== MODAL BASE ====== */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:120}
   .modal.show{display:flex}
   .sheet{width:min(560px,92vw);background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:16px}
-  .sheet .top{display:flex;gap:12px;align-items:center}
-  /* hero mode para la ficha (no afecta otros lados) */
-  .sheet .top.hero{flex-direction:column;align-items:flex-start;gap:10px}
-  .sheet .top.hero #mAvatar{width:96px;height:96px;border-radius:999px;box-shadow:0 0 0 3px rgba(255,255,255,.08)}
-  .sheet .top.hero .handle{font-weight:800;font-size:18px}
-  .meta{display:flex;gap:14px;margin-top:6px;color:var(--muted);font-size:12px}
-  .meta b{color:var(--text)}
-  .close{float:right;cursor:pointer;color:var(--muted)}
+
+  /* ====== TARJETÓN PERFIL ====== */
+  .profile-top{display:flex;gap:12px;align-items:center}
+  .profile-stats{display:flex;gap:14px;margin-top:6px;color:var(--muted);font-size:12px}
+  .profile-stats b{color:var(--text)}
+  .profile-bio{margin-top:10px;color:var(--muted);font-size:13px;white-space:pre-line}
+  .avatar-56{width:56px;height:56px;border-radius:999px;overflow:hidden}
+  .ring{position:relative;width:56px;height:56px;border-radius:50%;padding:3px;background:
+    conic-gradient(#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);}
+  .ring.green{background:conic-gradient(#3ecf5e,#118c3e,#3ecf5e)}
+  .ring>img{width:100%;height:100%;border-radius:50%;display:block}
 
   /* ====== MODO BESTIA ====== */
   .beast-mode-card{
@@ -206,11 +235,11 @@
   @media (max-height:680px){.credit{bottom:calc(var(--nav-h,64px) + 12px); font-size:11px;}}
   @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
-  /* ====== GLITCH ====== */
+  /* ====== GLITCH (sutil) ====== */
   body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(45deg,transparent 0,rgba(255,0,0,0.1) 1px,transparent 2px);animation:glitch .5s ease-out;z-index:-1;opacity:0}
   @keyframes glitch{0%{opacity:.5}100%{opacity:0}}
 
-  /* ====== LOCK ====== */
+  /* ====== BLOQUEO INICIAL ====== */
   body.locked { overflow: hidden; }
   body.locked main, body.locked header, body.locked nav, body.locked .dashboard { display:none !important; }
   body.locked .credit{ display:none !important; }
@@ -219,22 +248,6 @@
   .lock-robot{width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(25,194,255,.6))}
   @keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
   .lock-robot{animation:floatY 3s ease-in-out infinite}
-
-  /* ====== MU2025 (card especial) ====== */
-  .mu-card{
-    background:linear-gradient(135deg,#6f2cff 0%,#c79a3a 55%,#ffd27a 100%);
-    border:1px solid rgba(255,215,128,.5);
-    color:#fff;
-    position:relative;
-  }
-  .mu-sub{font-size:12px;opacity:.9}
-  .mu-sparkle{position:absolute;inset:0;pointer-events:none}
-  .mu-sparkle::after{
-    content:'';position:absolute;right:16px;top:14px;width:8px;height:8px;border-radius:999px;background:#fff;opacity:.7;
-    animation:twinkle 2.2s ease-in-out infinite;
-    box-shadow:0 0 10px #fff, 0 0 20px #fff;
-  }
-  @keyframes twinkle{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.6);opacity:1}}
 
   /* ====== MEDIA ====== */
   @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
@@ -279,7 +292,10 @@
 
       <!-- Clientes -->
       <section id="view-clients" class="view">
-        <h1>Clientes</h1>
+        <h1 style="display:flex;align-items:center;gap:8px">
+          Clientes
+          <button id="addClientBtn" class="btn ghost tiny" title="Añadir cliente">＋</button>
+        </h1>
         <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:12px 0 16px"/>
         <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
       </section>
@@ -343,24 +359,46 @@
     <div class="item" data-go="accounts">Cuentas</div>
   </nav>
 
-  <!-- MODAL -->
+  <!-- MODAL: FICHA CLIENTE -->
   <div class="modal" id="clientModal" role="dialog" aria-modal="true" aria-label="Ficha del cliente">
     <div class="sheet">
       <div class="close" data-close-modal>✕</div>
-      <div class="top hero">
-        <img id="mAvatar" class="avatar" alt="avatar"/>
-        <div class="handle" id="mUser"></div>
-        <div class="muted" id="mName"></div>
-        <div class="meta">
-          <div><b id="mPosts"></b> posts</div>
-          <div><b id="mFollowers"></b> seguidores</div>
-          <div><b id="mFollowing"></b> siguiendo</div>
+
+      <!-- Top -->
+      <div class="profile-top">
+        <div id="mRing" class="ring"><img id="mAvatar" class="avatar-56" alt="avatar"/></div>
+        <div>
+          <div id="mUser" style="font-weight:800"></div>
+          <div class="muted" id="mName"></div>
+          <div class="profile-stats">
+            <div><b id="mPosts"></b> posts</div>
+            <div><b id="mFollowers"></b> seguidores</div>
+            <div><b id="mFollowing"></b> siguiendo</div>
+          </div>
         </div>
       </div>
+
+      <!-- Bio -->
+      <div id="mBio" class="profile-bio"></div>
+
       <div style="margin-top:14px;display:flex;gap:10px">
-        <button id="openIgBtn" class="btn">Abrir Instagram</button>
-        <button class="btn primary">Crear campaña</button>
+        <a id="mOpenIg" class="btn" target="_blank" rel="noopener">Abrir Instagram</a>
+        <button id="mCampaign" class="btn primary">Crear campaña</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AÑADIR CLIENTE -->
+  <div class="modal" id="addClientModal" role="dialog" aria-modal="true" aria-label="Añadir cliente">
+    <div class="sheet" style="max-width:420px">
+      <div class="close" data-close-add>✕</div>
+      <h3 style="margin:0 0 10px;font-weight:800">Añadir cliente</h3>
+      <input id="newClientInput" class="input" placeholder="@usuario" autofocus />
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button id="saveClientBtn" class="btn primary">Guardar</button>
+        <button class="btn" data-close-add>Cancelar</button>
+      </div>
+      <div id="addClientMsg" class="muted" style="margin-top:8px"></div>
     </div>
   </div>
 
@@ -396,11 +434,13 @@
     <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
 
     <!-- Corona MU -->
-    <symbol id="muCrown" viewBox="0 0 64 64">
-      <path d="M6 46l6-22 13 12 7-18 7 18 13-12 6 22H6z" fill="#ffd27a" stroke="#c79a3a" stroke-width="2" stroke-linejoin="round"/>
-      <circle cx="32" cy="16" r="4" fill="#fff"/>
-      <circle cx="19" cy="24" r="3" fill="#fff"/>
-      <circle cx="45" cy="24" r="3" fill="#fff"/>
+    <symbol id="crown" viewBox="0 0 24 24">
+      <path fill="url(#goldGrad)" d="M3 18l2-9 5 4 2-7 2 7 5-4 2 9H3z"/>
+      <defs>
+        <linearGradient id="goldGrad" x1="0" x2="1">
+          <stop offset="0" stop-color="#FFD700"/><stop offset="1" stop-color="#FFC300"/>
+        </linearGradient>
+      </defs>
     </symbol>
 
     <!-- redes -->
@@ -425,6 +465,18 @@ const apiUrl = (p) => `${API_BASE}${p}`;
 
 /* ====== helper: avatar desde tu backend (API) ====== */
 function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
+
+/* ====== HELPERS ====== */
+const CLOSE_FRIENDS_FALLBACK = new Set(['joscanela','elmalilla_','oscar_maydonn']);
+const IG_RING_CACHE = new Map(); // user -> 'none' | 'story' | 'close'
+function pretty(n){
+  if(n==null) return '';
+  const x = Number(n);
+  if(!Number.isFinite(x)) return String(n);
+  if(x>=1_000_000) return (x/1_000_000).toFixed(x%1_000_000===0?0:1)+'M';
+  if(x>=1_000) return (x/1_000).toFixed(x%1_000===0?0:1)+'K';
+  return x.toLocaleString();
+}
 
 /* ====== MONITOR CONEXIÓN /health ====== */
 const connEl=document.getElementById('conn');
@@ -470,7 +522,6 @@ function showView(key){
   document.querySelectorAll('.nav .item').forEach(i=>i.classList.toggle('active',i.getAttribute('data-go')===key));
   window.scrollTo({top:0,behavior:'smooth'});
 }
-document.querySelectorAll('.nav . item'); // noop to keep structure
 document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',()=>showView(el.getAttribute('data-go'))));
 function goHome(){showView('home')} showView('home');
 
@@ -480,6 +531,7 @@ function setNavHeight(){document.documentElement.style.setProperty('--nav-h',nav
 setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orientationchange',setNavHeight);
 
 /* ====== DATA REDES ====== */
+/* Insertamos MU 2025 antes del beast-mode */
 const networks=[
   {key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},
   {key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},
@@ -491,8 +543,7 @@ const networks=[
   {key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},
   {key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},
   {key:'whatsapp',name:'WhatsApp',icon:'#wa',color:'#25D366',services:['Vistas de estado','Clicks','Mensajes masivos']},
-  /* NUEVO: MU2025 justo antes de Beast Mode */
-  {key:'mu2025',name:'MU2025',icon:'#muCrown',color:'#ffd27a',services:['Live Feeds','Clips / Highlights','Menciones / Engagement']},
+  {key:'mu2025',name:'MU 2025',icon:'#crown',color:'#FFD700',services:['Trending','Hashtags','Votos Fan','Cobertura Social']},
   {key:'beast-mode',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]}
 ];
 
@@ -507,12 +558,9 @@ socialGrid.innerHTML=networks.map(n=>{
   }
   if(n.key==='mu2025'){
     return `<div class="card mu-card" data-net="${n.key}">
-      <div class="mu-sparkle"></div>
-      <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
-      <div>
-        <div class="title">MU2025</div>
-        <div class="mu-sub">Miss Universe 2025</div>
-      </div>
+      <div class="logo-wrap"><svg width="28" height="28"><use href="#crown"></use></svg></div>
+      <div class="title">Miss Universe 2025</div>
+      <span class="mu-badge">MU2025</span>
     </div>`;
   }
   return `<div class="card" data-net="${n.key}">
@@ -528,61 +576,88 @@ const netSub=document.getElementById('networkSub');
 const netServices=document.getElementById('networkServices');
 function openNetwork(key){
   const net=networks.find(x=>x.key===key); if(!net) return;
-  if(key==='mu2025'){
-    netTitle.textContent='Miss Universe 2025 (MU2025)';
-    netSub.textContent='Operación especial del certamen · Feeds y Engagement';
-    netServices.innerHTML=[
-      {t:'Live Feeds (HLS/MJPEG/HTTPS)',ph1:'URL del stream (m3u8/mjpg/https)',ph2:'Calidad / Nota'},
-      {t:'Clips / Highlights',ph1:'URL del post / nota',ph2:'Cantidad de clips'},
-      {t:'Menciones / Engagement',ph1:'@usuario',ph2:'Cantidad'}
-    ].map(s=>`<div class="svc">
-      <h4>${s.t}</h4>
-      <input class="input" placeholder="${s.ph1}" />
-      <input class="input" placeholder="${s.ph2}" />
+  netTitle.textContent=`Servicios · ${net.name}`;
+  netSub.textContent= key==='mu2025' ? 'Activaciones sociales para Miss Universe 2025' : `Automatiza ${net.name} con IA`;
+  netServices.innerHTML=net.services.map(svc=>`
+    <div class="svc">
+      <h4>${svc}</h4>
+      <input class="input" placeholder="${svc.includes('Seguidores') ? '@usuario' : 'URL / ID / Nota'}" />
+      <input class="input" placeholder="Cantidad" type="number" min="10" />
       <button class="btn primary">Ordenar</button>
     </div>`).join('');
-  }else{
-    netTitle.textContent=`Servicios · ${net.name}`;
-    netSub.textContent=`Automatiza ${net.name} con IA`;
-    netServices.innerHTML=net.services.map(svc=>`
-      <div class="svc">
-        <h4>${svc}</h4>
-        <input class="input" placeholder="${svc.includes('Seguidores') ? '@usuario' : 'URL / ID / Nota'}" />
-        <input class="input" placeholder="Cantidad" type="number" min="10" />
-        <button class="btn primary">Ordenar</button>
-      </div>`).join('');
-  }
   showView('network');
 }
 
 /* ====== VERIFIED SVG ====== */
 function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
-/* ====== CLIENTES ====== */
-const clients=[{user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},{user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},{user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},{user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},{user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},{user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},{user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},{user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},{user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},{user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},{user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},{user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}];
-const avatars={};
+/* ====== CLIENTES (seed) ====== */
+const clients=[
+  {user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},
+  {user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},
+  {user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true},
+  {user:'jimenagallegotv',name:'Jimena Gállego',followers:'544K',posts:'3,328',following:'1,608',verified:true},
+  {user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'3.6M',posts:'675',following:'2,006',verified:true},
+  {user:'mariobautista',name:'Mario Bautista (MB)',followers:'6.7M',posts:'515',following:'3,371',verified:true},
+  {user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'1.5M',posts:'607',following:'2,748',verified:true},
+  {user:'sonymusiclatin',name:'Sony Music Latin',followers:'1.1M',posts:'43.3K',following:'535',verified:true},
+  {user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},
+  {user:'manuelturizo',name:'Manuel Turizo - MTZ',followers:'14.6M',posts:'127',following:'1,298',verified:true},
+  {user:'pesopluma',name:'La Doble P',followers:'15.4M',posts:'44',following:'1,195',verified:true},
+  {user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true}
+];
 
-/* HOME - recientes */
-const recentList=document.getElementById('recentList');
-recentList.innerHTML=clients.slice(0,12).map(c=>`
-  <div class="row">
-    <img class="avatar" alt="" src="${avatarSrc(c.user)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
-    <div class="grow">
-      <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
-      <div class="muted">${c.name} · ${c.followers} seguidores</div>
-    </div>
-    <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
-  </div>`).join('');
-setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),100);
-const summary=document.createElement('div'); summary.className='summary'; summary.style.marginTop='8px';
-const totalFollowers=clients.reduce((sum,c)=>{const n=parseFloat(c.followers);return sum+(c.followers.includes('M')?n*1_000_000:c.followers.includes('K')?n*1_000:n)},0);
-summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`; recentList.after(summary);
+/* ====== RENDER AVATAR CON ARO ====== */
+function renderAvatarWithRing(user, size='36'){
+  const ringClass = IG_RING_CACHE.get(user) === 'close' ? 'green' : (IG_RING_CACHE.get(user) === 'story' ? '' : null);
+  if(ringClass===null){
+    // sin historia: avatar simple
+    return `<img class="avatar" alt="" src="${avatarSrc(user)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />`;
+  }
+  // con historia
+  const px = Number(size);
+  return `<div class="ring ${ringClass}" style="width:${px}px;height:${px}px;padding:2.5px">
+            <img alt="" src="${avatarSrc(user)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+          </div>`;
+}
 
-/* CLIENTES (grid) */
+/* ====== RENDER "Clientes recientes" ====== */
+function renderRecents(){
+  const recentList=document.getElementById('recentList');
+  recentList.innerHTML=clients.slice(0,12).map(c=>`
+    <div class="row" data-u="${c.user}">
+      ${renderAvatarWithRing(c.user,'36')}
+      <div class="grow">
+        <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
+        <div class="muted">${c.name} · ${c.followers} seguidores</div>
+      </div>
+      <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
+    </div>`).join('');
+  setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),100);
+
+  // total seguidores
+  const exist = document.querySelector('.summary');
+  if(exist) exist.remove();
+  const summary=document.createElement('div'); summary.className='summary'; summary.style.marginTop='8px';
+  const totalFollowers=clients.reduce((sum,c)=>{
+    const v=String(c.followers||'').toUpperCase();
+    const n=parseFloat(v.replace(/,/g,''));
+    if(!v) return sum;
+    return sum + (v.includes('M')?n*1_000_000: v.includes('K')?n*1_000: Number.isFinite(n)?n:0);
+  },0);
+  summary.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`;
+  recentList.after(summary);
+}
+
+/* ====== GRID CLIENTES ====== */
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
-  return `<div class="client-card" data-open="${c.user}">
-    <img class="avatar" alt="" src="${avatarSrc(c.user)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+  return `<div class="client-card" data-open="${c.user}" data-u="${c.user}">
+    ${c.extra?`<button class="card-kebab" data-kebab="${c.user}">⋯</button>
+      <div class="card-menu" data-menu="${c.user}">
+        <button data-del="${c.user}">Eliminar</button>
+      </div>`:''}
+    ${renderAvatarWithRing(c.user,'44')}
     <div class="grow">
       <div class="client-title">${c.name}${c.verified?verifiedSvg():''}</div>
       <div class="client-sub">@${c.user}</div>
@@ -591,39 +666,149 @@ function cardHtml(c){
     <span class="chip">Ver ficha</span>
   </div>`;
 }
-function paintClientsGrid(arr){clientsGrid.innerHTML=arr.map(cardHtml).join(''); requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))}
+function paintClientsGrid(arr){
+  clientsGrid.innerHTML=arr.map(cardHtml).join('');
+  requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))
+}
 paintClientsGrid(clients);
+renderRecents();
 
-/* BUSCADOR (tarjetas) */
+/* ====== BUSCADOR (tarjetas) ====== */
 document.getElementById('clientSearch').addEventListener('input',e=>{
   const q=e.target.value.toLowerCase().trim();
   paintClientsGrid(clients.filter(c=>c.user.toLowerCase().includes(q)||c.name.toLowerCase().includes(q)));
 });
 
-/* MODAL (ficha tarjetón) */
+/* ====== FETCH DATOS REALES ====== */
+async function fetchUserReal(username){
+  const u = username.replace(/^@/,'').trim();
+  try{
+    const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(u)}`), {cache:'no-store'});
+    if(!r.ok) throw 0;
+    const j = await r.json();
+    // Mapea campos tolerante
+    return {
+      username: j.username || u,
+      name: j.name || j.fullname || u,
+      followers: j.followers_count ?? j.followers ?? j.stats?.followers,
+      following: j.following_count ?? j.following ?? j.stats?.following,
+      posts: j.posts_count ?? j.media_count ?? j.stats?.posts,
+      verified: !!(j.verified ?? j.is_verified),
+      bio: j.biography || j.bio || '',
+      has_story: !!(j.has_story ?? j.story_active),
+      close_friends: !!(j.close_friends ?? j.is_close_friend)
+    };
+  }catch(_){ return null; }
+}
+
+async function fetchStoryStatus(username){
+  // 1) intentar endpoint dedicado si existiera
+  try{
+    const r = await fetch(apiUrl(`/historias-estado?username=${encodeURIComponent(username)}`), {cache:'no-store'});
+    if(r.ok){
+      const j = await r.json();
+      return {has:j.has_story||j.active||false, close:j.close_friends||false};
+    }
+  }catch(_){}
+  // 2) fallback dentro de buscar-usuario
+  const d = await fetchUserReal(username);
+  if(d) return {has:!!d.has_story, close: !!d.close_friends};
+  // 3) fallback manual para los 3 clientes pedidos
+  if(CLOSE_FRIENDS_FALLBACK.has(username.toLowerCase())) return {has:true, close:true};
+  return {has:false, close:false};
+}
+
+/* ====== HIDRATAR TODOS (anillos + conteos reales) ====== */
+async function hydrateAll(){
+  for(const c of clients){
+    const [d, s] = await Promise.all([fetchUserReal(c.user), fetchStoryStatus(c.user)]);
+    if(d){
+      c.name = d.name || c.name;
+      c.followers = pretty(d.followers) || c.followers;
+      c.posts = pretty(d.posts) || c.posts;
+      c.following = pretty(d.following) || c.following;
+      c.verified = !!d.verified;
+      c.bio = d.bio || c.bio || '';
+    }
+    const ringState = s.close ? 'close' : (s.has ? 'story' : 'none');
+    IG_RING_CACHE.set(c.user, ringState);
+    patchRecentRow(c.user);
+    patchClientCard(c.user);
+  }
+}
+function patchRecentRow(user){
+  const row = document.querySelector(`.row[data-u="${CSS.escape(user)}"]`);
+  if(!row) return;
+  const c = clients.find(x=>x.user===user);
+  if(!c) return;
+  // avatar
+  const first = row.firstElementChild;
+  if(first) first.outerHTML = renderAvatarWithRing(user,'36');
+  // name & counters
+  row.querySelector('.muted').textContent = `${c.name} · ${c.followers} seguidores`;
+  const userDiv = row.querySelector('.user');
+  if(userDiv) userDiv.innerHTML = `@${c.user} ${c.verified?verifiedSvg():''}`;
+}
+function patchClientCard(user){
+  const card = document.querySelector(`.client-card[data-u="${CSS.escape(user)}"]`);
+  if(!card) return;
+  const c = clients.find(x=>x.user===user); if(!c) return;
+  const av = card.querySelector('.ring, .avatar');
+  if(av) av.outerHTML = renderAvatarWithRing(user,'44');
+  card.querySelector('.client-title').innerHTML = `${c.name}${c.verified?verifiedSvg():''}`;
+  card.querySelector('.client-sub').textContent = `@${c.user}`;
+  card.querySelector('.client-meta').textContent = `${c.followers} seguidores · ${c.posts} posts`;
+}
+hydrateAll();
+
+/* ====== MODAL (ficha) ====== */
 const modal=document.getElementById('clientModal');
 function openCard(user){
   const c=clients.find(x=>x.user===user); if(!c) return;
+  // aros
+  const ring = document.getElementById('mRing');
+  ring.classList.toggle('green', IG_RING_CACHE.get(user)==='close');
+  if(IG_RING_CACHE.get(user)==='none'){ ring.classList.remove('green'); ring.classList.add('no-ring'); }
   const av=document.getElementById('mAvatar'); av.src=avatarSrc(c.user);
   av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
-  document.getElementById('mName').textContent=c.name;
-  document.getElementById('mPosts').textContent=c.posts;
-  document.getElementById('mFollowers').textContent=c.followers;
-  document.getElementById('mFollowing').textContent=c.following;
-  // botón abrir instagram real
-  const igBtn=document.getElementById('openIgBtn');
-  igBtn.onclick=()=>window.open(`https://instagram.com/${c.user}`, '_blank', 'noopener');
+  document.getElementById('mName').textContent=c.name||'';
+  document.getElementById('mPosts').textContent=c.posts||'—';
+  document.getElementById('mFollowers').textContent=c.followers||'—';
+  document.getElementById('mFollowing').textContent=c.following||'—';
+  document.getElementById('mBio').textContent = c.bio || '';
+  const openIg = document.getElementById('mOpenIg'); openIg.href = `https://instagram.com/${encodeURIComponent(c.user)}`;
   modal.classList.add('show');
 }
 function closeModal(){modal.classList.remove('show')}
 modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) closeModal(); });
 
-/* Delegación click: redes, ver ficha y beast */
+/* Delegación click: redes, ver ficha y beast, menus */
 document.addEventListener('click',(e)=>{
   const netEl=e.target.closest('[data-net]'); if(netEl){openNetwork(netEl.getAttribute('data-net')); return;}
   const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); return;}
   const beastEl=e.target.closest('[data-beast]'); if(beastEl){activateBeastMode(e); return;}
+
+  const kebab = e.target.closest('[data-kebab]');
+  if(kebab){
+    e.stopPropagation();
+    const u = kebab.getAttribute('data-kebab');
+    const menu = document.querySelector(`.card-menu[data-menu="${u}"]`);
+    document.querySelectorAll('.card-menu').forEach(m=>m.classList.remove('show'));
+    if(menu) menu.classList.add('show');
+    return;
+  }
+  const del = e.target.closest('[data-del]');
+  if(del){
+    const u = del.getAttribute('data-del');
+    if(confirm(`Eliminar @${u} de la lista?`)){
+      removeExtraClient(u);
+      showToast('Cliente eliminado');
+    }
+    document.querySelectorAll('.card-menu').forEach(m=>m.classList.remove('show'));
+    return;
+  }
+  document.querySelectorAll('.card-menu').forEach(m=>m.classList.remove('show'));
 });
 
 /* FARM */
@@ -640,16 +825,18 @@ farmGrid.innerHTML=devices.map(d=>`
     </div>
   </div>`).join('');
 
-/* MODO BESTIA */
+/* MODO BESTIA: botón rojo + flash circular en pantalla */
 let beastCanvas=null, beastRAF=null;
 function activateBeastMode(event){
   const beastCard=event.target.closest('[data-beast]'); if(!beastCard) return;
   if(beastCard.classList.contains('beast-mode-active')) return;
   beastCard.classList.add('beast-mode-active');
+
   const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial);
   const circle=document.createElement('div'); circle.className='screen-circle';
   const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`;
   document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
+
   if(!beastCanvas){
     beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
     Object.assign(beastCanvas.style,{position:'absolute',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
@@ -702,7 +889,7 @@ document.querySelector('.brand').addEventListener('click',()=>document.getElemen
 /* NODOS BACKGROUND */
 (function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
-/* ====== PWA ====== */
+/* ====== PWA: Service Worker + Install Prompt ====== */
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{
@@ -711,9 +898,9 @@ window.addEventListener('beforeinstallprompt',(e)=>{
 installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt();}catch(_){} deferredPrompt=null; installBtn.classList.add('hidden')});
 window.addEventListener('appinstalled',()=>showToast('App instalada'));
 
-/* ====== CONTROL DE CONTRASEÑA ====== */
-const validPasswords = new Set(['Andrick99','invitado25']);
-document.body.classList.add('locked');
+/* ====== CONTROL DE CONTRASEÑA (doble) ====== */
+const validPasswords = new Set(['Andrick99','invitado25']); // <- Tus dos contraseñas
+document.body.classList.add('locked'); // Bloquea la página al cargar
 function checkPassword() {
   const input = document.getElementById('passwordInput').value;
   const errorMessage = document.getElementById('errorMessage');
@@ -729,7 +916,121 @@ function checkPassword() {
   }
 }
 document.getElementById('passwordModal').classList.add('show');
-document.getElementById('passwordInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
+document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+/* ====== CLIENTES EXTRAS (añadir/eliminar, persistir) ====== */
+const EXTRA_KEY = 'krave-clients-extra'; // guarda un array de usernames
+function loadExtras(){ try{ return JSON.parse(localStorage.getItem(EXTRA_KEY)||'[]'); }catch(_){ return []; } }
+function saveExtras(list){ try{ localStorage.setItem(EXTRA_KEY, JSON.stringify(list)); }catch(_){} }
+
+async function addExtraClient(username){
+  const u = username.replace(/^@/,'').trim().toLowerCase();
+  if(!u){ throw new Error('Ingresa un usuario'); }
+  if(clients.some(c=>c.user.toLowerCase()===u)) throw new Error('Ya existe en la lista');
+
+  const msgEl = document.getElementById('addClientMsg');
+  msgEl.textContent = 'Validando…';
+
+  const data = await fetchUserReal(u);
+  if(!data) throw new Error('No se pudo validar en el backend');
+
+  const newC = {
+    user: u,
+    name: data.name || u,
+    followers: pretty(data.followers) || '—',
+    posts: pretty(data.posts) || '—',
+    following: pretty(data.following) || '—',
+    verified: data.verified || false,
+    bio: data.bio || '',
+    extra: true
+  };
+
+  clients.unshift(newC);
+  const extras = loadExtras(); extras.unshift(u); saveExtras(extras);
+
+  try{
+    await fetch(apiUrl('/guardar-cliente'), {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username:u })});
+  }catch(_){}
+
+  renderRecents();
+  paintClientsGrid(clients);
+  hydrateSingle(u); // ring + datos finales
+}
+
+function removeExtraClient(username){
+  const u = username.toLowerCase();
+  const idx = clients.findIndex(c=>c.user.toLowerCase()===u);
+  if(idx>-1) clients.splice(idx,1);
+  const extras = loadExtras().filter(x=>x.toLowerCase()!==u);
+  saveExtras(extras);
+  renderRecents();
+  paintClientsGrid(clients);
+}
+
+/* ====== Hidratación puntual ====== */
+async function hydrateSingle(user){
+  const [d,s] = await Promise.all([fetchUserReal(user), fetchStoryStatus(user)]);
+  const c = clients.find(x=>x.user===user);
+  if(c && d){
+    Object.assign(c, {
+      name: d.name || c.name,
+      followers: pretty(d.followers) || c.followers,
+      posts: pretty(d.posts) || c.posts,
+      following: pretty(d.following) || c.following,
+      verified: !!d.verified,
+      bio: d.bio || c.bio || ''
+    });
+  }
+  const ringState = s.close ? 'close' : (s.has ? 'story' : 'none');
+  IG_RING_CACHE.set(user, ringState);
+  patchRecentRow(user);
+  patchClientCard(user);
+}
+
+/* ====== Botones / Modales de alta ====== */
+const addBtn = document.getElementById('addClientBtn');
+const addModal = document.getElementById('addClientModal');
+const addInput = document.getElementById('newClientInput');
+const addMsg = document.getElementById('addClientMsg');
+document.getElementById('saveClientBtn').addEventListener('click', async ()=>{
+  addMsg.textContent='';
+  try{
+    await addExtraClient(addInput.value);
+    addMsg.textContent='Guardado ✨';
+    showToast('Cliente añadido');
+    addInput.value='';
+    addModal.classList.remove('show');
+  }catch(err){
+    addMsg.textContent = err.message || 'Error al guardar';
+  }
+});
+addBtn.addEventListener('click',()=>{
+  addMsg.textContent='';
+  addInput.value='';
+  addModal.classList.add('show');
+  setTimeout(()=>addInput.focus(),50);
+});
+addModal.addEventListener('click',(e)=>{
+  if(e.target===addModal || e.target.hasAttribute('data-close-add')){
+    addModal.classList.remove('show');
+  }
+});
+
+/* ====== Inyectar extras guardados al cargar ====== */
+(function injectExtrasOnLoad(){
+  const extras = loadExtras();
+  if(!extras.length) return;
+  for(const u of extras.slice().reverse()){
+    if(!clients.some(c=>c.user.toLowerCase()===u.toLowerCase())){
+      clients.unshift({user:u, name:u, followers:'—', posts:'—', following:'—', verified:false, extra:true});
+    }
+  }
+  renderRecents();
+  paintClientsGrid(clients);
+  extras.forEach(hydrateSingle);
+})();
 </script>
 </body>
 </html>
