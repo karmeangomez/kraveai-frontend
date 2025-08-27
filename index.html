@@ -23,7 +23,7 @@
 <style>
   /* ====== THEME ====== */
   :root{
-    --bg:#0f1419;--card:#141a21;--card-2:#11171d;--muted:#8ea0b2;--text:#e9eef5;--line:#1f2833;
+    --bg:#0f1419;--card:#141a21;--card-2:#111a28;--muted:#8ea0b2;--text:#e9eef5;--line:#1f2833;
     --brand:#19c2ff;--accent:#0077ff;--chip:#1b2430;--chip-text:#dfe7ef;--success:#25d366;
     --gold1:#1b1a14;--gold2:#3b3523;--gold3:#c5a34a;
   }
@@ -70,9 +70,8 @@
   .logo-wrap{width:28px;height:28px;display:grid;place-items:center}
   .card .title{font-weight:700}
 
-  /* Miss Universe (mismo tamaño, estilo dorado) */
-  .card.mu{background:linear-gradient(160deg,var(--gold1),var(--gold2)); border-color:#5a5136;
-    position:relative; overflow:hidden;}
+  /* Miss Universe */
+  .card.mu{background:linear-gradient(160deg,var(--gold1),var(--gold2)); border-color:#5a5136; position:relative; overflow:hidden;}
   .card.mu::after{content:'';position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(120px 40px at 85% -20%, rgba(197,163,74,.35), transparent 60%);}
   .pill-mu{font-size:11px;border:1px solid #7c6a3a;border-radius:999px;padding:4px 8px;opacity:.9}
@@ -90,8 +89,7 @@
     0%,100%{box-shadow:0 0 18px var(--brand), inset 0 0 12px var(--accent)}
     50%{box-shadow:0 0 28px var(--accent), inset 0 0 16px var(--brand)}
   }
-  .beast-hot{background:#ff1a1a!important;border-color:#ff6b6b!important;
-    box-shadow:0 0 34px #ff3b3b, inset 0 0 22px #ff9a9a!important}
+  .beast-hot{background:#ff1a1a!important;border-color:#ff6b6b!important; box-shadow:0 0 34px #ff3b3b, inset 0 0 22px #ff9a9a!important}
 
   /* halo interno y destellos */
   @keyframes radial-flash{0%{transform:scale(0);opacity:.85}100%{transform:scale(18);opacity:0}}
@@ -113,7 +111,7 @@
   .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
   .dots{border:none;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;padding:6px;line-height:0}
 
-  /* ====== CLIENTES (tarjetas) ====== */
+  /* ====== CLIENTES ====== */
   .clients-grid{display:grid;gap:12px;max-width:1200px;margin:0 auto;grid-template-columns: repeat(4,1fr)}
   @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr } }
   @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr) } }
@@ -201,7 +199,7 @@
   /* ====== MEDIA ====== */
   @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
 
-  /* ====== BOTÓN F1 (pedido) ====== */
+  /* ====== BOTÓN F1 ====== */
   .f1-btn{
     position:relative;border:1px solid var(--line);
     background:linear-gradient(90deg,#0b1220,#111a28);
@@ -436,7 +434,7 @@ function showView(key){
   document.querySelectorAll('.nav .item').forEach(i=>i.classList.toggle('active',i.getAttribute('data-go')===key));
   window.scrollTo({top:0,behavior:'smooth'});
 }
-document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',()=>showView(el.getAttribute('data-go'))));
+document.querySelectorAll('.nav . item');document.querySelectorAll('.nav .item').forEach(el=>el.addEventListener('click',()=>showView(el.getAttribute('data-go'))));
 function goHome(){showView('home')} showView('home');
 
 /* ====== Ajuste badge ====== */
@@ -519,7 +517,7 @@ let clients=[
 
 /* ====== EXTRA CLIENTES (fijados arriba) ====== */
 const extraClients = [
-  {user:'cadillaccf1', name:'Cadillac Formula 1 Team', followers:'1.1M', posts:'10', following:'82', verified:true, tag:'f1'},
+  {user:'cadillacf1', name:'Cadillac Formula 1 Team', followers:'1.1M', posts:'10', following:'82', verified:true, tag:'f1'},
   {user:'manuelturizo', name:'Manuel Turizo - MTZ',   followers:'14.7M', posts:'131', following:'1,300', verified:true, tag:'music'},
   {user:'pesopluma',   name:'La Doble P',             followers:'15.4M', posts:'44',  following:'1,191', verified:true, tag:'music'}
 ];
@@ -530,7 +528,7 @@ for (const nc of extraClients) {
   clients.unshift(nc);
 }
 // Orden con "pinned"
-const pinnedClients = ['cadillaccf1','manuelturizo','pesopluma'];
+const pinnedClients = ['cadillacf1','manuelturizo','pesopluma'];
 function orderedClients(list=clients){
   const map = new Map(list.map(c => [c.user, c]));
   const top = pinnedClients.map(u => map.get(u)).filter(Boolean);
@@ -635,19 +633,21 @@ async function promptAdd(){
   clients.unshift(nuevo);
   paintRecent(); paintClientsGrid(clients);
   showToast('Cliente agregado');
-  // intento opcional de enriquecer desde backend
+  // enriquecer desde backend
   try{
     const r=await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(u)}`));
     const j=await r.json();
     const info=j.usuario||{};
     const idx=clients.findIndex(c=>c.user===u);
     if(idx>-1){
+      if(info.username && clients[idx].user!==info.username){ clients[idx].user=info.username; }
       if(info.full_name) clients[idx].name=info.full_name;
-      if(info.follower_count) clients[idx].followers=new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(info.follower_count);
-      if(info.following_count) clients[idx].following=String(info.following_count);
-      if(info.media_count) clients[idx].posts=String(info.media_count);
+      if(info.follower_count!=null) clients[idx].followers=new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(info.follower_count);
+      if(info.following_count!=null) clients[idx].following=String(info.following_count);
+      if(info.media_count!=null) clients[idx].posts=String(info.media_count);
       if(info.biography) clients[idx].bio=info.biography;
       if(info.is_verified!=null) clients[idx].verified=!!info.is_verified;
+      if(info.profile_pic_url) clients[idx].__avatar_override=info.profile_pic_url;
       paintRecent(); paintClientsGrid(clients);
     }
   }catch(_){}
@@ -783,7 +783,7 @@ function checkPassword() {
 document.getElementById('passwordModal').classList.add('show');
 document.getElementById('passwordInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
 
-/* ====== BOTÓN F1 (solo destello y toast) ====== */
+/* ====== BOTÓN F1 ====== */
 const f1Btn = document.getElementById('f1Btn');
 if(f1Btn){
   f1Btn.addEventListener('click', ()=>{
@@ -792,6 +792,58 @@ if(f1Btn){
     showToast('F1');
   });
 }
+
+/* ====== AUTO-SYNC DATOS REALES (quirúrgico) ====== */
+// 1) compacta 1.3K / 1.1M
+function compact(n){ if(n==null) return null; return new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(n); }
+// 2) pide el perfil al backend
+async function pullProfile(u){
+  const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(u)}`), { cache:'no-store' });
+  if(!r.ok) throw new Error('fetch_fail');
+  const j = await r.json();
+  return j.usuario || {};
+}
+// 3) refresca todos en lotes pequeños
+async function refreshAllClientsOnce(){
+  const batch = 5;
+  const users = clients.map(c=>c.user);
+  for(let i=0;i<users.length;i+=batch){
+    const slice = users.slice(i,i+batch);
+    await Promise.all(slice.map(async u=>{
+      try{
+        const p = await pullProfile(u);
+        const idx = clients.findIndex(c=>c.user===u || c.user===p.username);
+        if(idx>-1){
+          if(p.username && clients[idx].user!==p.username){ clients[idx].user = p.username; }
+          if(p.full_name) clients[idx].name = p.full_name;
+          if(p.follower_count!=null) clients[idx].followers = compact(p.follower_count);
+          if(p.following_count!=null) clients[idx].following = String(p.following_count);
+          if(p.media_count!=null) clients[idx].posts = String(p.media_count);
+          if(p.is_verified!=null) clients[idx].verified = !!p.is_verified;
+          if(p.biography!=null) clients[idx].bio = p.biography;
+          if(p.profile_pic_url) clients[idx].__avatar_override = p.profile_pic_url;
+        }
+      }catch(_){}
+    }));
+  }
+  paintRecent(); paintClientsGrid(clients);
+}
+// 4) usa la URL real del avatar si ya la tenemos
+const _avatarSrc = avatarSrc;
+function avatarSrc(u){
+  const c = clients.find(x=>x.user===u);
+  if(c && c.__avatar_override) return c.__avatar_override;
+  return _avatarSrc(u);
+}
+// 5) dispara el sync al entrar a Clientes y cada 60s si estás ahí
+document.querySelectorAll('.nav .item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    if(el.getAttribute('data-go')==='clients') refreshAllClientsOnce();
+  });
+});
+setInterval(()=>{ if(views.clients.classList.contains('active')) refreshAllClientsOnce(); }, 60_000);
+// 6) primer sync suave tras cargar
+setTimeout(()=>refreshAllClientsOnce(), 2000);
 </script>
 </body>
 </html>
