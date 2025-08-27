@@ -192,6 +192,7 @@
   .dashboard .stat{color:var(--muted);font-size:12px}
   .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
   .credit{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 22px);z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;max-width:90vw;text-align:center;white-space:nowrap}
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
   /* ====== LOCK ====== */
   body.locked{overflow:hidden}
@@ -386,7 +387,7 @@
     <symbol id="x" viewBox="0 0 24 24"><path fill="#fff" d="M17.5 4H20l-5.5 6 6 10h-5l-3.5-6-4 4-3-2 5-5-5-7h5l3 5 4.5-5z"/></symbol>
     <symbol id="fb" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12a10 10 0 008.5 9.87v-6.98H8.07v-2.9h2.43V9.41c0-2.4 1.43-3.73 3.63-3.73 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.19 0-1.56.74-1.56 1.49v1.79h2.65l-.42 2.9h-2.23V21.9A10 10 0 0022 12z"/></symbol>
     <symbol id="li" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.45 20.45H17V14.6c0-1.39-.5-2.34-1.75-2.34-.95 0-1.52.64-1.77 1.26-.09.22-.11.52-.11.82v6.11H9.89s.05-9.92 0-10.95h3.48v1.55c.46-.71 1.29-1.72 3.13-1.72 2.28 0 3.95 1.49 3.95 4.69v6.43zM7.34 8.94a2.02 2.02 0 110-4.04 2.02 2.02 0 010 4.04zM5.57 20.45h3.54V9.5H5.57v10.95z"/></symbol>
-    <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path fill="#fff" d="M7 9c4-1 8 0 10 1 .5.2.7.8.5 1.3-.3.5-.9.6-1.4.4-1.8-.9-5-1.7-8.7-.7-.6.2-1.1-.2-1.3-.8-.2-.6.2-1.1.9-1.2zM7 12c3-.7 6 0 8 .7.4.1.7.6.5 1-.2.5-.7.6-1.2.4-1.6-.7-4.1-1.3-7.2-.6-.5.1-1-.2-1.1-.7-.1-.6.2-1 .9-1.2zM7 15c2-.4 4 .1 5.4.6.4.1.6.5.5.9-.1.4-.5.5-.9.4-1.2-.5-3-1-4.6-.6-.4.1-.8-.1-.9-.5-.1-.5.1-.8.5-.8z"/></symbol>
+    <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path fill="#fff" d="M7 9c4-1 8 0 10 1 .5 0 .7.8.5 1.3-.3.5-.9.6-1.4.4-1.8-.9-5-1.7-8.7-.7-.6.2-1.1-.2-1.3-.8-.2-.6.2-1.1.9-1.2zM7 12c3-.7 6 0 8 .7.4.1.7.6.5 1-.2.5-.7.6-1.2.4-1.6-.7-4.1-1.3-7.2-.6-.5.1-1-.2-1.1-.7-.1-.6.2-1 .9-1.2zM7 15c2-.4 4 .1 5.4.6.4.1.6.5.5.9-.1.4-.5.5-.9.4-1.2-.5-3-1-4.6-.6-.4.1-.8-.1-.9-.5-.1-.5.1-.8.5-.8z"/></symbol>
     <symbol id="tg" viewBox="0 0 24 24"><path fill="#229ED9" d="M9.6 16.8l-.4 3.7c.6 0 .9-.3 1.2-.6l2.8-2.7 5.8 4.3c1 .6 1.6 .3 1.9-.9l3.4-16c.3-1.2-.4-1.7-1.3-1.4L2.2 9.9c-1.1 .4-1.1 1.1-.2 1.4l5.6 1.7L18.8 6c.7-.4 1.2-.2 .7 .3"/></symbol>
     <symbol id="wa" viewBox="0 0 24 24"><path fill="#25D366" d="M20.5 3.5A10 10 0 003.6 20.4L2 22l1.8-.5a10 10 0 0014.3-14zM12 19a7 7 0 116.2-10.2A7 7 0 0112 19z"/><path fill="#25D366" d="M8.8 7.7c-.4 0-.7.3-.7.7 0 2.2 2.2 4.4 4.4 4.4.4 0 .7-.3 .7-.7 0-.2-.1-.5-.3-.6l-1.1-.6c-.1-.1-.3-.1-.4 0l-.3.2c-.6-.3-1.1-.8-1.4-1.4l.2-.3c.1-.1.1-.3 0-.4l-.6-1.1c-.1-.2-.4-.3-.6-.3z"/></symbol>
   </svg>
@@ -398,6 +399,9 @@ const API_BASE = (location.hostname === 'localhost' || location.hostname === '12
   : 'https://api.kraveapi.xyz';
 const apiUrl = (p) => `${API_BASE}${p}`;
 function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
+// Overrides opcionales si backend devuelve profile_pic_url (no rompe nada si no llega)
+const avatarOverrides = new Map();
+function avatarUrl(u){ return avatarOverrides.get(u) || avatarSrc(u); }
 
 /* ====== MONITOR CONEXIÓN /health ====== */
 const connEl=document.getElementById('conn');
@@ -540,7 +544,7 @@ function orderedClients(list=clients){
 /* ====== HELPERS aros y avatar ====== */
 function avatarWrapHtml(u, ring){
   const ringClass = ring==='close' ? 'ring-close' : (ring==='story' ? 'ring-ig' : '');
-  return `<div class="avatar-wrap ${ringClass}"><img class="avatar" alt="" src="${avatarSrc(u)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" /></div>`;
+  return `<div class="avatar-wrap ${ringClass}"><img class="avatar" alt="" src="${avatarUrl(u)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" /></div>`;
 }
 function ringForClient(c){
   if(c.closeFriend) return 'close';
@@ -625,7 +629,7 @@ document.addEventListener('click',(e)=>{
   if(!e.target.closest('.menu')) document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show'));
 });
 
-/* ====== AÑADIR CLIENTE (enriquecido real) ====== */
+/* ====== AÑADIR CLIENTE ====== */
 async function promptAdd(){
   const u=prompt('Usuario (sin @):'); if(!u) return;
   const n=prompt('Nombre para mostrar:') || u;
@@ -634,22 +638,20 @@ async function promptAdd(){
   clients.unshift(nuevo);
   paintRecent(); paintClientsGrid(clients);
   showToast('Cliente agregado');
-
-  // Enriquecer desde backend
+  // intento opcional de enriquecer desde backend
   try{
-    const r=await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(u)}`), { cache:'no-store' });
+    const r=await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(u)}`));
     const j=await r.json();
     const info=j.usuario||{};
-    const idx=clients.findIndex(c=>c.user===u || c.user===info.username);
+    const idx=clients.findIndex(c=>c.user===u);
     if(idx>-1){
-      if(info.username && clients[idx].user!==info.username){ clients[idx].user=info.username; }
       if(info.full_name) clients[idx].name=info.full_name;
-      if(info.follower_count!=null) clients[idx].followers=new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(info.follower_count);
-      if(info.following_count!=null) clients[idx].following=String(info.following_count);
-      if(info.media_count!=null) clients[idx].posts=String(info.media_count);
+      if(info.follower_count) clients[idx].followers=new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(info.follower_count);
+      if(info.following_count) clients[idx].following=String(info.following_count);
+      if(info.media_count) clients[idx].posts=String(info.media_count);
       if(info.biography) clients[idx].bio=info.biography;
       if(info.is_verified!=null) clients[idx].verified=!!info.is_verified;
-      if(info.profile_pic_url) clients[idx].__avatar_override = info.profile_pic_url;
+      if(info.profile_pic_url) avatarOverrides.set(nuevo.user, info.profile_pic_url);
       paintRecent(); paintClientsGrid(clients);
     }
   }catch(_){}
@@ -664,7 +666,7 @@ function openCard(user){
   const wrap=document.getElementById('mAvatarWrap');
   wrap.classList.remove('ring-ig','ring-close');
   const ring=ringForClient(c); if(ring==='close') wrap.classList.add('ring-close'); else if(ring==='story') wrap.classList.add('ring-ig');
-  const av=document.getElementById('mAvatar'); av.src=avatarSrc(c.user);
+  const av=document.getElementById('mAvatar'); av.src=avatarUrl(c.user);
   av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent=c.name||'';
@@ -795,54 +797,123 @@ if(f1Btn){
   });
 }
 
-/* ====== AUTO-SYNC DATOS REALES ====== */
-function compact(n){ if(n==null) return null; return new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(n); }
-async function pullProfile(u){
-  const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(u)}`), { cache:'no-store' });
-  if(!r.ok) throw new Error('fetch_fail');
-  const j = await r.json();
-  return j.usuario || {};
+/* ====== HIDRATACIÓN DE DATOS REALES (no intrusiva) ====== */
+
+// Formato compacto K/M
+function compactNumber(n){
+  const num = Number(n);
+  if(!isFinite(num)) return '0';
+  if(num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
+  if(num >= 1_000)     return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
+  return String(Math.round(num));
 }
-async function refreshAllClientsOnce(){
-  const batch = 5;
-  const users = clients.map(c=>c.user);
-  for(let i=0;i<users.length;i+=batch){
-    const slice = users.slice(i,i+batch);
-    await Promise.all(slice.map(async u=>{
-      try{
-        const p = await pullProfile(u);
-        const idx = clients.findIndex(c=>c.user===u || c.user===p.username);
-        if(idx>-1){
-          if(p.username && clients[idx].user!==p.username){ clients[idx].user=p.username; }
-          if(p.full_name) clients[idx].name=p.full_name;
-          if(p.follower_count!=null) clients[idx].followers=compact(p.follower_count);
-          if(p.following_count!=null) clients[idx].following=String(p.following_count);
-          if(p.media_count!=null) clients[idx].posts=String(p.media_count);
-          if(p.is_verified!=null) clients[idx].verified=!!p.is_verified;
-          if(p.biography!=null) clients[idx].bio=p.biography;
-          if(p.profile_pic_url) clients[idx].__avatar_override=p.profile_pic_url;
-        }
-      }catch(_){}
-    }));
+
+// Aplica la respuesta del backend al objeto cliente local
+function applyApiUserToClient(c, info){
+  if(!info || typeof info !== 'object') return;
+
+  if(info.full_name)       c.name      = info.full_name;
+  if(info.follower_count)  c.followers = compactNumber(info.follower_count);
+  if(info.following_count) c.following = String(info.following_count);
+  if(info.media_count)     c.posts     = String(info.media_count);
+  if(info.biography)       c.bio       = info.biography;
+  if(info.is_verified != null) c.verified = !!info.is_verified;
+
+  // Avatar directo si viene profile_pic_url; onerror ya hace fallback
+  if(info.profile_pic_url){
+    avatarOverrides.set(c.user, info.profile_pic_url);
   }
-  paintRecent(); paintClientsGrid(clients);
 }
-// usa la URL real del avatar si ya la tenemos
-const _avatarSrc = avatarSrc;
-function avatarSrc(u){
-  const c = clients.find(x=>x.user===u);
-  if(c && c.__avatar_override) return c.__avatar_override;
-  return _avatarSrc(u);
+
+// Hidrata un usuario (fetch + merge + repintar sólo si cambió)
+async function hydrateClient(username){
+  try{
+    const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(username)}`), { cache: 'no-store' });
+    if(!r.ok) return;
+
+    const j = await r.json();
+    const info = j && (j.usuario || j.user || j.data || j);
+
+    const idx = clients.findIndex(x => x.user === username);
+    if(idx === -1) return;
+
+    // Copia previa para detectar cambios relevantes
+    const prev = JSON.stringify({
+      name: clients[idx].name,
+      followers: clients[idx].followers,
+      following: clients[idx].following,
+      posts: clients[idx].posts,
+      bio: clients[idx].bio,
+      verified: clients[idx].verified
+    });
+
+    applyApiUserToClient(clients[idx], info);
+
+    const now = JSON.stringify({
+      name: clients[idx].name,
+      followers: clients[idx].followers,
+      following: clients[idx].following,
+      posts: clients[idx].posts,
+      bio: clients[idx].bio,
+      verified: clients[idx].verified
+    });
+
+    if(prev !== now){
+      // Repinta grillas/listas
+      paintRecent();
+      paintClientsGrid(clients);
+
+      // Si el modal abierto corresponde, refresca sin cerrar
+      const isOpen = document.getElementById('clientModal').classList.contains('show');
+      if(isOpen){
+        const userShown = document.getElementById('mUser').textContent.replace('@','').split(' ')[0];
+        if(userShown === username){
+          document.getElementById('mName').textContent = clients[idx].name || '';
+          document.getElementById('mPosts').textContent = clients[idx].posts || '0';
+          document.getElementById('mFollowers').textContent = clients[idx].followers || '0';
+          document.getElementById('mFollowing').textContent = clients[idx].following || '0';
+          document.getElementById('mBio').textContent = clients[idx].bio || '';
+          document.getElementById('mAvatar').src = avatarUrl(username);
+        }
+      }
+    }
+  }catch(_){}
 }
-// dispara el sync al entrar a Clientes y cada 60s si estás ahí
+
+// Hidrata en lotes pequeños para no saturar el backend
+async function hydrateAllClientsOnce(){
+  if (hydrateAllClientsOnce._done) return;
+  hydrateAllClientsOnce._done = true;
+
+  const uniqueUsers = Array.from(new Set(clients.map(c => c.user)));
+  const batchSize = 5;
+
+  for(let i=0; i<uniqueUsers.length; i+=batchSize){
+    const slice = uniqueUsers.slice(i, i+batchSize);
+    await Promise.all(slice.map(u => hydrateClient(u)));
+  }
+}
+
+// Una pasada automática poco después de cargar
+setTimeout(hydrateAllClientsOnce, 1200);
+
+// También hidrata “bajo demanda” al abrir la ficha
+const _origOpenCard = openCard;
+openCard = function(user){
+  hydrateClient(user); // no bloquea UI
+  return _origOpenCard(user);
+};
+
+// Opcional: al entrar por primera vez a Clientes, fuerza hidratación
+let _hydratedOnClientsView = false;
 document.querySelectorAll('.nav .item').forEach(el=>{
-  el.addEventListener('click',()=>{
-    if(el.getAttribute('data-go')==='clients') refreshAllClientsOnce();
+  el.addEventListener('click', ()=>{
+    if(!_hydratedOnClientsView && el.getAttribute('data-go') === 'clients'){
+      _hydratedOnClientsView = true;
+      hydrateAllClientsOnce();
+    }
   });
 });
-setInterval(()=>{ const v=document.getElementById('view-clients'); if(v && v.classList.contains('active')) refreshAllClientsOnce(); }, 60_000);
-// primer sync suave tras cargar
-setTimeout(()=>refreshAllClientsOnce(), 2000);
 </script>
 </body>
 </html>
