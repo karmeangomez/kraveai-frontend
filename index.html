@@ -192,7 +192,6 @@
   .dashboard .stat{color:var(--muted);font-size:12px}
   .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
   .credit{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 22px);z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;max-width:90vw;text-align:center;white-space:nowrap}
-  @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
   /* ====== LOCK ====== */
   body.locked{overflow:hidden}
@@ -399,7 +398,8 @@ const API_BASE = (location.hostname === 'localhost' || location.hostname === '12
   : 'https://api.kraveapi.xyz';
 const apiUrl = (p) => `${API_BASE}${p}`;
 function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
-// Overrides opcionales si backend devuelve profile_pic_url (no rompe nada si no llega)
+
+// Overrides opcionales si backend devuelve profile_pic_url (no rompe si no llega)
 const avatarOverrides = new Map();
 function avatarUrl(u){ return avatarOverrides.get(u) || avatarSrc(u); }
 
@@ -506,7 +506,7 @@ function openNetwork(key){
 /* ====== VERIFIED SVG ====== */
 function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
-/* ====== CLIENTES ====== */
+/* ====== CLIENTES (seed) ====== */
 let clients=[
   {user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},
   {user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},
@@ -522,7 +522,7 @@ let clients=[
 
 /* ====== EXTRA CLIENTES (fijados arriba) ====== */
 const extraClients = [
-  {user:'cadillacf1', name:'Cadillac Formula 1 Team', followers:'1.1M', posts:'10', following:'82', verified:true, tag:'f1'},
+  {user:'cadillacf1', name:'Cadillac Formula 1 Team', followers:'1.1M', posts:'10', following:'82',  verified:true, tag:'f1'},
   {user:'manuelturizo', name:'Manuel Turizo - MTZ',   followers:'14.7M', posts:'131', following:'1,300', verified:true, tag:'music'},
   {user:'pesopluma',   name:'La Doble P',             followers:'15.4M', posts:'44',  following:'1,191', verified:true, tag:'music'}
 ];
@@ -629,32 +629,96 @@ document.addEventListener('click',(e)=>{
   if(!e.target.closest('.menu')) document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show'));
 });
 
-/* ====== AÑADIR CLIENTE ====== */
+/* ====== Formato compacto K/M (robusto) ====== */
+function compactNumber(n){
+  const num = Number(n);
+  if (!Number.isFinite(num)) return '0';
+  if (num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
+  if (num >= 1_000)     return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
+  return String(Math.round(num));
+}
+
+/* ====== Aplica respuesta del backend (acepta 0/false) ====== */
+function applyApiUserToClient(c, info){
+  if (!info || typeof info !== 'object') return;
+
+  if ('full_name'       in info && info.full_name != null)       c.name      = info.full_name || c.name || c.user;
+  if ('follower_count'  in info && info.follower_count != null)  c.followers = compactNumber(info.follower_count);
+  if ('following_count' in info && info.following_count != null) c.following = String(info.following_count);
+  if ('media_count'     in info && info.media_count != null)     c.posts     = String(info.media_count);
+  if ('biography'       in info && info.biography != null)       c.bio       = info.biography;
+  if ('is_verified'     in info && info.is_verified != null)     c.verified  = !!info.is_verified;
+
+  if ('profile_pic_url' in info && info.profile_pic_url){
+    avatarOverrides.set(c.user, info.profile_pic_url);
+  }
+}
+
+/* ====== Hidrata un usuario (fetch + merge + repintar si cambió) ====== */
+async function hydrateClient(username){
+  try{
+    const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(username)}`), { cache: 'no-store' });
+    if(!r.ok) return;
+
+    const j = await r.json();
+    const info = j && (j.usuario || j.user || j.data || j);
+
+    const idx = clients.findIndex(x => x.user === username);
+    if(idx === -1) return;
+
+    const before = JSON.stringify({
+      name      : clients[idx].name,
+      followers : clients[idx].followers,
+      following : clients[idx].following,
+      posts     : clients[idx].posts,
+      bio       : clients[idx].bio,
+      verified  : clients[idx].verified
+    });
+
+    applyApiUserToClient(clients[idx], info);
+
+    const after = JSON.stringify({
+      name      : clients[idx].name,
+      followers : clients[idx].followers,
+      following : clients[idx].following,
+      posts     : clients[idx].posts,
+      bio       : clients[idx].bio,
+      verified  : clients[idx].verified
+    });
+
+    if (before !== after){
+      paintRecent();
+      paintClientsGrid(clients);
+
+      // Si el modal de este usuario está abierto, refresca sus campos
+      const isOpen = document.getElementById('clientModal').classList.contains('show');
+      if(isOpen){
+        const shown = document.getElementById('mUser').textContent.replace('@','').split(' ')[0];
+        if(shown === username){
+          document.getElementById('mName').textContent      = clients[idx].name || '';
+          document.getElementById('mPosts').textContent     = clients[idx].posts || '0';
+          document.getElementById('mFollowers').textContent = clients[idx].followers || '0';
+          document.getElementById('mFollowing').textContent = clients[idx].following || '0';
+          document.getElementById('mBio').textContent       = clients[idx].bio || '';
+          document.getElementById('mAvatar').src            = avatarUrl(username);
+        }
+      }
+    }
+  }catch(_){}
+}
+
+/* ====== Añadir cliente (sólo pide @, hidrata automático) ====== */
 async function promptAdd(){
-  const u=prompt('Usuario (sin @):'); if(!u) return;
-  const n=prompt('Nombre para mostrar:') || u;
-  const nuevo={user:u,name:n,followers:'0',posts:'0',following:'0',verified:true};
-  const i = clients.findIndex(c=>c.user===u); if(i>=0) clients.splice(i,1);
+  const u = (prompt('Usuario (sin @):') || '').trim();
+  if(!u) return;
+
+  const nuevo = { user: u, name: u, followers:'0', posts:'0', following:'0', verified:false };
+  const i = clients.findIndex(c => c.user === u); if(i>=0) clients.splice(i,1);
   clients.unshift(nuevo);
   paintRecent(); paintClientsGrid(clients);
   showToast('Cliente agregado');
-  // intento opcional de enriquecer desde backend
-  try{
-    const r=await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(u)}`));
-    const j=await r.json();
-    const info=j.usuario||{};
-    const idx=clients.findIndex(c=>c.user===u);
-    if(idx>-1){
-      if(info.full_name) clients[idx].name=info.full_name;
-      if(info.follower_count) clients[idx].followers=new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(info.follower_count);
-      if(info.following_count) clients[idx].following=String(info.following_count);
-      if(info.media_count) clients[idx].posts=String(info.media_count);
-      if(info.biography) clients[idx].bio=info.biography;
-      if(info.is_verified!=null) clients[idx].verified=!!info.is_verified;
-      if(info.profile_pic_url) avatarOverrides.set(nuevo.user, info.profile_pic_url);
-      paintRecent(); paintClientsGrid(clients);
-    }
-  }catch(_){}
+
+  await hydrateClient(u);
 }
 document.getElementById('addClientBtn').addEventListener('click',promptAdd);
 document.getElementById('addFromHome').addEventListener('click',()=>{showView('clients'); promptAdd()});
@@ -797,88 +861,7 @@ if(f1Btn){
   });
 }
 
-/* ====== HIDRATACIÓN DE DATOS REALES (no intrusiva) ====== */
-
-// Formato compacto K/M
-function compactNumber(n){
-  const num = Number(n);
-  if(!isFinite(num)) return '0';
-  if(num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
-  if(num >= 1_000)     return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
-  return String(Math.round(num));
-}
-
-// Aplica la respuesta del backend al objeto cliente local
-function applyApiUserToClient(c, info){
-  if(!info || typeof info !== 'object') return;
-
-  if(info.full_name)       c.name      = info.full_name;
-  if(info.follower_count)  c.followers = compactNumber(info.follower_count);
-  if(info.following_count) c.following = String(info.following_count);
-  if(info.media_count)     c.posts     = String(info.media_count);
-  if(info.biography)       c.bio       = info.biography;
-  if(info.is_verified != null) c.verified = !!info.is_verified;
-
-  // Avatar directo si viene profile_pic_url; onerror ya hace fallback
-  if(info.profile_pic_url){
-    avatarOverrides.set(c.user, info.profile_pic_url);
-  }
-}
-
-// Hidrata un usuario (fetch + merge + repintar sólo si cambió)
-async function hydrateClient(username){
-  try{
-    const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(username)}`), { cache: 'no-store' });
-    if(!r.ok) return;
-
-    const j = await r.json();
-    const info = j && (j.usuario || j.user || j.data || j);
-
-    const idx = clients.findIndex(x => x.user === username);
-    if(idx === -1) return;
-
-    // Copia previa para detectar cambios relevantes
-    const prev = JSON.stringify({
-      name: clients[idx].name,
-      followers: clients[idx].followers,
-      following: clients[idx].following,
-      posts: clients[idx].posts,
-      bio: clients[idx].bio,
-      verified: clients[idx].verified
-    });
-
-    applyApiUserToClient(clients[idx], info);
-
-    const now = JSON.stringify({
-      name: clients[idx].name,
-      followers: clients[idx].followers,
-      following: clients[idx].following,
-      posts: clients[idx].posts,
-      bio: clients[idx].bio,
-      verified: clients[idx].verified
-    });
-
-    if(prev !== now){
-      // Repinta grillas/listas
-      paintRecent();
-      paintClientsGrid(clients);
-
-      // Si el modal abierto corresponde, refresca sin cerrar
-      const isOpen = document.getElementById('clientModal').classList.contains('show');
-      if(isOpen){
-        const userShown = document.getElementById('mUser').textContent.replace('@','').split(' ')[0];
-        if(userShown === username){
-          document.getElementById('mName').textContent = clients[idx].name || '';
-          document.getElementById('mPosts').textContent = clients[idx].posts || '0';
-          document.getElementById('mFollowers').textContent = clients[idx].followers || '0';
-          document.getElementById('mFollowing').textContent = clients[idx].following || '0';
-          document.getElementById('mBio').textContent = clients[idx].bio || '';
-          document.getElementById('mAvatar').src = avatarUrl(username);
-        }
-      }
-    }
-  }catch(_){}
-}
+/* ====== HIDRATACIÓN DE DATOS REALES ====== */
 
 // Hidrata en lotes pequeños para no saturar el backend
 async function hydrateAllClientsOnce(){
@@ -894,7 +877,40 @@ async function hydrateAllClientsOnce(){
   }
 }
 
-// Una pasada automática poco después de cargar
+// IntersectionObserver: hidrata al entrar al viewport
+let _io;
+function ensureObserver(){
+  if (_io) return _io;
+  _io = new IntersectionObserver((entries)=>{
+    for (const e of entries){
+      if (e.isIntersecting){
+        const el = e.target;
+        const user = el.getAttribute('data-open') || el.getAttribute('data-user');
+        if (user) hydrateClient(user);
+        _io.unobserve(el);
+      }
+    }
+  }, { rootMargin: '200px 0px' });
+  return _io;
+}
+function observeVisibleItems(){
+  const io = ensureObserver();
+  document.querySelectorAll('.client-card[data-open], .row[data-user]').forEach(el=>io.observe(el));
+}
+
+// Hookea repintados
+const _paintClientsGridRef = paintClientsGrid;
+paintClientsGrid = function(arr){
+  _paintClientsGridRef(arr);
+  observeVisibleItems();
+};
+const _paintRecentRef = paintRecent;
+paintRecent = function(){
+  _paintRecentRef();
+  observeVisibleItems();
+};
+
+// Primera pasada automática
 setTimeout(hydrateAllClientsOnce, 1200);
 
 // También hidrata “bajo demanda” al abrir la ficha
