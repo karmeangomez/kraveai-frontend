@@ -69,9 +69,10 @@
   .card:hover{transform:translateY(-1px)}
   .logo-wrap{width:28px;height:28px;display:grid;place-items:center}
   .card .title{font-weight:700}
+
+  /* Miss Universe */
   .card.mu{background:linear-gradient(160deg,var(--gold1),var(--gold2)); border-color:#5a5136; position:relative; overflow:hidden;}
-  .card.mu::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120px 40px at 85% -20%, rgba(197,163,74,.35), transparent 60%);}
+  .card.mu::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(120px 40px at 85% -20%, rgba(197,163,74,.35), transparent 60%);}
   .pill-mu{font-size:11px;border:1px solid #7c6a3a;border-radius:999px;padding:4px 8px;opacity:.9}
 
   /* ====== BEAST MODE ====== */
@@ -108,7 +109,7 @@
   .chip{background:var(--chip);color:var(--chip-text);border-radius:999px;padding:6px 10px;font-size:12px}
   .dots{border:none;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;padding:6px;line-height:0}
 
-  /* ====== CLIENTES ====== */
+  /* ====== CLIENTES (tarjetas) ====== */
   .clients-grid{display:grid;gap:12px;max-width:1200px;margin:0 auto;grid-template-columns: repeat(4,1fr)}
   @media (max-width:480px){ .clients-grid{ grid-template-columns: 1fr } }
   @media (min-width:481px) and (max-width:900px){ .clients-grid{ grid-template-columns: repeat(2,1fr) } }
@@ -387,38 +388,50 @@
   </svg>
 
 <script>
-/* ====== BACKEND BASE ====== */
+/* ====== BASE API (Raspberry/Backend) ====== */
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:8000'
-  : 'https://api.kraveapi.xyz';
+  : 'https://api.kraveapi.xyz'; // ajusta si tu Pi usa otra URL/IP
+
 const apiUrl = (p) => `${API_BASE}${p}`;
+
+/* ====== AVATAR HELPERS ====== */
 function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
-// Overrides si backend entrega profile_pic_url explícita
+// Overrides opcionales si el backend devuelve profile_pic_url
 const avatarOverrides = new Map();
 function avatarUrl(u){ return avatarOverrides.get(u) || avatarSrc(u); }
 
-/* ====== MONITOR CONEXIÓN /health (robusto) ====== */
+/* ====== MONITOR CONEXIÓN (real, con timeout) ====== */
 const connEl=document.getElementById('conn');
 const dotEl=document.querySelector('.dot');
-function setConnected(){ connEl.textContent='Conectado'; dotEl.style.background='var(--success)'; }
-function setDisconnected(){ connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b'; }
+
+function setConn(online){
+  connEl.textContent = online ? 'Conectado' : 'Sin conexión';
+  dotEl.style.background = online ? 'var(--success)' : '#e0565b';
+}
+
+function fetchWithTimeout(resource, options = {}){
+  const { timeout = 4000 } = options;
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  return fetch(resource, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+}
 
 async function checkBackend(){
-  if(navigator.onLine === false){ setDisconnected(); return; }
-  const ctrl = new AbortController(); const t = setTimeout(()=>ctrl.abort(), 3500);
+  // si el navegador está offline, marca offline sin intentar fetch
+  if(!navigator.onLine){ setConn(false); return; }
   try{
-    const r = await fetch(apiUrl(`/health?_=${Date.now()}`), {
-      method:'GET', cache:'no-store', credentials:'omit', signal: ctrl.signal,
-      headers:{'Accept':'application/json','Cache-Control':'no-store, no-cache, must-revalidate, max-age=0','Pragma':'no-cache'}
-    });
-    clearTimeout(t);
-    if(!r.ok){ setDisconnected(); return; }
-    const j = await r.json().catch(()=>null);
-    if(j && j.status==='ok') setConnected(); else setDisconnected();
-  }catch(_){ clearTimeout(t); setDisconnected(); }
+    const r = await fetchWithTimeout(apiUrl('/health'), { cache:'no-store', timeout: 4500 });
+    setConn(r.ok);
+  }catch(_){
+    setConn(false);
+  }
 }
+// escucha cambios de red del sistema
+window.addEventListener('online',  () => checkBackend());
+window.addEventListener('offline', () => setConn(false));
+// verifica ahora y cada 15s
 checkBackend(); setInterval(checkBackend, 15000);
-addEventListener('online',checkBackend); addEventListener('offline',checkBackend);
 
 /* ====== TEMA ====== */
 const themeToggle=document.getElementById('themeToggle');
@@ -428,7 +441,16 @@ if(savedTheme==='neon')document.body.classList.add('neon-theme');
 themeToggle.textContent=document.body.classList.contains('light')?'🌞':document.body.classList.contains('neon-theme')?'💡':'🌙';
 themeToggle.onclick=(e)=>{
   const menu=document.createElement('div');
-  Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:var(--card),border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
+  Object.assign(menu.style,{
+    position:'absolute',
+    top:'110%',
+    right:'0',
+    background:'var(--card)',
+    border:'1px solid var(--line)',
+    borderRadius:'10px',
+    padding:'8px',
+    zIndex:'1000'
+  });
   menu.innerHTML=`<div style="padding:6px 10px;cursor:pointer">Claro</div><div style="padding:6px 10px;cursor:pointer">Neón</div><div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
   const [op1,op2,op3]=menu.children;
   op1.onclick=()=>{document.body.classList.add('light');document.body.classList.remove('neon-theme');localStorage.setItem('krave-theme','light');themeToggle.textContent='🌞';menu.remove()};
@@ -511,7 +533,7 @@ function openNetwork(key){
 /* ====== VERIFIED SVG ====== */
 function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
-/* ====== CLIENTES (semilla) ====== */
+/* ====== CLIENTES (seed) ====== */
 let clients=[
   {user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},
   {user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},
@@ -525,12 +547,13 @@ let clients=[
   {user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true, closeFriend:true, hasStory:true}
 ];
 
-/* ====== EXTRA (pinned arriba) ====== */
+/* ====== EXTRA CLIENTES (pinned arriba) ====== */
 const extraClients = [
   {user:'cadillacf1', name:'Cadillac Formula 1 Team', followers:'1.1M', posts:'10', following:'82', verified:true, tag:'f1'},
   {user:'manuelturizo', name:'Manuel Turizo - MTZ',   followers:'14.7M', posts:'131', following:'1,300', verified:true, tag:'music'},
   {user:'pesopluma',   name:'La Doble P',             followers:'15.4M', posts:'44',  following:'1,191', verified:true, tag:'music'}
 ];
+// Reubica si existen y coloca arriba sin duplicar
 for (const nc of extraClients) {
   const i = clients.findIndex(c => c.user === nc.user);
   if (i >= 0) clients.splice(i,1);
@@ -572,12 +595,14 @@ function paintRecent(){
         <div class="menu"><button data-del="${c.user}">Eliminar</button></div>
       </div>
     </div>`).join('');
+
   setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),80);
 
   const totalFollowers=_clients.reduce((sum,c)=>{
     const n=parseFloat(c.followers);
     return sum+(c.followers?.includes('M')?n*1_000_000:c.followers?.includes('K')?n*1_000:n||0)
   },0);
+
   if(!document.getElementById('summaryFollowers')){
     const s=document.createElement('div'); s.id='summaryFollowers'; s.style.margin='6px 2px 0';
     s.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`;
@@ -620,71 +645,17 @@ document.getElementById('clientSearch').addEventListener('input',e=>{
 
 /* ====== POP MENÚS / ELIMINAR ====== */
 document.addEventListener('click',(e)=>{
+  // abrir menú
   const dots=e.target.closest('.dots');
   if(dots){ const m=dots.parentElement.querySelector('.menu'); document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show')); m.classList.toggle('show'); return; }
+  // eliminar
   const del=e.target.getAttribute('data-del');
   if(del){ const ok=confirm('¿Eliminar este cliente?'); if(ok){ clients=clients.filter(c=>c.user!==del); paintRecent(); paintClientsGrid(clients); showToast('Cliente eliminado'); } return; }
+  // cerrar menús si click fuera
   if(!e.target.closest('.menu')) document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show'));
 });
 
-/* ====== AÑADIR CLIENTE (hidrata real) ====== */
-function compactNumber(n){
-  const num = Number(n);
-  if(!isFinite(num)) return '0';
-  if(num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
-  if(num >= 1_000)     return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
-  return String(Math.round(num));
-}
-function applyApiUserToClient(c, info){
-  if(!info || typeof info !== 'object') return;
-  if(info.full_name)       c.name      = info.full_name;
-  if(info.follower_count!=null)  c.followers = compactNumber(info.follower_count);
-  if(info.following_count!=null) c.following = String(info.following_count);
-  if(info.media_count!=null)     c.posts     = String(info.media_count);
-  if(info.biography)       c.bio       = info.biography;
-  if(info.is_verified != null) c.verified = !!info.is_verified;
-  if(info.profile_pic_url) avatarOverrides.set(c.user, info.profile_pic_url);
-}
-async function hydrateClient(username){
-  try{
-    const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(username)}`), { cache:'no-store' });
-    if(!r.ok) return;
-    const j = await r.json();
-    const info = j && (j.usuario || j.user || j.data || j);
-    const idx = clients.findIndex(x => x.user === username);
-    if(idx === -1) return;
-
-    const prev = JSON.stringify({name:clients[idx].name,followers:clients[idx].followers,following:clients[idx].following,posts:clients[idx].posts,bio:clients[idx].bio,verified:clients[idx].verified});
-    applyApiUserToClient(clients[idx], info);
-    const now  = JSON.stringify({name:clients[idx].name,followers:clients[idx].followers,following:clients[idx].following,posts:clients[idx].posts,bio:clients[idx].bio,verified:clients[idx].verified});
-
-    if(prev !== now){
-      paintRecent(); paintClientsGrid(clients);
-      const isOpen = document.getElementById('clientModal').classList.contains('show');
-      if(isOpen){
-        const userShown = document.getElementById('mUser').textContent.replace('@','').split(' ')[0];
-        if(userShown === username){
-          document.getElementById('mName').textContent = clients[idx].name || '';
-          document.getElementById('mPosts').textContent = clients[idx].posts || '0';
-          document.getElementById('mFollowers').textContent = clients[idx].followers || '0';
-          document.getElementById('mFollowing').textContent = clients[idx].following || '0';
-          document.getElementById('mBio').textContent = clients[idx].bio || '';
-          document.getElementById('mAvatar').src = avatarUrl(username);
-        }
-      }
-    }
-  }catch(_){}
-}
-async function hydrateAllClientsOnce(){
-  if (hydrateAllClientsOnce._done) return;
-  hydrateAllClientsOnce._done = true;
-  const uniqueUsers = Array.from(new Set(clients.map(c => c.user)));
-  const batchSize = 5;
-  for(let i=0; i<uniqueUsers.length; i+=batchSize){
-    const slice = uniqueUsers.slice(i, i+batchSize);
-    await Promise.all(slice.map(u => hydrateClient(u)));
-  }
-}
+/* ====== AÑADIR CLIENTE ====== */
 async function promptAdd(){
   const u=prompt('Usuario (sin @):'); if(!u) return;
   const n=prompt('Nombre para mostrar:') || u;
@@ -693,7 +664,9 @@ async function promptAdd(){
   clients.unshift(nuevo);
   paintRecent(); paintClientsGrid(clients);
   showToast('Cliente agregado');
-  hydrateClient(u); // Enriquecer a real sin bloquear
+
+  // hidrata inmediatamente
+  hydrateClient(u);
 }
 document.getElementById('addClientBtn').addEventListener('click',promptAdd);
 document.getElementById('addFromHome').addEventListener('click',()=>{showView('clients'); promptAdd()});
@@ -713,14 +686,20 @@ function openCard(user){
   document.getElementById('mFollowers').textContent=c.followers||'0';
   document.getElementById('mFollowing').textContent=c.following||'0';
   document.getElementById('mBio').textContent=c.bio||'';
-  document.getElementById('mOpenIg').href=`https://instagram.com/${c.user}`;
+  const link=`https://instagram.com/${c.user}`;
+  const openBtn=document.getElementById('mOpenIg'); openBtn.href=link;
   modal.classList.add('show');
+
+  // rehidrata bajo demanda
+  hydrateClient(user);
 }
 function closeModal(){modal.classList.remove('show')}
 modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) closeModal(); });
+
+/* Delegación click: redes, ver ficha y beast */
 document.addEventListener('click',(e)=>{
   const netEl=e.target.closest('[data-net]'); if(netEl){ if(netEl.getAttribute('data-net')!=='missu') openNetwork(netEl.getAttribute('data-net')); return;}
-  const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); hydrateClient(openEl.getAttribute('data-open')); return;}
+  const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); return;}
   const beastEl=e.target.closest('[data-beast]'); if(beastEl){activateBeastMode(e, beastEl); return;}
 });
 
@@ -793,14 +772,14 @@ document.querySelector('.brand').addEventListener('click',()=>document.getElemen
 /* NODOS BACKGROUND */
 (function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
-/* PWA */
+/* ====== PWA: Service Worker + Install Prompt (Chrome) ====== */
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');});
 installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt(); const choice=await deferredPrompt.userChoice; if(choice?.outcome==='accepted'){showToast('App instalada')}}catch(_){} deferredPrompt=null; installBtn.classList.add('hidden')});
 window.addEventListener('appinstalled',()=>{showToast('App instalada'); installBtn.classList.add('hidden')});
 
-/* PASSWORD LOCK */
+/* ====== CONTROL DE CONTRASEÑA ====== */
 const validPasswords = new Set(['Andrick99','invitado25']);
 document.body.classList.add('locked');
 function checkPassword() {
@@ -820,8 +799,83 @@ function checkPassword() {
 document.getElementById('passwordModal').classList.add('show');
 document.getElementById('passwordInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
 
-/* HIDRATACIÓN */
+/* ====== HIDRATACIÓN DE DATOS REALES ====== */
+function compactNumber(n){
+  const num = Number(n);
+  if(!isFinite(num)) return '0';
+  if(num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
+  if(num >= 1_000)     return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
+  return String(Math.round(num));
+}
+function applyApiUserToClient(c, info){
+  if(!info || typeof info !== 'object') return;
+  if(info.full_name)       c.name      = info.full_name;
+  if(info.follower_count)  c.followers = compactNumber(info.follower_count);
+  if(info.following_count) c.following = String(info.following_count);
+  if(info.media_count)     c.posts     = String(info.media_count);
+  if(info.biography)       c.bio       = info.biography;
+  if(info.is_verified != null) c.verified = !!info.is_verified;
+  if(info.profile_pic_url) avatarOverrides.set(c.user, info.profile_pic_url);
+}
+async function hydrateClient(username){
+  try{
+    const r = await fetch(apiUrl(`/buscar-usuario?username=${encodeURIComponent(username)}`), { cache: 'no-store' });
+    if(!r.ok) return;
+    const j = await r.json();
+    const info = j && (j.usuario || j.user || j.data || j);
+
+    const idx = clients.findIndex(x => x.user === username);
+    if(idx === -1) return;
+
+    const prev = JSON.stringify({
+      name: clients[idx].name,
+      followers: clients[idx].followers,
+      following: clients[idx].following,
+      posts: clients[idx].posts,
+      bio: clients[idx].bio,
+      verified: clients[idx].verified
+    });
+
+    applyApiUserToClient(clients[idx], info);
+
+    const now = JSON.stringify({
+      name: clients[idx].name,
+      followers: clients[idx].followers,
+      following: clients[idx].following,
+      posts: clients[idx].posts,
+      bio: clients[idx].bio,
+      verified: clients[idx].verified
+    });
+
+    if(prev !== now){
+      paintRecent();
+      paintClientsGrid(clients);
+      if(document.getElementById('clientModal').classList.contains('show')){
+        const userShown = document.getElementById('mUser').textContent.replace('@','').split(' ')[0];
+        if(userShown === username){
+          document.getElementById('mName').textContent = clients[idx].name || '';
+          document.getElementById('mPosts').textContent = clients[idx].posts || '0';
+          document.getElementById('mFollowers').textContent = clients[idx].followers || '0';
+          document.getElementById('mFollowing').textContent = clients[idx].following || '0';
+          document.getElementById('mBio').textContent = clients[idx].bio || '';
+          document.getElementById('mAvatar').src = avatarUrl(username);
+        }
+      }
+    }
+  }catch(_){}
+}
+// hidrata todos (lotes para no saturar)
+async function hydrateAllClientsOnce(){
+  if (hydrateAllClientsOnce._done) return; hydrateAllClientsOnce._done = true;
+  const uniqueUsers = Array.from(new Set(clients.map(c => c.user)));
+  const batchSize = 5;
+  for(let i=0; i<uniqueUsers.length; i+=batchSize){
+    const slice = uniqueUsers.slice(i, i+batchSize);
+    await Promise.all(slice.map(u => hydrateClient(u)));
+  }
+}
 setTimeout(hydrateAllClientsOnce, 1200);
+// al entrar por primera vez a “Clientes”, refuerza hidratación
 let _hydratedOnClientsView = false;
 document.querySelectorAll('.nav .item').forEach(el=>{
   el.addEventListener('click', ()=>{
