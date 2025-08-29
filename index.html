@@ -71,16 +71,29 @@
   .card .title{font-weight:700}
 
   /* Miss Universe (mismo tamaño, estilo dorado) */
-  .card.mu{background:linear-gradient(160deg,var(--gold1),var(--gold2)); border-color:#5a5136;position:relative; overflow:hidden;}
-  .card.mu::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(120px 40px at 85% -20%, rgba(197,163,74,.35), transparent 60%);}
+  .card.mu{background:linear-gradient(160deg,var(--gold1),var(--gold2)); border-color:#5a5136;
+    position:relative; overflow:hidden;}
+  .card.mu::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120px 40px at 85% -20%, rgba(197,163,74,.35), transparent 60%);}
   .pill-mu{font-size:11px;border:1px solid #7c6a3a;border-radius:999px;padding:4px 8px;opacity:.9}
 
   /* ====== BEAST MODE ====== */
-  .card.beast{background:linear-gradient(45deg,var(--accent),var(--brand));border:1px solid rgba(25,194,255,.5);
-    text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);box-shadow:0 0 18px var(--brand), inset 0 0 12px var(--accent);
-    animation:beast-glow 3s ease-in-out infinite;position:relative;}
-  @keyframes beast-glow{0%,100%{box-shadow:0 0 18px var(--brand), inset 0 0 12px var(--accent)}50%{box-shadow:0 0 28px var(--accent), inset 0 0 16px var(--brand)}}
-  .beast-hot{background:#ff1a1a!important;border-color:#ff6b6b!important;box-shadow:0 0 34px #ff3b3b, inset 0 0 22px #ff9a9a!important}
+  .card.beast{
+    background:linear-gradient(45deg,var(--accent),var(--brand));
+    border:1px solid rgba(25,194,255,.5);
+    text-shadow:0 0 8px var(--brand),0 0 16px var(--accent);
+    box-shadow:0 0 18px var(--brand), inset 0 0 12px var(--accent);
+    animation:beast-glow 3s ease-in-out infinite;
+    position:relative;
+  }
+  @keyframes beast-glow{
+    0%,100%{box-shadow:0 0 18px var(--brand), inset 0 0 12px var(--accent)}
+    50%{box-shadow:0 0 28px var(--accent), inset 0 0 16px var(--brand)}
+  }
+  .beast-hot{background:#ff1a1a!important;border-color:#ff6b6b!important;
+    box-shadow:0 0 34px #ff3b3b, inset 0 0 22px #ff9a9a!important}
+
+  /* halo interno y destellos */
   @keyframes radial-flash{0%{transform:scale(0);opacity:.85}100%{transform:scale(18);opacity:0}}
   .radial-effect{position:absolute;inset:0;border-radius:inherit;background:rgba(255,0,0,.35);animation:radial-flash .7s ease-out forwards;pointer-events:none}
   @keyframes circle-flash{0%{transform:scale(0);opacity:.35}100%{transform:scale(80);opacity:0}}
@@ -179,7 +192,6 @@
   .dashboard .stat{color:var(--muted);font-size:12px}
   .dashboard .close{position:absolute;top:5px;right:10px;cursor:pointer;color:var(--muted)}
   .credit{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 22px);z-index:90;padding:8px 14px;border-radius:999px;font-size:12px;color:#fff;background:rgba(41,178,255,.12);border:1px solid rgba(41,178,255,.35);box-shadow:0 0 30px 6px rgba(41,178,255,.35), inset 0 0 24px rgba(41,178,255,.25);backdrop-filter:blur(6px);pointer-events:none;animation:pulse-glow 2.8s ease-in-out infinite;max-width:90vw;text-align:center;white-space:nowrap}
-  @keyframes pulse-glow{0%,100%{box-shadow:0 0 26px 5px rgba(41,178,255,.32), inset 0 0 22px rgba(41,178,255,.22)}50%{box-shadow:0 0 42px 10px rgba(41,178,255,.55), inset 0 0 28px rgba(41,178,255,.30)}}
 
   /* ====== LOCK ====== */
   body.locked{overflow:hidden}
@@ -318,7 +330,7 @@
     <div class="sheet">
       <div class="close" data-close-modal>✕</div>
       <div class="top">
-        <div id="mAvatarWrap" class="avatar-wrap"><img id="mAvatar" class="avatar" alt="avatar" crossorigin="anonymous"/></div>
+        <div id="mAvatarWrap" class="avatar-wrap"><img id="mAvatar" class="avatar" alt="avatar"/></div>
         <div>
           <div id="mUser" style="font-weight:800"></div>
           <div class="muted" id="mName"></div>
@@ -380,51 +392,77 @@
   </svg>
 
 <script>
-/* ====== CONFIG / API BASE ====== */
-const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-  ? 'http://localhost:8000'
-  : 'https://api.kraveapi.xyz'; // <-- si tu Pi usa otra URL/IP cámbiala aquí
+/* ===========================================================
+   CONFIG / API BASE (auto-detección, timeout, mixed-content safe)
+   =========================================================== */
+const ORIGIN = location.origin.replace(/\/$/,'');
+const CANDIDATES = [
+  ORIGIN,
+  'https://api.kraveapi.xyz',
+  'http://raspberrypi.local:8000',
+  'http://192.168.0.10:8000',
+  'http://192.168.1.50:8000',
+];
+// Si necesitas forzar manualmente, antes de este script define:
+// window.__API_BASE__ = "http://TU-IP:8000"
+
+let API_BASE = (typeof window.__API_BASE__ === 'string' && window.__API_BASE__) || null;
 const apiUrl = (p) => `${API_BASE}${p}`;
 
-/* ====== HELPERS ====== */
-const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
 function fetchWithTimeout(resource, options={}) {
-  const { timeout = 4500, ...rest } = options;
+  const { timeout = 8000, ...rest } = options;
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   return fetch(resource, { ...rest, signal: controller.signal }).finally(()=>clearTimeout(id));
 }
-function compactNumber(n){
-  const num = Number(n);
-  if(!isFinite(num)) return '0';
-  if(num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
-  if(num >= 1_000)     return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
-  return String(Math.round(num));
-}
 
-/* ====== AVATAR URLS ====== */
-const avatarOverrides = new Map();
-function avatarApi(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
-function avatarFallback(u){ return `https://unavatar.io/instagram/${encodeURIComponent(u)}`; }
-function avatarUrl(u){ return avatarOverrides.get(u) || avatarApi(u); }
-
-/* ====== MONITOR CONEXIÓN REAL ====== */
+/* ====== MONITOR CONEXIÓN REAL a /health ====== */
 const connEl=document.getElementById('conn');
 const dotEl=document.querySelector('.dot');
-async function checkBackend(){
+
+async function probeHealth(base){
+  if (location.protocol === 'https:' && base.startsWith('http://') && !base.startsWith(ORIGIN)) return false;
   try{
-    const r = await fetchWithTimeout(apiUrl('/health'), { cache:'no-store', timeout:4500 });
-    if(!r.ok) throw new Error('bad');
-    const j = await r.json();
-    if(j && j.status === 'ok'){
-      connEl.textContent='Conectado'; dotEl.style.background='var(--success)'; return;
-    }
-    throw new Error('bad');
-  }catch(_){
-    connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b';
+    const r = await fetchWithTimeout(`${base}/health`, { cache:'no-store', timeout:6000 });
+    if(!r.ok) return false;
+    const j = await r.json().catch(()=>null);
+    return j && j.status === 'ok';
+  }catch{return false}
+}
+
+let _probing=false;
+async function ensureApiBase(){
+  if(API_BASE) return true;
+  if(_probing) return false;
+  _probing=true;
+  const list = (typeof window.__API_BASE__ === 'string' && window.__API_BASE__)
+    ? [window.__API_BASE__, ...CANDIDATES] : CANDIDATES.slice();
+  for(const c of list){
+    if(!c) continue;
+    const ok = await probeHealth(c);
+    if(ok){ API_BASE=c; _probing=false; return true; }
   }
+  _probing=false;
+  return false;
+}
+
+async function checkBackend(){
+  if(!API_BASE){
+    const found = await ensureApiBase();
+    if(!found){ connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b'; return; }
+  }
+  let healthy = await probeHealth(API_BASE);
+  if(!healthy) healthy = await probeHealth(API_BASE);
+  if(healthy){ connEl.textContent='Conectado'; dotEl.style.background='var(--success)'; }
+  else{ connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b'; }
 }
 checkBackend(); setInterval(checkBackend, 15000);
+window.__setApi = (u)=>{ window.__API_BASE__=u; API_BASE=null; checkBackend(); };
+
+/* ====== AVATAR URL (con overrides) ====== */
+const avatarOverrides=new Map();
+function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
+function avatarUrl(u){ return avatarOverrides.get(u) || avatarSrc(u); }
 
 /* ====== TEMA ====== */
 const themeToggle=document.getElementById('themeToggle');
@@ -434,7 +472,7 @@ if(savedTheme==='neon')document.body.classList.add('neon-theme');
 themeToggle.textContent=document.body.classList.contains('light')?'🌞':document.body.classList.contains('neon-theme')?'💡':'🌙';
 themeToggle.onclick=(e)=>{
   const menu=document.createElement('div');
-  Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:var(--card),border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
+  Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:'var(--card)',border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
   menu.innerHTML=`<div style="padding:6px 10px;cursor:pointer">Claro</div><div style="padding:6px 10px;cursor:pointer">Neón</div><div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
   const [op1,op2,op3]=menu.children;
   op1.onclick=()=>{document.body.classList.add('light');document.body.classList.remove('neon-theme');localStorage.setItem('krave-theme','light');themeToggle.textContent='🌞';menu.remove()};
@@ -517,11 +555,11 @@ function openNetwork(key){
 /* ====== VERIFIED SVG ====== */
 function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
-/* ====== CLIENTES (semilla) ====== */
+/* ====== CLIENTES (seed) ====== */
 let clients=[
-  {user:'cadillacf1', name:'Cadillac Formula 1 Team', followers:'1.1M', posts:'10', following:'82', verified:true},
-  {user:'manuelturizo', name:'Manuel Turizo - MTZ',   followers:'14.7M', posts:'131', following:'1,300', verified:true},
-  {user:'pesopluma',   name:'La Doble P',             followers:'15.4M', posts:'44',  following:'1,191', verified:true},
+  {user:'cadillacf1', name:'Cadillac Formula 1 Team', followers:'1.1M', posts:'10', following:'82', verified:true, tag:'f1'},
+  {user:'manuelturizo', name:'Manuel Turizo - MTZ',   followers:'14.7M', posts:'131', following:'1,300', verified:true, tag:'music'},
+  {user:'pesopluma',   name:'La Doble P',             followers:'15.4M', posts:'44',  following:'1,191', verified:true, tag:'music'},
   {user:'aaronmercury',name:'Aaron Mercurio',followers:'5.4M',posts:'543',following:'924',verified:true},
   {user:'televisadigital',name:'Televisa Digital',followers:'246K',posts:'5,779',following:'617',verified:true},
   {user:'joscanela',name:'Jos Canela',followers:'722K',posts:'63',following:'425',verified:true, closeFriend:true, hasStory:true},
@@ -533,99 +571,97 @@ let clients=[
   {user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'3.3M',posts:'6,632',following:'90',verified:true},
   {user:'oscar_maydonn',name:'Oscar Maydon',followers:'2.5M',posts:'20',following:'1,203',verified:true, closeFriend:true, hasStory:true}
 ];
-const pinnedClients = ['cadillacf1','manuelturizo','pesopluma'];
+// Pinned arriba:
+const pinnedClients=['cadillacf1','manuelturizo','pesopluma'];
 function orderedClients(list=clients){
-  const map = new Map(list.map(c => [c.user, c]));
-  const top = pinnedClients.map(u => map.get(u)).filter(Boolean);
-  const rest = list.filter(c => !pinnedClients.includes(c.user));
-  return [...top, ...rest];
+  const map=new Map(list.map(c=>[c.user,c]));
+  const top=pinnedClients.map(u=>map.get(u)).filter(Boolean);
+  const rest=list.filter(c=>!pinnedClients.includes(c.user));
+  return [...top,...rest];
 }
 
-/* ====== CACHÉ LOCAL PERFILES (SWR) ====== */
-const PROFILE_TTL_MS = 15 * 60 * 1000; // 15min
-function cacheKey(u){ return `krave:profile:${u.toLowerCase()}`; }
-function getCachedProfile(u){
-  try{
-    const raw = localStorage.getItem(cacheKey(u));
-    if(!raw) return null;
-    const obj = JSON.parse(raw);
-    if(!obj || !obj.data || !obj.updatedAt) return null;
-    return obj;
-  }catch{ return null; }
+/* ====== CACHE LOCAL (por usuario, 15 min) ====== */
+const LST_KEY='krave_profile_cache_v1';
+const TTL_MS = 15*60*1000;
+function loadCache(){ try{ return JSON.parse(localStorage.getItem(LST_KEY)||'{}'); }catch{ return {}; } }
+function saveCache(store){ try{ localStorage.setItem(LST_KEY, JSON.stringify(store)); }catch{} }
+function getCachedUser(u){
+  const store=loadCache(); const ent=store[u];
+  if(!ent) return null; if(Date.now()-ent.t>TTL_MS) return null; return ent.data;
 }
-function setCachedProfile(u, data){
-  const payload = { data, updatedAt: Date.now() };
-  try{ localStorage.setItem(cacheKey(u), JSON.stringify(payload)); }catch{}
+function setCachedUser(u,data){
+  const store=loadCache(); store[u]={t:Date.now(),data}; saveCache(store);
 }
-function isFresh(ts){ return (Date.now() - ts) < PROFILE_TTL_MS; }
 
-/* ====== HELPERS aros y avatar ====== */
+/* ====== NUMERO COMPACTO ====== */
+function compactNumber(n){
+  const num=Number(n);
+  if(!isFinite(num)) return '0';
+  if(num>=1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'')+'M';
+  if(num>=1_000) return (num/1_000).toFixed(1).replace(/\.0$/,'')+'K';
+  return String(Math.round(num));
+}
+
+/* ====== APLICAR INFO REAL A UN CLIENTE ====== */
+function applyApiUserToClient(c, info){
+  if(!info||typeof info!=='object') return;
+  if(info.full_name)       c.name      = info.full_name;
+  if(info.follower_count!=null)  c.followers = compactNumber(info.follower_count);
+  if(info.following_count!=null) c.following = String(info.following_count);
+  if(info.media_count!=null)     c.posts     = String(info.media_count);
+  if(info.biography)       c.bio      = info.biography;
+  if(info.is_verified!=null) c.verified = !!info.is_verified;
+  if(info.profile_pic_url) avatarOverrides.set(c.user, info.profile_pic_url);
+}
+
+/* ====== AVATAR / AROS ====== */
+function ringForClient(c){ if(c.closeFriend) return 'close'; if(c.hasStory) return 'story'; return ''; }
 function avatarWrapHtml(u, ring){
-  const ringClass = ring==='close' ? 'ring-close' : (ring==='story' ? 'ring-ig' : '');
-  // crossOrigin para evitar bloqueos y permitir fallback
-  return `<div class="avatar-wrap ${ringClass}">
-    <img class="avatar" alt="" crossorigin="anonymous"
-         src="${avatarUrl(u)}"
-         onerror="this.onerror=null; this.src='${avatarFallback(u)}'"/>
-  </div>`;
-}
-function ringForClient(c){
-  if(c.closeFriend) return 'close';
-  if(c.hasStory) return 'story';
-  return '';
+  const ringClass=ring==='close'?'ring-close':(ring==='story'?'ring-ig':'');
+  return `<div class="avatar-wrap ${ringClass}"><img class="avatar" alt="" src="${avatarUrl(u)}" onerror="this.style.background='#2a3442'; this.removeAttribute('src')" /></div>`;
 }
 
 /* ====== HOME - recientes ====== */
 const recentList=document.getElementById('recentList');
 function paintRecent(){
-  const _clients = orderedClients();
-  recentList.innerHTML=_clients.slice(0,30).map(c=>{
-    const cached = getCachedProfile(c.user);
-    const name      = cached?.data?.full_name || c.name || c.user;
-    const verified  = cached?.data?.is_verified ?? c.verified;
-    const followers = cached?.data?.follower_count!=null ? compactNumber(cached.data.follower_count) : c.followers;
-    return `<div class="row" data-user="${c.user}">
+  const _clients=orderedClients();
+  recentList.innerHTML=_clients.slice(0,30).map(c=>`
+    <div class="row" data-user="${c.user}">
       ${avatarWrapHtml(c.user, ringForClient(c))}
       <div class="grow">
-        <div class="user">@${c.user} ${verified?verifiedSvg():''}</div>
-        <div class="muted">${name} · ${followers||'0'} seguidores</div>
+        <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
+        <div class="muted">${c.name} · ${c.followers||'0'} seguidores</div>
       </div>
       <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
       <div class="row-menu">
         <button class="dots" title="Opciones">⋯</button>
         <div class="menu"><button data-del="${c.user}">Eliminar</button></div>
       </div>
-    </div>`;
-  }).join('');
-
+    </div>`).join('');
   setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),80);
 
-  const totalFollowers=orderedClients().reduce((sum,c)=>{
-    const cached = getCachedProfile(c.user);
-    const raw = cached?.data?.follower_count;
-    const n = Number(raw);
-    if(!isFinite(n)) return sum;
-    return sum + n;
+  const totalFollowers=_clients.reduce((sum,c)=>{
+    const f=c.followers||'0'; const n=parseFloat(f);
+    return sum+(f.includes('M')?n*1_000_000:f.includes('K')?n*1_000:Number(f)||0);
   },0);
-
-  const summaryEl = document.getElementById('summaryFollowers') || (()=>{const s=document.createElement('div'); s.id='summaryFollowers'; s.style.margin='6px 2px 0'; recentList.after(s); return s;})();
-  summaryEl.textContent = `Total seguidores: ${totalFollowers ? totalFollowers.toLocaleString() : '—'}`;
+  if(!document.getElementById('summaryFollowers')){
+    const s=document.createElement('div'); s.id='summaryFollowers'; s.style.margin='6px 2px 0';
+    s.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`;
+    recentList.after(s);
+  }else{
+    document.getElementById('summaryFollowers').textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`;
+  }
 }
 
 /* ====== CLIENTES (grid) ====== */
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
-  const cached = getCachedProfile(c.user);
-  const name      = cached?.data?.full_name || c.name || c.user;
-  const verified  = cached?.data?.is_verified ?? c.verified;
-  const followers = cached?.data?.follower_count!=null ? compactNumber(cached.data.follower_count) : c.followers;
-  const posts     = cached?.data?.media_count!=null ? String(cached.data.media_count) : c.posts;
   return `<div class="client-card" data-open="${c.user}">
     ${avatarWrapHtml(c.user, ringForClient(c))}
     <div class="grow">
-      <div class="client-title">${name}${verified?verifiedSvg():''}</div>
+      <div class="client-title">${c.name||c.user}${c.verified?verifiedSvg():''}</div>
       <div class="client-sub">@${c.user}</div>
-      <div class="client-meta">${followers||'0'} seguidores · ${posts||'0'} posts</div>
+      <div class="client-meta">${c.followers||'0'} seguidores · ${c.posts||'0'} posts</div>
     </div>
     <div class="card-menu">
       <button class="dots" title="Opciones">⋯</button>
@@ -634,16 +670,15 @@ function cardHtml(c){
   </div>`;
 }
 function paintClientsGrid(arr){
-  const _arr = orderedClients(arr || clients);
+  const _arr=orderedClients(arr||clients);
   clientsGrid.innerHTML=_arr.map(cardHtml).join('');
   requestAnimationFrame(()=>clientsGrid.querySelectorAll('.client-card').forEach(el=>el.classList.add('visible')))
 }
-paintRecent(); paintClientsGrid(clients);
 
 /* ====== BUSCADOR ====== */
 document.getElementById('clientSearch').addEventListener('input',e=>{
   const q=e.target.value.toLowerCase().trim();
-  const filtered = clients.filter(c => c.user.toLowerCase().includes(q) || (getCachedProfile(c.user)?.data?.full_name || c.name || '').toLowerCase().includes(q));
+  const filtered = clients.filter(c => c.user.toLowerCase().includes(q) || (c.name||'').toLowerCase().includes(q));
   paintClientsGrid(filtered);
 });
 
@@ -656,129 +691,95 @@ document.addEventListener('click',(e)=>{
   if(!e.target.closest('.menu')) document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show'));
 });
 
+/* ====== HIDRATACIÓN REAL (API) + CACHE ====== */
+async function fetchUser(username){
+  const url = apiUrl(`/buscar-usuario?username=${encodeURIComponent(username)}`);
+  const r = await fetchWithTimeout(url,{cache:'no-store',timeout:9000});
+  if(!r.ok) throw new Error('bad');
+  const j = await r.json();
+  return j && (j.usuario || j.user || j.data || j);
+}
+
+async function hydrateClient(username){
+  const idx = clients.findIndex(c=>c.user===username);
+  if(idx===-1) return;
+  // Prefill desde cache local (instantáneo)
+  const cached=getCachedUser(username);
+  if(cached){ applyApiUserToClient(clients[idx], cached); }
+
+  // Llamada real
+  try{
+    const info = await fetchUser(username);
+    if(info){ setCachedUser(username, info); applyApiUserToClient(clients[idx], info); }
+    paintRecent(); paintClientsGrid(clients);
+    // Si ficha abierta corresponde, refresca
+    if(document.getElementById('clientModal').classList.contains('show')){
+      const shown = (document.getElementById('mUser').textContent||'').replace('@','').split(' ')[0];
+      if(shown===username) fillModal(clients[idx]);
+    }
+  }catch(_){}
+}
+
+async function hydrateAll(batchSize=5){
+  const uniqueUsers=[...new Set(clients.map(c=>c.user))];
+  for(let i=0;i<uniqueUsers.length;i+=batchSize){
+    await Promise.all(uniqueUsers.slice(i,i+batchSize).map(u=>hydrateClient(u)));
+  }
+}
+
+/* ====== AÑADIR CLIENTE ====== */
+async function promptAdd(){
+  const u=prompt('Usuario (sin @):'); if(!u) return;
+  const n=prompt('Nombre para mostrar:') || u;
+  const nuevo={user:u,name:n,followers:'0',posts:'0',following:'0',verified:true};
+  const i = clients.findIndex(c=>c.user===u); if(i>=0) clients.splice(i,1);
+  clients.unshift(nuevo);
+  paintRecent(); paintClientsGrid(clients);
+  showToast('Cliente agregado');
+  hydrateClient(u);
+}
+document.getElementById('addClientBtn').addEventListener('click',promptAdd);
+document.getElementById('addFromHome').addEventListener('click',()=>{showView('clients'); promptAdd()});
+
 /* ====== MODAL (ficha) ====== */
 const modal=document.getElementById('clientModal');
-function openCard(user){
-  const c=clients.find(x=>x.user===user); if(!c) return;
-
-  const cached = getCachedProfile(c.user)?.data || {};
-  const name = cached.full_name || c.name || c.user;
-  const followers = cached.follower_count!=null ? compactNumber(cached.follower_count) : c.followers || '0';
-  const following = cached.following_count!=null ? String(cached.following_count) : c.following || '0';
-  const posts = cached.media_count!=null ? String(cached.media_count) : c.posts || '0';
-  const bio = cached.biography || c.bio || '';
-
+function fillModal(c){
   const wrap=document.getElementById('mAvatarWrap');
   wrap.classList.remove('ring-ig','ring-close');
   const ring=ringForClient(c); if(ring==='close') wrap.classList.add('ring-close'); else if(ring==='story') wrap.classList.add('ring-ig');
-
-  const av=document.getElementById('mAvatar');
-  av.crossOrigin = 'anonymous';
-  av.src=avatarUrl(c.user);
-  av.onerror=function(){this.onerror=null; this.src=avatarFallback(c.user);};
-
-  document.getElementById('mUser').innerHTML=`@${c.user} ${(cached.is_verified ?? c.verified)?verifiedSvg():''}`;
-  document.getElementById('mName').textContent=name;
-  document.getElementById('mPosts').textContent=posts;
-  document.getElementById('mFollowers').textContent=followers;
-  document.getElementById('mFollowing').textContent=following;
-  document.getElementById('mBio').textContent=bio;
+  const av=document.getElementById('mAvatar'); av.src=avatarUrl(c.user);
+  av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
+  document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
+  document.getElementById('mName').textContent=c.name||'';
+  document.getElementById('mPosts').textContent=c.posts||'0';
+  document.getElementById('mFollowers').textContent=c.followers||'0';
+  document.getElementById('mFollowing').textContent=c.following||'0';
+  document.getElementById('mBio').textContent=c.bio||'';
   document.getElementById('mOpenIg').href=`https://instagram.com/${c.user}`;
-
+}
+function openCard(user){
+  const c=clients.find(x=>x.user===user); if(!c) return;
+  fillModal(c);
   modal.classList.add('show');
-
-  // Revalidación inmediata al abrir ficha
-  hydrateClient(user, {force:true});
+  hydrateClient(user); // refresco inmediato en background
 }
 function closeModal(){modal.classList.remove('show')}
 modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) closeModal(); });
 
-/* ====== TOAST ====== */
-function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
-
-/* ====== AÑADIR CLIENTE ====== */
-async function promptAdd(){
-  const u=(prompt('Usuario (sin @):')||'').trim(); if(!u) return;
-  const nuevo={user:u,name:u,followers:'0',posts:'0',following:'0',verified:false};
-  const i = clients.findIndex(c=>c.user.toLowerCase()===u.toLowerCase()); if(i>=0) clients.splice(i,1);
-  clients.unshift(nuevo);
-  paintRecent(); paintClientsGrid(clients);
-  showToast('Cliente agregado');
-
-  // Hidrata y actualiza cache+UI
-  await hydrateClient(u, {force:true});
-}
-
-/* ====== HIDRATACIÓN (SWR) ====== */
-function applyApiToCache(user, info){
-  if(!info || typeof info!=='object') return;
-  const payload = {
-    username: info.username || user,
-    full_name: info.full_name || user,
-    biography: info.biography || '',
-    is_verified: !!info.is_verified,
-    follower_count: Number(info.follower_count) || 0,
-    following_count: Number(info.following_count) || 0,
-    media_count: Number(info.media_count) || 0,
-    profile_pic_url: info.profile_pic_url || info.profile_pic_url_hd || null
-  };
-  setCachedProfile(user, payload);
-  if(payload.profile_pic_url) avatarOverrides.set(user, payload.profile_pic_url);
-}
-
-async function hydrateClient(user, {force=false}={}){
-  const cached = getCachedProfile(user);
-  if(cached && !force && isFresh(cached.updatedAt)) return; // fresco
-
-  try{
-    const r = await fetchWithTimeout(apiUrl(`/buscar-usuario?username=${encodeURIComponent(user)}`), { cache:'no-store', timeout:8000 });
-    if(!r.ok) throw new Error('api error');
-    const j = await r.json();
-    const info = j?.usuario || j?.user || j?.data || j;
-    if(info){
-      const before = JSON.stringify(getCachedProfile(user)?.data||{});
-      applyApiToCache(user, info);
-      const after = JSON.stringify(getCachedProfile(user)?.data||{});
-      if(before!==after){
-        paintRecent();
-        paintClientsGrid(clients);
-        // Si el modal abierto corresponde, refresca campos
-        if(document.getElementById('clientModal').classList.contains('show')){
-          const shown = (document.getElementById('mUser').textContent||'').trim().replace('@','').split(' ')[0];
-          if(shown.toLowerCase()===user.toLowerCase()){
-            openCard(user); // repinta modal con datos nuevos (rápido)
-          }
-        }
-      }
-    }
-  }catch(_){ /* silencio */ }
-}
-
-// Hidratación inicial por lotes (pequeños)
-async function hydrateAllClientsOnce(){
-  const uniqueUsers = Array.from(new Set(clients.map(c => c.user)));
-  const batch = 5;
-  for(let i=0;i<uniqueUsers.length;i+=batch){
-    await Promise.all(uniqueUsers.slice(i,i+batch).map(u => hydrateClient(u)));
-    await sleep(200); // micro pausa
-  }
-}
-setTimeout(hydrateAllClientsOnce, 600);
-
-/* ====== AUTO-REFRESH (focus + interval) ====== */
-let refreshTimer = setInterval(hydrateAllClientsOnce, 10*60*1000); // cada 10 min
-window.addEventListener('visibilitychange', ()=>{
-  if(document.visibilityState==='visible'){ hydrateAllClientsOnce(); checkBackend(); }
-});
-
-/* ====== Delegación click: redes, ver ficha y beast ====== */
+/* Delegación click: redes, ver ficha y beast */
 document.addEventListener('click',(e)=>{
   const netEl=e.target.closest('[data-net]'); if(netEl){ if(netEl.getAttribute('data-net')!=='missu') openNetwork(netEl.getAttribute('data-net')); return;}
   const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); return;}
   const beastEl=e.target.closest('[data-beast]'); if(beastEl){activateBeastMode(e, beastEl); return;}
 });
-document.getElementById('addClientBtn').addEventListener('click',promptAdd);
-document.getElementById('addFromHome').addEventListener('click',()=>{showView('clients'); promptAdd()});
+
+/* ====== RENDER INICIAL ====== */
+paintRecent(); paintClientsGrid(clients);
+
+/* ====== HIDRATACIÓN AUTOMÁTICA ====== */
+setTimeout(()=>hydrateAll(5), 1000);          // al cargar
+setInterval(()=>hydrateAll(5), 10*60*1000);   // cada 10 min
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) hydrateAll(5); });
 
 /* ====== FARM ====== */
 const farmGrid=document.getElementById('farmGrid');
@@ -798,8 +799,7 @@ farmGrid.innerHTML=devices.map(d=>`
 let beastCanvas=null, beastRAF=null;
 function activateBeastMode(event, beastCard){
   if(!beastCard) return;
-  beastCard.classList.add('beast-hot');
-  setTimeout(()=>beastCard.classList.remove('beast-hot'),700);
+  beastCard.classList.add('beast-hot'); setTimeout(()=>beastCard.classList.remove('beast-hot'),700);
   const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial); radial.addEventListener('animationend',()=>radial.remove());
   const circle=document.createElement('div'); circle.className='screen-circle';
   const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`; document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
@@ -822,7 +822,16 @@ function activateBeastMode(event, beastCard){
   beastRAF=requestAnimationFrame(drawParticles);
 }
 
-/* ====== VOICE MODE ====== */
+/* ACTION BTN */
+function sendAction(){
+  const button=document.querySelector('.btn.primary'); button.innerHTML='Enviando <span class="spinner"></span>'; button.classList.add('loading');
+  setTimeout(()=>{button.innerHTML='Enviar'; button.classList.remove('loading'); showToast('Acción enviada')},1400);
+}
+
+/* TOAST */
+function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
+
+/* VOICE MODE */
 const micToggle=document.getElementById('micToggle');
 if('webkitSpeechRecognition' in window){
   const recognition=new webkitSpeechRecognition(); recognition.continuous=false; recognition.interimResults=false; recognition.lang='es-ES';
@@ -834,13 +843,13 @@ if('webkitSpeechRecognition' in window){
   recognition.onerror=()=>{micToggle.textContent='🎙️'; micToggle.classList.remove('recording'); showToast('Error en reconocimiento de voz')};
 }else{micToggle.style.display='none'}
 
-/* ====== DASHBOARD ====== */
+/* DASHBOARD */
 document.querySelector('.brand').addEventListener('click',()=>document.getElementById('dashboard').classList.toggle('active'));
 
-/* ====== NODOS BACKGROUND ====== */
+/* NODOS BACKGROUND */
 (function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
-/* ====== PWA: Service Worker + Install Prompt (Chrome) ====== */
+/* ====== PWA: SW + Install Prompt ====== */
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');});
@@ -867,7 +876,7 @@ function checkPassword() {
 document.getElementById('passwordModal').classList.add('show');
 document.getElementById('passwordInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
 
-/* ====== BOTÓN F1 (solo destello y toast) ====== */
+/* ====== BOTÓN F1 ====== */
 const f1Btn = document.getElementById('f1Btn');
 if(f1Btn){
   f1Btn.addEventListener('click', ()=>{
