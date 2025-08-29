@@ -9,10 +9,16 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0b1220">
 
-<!-- ICONOS -->
+<!-- FAVICON + PWA ICONS -->
 <link rel="icon" href="/icons/robot-192.png" sizes="192x192">
 <link rel="icon" href="/icons/robot-512.png" sizes="512x512">
 <link rel="apple-touch-icon" href="/icons/robot-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/robot-192.png">
+
+<!-- iOS PWA (standalone) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="KraveAI">
 
 <style>
   :root{
@@ -23,8 +29,13 @@
   .light{--bg:#f6f8fb;--card:#fff;--card-2:#fff;--muted:#5c6b7a;--text:#0b1220;--line:#e7edf4;--brand:#0077ff;--accent:#0057d6;--chip:#eef3f8;--chip-text:#0b1220}
   .neon-theme{--bg:#0a0f14;--card:#1a2430;--text:#e0f7ff;--brand:#00ffcc;--accent:#ff00ff;--line:#2a3442}
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0}
-  body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  html,body{height:100%;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    overflow-x:hidden;position:relative;-webkit-text-size-adjust:100%;
+    touch-action:manipulation;
+  }
   a{color:inherit;text-decoration:none}
   .hidden{display:none!important}
   .muted{color:var(--muted)}
@@ -36,10 +47,8 @@
   .topbar{position:sticky;top:0;z-index:80;background:var(--card-2);border-bottom:1px solid var(--line);
     padding:14px calc(14px + env(safe-area-inset-left,0px)) 14px calc(14px + env(safe-area-inset-right,0px));
     display:flex;align-items:center;gap:12px;justify-content:space-between;width:100vw}
-  .brand{display:flex;align-items:center;gap:8px;font-weight:800;position:relative; user-select:none}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
   .robot{width:28px;height:28px;display:block}
-  /* Botón secreto (tap 5x) */
-  .brand .secret{position:absolute;left:-6px;top:-6px;width:14px;height:14px;border-radius:50%;opacity:.05;cursor:pointer}
   .right-head{display:flex;align-items:center;gap:12px}
   .pill{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
   .dot{width:8px;height:8px;border-radius:999px;background:#e0565b}
@@ -112,6 +121,41 @@
   @keyframes holographic-enter{0%{filter:blur(2px);opacity:0}100%{filter:blur(0);opacity:1}}
 
   .back{margin:6px 0 16px;display:inline-flex;gap:8px;align-items:center;color:var(--muted);cursor:pointer}
+  .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:860px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .svc h4{margin:0 0 10px;font-size:14px}
+  .svc .input{margin:6px 0}
+  .svc .btn{width:100%;margin-top:8px}
+
+  .devices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:820px){.devices{grid-template-columns:repeat(3,1fr)}}
+  .device{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .thumb{position:relative;border-radius:22px;background:#0b1220;border:1px solid var(--line);overflow:hidden;aspect-ratio: 9 / 19.5;box-shadow: inset 0 0 0 8px rgba(255,255,255,.02)}
+  .thumb::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:34%;height:12px;background:#0b1220;border-bottom-left-radius:10px;border-bottom-right-radius:10px;box-shadow:0 1px 0 rgba(255,255,255,.06)}
+  .device .btn{width:48%}
+
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:120}
+  .modal.show{display:flex}
+  .sheet{width:min(580px,92vw);background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .sheet .top{display:flex;gap:12px;align-items:center}
+  .sheet .top .avatar-wrap{width:64px;height:64px;padding:3px}
+  .sheet .top .avatar{width:58px;height:58px}
+  .bio{color:var(--muted);margin-top:8px;font-size:14px;white-space:pre-wrap}
+  .meta{display:flex;gap:14px;margin-top:6px;color:var(--muted);font-size:12px}
+  .meta b{color:var(--text)}
+  .close{float:right;cursor:pointer;color:var(--muted)}
+
+  .background-3d{position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle,rgba(25,194,255,.05) 0%,rgba(0,119,255,.05) 100%);z-index:-1;overflow:hidden}
+  .node{position:absolute;width:4px;height:4px;background:var(--brand);border-radius:50%;animation:float 15s infinite linear}
+  @keyframes float{0%{transform:translate(0,0)}100%{transform:translate(50vw,50vh)}}
+
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top:2px solid var(--brand);border-left:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-left:8px;vertical-align:middle}
+  @keyframes spin{100%{transform:rotate(360deg)}}
+  .btn.loading{opacity:.7;pointer-events:none}
+  .toast{position:fixed;bottom:calc(var(--nav-h,64px) + env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:12px 20px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:200;opacity:0;animation:slide-up .5s ease-out, fade-out 3s ease-out 2.5s}
+  @keyframes slide-up{from{bottom:-50px}to{bottom:calc(var(--nav-h,64px) + 80px)}}
+  @keyframes fade-out{to{opacity:0}}
 
   .dashboard{position:fixed;top:80px;right:20px;background:var(--card-2);border:1px solid var(--line);border-radius:50%;width:180px;height:180px;padding:20px;z-index:100;display:none;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
   .dashboard.active{display:block}
@@ -124,6 +168,22 @@
   body.locked main, body.locked header, body.locked nav, body.locked .dashboard, body.locked .credit{display:none!important}
 
   @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
+
+  .f1-btn{
+    position:relative;border:1px solid var(--line);
+    background:linear-gradient(90deg,#0b1220,#111a28);
+    color:#fff;font-weight:800;letter-spacing:.5px;
+    padding:8px 12px;border-radius:10px;cursor:pointer;
+    box-shadow:0 0 12px rgba(255,0,0,.25), inset 0 0 8px rgba(255,0,0,.25);
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+  .f1-btn::after{
+    content:"";position:absolute;inset:-2px;border-radius:12px;pointer-events:none;
+    box-shadow:0 0 18px rgba(255,0,0,.45), 0 0 36px rgba(255,0,0,.25);
+    opacity:.65;transition:opacity .2s ease;
+  }
+  .f1-btn:hover{transform:translateY(-1px);box-shadow:0 0 16px rgba(255,0,0,.55), inset 0 0 10px rgba(255,0,0,.35)}
+  .f1-btn:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -131,81 +191,90 @@
 
   <!-- HEADER -->
   <header class="topbar">
-    <div class="brand" id="brandTap">
-      <div class="secret" title=""></div>
+    <div class="brand">
       <svg class="robot" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs><rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g)"/><rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/><circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/><rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/></svg>
       <span class="name">KraveAI</span>
     </div>
-
     <div class="right-head">
-      <div class="pill"><span class="dot" id="connDot"></span> <span id="conn">Sin conexión</span></div>
+      <div class="pill"><span class="dot"></span> <span id="conn">Sin conexión</span></div>
       <button id="themeToggle" class="toggle" title="Cambiar tema">🌙</button>
       <button id="micToggle" class="mic-btn" title="Activar voz">🎙️</button>
+      <button id="f1Btn" class="f1-btn" title="F1">🏎️ F1</button>
       <button id="installBtn" class="toggle hidden" title="Instalar app">⬇️ Instalar</button>
     </div>
   </header>
 
   <!-- CONTENIDO -->
   <main class="wrap">
-    <section id="view-home" class="view">
-      <h1>Redes sociales</h1>
-      <div class="sub">Domina todas tus redes con IA</div>
-      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
-        <span>Redes</span>
-        <button id="addFromHome" class="mini btn ghost" title="Añadir cliente">＋</button>
-      </div>
-      <div class="grid" id="socialGrid"></div>
-      <div class="section-title" style="margin-top:12px">Clientes recientes</div>
-      <div class="list" id="recentList"></div>
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
-        <button class="btn primary" onclick="sendAction()">Enviar</button>
-      </div>
-    </section>
+    <div class="content-flex">
+      <!-- Home -->
+      <section id="view-home" class="view">
+        <h1>Redes sociales</h1>
+        <div class="sub">Domina todas tus redes con IA</div>
 
-    <section id="view-clients" class="view">
-      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
-        <span>Clientes</span>
-        <button id="addClientBtn" class="mini btn ghost" title="Añadir cliente">＋</button>
-      </div>
-      <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:8px 0 12px"/>
-      <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
-    </section>
+        <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+          <span>Redes</span>
+          <button id="addFromHome" class="mini btn ghost" title="Añadir cliente">＋</button>
+        </div>
+        <div class="grid" id="socialGrid"></div>
 
-    <section id="view-farm" class="view">
-      <h1>Device Farm</h1>
-      <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
-      <div class="devices" id="farmGrid"></div>
-    </section>
+        <div class="section-title" style="margin-top:12px">Clientes recientes</div>
+        <div class="list" id="recentList"></div>
 
-    <section id="view-accounts" class="view">
-      <h1>Cuentas</h1>
-      <div class="sub">Gestión de sesión y cuentas manuales</div>
-      <div class="stack" style="max-width:560px">
-        <div class="svc">
-          <h4>Iniciar sesión</h4>
-          <input class="input" placeholder="Usuario" />
-          <input class="input" placeholder="Contraseña" type="password"/>
-          <div style="display:flex;gap:10px">
-            <button class="btn primary">Iniciar sesión</button>
-            <button class="btn">Cerrar sesión</button>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <input id="aiPrompt" class="input" placeholder="¿Qué quieres automatizar hoy?" />
+          <button class="btn primary" onclick="sendAction()">Enviar</button>
+        </div>
+      </section>
+
+      <!-- Clientes -->
+      <section id="view-clients" class="view">
+        <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+          <span>Clientes</span>
+          <button id="addClientBtn" class="mini btn ghost" title="Añadir cliente">＋</button>
+        </div>
+        <input id="clientSearch" class="input" placeholder="Buscar cliente (@usuario o nombre)" style="margin:8px 0 12px"/>
+        <div class="clients-grid" id="clientsGrid" style="margin-bottom:12px"></div>
+      </section>
+
+      <!-- Farm -->
+      <section id="view-farm" class="view">
+        <h1>Device Farm</h1>
+        <div class="sub">Streams: HLS .m3u8, MJPEG .mjpg o visor https.</div>
+        <div class="devices" id="farmGrid"></div>
+      </section>
+
+      <!-- Cuentas -->
+      <section id="view-accounts" class="view">
+        <h1>Cuentas</h1>
+        <div class="sub">Gestión de sesión y cuentas manuales</div>
+        <div class="stack" style="max-width:560px">
+          <div class="svc">
+            <h4>Iniciar sesión</h4>
+            <input class="input" placeholder="Usuario" />
+            <input class="input" placeholder="Contraseña" type="password"/>
+            <div style="display:flex;gap:10px">
+              <button class="btn primary">Iniciar sesión</button>
+              <button class="btn">Cerrar sesión</button>
+            </div>
+          </div>
+          <div class="svc">
+            <h4>Agregar cuenta manual</h4>
+            <input class="input" placeholder="@usuario"/>
+            <input class="input" placeholder="Token / Contraseña" type="password"/>
+            <button class="btn primary">Guardar cuenta</button>
           </div>
         </div>
-        <div class="svc">
-          <h4>Agregar cuenta manual</h4>
-          <input class="input" placeholder="@usuario"/>
-          <input class="input" placeholder="Token / Contraseña" type="password"/>
-          <button class="btn primary">Guardar cuenta</button>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="view-network" class="view">
-      <div class="back" onclick="showView('home')">← Atrás</div>
-      <h1 id="networkTitle">Servicios</h1>
-      <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
-      <div class="svc-grid" id="networkServices"></div>
-    </section>
+      <!-- Network -->
+      <section id="view-network" class="view">
+        <div class="back" onclick="showView('home')">← Atrás</div>
+        <h1 id="networkTitle">Servicios</h1>
+        <div class="sub" id="networkSub">Selecciona un servicio para esta red</div>
+        <div class="svc-grid" id="networkServices"></div>
+      </section>
+    </div>
   </main>
 
   <!-- DASHBOARD -->
@@ -251,7 +320,7 @@
     </div>
   </div>
 
-  <!-- MODAL PASSWORD -->
+  <!-- MODAL DE CONTRASEÑA -->
   <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-label="Ingresar contraseña">
     <div class="sheet" style="max-width: 420px;">
       <div class="lock-robot-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
@@ -273,85 +342,60 @@
     </div>
   </div>
 
-  <!-- ADMIN PANEL (secreto) -->
-  <div id="adminPanel" class="modal" role="dialog" aria-modal="true" aria-label="Admin" style="backdrop-filter: blur(2px);">
-    <div class="sheet" style="max-width:420px">
-      <div class="close" data-close-modal>✕</div>
-      <h3 style="margin-top:0">Admin</h3>
-      <div class="muted" style="font-size:13px;margin-bottom:8px">Herramientas rápidas</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn" id="btnAdminRetry">Reintentar conexión</button>
-        <button class="btn" id="btnAdminFlush">Flush cache</button>
-        <button class="btn" id="btnAdminWarm">Precalentar perfiles</button>
-        <button class="btn" id="btnAdminPing">Ping x3</button>
-        <button class="btn" id="btnAdminReboot">Reiniciar backend</button>
-      </div>
-      <div id="adminLog" class="muted" style="margin-top:10px;white-space:pre-wrap;font-size:12px"></div>
-    </div>
-  </div>
-
-  <!-- SVGs -->
+  <!-- SVGs (sprites) -->
   <svg style="position:absolute;width:0;height:0;overflow:hidden">
-    <symbol id="igVerified" viewBox="0 0 24 24"><defs><radialGradient id="metaBlue" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#67B7FF"/><stop offset="1" stop-color="#0B65FF"/></radialGradient></defs><path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/><path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/></symbol>
+    <symbol id="igVerified" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+      <defs><radialGradient id="metaBlue" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#67B7FF"/><stop offset="1" stop-color="#0B65FF"/></radialGradient></defs>
+      <path fill="url(#metaBlue)" d="M12 2.4l2.15 1.3 2.46-.14 1.15 2.17 2.17 1.15-.14 2.46 1.3 2.15-1.3 2.15.14 2.46-2.17 1.15-1.15 2.17-2.46-.14L12 21.6l-2.15-1.3-2.46.14-1.15-2.17-2.17-1.15.14-2.46L2.4 12l1.3-2.15-.14-2.46 2.17-1.15 1.15-2.17 2.46.14L12 2.4z"/>
+      <path fill="#fff" d="M10.25 14.6l-2.1-2.1 1.3-1.3 1.6 1.6 4.1-4.1 1.3 1.3-5.4 5.4z"/>
+    </symbol>
+    <symbol id="beastIcon" viewBox="0 0 24 24"><path fill="#fff" d="M12 2L9 5h6l-3-3zm-1 17v-7h2v7h-2zm-4 0v-9h2v9H7zm8 0v-9h2v9h-2zM4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/></symbol>
     <symbol id="ig" viewBox="0 0 24 24"><defs><linearGradient id="igG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#e600ff"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="18" cy="6" r="1.6" fill="#fff"/></symbol>
+    <symbol id="tiktok" viewBox="0 0 24 24"><path fill="#25F4EE" d="M10 4h3v9a4 4 0 11-3.2-3.9V8.1A7 7 0 003 15a7 7 0 1011-5.8V4z"/><path fill="#FE2C55" d="M13 4a6 6 0 006 6V7a3 3 0 01-3-3h-3z"/><path fill="#fff" d="M13 7.8v5.2a4 4 0 11-3.2-3.9V7.8A7 7 0 003 15a7 7 0 1011-5.8z"/></symbol>
+    <symbol id="yt" viewBox="0 0 24 24"><path fill="#FF0000" d="M22 12s0-4-1-5c-1-1-5-1-9-1s-8 0-9 1-1 5-1 5 0 4 1 5 5 1 9 1 8 0 9-1 1-5 1-5z"/><path fill="#fff" d="M10 15V9l6 3-6 3z"/></symbol>
+    <symbol id="threads" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#000"/><path fill="#fff" d="M8.5 12c0 2.2 1.8 3.5 3.7 3.5 2.3 0 3.8-1.4 3.8-3.8 0-2.7-1.8-4.2-4.8-4.2h-.9V6h.8c3.9 0 6.5 2.2 6.5 5.9 0 3.2-2.4 5.3-5.6 5.3-3.2 0-5.5-2.1-5.5-5.2h1z"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path fill="#fff" d="M17.5 4H20l-5.5 6 6 10h-5l-3.5-6-4 4-3-2 5-5-5-7h5l3 5 4.5-5z"/></symbol>
+    <symbol id="fb" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12a10 10 0 008.5 9.87v-6.98H8.07v-2.9h2.43V9.41c0-2.4 1.43-3.73 3.63-3.73 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.19 0-1.56.74-1.56 1.49v1.79h2.65l-.42 2.9h-2.23V21.9A10 10 0 0022 12z"/></symbol>
+    <symbol id="li" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.45 20.45H17V14.6c0-1.39-.5-2.34-1.75-2.34-.95 0-1.52.64-1.77 1.26-.09.22-.11.52-.11.82v6.11H9.89s.05-9.92 0-10.95h3.48v1.55c.46-.71 1.29-1.72 3.13-1.72 2.28 0 3.95 1.49 3.95 4.69v6.43zM7.34 8.94a2.02 2.02 0 110-4.04 2.02 2.02 0 010 4.04zM5.57 20.45h3.54V9.5H5.57v10.95z"/></symbol>
+    <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path fill="#fff" d="M7 9c4-1 8 0 10 1 .5 0 .7.8.5 1.3-.3.5-.9.6-1.4.4-1.8-.9-5-1.7-8.7-.7-.6.2-1.1-.2-1.3-.8-.2-.6.2-1.1.9-1.2zM7 12c3-.7 6 0 8 .7.4.1.7.6.5 1-.2.5-.7.6-1.2.4-1.6-.7-4.1-1.3-7.2-.6-.5.1-1-.2-1.1-.7-.1-.6.2-1 .9-1.2zM7 15c2-.4 4 .1 5.4.6.4.1.6.5.5.9-.1.4-.5.5-.9.4-1.2-.5-3-1-4.6-.6-.4.1-.8-.1-.9-.5-.1-.5.1-.8.5-.8z"/></symbol>
+    <symbol id="tg" viewBox="0 0 24 24"><path fill="#229ED9" d="M9.6 16.8l-.4 3.7c.6 0 .9-.3 1.2-.6l2.8-2.7 5.8 4.3c1 .6 1.6 .3 1.9-.9l3.4-16c.3-1.2-.4-1.7-1.3-1.4L2.2 9.9c-1.1 .4-1.1 1.1-.2 1.4l5.6 1.7L18.8 6c.7-.4 1.2-.2 .7 .3"/></symbol>
+    <!-- KICK -->
+    <symbol id="kick" viewBox="0 0 24 24">
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="#52FF00"/>
+      <path fill="#0b1220" d="M7 7h3v4l4-4h3l-5 5 5 5h-3l-4-4v4H7z"/>
+    </symbol>
+    <!-- (Se eliminó WhatsApp del grid; el símbolo wa puede omitirse) -->
   </svg>
 
 <script>
 /* =======================
-   API BASE
+   API BASE (FIJO A PROD)
    ======================= */
-let API_BASE = "https://api.kraveapi.xyz"; // cambia si hace falta (p.ej. LAN)
+const API_BASE = "https://api.kraveapi.xyz";
 const apiUrl = (p) => `${API_BASE}${p}`;
-
-/* Helper fetch con timeout y no-store */
 function fetchWithTimeout(resource, options={}) {
   const { timeout = 8000, ...rest } = options;
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
-  const headers = new Headers(rest.headers||{});
-  // Evita caches intermedios
-  headers.set('Cache-Control','no-store');
-  headers.set('Pragma','no-cache');
-  return fetch(resource, { ...rest, signal: controller.signal, headers, cache:'no-store' })
-    .finally(()=>clearTimeout(id));
+  return fetch(resource, { ...rest, signal: controller.signal }).finally(()=>clearTimeout(id));
 }
 function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
 
-/* ====== Estado conexión real ====== */
+/* ====== CONEXIÓN REAL /health ====== */
 const connEl=document.getElementById('conn');
-const dotEl=document.getElementById('connDot');
-
-function setConnState(ok, extra=''){
-  if(ok){ connEl.textContent='Conectado'+(extra?' · '+extra:''); dotEl.style.background='var(--success)'; }
-  else { connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b'; }
-}
-
+const dotEl=document.querySelector('.dot');
 async function checkBackend(){
-  // Si el navegador está offline, marca offline directo
-  if(typeof navigator!=='undefined' && navigator && navigator.onLine===false){
-    setConnState(false); return false;
-  }
   try{
-    // nonce para evitar proxy/CDN cache
-    const url = apiUrl(`/health?nonce=${Date.now()}.${Math.random().toString(16).slice(2)}`);
-    const r = await fetchWithTimeout(url, { timeout: 4500 });
-    if(!r.ok) throw new Error('bad');
-    // Forzamos leer el body; si no es JSON válido, se toma como fallo
-    const j = await r.json().catch(()=>null);
-    if(j && j.status==='ok' && typeof j.nonce==='string'){
-      setConnState(true, j.version||'');
-      return true;
-    }
-    throw new Error('bad-json');
-  }catch(_){
-    setConnState(false);
-    return false;
-  }
+    const r = await fetchWithTimeout(apiUrl('/health?t='+Date.now()), { cache:'no-store', timeout:6000 });
+    if(!r.ok) throw 0;
+    const j = await r.json().catch(()=>({}));
+    if(j && j.status==='ok'){ connEl.textContent='Conectado'; dotEl.style.background='var(--success)'; return; }
+    throw 0;
+  }catch(_){ connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b'; }
 }
-checkBackend();
-setInterval(checkBackend, 15000);
+checkBackend(); setInterval(checkBackend, 15000);
 
-/* ====== Tema ====== */
+/* ====== TEMA ====== */
 const themeToggle=document.getElementById('themeToggle');
 const savedTheme=localStorage.getItem('krave-theme');
 if(savedTheme==='light')document.body.classList.add('light');
@@ -359,7 +403,12 @@ if(savedTheme==='neon')document.body.classList.add('neon-theme');
 themeToggle.textContent=document.body.classList.contains('light')?'🌞':document.body.classList.contains('neon-theme')?'💡':'🌙';
 themeToggle.onclick=(e)=>{
   const menu=document.createElement('div');
-  Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:'var(--card)',border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
+  Object.assign(menu.style,{
+    position:'absolute',top:'110%',right:'0',
+    background:'var(--card)',
+    border:'1px solid var(--line)',
+    borderRadius:'10px',padding:'8px',zIndex:'1000'
+  });
   menu.innerHTML=`<div style="padding:6px 10px;cursor:pointer">Claro</div><div style="padding:6px 10px;cursor:pointer">Neón</div><div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
   const [op1,op2,op3]=menu.children;
   op1.onclick=()=>{document.body.classList.add('light');document.body.classList.remove('neon-theme');localStorage.setItem('krave-theme','light');themeToggle.textContent='🌞';menu.remove()};
@@ -385,26 +434,79 @@ setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orienta
 
 /* ====== DATA REDES ====== */
 const networks=[
-  {key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']}
+  {key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},
+  {key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},
+  {key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},
+  {key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},
+  {key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},
+  {key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},
+  {key:'linkedin',name:'LinkedIn',icon:'#li',color:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},
+  {key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},
+  {key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},
+  {key:'kick',name:'Kick',icon:'#kick',color:'#52FF00',services:['Seguidores','Views','Chatters','Live Views']},
+  {key:'missu',name:'Miss Universe 2025',icon:null,color:'#c5a34a',services:[]},
+  {key:'beast',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]},
 ];
 
 /* ====== RENDER GRID REDES ====== */
 const socialGrid=document.getElementById('socialGrid');
-socialGrid.innerHTML=networks.map(n=>`
-  <div class="card" data-net="${n.key}">
+socialGrid.innerHTML=networks.map(n=>{
+  if(n.key==='missu'){
+    return `<div class="card mu" data-net="missu">
+      <div class="logo-wrap">👑</div>
+      <div class="title" style="display:flex;align-items:center;gap:8px"><span>Miss Universe</span><span class="pill-mu">MU2025</span></div>
+    </div>`;
+  }
+  if(n.key==='beast'){
+    return `<div class="card beast" data-beast>
+      <div class="logo-wrap"><svg width="24" height="24"><use href="#beastIcon"></use></svg></div>
+      <div class="title">Modo Bestia</div>
+    </div>`;
+  }
+  return `<div class="card" data-net="${n.key}">
     <div class="logo-wrap"><svg width="28" height="28"><use href="${n.icon}"></use></svg></div>
     <div class="title">${n.name}</div>
-  </div>`).join('');
-setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),80);
+  </div>`;
+}).join('');
+setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),100);
+
+/* ====== NETWORK VIEW ====== */
+const netTitle=document.getElementById('networkTitle');
+const netSub=document.getElementById('networkSub');
+const netServices=document.getElementById('networkServices');
+function openNetwork(key){
+  const net=networks.find(x=>x.key===key); if(!net) return;
+  netTitle.textContent=`Servicios · ${net.name}`;
+  netSub.textContent=`Automatiza ${net.name} con IA`;
+  netServices.innerHTML=(net.services||[]).map(svc=>`
+    <div class="svc">
+      <h4>${svc}</h4>
+      <input class="input" placeholder="${svc.includes('Seguidores') ? '@usuario' : 'URL / ID / Nota'}" />
+      <input class="input" placeholder="Cantidad" type="number" min="10" />
+      <button class="btn primary">Ordenar</button>
+    </div>`).join('') || `<div class="muted">Próximamente</div>`;
+  showView('network');
+}
 
 /* ====== VERIFIED SVG ====== */
 function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
-/* ====== CLIENTES (seed) ====== */
+/* ====== CLIENTES (seed, top 3) ====== */
 let clients=[
-  {user:'cadillacf1',   name:'Cadillac Formula 1 Team', followers:'0', posts:'0', following:'0', verified:true},
-  {user:'manuelturizo', name:'Manuel Turizo',           followers:'0', posts:'0', following:'0', verified:true},
-  {user:'pesopluma',    name:'Peso Pluma',              followers:'0', posts:'0', following:'0', verified:true}
+  {user:'cadillacf1',   name:'Cadillac Formula 1 Team', followers:'0', posts:'0', following:'0', verified:true, tag:'f1'},
+  {user:'manuelturizo', name:'Manuel Turizo',           followers:'0', posts:'0', following:'0', verified:true, tag:'music'},
+  {user:'pesopluma',    name:'Peso Pluma',              followers:'0', posts:'0', following:'0', verified:true, tag:'music'},
+
+  {user:'aaronmercury',name:'Aaron Mercurio',followers:'0',posts:'0',following:'0',verified:true},
+  {user:'televisadigital',name:'Televisa Digital',followers:'0',posts:'0',following:'0',verified:true},
+  {user:'joscanela',name:'Jos Canela',followers:'0',posts:'0',following:'0',verified:true, closeFriend:true, hasStory:true},
+  {user:'jimenagallegotv',name:'Jimena Gállego',followers:'0',posts:'0',following:'0',verified:true},
+  {user:'elmalilla_',name:'MALI EL MALILLAA!!🇲🇽',followers:'0',posts:'0',following:'0',verified:true, closeFriend:true, hasStory:true},
+  {user:'mariobautista',name:'Mario Bautista (MB)',followers:'0',posts:'0',following:'0',verified:true},
+  {user:'aldotdenigris',name:'Aldo Tamez De Nigris',followers:'0',posts:'0',following:'0',verified:true},
+  {user:'sonymusiclatin',name:'Sony Music Latin',followers:'0',posts:'0',following:'0',verified:true},
+  {user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'0',posts:'0',following:'0',verified:true},
+  {user:'oscar_maydonn',name:'Oscar Maydon',followers:'0',posts:'0',following:'0',verified:true, closeFriend:true, hasStory:true}
 ];
 const pinnedClients=['cadillacf1','manuelturizo','pesopluma'];
 function orderedClients(list=clients){
@@ -446,39 +548,63 @@ function applyApiUserToClient(c, info){
   if(info.biography)            c.bio       = info.biography;
   if(info.is_verified!=null)    c.verified  = !!info.is_verified;
 }
-function avatarUrl(u){ return avatarSrc(u); }
+function avatarUrl(u){ return avatarSrc(u); } // siempre vía proxy
 
 /* ====== UI HELPERS ====== */
-function avatarWrapHtml(u){
-  return `<div class="avatar-wrap"><img class="avatar" alt="" referrerpolicy="no-referrer" src="${avatarUrl(u)}"
-    onerror="this.style.background='#2a3442'; this.removeAttribute('src')" /></div>`;
+function ringForClient(c){ if(c.closeFriend) return 'close'; if(c.hasStory) return 'story'; return ''; }
+function avatarWrapHtml(u, ring){
+  const ringClass=ring==='close'?'ring-close':(ring==='story'?'ring-ig':'');
+  return `<div class="avatar-wrap ${ringClass}">
+    <img class="avatar" alt="" referrerpolicy="no-referrer" src="${avatarUrl(u)}"
+         onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+  </div>`;
 }
 
 /* ====== HOME - recientes ====== */
 const recentList=document.getElementById('recentList');
 function paintRecent(){
   const _clients=orderedClients();
-  recentList.innerHTML=_clients.map(c=>`
+  recentList.innerHTML=_clients.slice(0,30).map(c=>`
     <div class="row" data-user="${c.user}">
-      ${avatarWrapHtml(c.user)}
+      ${avatarWrapHtml(c.user, ringForClient(c))}
       <div class="grow">
         <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
         <div class="muted">${c.name} · ${(c.followers&&c.followers!=='0')?c.followers:'—'} seguidores</div>
       </div>
       <a class="chip" href="#" data-open="${c.user}">Ver ficha</a>
+      <div class="row-menu">
+        <button class="dots" title="Opciones">⋯</button>
+        <div class="menu"><button data-del="${c.user}">Eliminar</button></div>
+      </div>
     </div>`).join('');
   setTimeout(()=>recentList.querySelectorAll('.row').forEach(el=>el.classList.add('visible')),80);
+
+  const totalFollowers=_clients.reduce((sum,c)=>{
+    const f=c.followers||'0'; const n=parseFloat(f);
+    return sum+(f.includes('M')?n*1_000_000:f.includes('K')?n*1_000:Number(f)||0);
+  },0);
+  if(!document.getElementById('summaryFollowers')){
+    const s=document.createElement('div'); s.id='summaryFollowers'; s.style.margin='6px 2px 0';
+    s.textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`;
+    recentList.after(s);
+  }else{
+    document.getElementById('summaryFollowers').textContent=`Total seguidores: ${totalFollowers.toLocaleString()}`;
+  }
 }
 
 /* ====== CLIENTES (grid) ====== */
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
   return `<div class="client-card" data-open="${c.user}">
-    ${avatarWrapHtml(c.user)}
+    ${avatarWrapHtml(c.user, ringForClient(c))}
     <div class="grow">
       <div class="client-title">${c.name||c.user}${c.verified?verifiedSvg():''}</div>
       <div class="client-sub">@${c.user}</div>
       <div class="client-meta">${(c.followers&&c.followers!=='0')?c.followers:'—'} seguidores · ${(c.posts&&c.posts!=='0')?c.posts:'—'} posts</div>
+    </div>
+    <div class="card-menu">
+      <button class="dots" title="Opciones">⋯</button>
+      <div class="menu"><button data-del="${c.user}">Eliminar</button></div>
     </div>
   </div>`;
 }
@@ -495,10 +621,19 @@ document.getElementById('clientSearch').addEventListener('input',e=>{
   paintClientsGrid(filtered);
 });
 
+/* ====== POP MENÚS / ELIMINAR ====== */
+document.addEventListener('click',(e)=>{
+  const dots=e.target.closest('.dots');
+  if(dots){ const m=dots.parentElement.querySelector('.menu'); document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show')); m.classList.toggle('show'); return; }
+  const del=e.target.getAttribute('data-del');
+  if(del){ const ok=confirm('¿Eliminar este cliente?'); if(ok){ clients=clients.filter(c=>c.user!==del); paintRecent(); paintClientsGrid(clients); showToast('Cliente eliminado'); } return; }
+  if(!e.target.closest('.menu')) document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show'));
+});
+
 /* ====== API REAL ====== */
 async function fetchUser(username){
   const url = apiUrl(`/buscar-usuario?username=${encodeURIComponent(username)}`);
-  const r = await fetchWithTimeout(url,{timeout:9000});
+  const r = await fetchWithTimeout(url,{cache:'no-store',timeout:9000});
   if(!r.ok) throw new Error('bad');
   const j = await r.json();
   return j && (j.usuario || j.user || j.data || j);
@@ -513,15 +648,16 @@ async function hydrateClient(username){
     const info = await fetchUser(username);
     if(info){ setCachedUser(username, info); applyApiUserToClient(clients[idx], info); }
     paintRecent(); paintClientsGrid(clients);
+    if(document.getElementById('clientModal').classList.contains('show')){
+      const shown = (document.getElementById('mUser').textContent||'').replace('@','').split(' ')[0];
+      if(shown===username) fillModal(clients[idx]);
+    }
   }catch(_){}
 }
 async function hydrateAll(batchSize=5){
-  const isUp = await checkBackend();
-  if(!isUp) return; // si backend caído, no intentes hidratar
   const uniqueUsers=[...new Set(clients.map(c=>c.user))];
   for(let i=0;i<uniqueUsers.length;i+=batchSize){
     await Promise.all(uniqueUsers.slice(i,i+batchSize).map(u=>hydrateClient(u)));
-    await new Promise(r=>setTimeout(r, 150)); // respiro corto
   }
 }
 
@@ -533,6 +669,7 @@ async function promptAdd(){
   const i = clients.findIndex(c=>c.user===u); if(i>=0) clients.splice(i,1);
   clients.unshift(nuevo);
   paintRecent(); paintClientsGrid(clients);
+  showToast('Cliente agregado');
   hydrateClient(u);
 }
 document.getElementById('addClientBtn').addEventListener('click',promptAdd);
@@ -541,6 +678,9 @@ document.getElementById('addFromHome').addEventListener('click',()=>{showView('c
 /* ====== MODAL (ficha) ====== */
 const modal=document.getElementById('clientModal');
 function fillModal(c){
+  const wrap=document.getElementById('mAvatarWrap');
+  wrap.classList.remove('ring-ig','ring-close');
+  const ring=ringForClient(c); if(ring==='close') wrap.classList.add('ring-close'); else if(ring==='story') wrap.classList.add('ring-ig');
   const av=document.getElementById('mAvatar'); av.src=avatarUrl(c.user);
   av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
@@ -558,58 +698,95 @@ function openCard(user){
   hydrateClient(user);
 }
 function closeModal(){modal.classList.remove('show')}
+modal.addEventListener('click',(e)=>{ if(e.target===modal || e.target.hasAttribute('data-close-modal')) closeModal(); });
+
+/* Delegación click */
 document.addEventListener('click',(e)=>{
-  if(e.target.hasAttribute('data-close-modal') || e.target===modal) closeModal();
-  const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); }
+  const netEl=e.target.closest('[data-net]'); if(netEl){ if(netEl.getAttribute('data-net')!=='missu') openNetwork(netEl.getAttribute('data-net')); return;}
+  const openEl=e.target.closest('[data-open]'); if(openEl){e.preventDefault(); openCard(openEl.getAttribute('data-open')); return;}
+  const beastEl=e.target.closest('[data-beast]'); if(beastEl){activateBeastMode(e, beastEl); return;}
 });
 
-/* ====== Render inicial ====== */
+/* ====== RENDER + HIDRATACIÓN ====== */
 paintRecent(); paintClientsGrid(clients);
-setTimeout(()=>hydrateAll(5), 600);
+setTimeout(()=>hydrateAll(5), 800);
 setInterval(()=>hydrateAll(5), 10*60*1000);
 document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) hydrateAll(5); });
 
-/* ====== ADMIN secreto (5 taps en el logo) ====== */
-const adminPanel=document.getElementById('adminPanel');
-const adminLog=document.getElementById('adminLog');
-(function secretAdmin(){
-  const brand=document.getElementById('brandTap');
-  let taps=0, timer=null;
-  function reset(){ taps=0; clearTimeout(timer); timer=null; }
-  brand.addEventListener('click', ()=>{
-    taps++; if(timer) clearTimeout(timer);
-    timer=setTimeout(reset, 1000);
-    if(taps>=5){ reset(); adminPanel.classList.add('show'); document.body.classList.add('locked'); }
-  });
-  adminPanel.addEventListener('click',(e)=>{ if(e.target===adminPanel || e.target.hasAttribute('data-close-modal')){ adminPanel.classList.remove('show'); document.body.classList.remove('locked'); }});
-  const log=(m)=>{ adminLog.textContent = (adminLog.textContent?adminLog.textContent+'\n':'') + m; };
-  document.getElementById('btnAdminRetry').onclick=async()=>{ log('Reintentando /health...'); const ok=await checkBackend(); log(ok?'OK':'FALLÓ'); };
-  document.getElementById('btnAdminFlush').onclick=async()=>{
-    try{ const r=await fetchWithTimeout(apiUrl('/flush-cache'),{timeout:6000}); log('Flush: '+(r.ok?'OK':'ERR '+r.status)); }catch{ log('Flush: timeout/ERR'); }
-  };
-  document.getElementById('btnAdminWarm').onclick=async()=>{
-    try{ const users=[...new Set(clients.map(c=>c.user))].slice(0,20);
-      const r=await fetchWithTimeout(apiUrl('/warmup?users='+encodeURIComponent(users.join(','))),{timeout:15000});
-      const j=await r.json().catch(()=>({}));
-      log('Warmup: '+(j?.ok?'OK '+(j.count||0)+' usuarios':'ERR'));
-    }catch{ log('Warmup: timeout/ERR'); }
-  };
-  document.getElementById('btnAdminPing').onclick=async()=>{
-    log('Ping x3:'); for(let i=1;i<=3;i++){ const ok=await checkBackend(); log(`  #${i}: ${ok?'OK':'FAIL'}`); await new Promise(r=>setTimeout(r,300)); }
-  };
-  document.getElementById('btnAdminReboot').onclick=async()=>{
-    try{ const r=await fetchWithTimeout(apiUrl('/admin/reboot'),{method:'POST',timeout:6000}); log('Reboot: '+(r.ok?'202/OK (simulado)':'ERR '+r.status)); }catch{ log('Reboot: timeout/ERR'); }
-  };
-})();
+/* ====== FARM (mock) ====== */
+const farmGrid=document.getElementById('farmGrid');
+const devices=[{name:'iPhone 14 Pro · iOS',id:'10.0.0.8'},{name:'Galaxy S23 · Android',id:'10.0.0.9'},{name:'iPhone 13 · iOS',id:'10.0.0.10'},{name:'Pixel 8 · Android',id:'10.0.0.11'},{name:'iPhone 12 mini · iOS',id:'10.0.0.12'},{name:'Galaxy A54 · Android',id:'10.0.0.13'}];
+farmGrid.innerHTML=devices.map(d=>`
+  <div class="device">
+    <div class="thumb"></div>
+    <div style="font-weight:700">${d.name}</div>
+    <div class="muted">${d.id}</div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn primary" onclick="alert('Asignar stream a ${d.name}')">Asignar stream</button>
+      <button class="btn" onclick="alert('Limpiar ${d.name}')">Limpiar</button>
+    </div>
+  </div>`).join('');
 
-/* ====== PWA ====== */
+/* ====== MODO BESTIA (efecto) ====== */
+let beastCanvas=null, beastRAF=null;
+function activateBeastMode(event, beastCard){
+  if(!beastCard) return;
+  beastCard.classList.add('beast-hot'); setTimeout(()=>beastCard.classList.remove('beast-hot'),700);
+  const radial=document.createElement('div'); radial.classList.add('radial-effect'); beastCard.appendChild(radial); radial.addEventListener('animationend',()=>radial.remove());
+  const circle=document.createElement('div'); circle.className='screen-circle';
+  const x=event.clientX, y=event.clientY; circle.style.left=`${x-12}px`; circle.style.top=`${y-12}px`; document.body.appendChild(circle); circle.addEventListener('animationend',()=>circle.remove());
+  if(!beastCanvas){
+    beastCanvas=document.createElement('canvas'); beastCanvas.width=window.innerWidth; beastCanvas.height=window.innerHeight;
+    Object.assign(beastCanvas.style,{position:'fixed',top:0,left:0,zIndex:109,pointerEvents:'none'}); document.body.appendChild(beastCanvas);
+  }
+  const ctx=beastCanvas.getContext('2d'); let start=null;
+  function drawParticles(ts){
+    if(!start) start=ts;
+    const elapsed=ts-start; ctx.clearRect(0,0,beastCanvas.width,beastCanvas.height);
+    const rect=beastCard.getBoundingClientRect(); const cx=rect.left+rect.width/2; const cy=rect.top+rect.height/2;
+    for(let i=0;i<24;i++){
+      const angle=(i/24)*Math.PI*2 + (elapsed/400); const dist=Math.min(120, elapsed/6);
+      const px=cx+Math.cos(angle)*dist, py=cy+Math.sin(angle)*dist;
+      ctx.beginPath(); ctx.arc(px,py,2,0,Math.PI*2); ctx.fillStyle=`rgba(255,0,0,${1-elapsed/900})`; ctx.fill();
+    }
+    if(elapsed<900){beastRAF=requestAnimationFrame(drawParticles)} else {ctx.clearRect(0,0,beastCanvas.width,beastCanvas.height)}
+  }
+  beastRAF=requestAnimationFrame(drawParticles);
+}
+
+/* ACTION BTN + TOAST */
+function sendAction(){
+  const button=document.querySelector('.btn.primary'); button.innerHTML='Enviando <span class="spinner"></span>'; button.classList.add('loading');
+  setTimeout(()=>{button.innerHTML='Enviar'; button.classList.remove('loading'); showToast('Acción enviada')},1400);
+}
+function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
+
+/* VOICE MODE (opcional) */
+const micToggle=document.getElementById('micToggle');
+if('webkitSpeechRecognition' in window){
+  const recognition=new webkitSpeechRecognition(); recognition.continuous=false; recognition.interimResults=false; recognition.lang='es-ES';
+  micToggle.addEventListener('click',()=>{recognition.start(); micToggle.textContent='🎙️ (Escuchando)'; micToggle.classList.add('recording')});
+  recognition.onresult=(event)=>{const cmd=event.results[0][0].transcript.toLowerCase(); micToggle.textContent='🎙️'; micToggle.classList.remove('recording');
+    if(cmd.includes('ir a clientes')){showView('clients'); showToast('Navegando a Clientes')}
+    else if(cmd.includes('activar modo bestia')){document.querySelector('[data-beast]').click(); showToast('Modo Bestia activado')}
+  };
+  recognition.onerror=()=>{micToggle.textContent='🎙️'; micToggle.classList.remove('recording'); showToast('Error en reconocimiento de voz')};
+}else{micToggle.style.display='none'}
+
+/* DASHBOARD */
+document.querySelector('.brand').addEventListener('click',()=>document.getElementById('dashboard').classList.toggle('active'));
+
+/* NODOS BACKGROUND */
+(function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
+
+/* PWA */
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');});
 installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt(); const choice=await deferredPrompt.userChoice; if(choice?.outcome==='accepted'){showToast('App instalada')}}catch(_){} deferredPrompt=null; installBtn.classList.add('hidden')});
 window.addEventListener('appinstalled',()=>{showToast('App instalada'); installBtn.classList.add('hidden')});
 
-/* ====== PASSWORD GATE (demo) ====== */
+/* PASSWORD GATE (demo) */
 const validPasswords = new Set(['Andrick99','invitado25']);
 document.body.classList.add('locked');
 function checkPassword() {
@@ -629,16 +806,15 @@ function checkPassword() {
 document.getElementById('passwordModal').classList.add('show');
 document.getElementById('passwordInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
 
-/* TOAST */
-function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message;
-  t.style.position='fixed'; t.style.bottom='calc(var(--nav-h,64px) + 80px)'; t.style.left='50%'; t.style.transform='translateX(-50%)';
-  t.style.background='var(--card)'; t.style.color='var(--text)'; t.style.padding='12px 20px'; t.style.borderRadius='12px';
-  t.style.border='1px solid var(--line)'; t.style.boxShadow='0 4px 12px rgba(0,0,0,.1)'; t.style.zIndex='200'; t.style.opacity='0';
-  document.body.appendChild(t); requestAnimationFrame(()=>{t.style.transition='opacity .3s'; t.style.opacity='1'}); setTimeout(()=>{t.style.opacity='0'; setTimeout(()=>t.remove(),300)},2300);
+/* BOTÓN F1 */
+const f1Btn = document.getElementById('f1Btn');
+if(f1Btn){
+  f1Btn.addEventListener('click', ()=>{
+    f1Btn.style.boxShadow = '0 0 28px rgba(255,0,0,.75), inset 0 0 14px rgba(255,0,0,.45)';
+    setTimeout(()=>f1Btn.style.boxShadow='', 400);
+    showToast('F1');
+  });
 }
-
-/* Fondo nodos */
-(function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.background='var(--brand)'; n.style.position='absolute'; n.style.width='4px';n.style.height='4px';n.style.borderRadius='50%'; bg.appendChild(n);}})(15);
 </script>
 </body>
 </html>
