@@ -9,6 +9,9 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0b1220">
 
+<!-- Seguridad / imágenes cross-origin -->
+<meta name="referrer" content="no-referrer">
+
 <!-- FAVICON + PWA ICONS -->
 <link rel="icon" href="/icons/robot-192.png" sizes="192x192">
 <link rel="icon" href="/icons/robot-512.png" sizes="512x512">
@@ -47,8 +50,9 @@
   .topbar{position:sticky;top:0;z-index:80;background:var(--card-2);border-bottom:1px solid var(--line);
     padding:14px calc(14px + env(safe-area-inset-left,0px)) 14px calc(14px + env(safe-area-inset-right,0px));
     display:flex;align-items:center;gap:12px;justify-content:space-between;width:100vw}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;position:relative}
   .robot{width:28px;height:28px;display:block}
+  .secret{position:absolute;right:-8px;top:-8px;font-size:11px;opacity:.06;pointer-events:none}
   .right-head{display:flex;align-items:center;gap:12px}
   .pill{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
   .dot{width:8px;height:8px;border-radius:999px;background:#e0565b}
@@ -191,9 +195,10 @@
 
   <!-- HEADER -->
   <header class="topbar">
-    <div class="brand">
+    <div class="brand" id="brand">
       <svg class="robot" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#19c2ff"/><stop offset="1" stop-color="#0077ff"/></linearGradient></defs><rect x="2" y="10" width="60" height="44" rx="12" fill="url(#g)"/><rect x="8" y="16" width="48" height="32" rx="8" fill="#0b1220"/><circle cx="22" cy="32" r="6" fill="#19c2ff"/><circle cx="42" cy="32" r="6" fill="#19c2ff"/><rect x="28" y="40" width="8" height="4" rx="2" fill="#19c2ff"/></svg>
       <span class="name">KraveAI</span>
+      <span class="secret" id="secretHint">🛠</span>
     </div>
     <div class="right-head">
       <div class="pill"><span class="dot"></span> <span id="conn">Sin conexión</span></div>
@@ -356,20 +361,18 @@
     <symbol id="threads" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#000"/><path fill="#fff" d="M8.5 12c0 2.2 1.8 3.5 3.7 3.5 2.3 0 3.8-1.4 3.8-3.8 0-2.7-1.8-4.2-4.8-4.2h-.9V6h.8c3.9 0 6.5 2.2 6.5 5.9 0 3.2-2.4 5.3-5.6 5.3-3.2 0-5.5-2.1-5.5-5.2h1z"/></symbol>
     <symbol id="x" viewBox="0 0 24 24"><path fill="#fff" d="M17.5 4H20l-5.5 6 6 10h-5l-3.5-6-4 4-3-2 5-5-5-7h5l3 5 4.5-5z"/></symbol>
     <symbol id="fb" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12a10 10 0 008.5 9.87v-6.98H8.07v-2.9h2.43V9.41c0-2.4 1.43-3.73 3.63-3.73 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.19 0-1.56.74-1.56 1.49v1.79h2.65l-.42 2.9h-2.23V21.9A10 10 0 0022 12z"/></symbol>
-    <symbol id="li" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.45 20.45H17V14.6c0-1.39-.5-2.34-1.75-2.34-.95 0-1.52.64-1.77 1.26-.09.22-.11.52-.11.82v6.11H9.89s.05-9.92 0-10.95h3.48v1.55c.46-.71 1.29-1.72 3.13-1.72 2.28 0 3.95 1.49 3.95 4.69v6.43zM7.34 8.94a2.02 2.02 0 110-4.04 2.02 2.02 0 010 4.04zM5.57 20.45h3.54V9.5H5.57v10.95z"/></symbol>
+    <symbol id="li" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.45 20.45H17V14.6c0-1.39-.5-2.34-1.75-2.34-.95 0-1.52.64-1.77 1.26-.09.22-.11.52-.11.82v6.11H9.89s.05-9.92 0-10.95h3.48v1.55c.46-.71 1.29-1.72 3.13-1.72 2.28 0 3.95 1.49 3.95 4.69v6.43zM7.34 8.94a2.02 2.02 0 110-4.04 2.02 2.02 0 010 4.04z"/></symbol>
     <symbol id="sp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path fill="#fff" d="M7 9c4-1 8 0 10 1 .5 0 .7.8.5 1.3-.3.5-.9.6-1.4.4-1.8-.9-5-1.7-8.7-.7-.6.2-1.1-.2-1.3-.8-.2-.6.2-1.1.9-1.2zM7 12c3-.7 6 0 8 .7.4.1.7.6.5 1-.2.5-.7.6-1.2.4-1.6-.7-4.1-1.3-7.2-.6-.5.1-1-.2-1.1-.7-.1-.6.2-1 .9-1.2zM7 15c2-.4 4 .1 5.4.6.4.1.6.5.5.9-.1.4-.5.5-.9.4-1.2-.5-3-1-4.6-.6-.4.1-.8-.1-.9-.5-.1-.5.1-.8.5-.8z"/></symbol>
     <symbol id="tg" viewBox="0 0 24 24"><path fill="#229ED9" d="M9.6 16.8l-.4 3.7c.6 0 .9-.3 1.2-.6l2.8-2.7 5.8 4.3c1 .6 1.6 .3 1.9-.9l3.4-16c.3-1.2-.4-1.7-1.3-1.4L2.2 9.9c-1.1 .4-1.1 1.1-.2 1.4l5.6 1.7L18.8 6c.7-.4 1.2-.2 .7 .3"/></symbol>
-    <!-- KICK -->
+    <!-- KICK logo -->
     <symbol id="kick" viewBox="0 0 24 24">
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#52FF00"/>
-      <path fill="#0b1220" d="M7 7h3v4l4-4h3l-5 5 5 5h-3l-4-4v4H7z"/>
+      <path fill="#52FF52" d="M4 6h4v12H4zM9 6h4v5h-4zM9 13h4v5H9zM14 6h4v12h-4z"/>
     </symbol>
-    <!-- (Se eliminó WhatsApp del grid; el símbolo wa puede omitirse) -->
   </svg>
 
 <script>
 /* =======================
-   API BASE (FIJO A PROD)
+   API BASE (PROD)
    ======================= */
 const API_BASE = "https://api.kraveapi.xyz";
 const apiUrl = (p) => `${API_BASE}${p}`;
@@ -380,6 +383,15 @@ function fetchWithTimeout(resource, options={}) {
   return fetch(resource, { ...rest, signal: controller.signal }).finally(()=>clearTimeout(id));
 }
 function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
+function unavatar(u){ return `https://unavatar.io/instagram/${encodeURIComponent(u)}`; }
+function onImgError(img, u){
+  if(!img.dataset.tried){
+    img.dataset.tried = "1";
+    img.src = unavatar(u);
+  }else{
+    img.removeAttribute('src'); img.style.background='#2a3442';
+  }
+}
 
 /* ====== CONEXIÓN REAL /health ====== */
 const connEl=document.getElementById('conn');
@@ -391,7 +403,10 @@ async function checkBackend(){
     const j = await r.json().catch(()=>({}));
     if(j && j.status==='ok'){ connEl.textContent='Conectado'; dotEl.style.background='var(--success)'; return; }
     throw 0;
-  }catch(_){ connEl.textContent='Sin conexión'; dotEl.style.background='#e0565b'; }
+  }catch(_){
+    connEl.textContent='Sin conexión';
+    dotEl.style.background='#e0565b';
+  }
 }
 checkBackend(); setInterval(checkBackend, 15000);
 
@@ -403,12 +418,7 @@ if(savedTheme==='neon')document.body.classList.add('neon-theme');
 themeToggle.textContent=document.body.classList.contains('light')?'🌞':document.body.classList.contains('neon-theme')?'💡':'🌙';
 themeToggle.onclick=(e)=>{
   const menu=document.createElement('div');
-  Object.assign(menu.style,{
-    position:'absolute',top:'110%',right:'0',
-    background:'var(--card)',
-    border:'1px solid var(--line)',
-    borderRadius:'10px',padding:'8px',zIndex:'1000'
-  });
+  Object.assign(menu.style,{position:'absolute',top:'110%',right:'0',background:'var(--card)',border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
   menu.innerHTML=`<div style="padding:6px 10px;cursor:pointer">Claro</div><div style="padding:6px 10px;cursor:pointer">Neón</div><div style="padding:6px 10px;cursor:pointer">Oscuro</div>`;
   const [op1,op2,op3]=menu.children;
   op1.onclick=()=>{document.body.classList.add('light');document.body.classList.remove('neon-theme');localStorage.setItem('krave-theme','light');themeToggle.textContent='🌞';menu.remove()};
@@ -432,18 +442,18 @@ const navEl=document.querySelector('.nav');
 function setNavHeight(){document.documentElement.style.setProperty('--nav-h',navEl.offsetHeight+'px')}
 setNavHeight();addEventListener('resize',setNavHeight);addEventListener('orientationchange',setNavHeight);
 
-/* ====== DATA REDES ====== */
+/* ====== DATA REDES (WhatsApp OUT, Kick IN) ====== */
 const networks=[
   {key:'instagram',name:'Instagram',icon:'#ig',color:'#E1306C',services:['Likes','Comentarios','Seguidores','Vistas Reels','Compartidos','Guardados','Historias','Live Views']},
   {key:'tiktok',name:'TikTok',icon:'#tiktok',color:'#000000',services:['Likes','Comentarios','Seguidores','Views','Shares','Live Views']},
   {key:'youtube',name:'YouTube',icon:'#yt',color:'#FF0000',services:['Vistas','Likes','Comentarios','Suscriptores','Shorts Views','Live Views','Compartidos']},
   {key:'threads',name:'Threads',icon:'#threads',color:'#000000',services:['Likes','Respuestas','Seguidores','Vistas','Reposts']},
   {key:'x',name:'X',icon:'#x',color:'#ffffff',services:['Likes','Respuestas','Seguidores','Vistas','Reposts','Citas']},
-  {key:'facebook',name:'Facebook',icon:'#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},
+  {key:'facebook',name:'Facebook',icon='#fb',color:'#1877F2',services:['Likes','Comentarios','Seguidores/Página','Vistas','Compartidos','Live Views']},
   {key:'linkedin',name:'LinkedIn',icon:'#li',color:'#0A66C2',services:['Reacciones','Comentarios','Seguidores','Vistas','Compartidos']},
   {key:'spotify',name:'Spotify',icon:'#sp',color:'#1DB954',services:['Streams','Saves','Oyentes mensuales','Playlist adds']},
   {key:'telegram',name:'Telegram',icon:'#tg',color:'#229ED9',services:['Miembros','Vistas post','Forwards/Repost']},
-  {key:'kick',name:'Kick',icon:'#kick',color:'#52FF00',services:['Seguidores','Views','Chatters','Live Views']},
+  {key:'kick',name:'Kick',icon:'#kick',color:'#52FF52',services:['Viewers','Followers','Clips','Live Views']},
   {key:'missu',name:'Miss Universe 2025',icon:null,color:'#c5a34a',services:[]},
   {key:'beast',name:'Modo Bestia',icon:'#beastIcon',color:'var(--brand)',services:[]},
 ];
@@ -481,7 +491,7 @@ function openNetwork(key){
   netServices.innerHTML=(net.services||[]).map(svc=>`
     <div class="svc">
       <h4>${svc}</h4>
-      <input class="input" placeholder="${svc.includes('Seguidores') ? '@usuario' : 'URL / ID / Nota'}" />
+      <input class="input" placeholder="${svc.toLowerCase().includes('seguidor') ? '@usuario' : 'URL / ID / Nota'}" />
       <input class="input" placeholder="Cantidad" type="number" min="10" />
       <button class="btn primary">Ordenar</button>
     </div>`).join('') || `<div class="muted">Próximamente</div>`;
@@ -491,12 +501,12 @@ function openNetwork(key){
 /* ====== VERIFIED SVG ====== */
 function verifiedSvg(){return `<svg class="ig-verified" viewBox="0 0 24 24" aria-hidden="true"><use href="#igVerified"></use></svg>`}
 
-/* ====== CLIENTES (seed, top 3) ====== */
-let clients=[
+/* ====== CLIENTES (seed) + PERSISTENCIA ====== */
+const LST_CLIENTS='krave_clients_v1';
+const seedClients=[
   {user:'cadillacf1',   name:'Cadillac Formula 1 Team', followers:'0', posts:'0', following:'0', verified:true, tag:'f1'},
   {user:'manuelturizo', name:'Manuel Turizo',           followers:'0', posts:'0', following:'0', verified:true, tag:'music'},
   {user:'pesopluma',    name:'Peso Pluma',              followers:'0', posts:'0', following:'0', verified:true, tag:'music'},
-
   {user:'aaronmercury',name:'Aaron Mercurio',followers:'0',posts:'0',following:'0',verified:true},
   {user:'televisadigital',name:'Televisa Digital',followers:'0',posts:'0',following:'0',verified:true},
   {user:'joscanela',name:'Jos Canela',followers:'0',posts:'0',following:'0',verified:true, closeFriend:true, hasStory:true},
@@ -508,6 +518,21 @@ let clients=[
   {user:'lacasafamososmx',name:'La Casa de los Famosos MX',followers:'0',posts:'0',following:'0',verified:true},
   {user:'oscar_maydonn',name:'Oscar Maydon',followers:'0',posts:'0',following:'0',verified:true, closeFriend:true, hasStory:true}
 ];
+function loadClients(){
+  try{
+    const raw=localStorage.getItem(LST_CLIENTS);
+    if(!raw) return [...seedClients];
+    const arr=JSON.parse(raw);
+    // merge por si seed trae nuevos fijos
+    const map=new Map(arr.map(c=>[c.user,c]));
+    seedClients.forEach(c=>{ if(!map.has(c.user)) map.set(c.user,c); });
+    return Array.from(map.values());
+  }catch{ return [...seedClients]; }
+}
+function saveClients(list){
+  try{ localStorage.setItem(LST_CLIENTS, JSON.stringify(list)); }catch{}
+}
+let clients = loadClients();
 const pinnedClients=['cadillacf1','manuelturizo','pesopluma'];
 function orderedClients(list=clients){
   const map=new Map(list.map(c=>[c.user,c]));
@@ -516,11 +541,11 @@ function orderedClients(list=clients){
   return [...top,...rest];
 }
 
-/* ====== CACHE LOCAL (15 min) ====== */
-const LST_KEY='krave_profile_cache_v1';
+/* ====== CACHE LOCAL PROFILES (15 min) ====== */
+const LST_PROFILES='krave_profile_cache_v1';
 const TTL_MS = 15*60*1000;
-function loadCache(){ try{ return JSON.parse(localStorage.getItem(LST_KEY)||'{}'); }catch{ return {}; } }
-function saveCache(store){ try{ localStorage.setItem(LST_KEY, JSON.stringify(store)); }catch{} }
+function loadCache(){ try{ return JSON.parse(localStorage.getItem(LST_PROFILES)||'{}'); }catch{ return {}; } }
+function saveCache(store){ try{ localStorage.setItem(LST_PROFILES, JSON.stringify(store)); }catch{} }
 function getCachedUser(u){
   const store=loadCache(); const ent=store[u];
   if(!ent) return null; if(Date.now()-ent.t>TTL_MS) return null; return ent.data;
@@ -556,7 +581,7 @@ function avatarWrapHtml(u, ring){
   const ringClass=ring==='close'?'ring-close':(ring==='story'?'ring-ig':'');
   return `<div class="avatar-wrap ${ringClass}">
     <img class="avatar" alt="" referrerpolicy="no-referrer" src="${avatarUrl(u)}"
-         onerror="this.style.background='#2a3442'; this.removeAttribute('src')" />
+         onerror="onImgError(this,'${u}')" />
   </div>`;
 }
 
@@ -626,7 +651,16 @@ document.addEventListener('click',(e)=>{
   const dots=e.target.closest('.dots');
   if(dots){ const m=dots.parentElement.querySelector('.menu'); document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show')); m.classList.toggle('show'); return; }
   const del=e.target.getAttribute('data-del');
-  if(del){ const ok=confirm('¿Eliminar este cliente?'); if(ok){ clients=clients.filter(c=>c.user!==del); paintRecent(); paintClientsGrid(clients); showToast('Cliente eliminado'); } return; }
+  if(del){
+    const ok=confirm('¿Eliminar este cliente?');
+    if(ok){
+      clients=clients.filter(c=>c.user!==del);
+      saveClients(clients);
+      paintRecent(); paintClientsGrid(clients);
+      showToast('Cliente eliminado');
+    }
+    return;
+  }
   if(!e.target.closest('.menu')) document.querySelectorAll('.menu.show').forEach(x=>x.classList.remove('show'));
 });
 
@@ -663,11 +697,12 @@ async function hydrateAll(batchSize=5){
 
 /* ====== AÑADIR CLIENTE ====== */
 async function promptAdd(){
-  const u=prompt('Usuario (sin @):'); if(!u) return;
+  const u=(prompt('Usuario (sin @):')||'').trim(); if(!u) return;
   const n=prompt('Nombre para mostrar:') || u;
   const nuevo={user:u,name:n,followers:'0',posts:'0',following:'0',verified:true};
   const i = clients.findIndex(c=>c.user===u); if(i>=0) clients.splice(i,1);
   clients.unshift(nuevo);
+  saveClients(clients);
   paintRecent(); paintClientsGrid(clients);
   showToast('Cliente agregado');
   hydrateClient(u);
@@ -682,7 +717,7 @@ function fillModal(c){
   wrap.classList.remove('ring-ig','ring-close');
   const ring=ringForClient(c); if(ring==='close') wrap.classList.add('ring-close'); else if(ring==='story') wrap.classList.add('ring-ig');
   const av=document.getElementById('mAvatar'); av.src=avatarUrl(c.user);
-  av.onerror=function(){this.style.background='#2a3442'; this.removeAttribute('src')};
+  av.onerror=function(){ onImgError(this, c.user); };
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent=c.name||'';
   document.getElementById('mPosts').textContent=c.posts||'0';
@@ -779,8 +814,17 @@ document.querySelector('.brand').addEventListener('click',()=>document.getElemen
 /* NODOS BACKGROUND */
 (function createNodes(count){const bg=document.querySelector('.background-3d'); for(let i=0;i<count;i++){const n=document.createElement('div');n.className='node'; n.style.left=`${Math.random()*100}vw`; n.style.top=`${Math.random()*100}vh`; n.style.animationDuration=`${10+Math.random()*10}s`; n.style.animationDelay=`${Math.random()*5}s`; bg.appendChild(n);}})(15);
 
-/* PWA */
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}
+/* PWA (SW) */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", async ()=>{
+    try{
+      const reg = await navigator.serviceWorker.register("/sw.js", {scope:"/"});
+      if(reg.update) reg.update();
+      let refreshing=false;
+      navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(refreshing) return; refreshing=true; window.location.reload(); });
+    }catch(e){}
+  });
+}
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hidden');});
 installBtn.addEventListener('click',async()=>{if(!deferredPrompt) return; try{await deferredPrompt.prompt(); const choice=await deferredPrompt.userChoice; if(choice?.outcome==='accepted'){showToast('App instalada')}}catch(_){} deferredPrompt=null; installBtn.classList.add('hidden')});
@@ -815,6 +859,37 @@ if(f1Btn){
     showToast('F1');
   });
 }
+
+/* ====== BOTÓN SECRETO (reinicio backend) ====== */
+(function secretReboot(){
+  const brand=document.getElementById('brand'); const hint=document.getElementById('secretHint');
+  let clicks=0, timer=null;
+  brand.addEventListener('click', ()=>{
+    clicks++; clearTimeout(timer);
+    timer=setTimeout(()=>{clicks=0},600);
+    if(clicks===3){
+      clicks=0;
+      const menu=document.createElement('div');
+      Object.assign(menu.style,{position:'absolute',top:'110%',left:'0',background:'var(--card)',border:'1px solid var(--line)',borderRadius:'10px',padding:'8px',zIndex:'1000'});
+      menu.innerHTML=`<button id="rebootBtn" class="btn" style="font-size:12px;padding:6px 8px">🛠 Reiniciar backend</button>`;
+      brand.appendChild(menu);
+      menu.querySelector('#rebootBtn').onclick=async ()=>{
+        menu.remove();
+        showToast('Intentando reiniciar servicio…');
+        try{
+          let ok=false;
+          for(const path of ['/restart','/reboot']){
+            const r=await fetchWithTimeout(apiUrl(path),{method:'POST',timeout:5000}).catch(()=>null);
+            if(r && r.ok){ ok=true; break; }
+          }
+          if(ok){ showToast('Reinicio solicitado'); }
+          else { showToast('Reinicio no disponible'); }
+        }catch{ showToast('Reinicio no disponible'); }
+      };
+      setTimeout(()=>menu.remove(), 6000);
+    }
+  });
+})();
 </script>
 </body>
 </html>
