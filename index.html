@@ -203,6 +203,7 @@
       <button id="themeToggle" class="toggle" title="Cambiar tema">🌙</button>
       <button id="micToggle" class="mic-btn" title="Activar voz">🎙️</button>
       <button id="f1Btn" class="f1-btn" title="F1">🏎️ F1</button>
+      <button id="resetBtn" class="toggle" title="Reiniciar y limpiar caché">↻ Reset</button>
       <button id="installBtn" class="toggle hidden" title="Instalar app">⬇️ Instalar</button>
     </div>
   </header>
@@ -824,6 +825,40 @@ function sendAction(){
 }
 function showToast(message){const t=document.createElement('div'); t.className='toast'; t.textContent=message; document.body.appendChild(t); setTimeout(()=>t.remove(),3000)}
 
+/* ====== BOTÓN RESET (limpia app + backend) ====== */
+async function resetApp(){
+  const ok = confirm('¿Reiniciar KraveAI y limpiar caché?');
+  if(!ok) return;
+  try{
+    // 1) Limpiar caches locales
+    localStorage.removeItem('krave_clients_v1');
+    localStorage.removeItem('krave_profile_cache_v1');
+
+    // 2) Limpiar SW caches
+    if('caches' in window){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k).catch(()=>{})));
+    }
+
+    // 3) Desregistrar Service Workers (opcional, por si hay SW viejo)
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister().catch(()=>{})));
+    }
+
+    // 4) Pedir al backend que purgue su caché
+    try{
+      await fetchWithTimeout(apiUrl('/purge-cache'), {method:'POST', timeout:6000});
+    }catch(_){}
+
+    showToast('App reiniciada');
+  }finally{
+    // 5) Recargar limpio
+    setTimeout(()=>location.reload(), 400);
+  }
+}
+document.getElementById('resetBtn').addEventListener('click', resetApp);
+
 /* VOICE MODE (opcional) */
 const micToggle=document.getElementById('micToggle');
 if('webkitSpeechRecognition' in window){
@@ -893,4 +928,4 @@ if(f1Btn){
 }
 </script>
 </body>
-</html> 
+</html>
