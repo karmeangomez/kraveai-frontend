@@ -718,7 +718,7 @@ async function hydrateAllBatchRobust(){
   let done = 0;
   updateProgress(done, uniqueUsers.length);
 
-  // 1) Prefill inmediato desde cache local para que “aparezcan” datos sin esperar red
+  // 1) Prefill inmediato desde cache local para que "aparezcan" datos sin esperar red
   uniqueUsers.forEach(u=>{
     const cached = getCachedUser(u);
     if(cached){
@@ -1000,7 +1000,8 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
 /* ====== SISTEMA YOUTUBE VISTAS ====== */
 async function ordenarVistasYouTube(videoUrl, cantidad) {
     try {
-        const response = await fetch(apiUrl('/youtube/ordenar-vistas'), {
+        // CAMBIO: Usar localhost:8000 en lugar de la API remota
+        const response = await fetch('http://localhost:8000/youtube/ordenar-vistas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1012,7 +1013,7 @@ async function ordenarVistasYouTube(videoUrl, cantidad) {
         });
 
         const resultado = await response.json();
-        
+
         if (resultado.success) {
             showToast(`✅ ${resultado.message}`);
             return resultado;
@@ -1022,7 +1023,7 @@ async function ordenarVistasYouTube(videoUrl, cantidad) {
         }
     } catch (error) {
         console.error('Error ordenando vistas:', error);
-        showToast('❌ Error de conexión con el servidor');
+        showToast('❌ Error de conexión con el servidor local');
         return null;
     }
 }
@@ -1032,47 +1033,47 @@ function setupYouTubeIntegration() {
     document.addEventListener('click', async (e) => {
         if (e.target.classList.contains('btn') && e.target.classList.contains('primary')) {
             const btn = e.target;
-            
+
             const networkView = document.getElementById('view-network');
             if (!networkView || !networkView.classList.contains('active')) return;
-            
+
             const networkTitle = document.getElementById('networkTitle');
             if (!networkTitle || !networkTitle.textContent.includes('YouTube')) return;
-            
+
             const svc = btn.closest('.svc');
             if (!svc) return;
-            
+
             const titulo = svc.querySelector('h4');
             if (!titulo || !titulo.textContent.includes('Vistas')) return;
-            
+
             const inputs = svc.querySelectorAll('.input');
             if (inputs.length < 2) return;
-            
+
             const urlInput = inputs[0];
             const cantidadInput = inputs[1];
-            
+
             const videoUrl = urlInput.value.trim();
             const cantidad = cantidadInput.value.trim();
-            
+
             if (!videoUrl || !cantidad) {
                 showToast('❌ Ingresa URL del video y cantidad');
                 return;
             }
-            
+
             if (!videoUrl.includes('youtu.be') && !videoUrl.includes('youtube.com') && !videoUrl.includes('youtube.com/watch')) {
                 showToast('❌ URL de YouTube no válida');
                 return;
             }
-            
+
             const originalText = btn.innerHTML;
             btn.innerHTML = 'Ordenando <span class="spinner"></span>';
             btn.disabled = true;
-            
+
             const resultado = await ordenarVistasYouTube(videoUrl, cantidad);
-            
+
             btn.innerHTML = originalText;
             btn.disabled = false;
-            
+
             if (resultado && resultado.success) {
                 urlInput.value = '';
                 cantidadInput.value = '';
