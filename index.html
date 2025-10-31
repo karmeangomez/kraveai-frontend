@@ -376,12 +376,12 @@
 
 <script>
 /* =======================
-   API BASE (FIJO A PROD)
+   API BASE (FIJO A PROD) - CORREGIDO
    ======================= */
 const API_BASE = "https://api.kraveapi.xyz";
 const apiUrl = (p) => `${API_BASE}${p}`;
 function fetchWithTimeout(resource, options={}){
-  const { timeout = 12000, ...rest } = options; // subimos timeout por redes móviles
+  const { timeout = 12000, ...rest } = options;
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   return fetch(resource, { ...rest, signal: controller.signal, cache: 'no-store' })
@@ -394,9 +394,9 @@ function unavatar(u){ return `https://unavatar.io/instagram/${encodeURIComponent
 function onImgError(img,u){
   if(!img.dataset.tried){
     img.dataset.tried="1";
-    img.src = unavatar(u); // 2do intento
+    img.src = unavatar(u);
   }else{
-    img.removeAttribute('src'); // último recurso: fondo liso
+    img.removeAttribute('src');
     img.style.background = '#2a3442';
   }
 }
@@ -690,9 +690,9 @@ async function fetchUser(username){
 
 /* ====== HIDRATACIÓN MASIVA ROBUSTA ====== */
 const loadProgress = document.getElementById('loadProgress');
-const BATCH_SIZE = 8;         // usuarios por lote
-const MAX_RETRIES = 2;        // reintentos por lote
-const FALLBACK_CONC = 4;      // fetch individuales concurrentes
+const BATCH_SIZE = 8;
+const MAX_RETRIES = 2;
+const FALLBACK_CONC = 4;
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
@@ -718,7 +718,7 @@ async function hydrateAllBatchRobust(){
   let done = 0;
   updateProgress(done, uniqueUsers.length);
 
-  // 1) Prefill inmediato desde cache local para que "aparezcan" datos sin esperar red
+  // 1) Prefill inmediato desde cache local
   uniqueUsers.forEach(u=>{
     const cached = getCachedUser(u);
     if(cached){
@@ -728,7 +728,7 @@ async function hydrateAllBatchRobust(){
   });
   paintRecent(); paintClientsGrid(clients);
 
-  // 2) Lotes a /refresh-clients con reintentos y backoff
+  // 2) Lotes a /refresh-clients con reintentos
   const failures = [];
   for(let i=0;i<uniqueUsers.length;i+=BATCH_SIZE){
     const slice = uniqueUsers.slice(i,i+BATCH_SIZE);
@@ -739,7 +739,7 @@ async function hydrateAllBatchRobust(){
         ok = true;
       }catch(e){
         attempt++;
-        if(attempt<=MAX_RETRIES) await sleep(400*attempt); // backoff
+        if(attempt<=MAX_RETRIES) await sleep(400*attempt);
       }
     }
     if(!ok){
@@ -764,10 +764,10 @@ async function hydrateAllBatchRobust(){
     saveClients(clients);
     paintRecent(); paintClientsGrid(clients);
     updateProgress(done, uniqueUsers.length);
-    await sleep(50); // cedemos al main thread para fluidez
+    await sleep(50);
   }
 
-  // 3) Fallback por usuario (concurrencia controlada)
+  // 3) Fallback por usuario
   if(failures.length){
     const queue = [...failures];
     let active = 0;
@@ -801,7 +801,6 @@ async function hydrateAllBatchRobust(){
     });
   }
 
-  // 4) Persistimos y fin
   saveClients(clients);
   paintRecent(); paintClientsGrid(clients);
   updateProgress(uniqueUsers.length, uniqueUsers.length);
@@ -818,7 +817,6 @@ async function promptAdd(){
   paintRecent(); paintClientsGrid(clients);
   showToast('Cliente agregado');
 
-  // hidratar individual por si el batch tarda
   try{
     const info = await fetchUser(u);
     if(info){ applyApiUserToClient(nuevo, info); setCachedUser(u, info); saveClients(clients); paintRecent(); paintClientsGrid(clients); }
@@ -847,7 +845,6 @@ function openCard(user){
   const c=clients.find(x=>x.user===user); if(!c) return;
   fillModal(c);
   modal.classList.add('show');
-  // refrescar ese usuario silenciosamente
   fetchUser(user).then(info=>{
     if(info){ applyApiUserToClient(c, info); setCachedUser(user, info); saveClients(clients); fillModal(c); paintRecent(); paintClientsGrid(clients); }
   }).catch(()=>{});
@@ -864,10 +861,8 @@ document.addEventListener('click',(e)=>{
 
 /* ====== RENDER + HIDRATACIÓN ====== */
 paintRecent(); paintClientsGrid(clients);
-// hidratación robusta al entrar
 setTimeout(()=>hydrateAllBatchRobust(), 600);
 document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) hydrateAllBatchRobust(); });
-// refresco periódico liviano
 setInterval(()=>hydrateAllBatchRobust(), 10*60*1000);
 
 /* ====== FARM (mock) ====== */
@@ -986,7 +981,7 @@ if(f1Btn){
   });
 }
 
-/* NUEVO: BOTÓN REINICIAR (borra caches locales y recarga) */
+/* NUEVO: BOTÓN REINICIAR */
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   if(confirm('Esto borrará clientes guardados y cache de perfiles. ¿Continuar?')){
     try{
@@ -997,11 +992,13 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
   }
 });
 
-/* ====== SISTEMA YOUTUBE VISTAS ====== */
+/* ====== SISTEMA YOUTUBE VISTAS - CORREGIDO ====== */
 async function ordenarVistasYouTube(videoUrl, cantidad) {
     try {
-        // CAMBIO: Usar localhost:8000 en lugar de la API remota
-        const response = await fetch('http://localhost:8000/youtube/ordenar-vistas', {
+        console.log("🎯 Enviando orden a YouTube:", videoUrl, cantidad);
+        
+        // CORRECCIÓN: Usar apiUrl() en lugar de localhost
+        const response = await fetch(apiUrl('/youtube/ordenar-vistas'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1012,18 +1009,24 @@ async function ordenarVistasYouTube(videoUrl, cantidad) {
             })
         });
 
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `Error ${response.status}`);
+        }
+
         const resultado = await response.json();
+        console.log("📡 Respuesta del backend:", resultado);
 
         if (resultado.success) {
             showToast(`✅ ${resultado.message}`);
             return resultado;
         } else {
-            showToast(`❌ Error: ${resultado.error}`);
+            showToast(`❌ Error: ${resultado.message}`);
             return null;
         }
     } catch (error) {
-        console.error('Error ordenando vistas:', error);
-        showToast('❌ Error de conexión con el servidor local');
+        console.error('❌ Error ordenando vistas:', error);
+        showToast(`❌ Error: ${error.message}`);
         return null;
     }
 }
@@ -1060,8 +1063,10 @@ function setupYouTubeIntegration() {
                 return;
             }
 
-            if (!videoUrl.includes('youtu.be') && !videoUrl.includes('youtube.com') && !videoUrl.includes('youtube.com/watch')) {
-                showToast('❌ URL de YouTube no válida');
+            // ACEPTA URLs ACORTADAS (t.co, bit.ly, etc.)
+            if (!videoUrl.includes('youtu.be') && !videoUrl.includes('youtube.com') && 
+                !videoUrl.includes('t.co') && !videoUrl.includes('bit.ly')) {
+                showToast('❌ URL no válida. Debe ser de YouTube o URL acortada (t.co, bit.ly)');
                 return;
             }
 
