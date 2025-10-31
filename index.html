@@ -387,15 +387,32 @@ function fetchWithTimeout(resource, options={}){
   return fetch(resource, { ...rest, signal: controller.signal, cache: 'no-store' })
     .finally(()=>clearTimeout(id));
 }
-function avatarSrc(u){ return apiUrl(`/avatar?username=${encodeURIComponent(u)}`); }
 
-/* ====== FALLBACK DE AVATAR (Android/Chrome) ====== */
-function unavatar(u){ return `https://unavatar.io/instagram/${encodeURIComponent(u)}`; }
-function onImgError(img,u){
+/* ====== SISTEMA DE AVATARES MEJORADO ====== */
+function avatarUrl(u, info) {
+  // PRIORIDAD 1: Usar profile_pic_url del API si está disponible
+  if (info && info.profile_pic_url) {
+    return info.profile_pic_url;
+  }
+  // PRIORIDAD 2: Usar el endpoint /avatar del backend
+  return apiUrl(`/avatar?username=${encodeURIComponent(u)}`);
+}
+
+function unavatar(u){ 
+  return `https://unavatar.io/instagram/${encodeURIComponent(u)}`;
+}
+
+function onImgError(img, u, info){
   if(!img.dataset.tried){
     img.dataset.tried="1";
+    // Intentar con unavatar directo como fallback
     img.src = unavatar(u);
+  }else if(!img.dataset.tried2){
+    img.dataset.tried2="1";
+    // Último fallback: avatar por iniciales
+    img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(u)}&background=random&color=fff`;
   }else{
+    // Último recurso: fondo liso
     img.removeAttribute('src');
     img.style.background = '#2a3442';
   }
@@ -490,13 +507,14 @@ socialGrid.innerHTML=networks.map(n=>{
 }).join('');
 setTimeout(()=>socialGrid.querySelectorAll('.card').forEach(el=>el.classList.add('visible')),100);
 
-/* ====== NETWORK VIEW ====== */
+/* ====== NETWORK VIEW - CORREGIDO ====== */
 const netTitle=document.getElementById('networkTitle');
 const netSub=document.getElementById('networkSub');
 const netServices=document.getElementById('networkServices');
 function openNetwork(key){
   const net=networks.find(x=>x.key===key); if(!net) return;
   netTitle.textContent=`Servicios · ${net.name}`;
+  netTitle.dataset.network = net.key; // CORRECCIÓN CRÍTICA: Añadir dataset
   netSub.textContent=`Automatiza ${net.name} con IA`;
   netServices.innerHTML=(net.services||[]).map(svc=>`
     <div class="svc">
@@ -583,16 +601,19 @@ function applyApiUserToClient(c, info){
   if(info.media_count!=null)    c.posts     = String(info.media_count);
   if(info.biography)            c.bio       = info.biography;
   if(info.is_verified!=null)    c.verified  = !!info.is_verified;
+  // CORRECCIÓN CRÍTICA: Actualizar profile_pic_url si viene del API
+  if(info.profile_pic_url)      c.profile_pic_url = info.profile_pic_url;
 }
-function avatarUrl(u){ return avatarSrc(u); }
 
 /* ====== UI HELPERS ====== */
 function ringForClient(c){ if(c.closeFriend) return 'close'; if(c.hasStory) return 'story'; return ''; }
-function avatarWrapHtml(u, ring){
+function avatarWrapHtml(u, ring, info){
   const ringClass=ring==='close'?'ring-close':(ring==='story'?'ring-ig':'');
   return `<div class="avatar-wrap ${ringClass}">
-    <img class="avatar" alt="" referrerpolicy="no-referrer" src="${avatarUrl(u)}"
-         onerror="onImgError(this,'${u}')"/>
+    <img class="avatar" alt="" referrerpolicy="no-referrer" 
+         src="${avatarUrl(u, info)}"
+         onerror="onImgError(this,'${u}', ${JSON.stringify(info || {})})"
+         loading="lazy"/>
   </div>`;
 }
 
@@ -602,7 +623,7 @@ function paintRecent(){
   const _clients=orderedClients(clients);
   recentList.innerHTML=_clients.slice(0,30).map(c=>`
     <div class="row" data-user="${c.user}">
-      ${avatarWrapHtml(c.user, ringForClient(c))}
+      ${avatarWrapHtml(c.user, ringForClient(c), c)}
       <div class="grow">
         <div class="user">@${c.user} ${c.verified?verifiedSvg():''}</div>
         <div class="muted">${c.name} · ${(c.followers&&c.followers!=='0')?c.followers:'—'} seguidores</div>
@@ -633,7 +654,7 @@ function paintRecent(){
 const clientsGrid=document.getElementById('clientsGrid');
 function cardHtml(c){
   return `<div class="client-card" data-open="${c.user}">
-    ${avatarWrapHtml(c.user, ringForClient(c))}
+    ${avatarWrapHtml(c.user, ringForClient(c), c)}
     <div class="grow">
       <div class="client-title">${c.name||c.user}${c.verified?verifiedSvg():''}</div>
       <div class="client-sub">@${c.user}</div>
@@ -688,7 +709,7 @@ async function fetchUser(username){
   return j && (j.usuario || j.user || j.data || j);
 }
 
-/* ====== HIDRATACIÓN MASIVA ROBUSTA ====== */
+/* ====== HIDRATACIÓN MASIVA ROBUSTA - MEJORADA ====== */
 const loadProgress = document.getElementById('loadProgress');
 const BATCH_SIZE = 8;
 const MAX_RETRIES = 2;
@@ -806,6 +827,11 @@ async function hydrateAllBatchRobust(){
   updateProgress(uniqueUsers.length, uniqueUsers.length);
 }
 
+// ACTUALIZACIÓN PERIÓDICA DE FOTOS
+setInterval(() => {
+  hydrateAllBatchRobust();
+}, 15 * 60 * 1000); // Actualizar cada 15 minutos
+
 /* ====== AÑADIR CLIENTE ====== */
 async function promptAdd(){
   const u=prompt('Usuario (sin @):'); if(!u) return;
@@ -831,8 +857,9 @@ function fillModal(c){
   const wrap=document.getElementById('mAvatarWrap');
   wrap.classList.remove('ring-ig','ring-close');
   const ring=ringForClient(c); if(ring==='close') wrap.classList.add('ring-close'); else if(ring==='story') wrap.classList.add('ring-ig');
-  const av=document.getElementById('mAvatar'); av.src=avatarUrl(c.user);
-  av.onerror=function(){ onImgError(this, c.user); };
+  const av=document.getElementById('mAvatar'); 
+  av.src = avatarUrl(c.user, c);
+  av.onerror=function(){ onImgError(this, c.user, c); };
   document.getElementById('mUser').innerHTML=`@${c.user} ${c.verified?verifiedSvg():''}`;
   document.getElementById('mName').textContent=c.name||'';
   document.getElementById('mPosts').textContent=c.posts||'0';
@@ -863,7 +890,6 @@ document.addEventListener('click',(e)=>{
 paintRecent(); paintClientsGrid(clients);
 setTimeout(()=>hydrateAllBatchRobust(), 600);
 document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) hydrateAllBatchRobust(); });
-setInterval(()=>hydrateAllBatchRobust(), 10*60*1000);
 
 /* ====== FARM (mock) ====== */
 const farmGrid=document.getElementById('farmGrid');
@@ -997,7 +1023,6 @@ async function ordenarVistasYouTube(videoUrl, cantidad) {
     try {
         console.log("🎯 Enviando orden a YouTube:", videoUrl, cantidad);
         
-        // CORRECCIÓN: Usar apiUrl() en lugar de localhost
         const response = await fetch(apiUrl('/youtube/ordenar-vistas'), {
             method: 'POST',
             headers: {
@@ -1031,62 +1056,64 @@ async function ordenarVistasYouTube(videoUrl, cantidad) {
     }
 }
 
-/* ====== DETECCIÓN AUTOMÁTICA DE BOTONES YOUTUBE ====== */
+/* ====== DETECCIÓN AUTOMÁTICA DE BOTONES YOUTUBE - CORREGIDA ====== */
 function setupYouTubeIntegration() {
     document.addEventListener('click', async (e) => {
-        if (e.target.classList.contains('btn') && e.target.classList.contains('primary')) {
-            const btn = e.target;
+        // CORRECCIÓN: Usar closest para detectar botones dinámicos
+        const btn = e.target.closest('.btn.primary');
+        if (!btn) return;
 
-            const networkView = document.getElementById('view-network');
-            if (!networkView || !networkView.classList.contains('active')) return;
+        const networkView = document.getElementById('view-network');
+        if (!networkView || !networkView.classList.contains('active')) return;
 
-            const networkTitle = document.getElementById('networkTitle');
-            if (!networkTitle || !networkTitle.textContent.includes('YouTube')) return;
+        // CORRECCIÓN CRÍTICA: Usar dataset en lugar de textContent
+        const networkTitle = document.getElementById('networkTitle');
+        if (!networkTitle || networkTitle.dataset.network !== 'youtube') return;
 
-            const svc = btn.closest('.svc');
-            if (!svc) return;
+        const svc = btn.closest('.svc');
+        if (!svc) return;
 
-            const titulo = svc.querySelector('h4');
-            if (!titulo || !titulo.textContent.includes('Vistas')) return;
+        const titulo = svc.querySelector('h4');
+        if (!titulo || !titulo.textContent.includes('Vistas')) return;
 
-            const inputs = svc.querySelectorAll('.input');
-            if (inputs.length < 2) return;
+        const inputs = svc.querySelectorAll('.input');
+        if (inputs.length < 2) return;
 
-            const urlInput = inputs[0];
-            const cantidadInput = inputs[1];
+        const urlInput = inputs[0];
+        const cantidadInput = inputs[1];
 
-            const videoUrl = urlInput.value.trim();
-            const cantidad = cantidadInput.value.trim();
+        const videoUrl = urlInput.value.trim();
+        const cantidad = cantidadInput.value.trim();
 
-            if (!videoUrl || !cantidad) {
-                showToast('❌ Ingresa URL del video y cantidad');
-                return;
-            }
+        if (!videoUrl || !cantidad) {
+            showToast('❌ Ingresa URL del video y cantidad');
+            return;
+        }
 
-            // ACEPTA URLs ACORTADAS (t.co, bit.ly, etc.)
-            if (!videoUrl.includes('youtu.be') && !videoUrl.includes('youtube.com') && 
-                !videoUrl.includes('t.co') && !videoUrl.includes('bit.ly')) {
-                showToast('❌ URL no válida. Debe ser de YouTube o URL acortada (t.co, bit.ly)');
-                return;
-            }
+        // ACEPTA URLs ACORTADAS (t.co, bit.ly, etc.)
+        if (!videoUrl.includes('youtu.be') && !videoUrl.includes('youtube.com') && 
+            !videoUrl.includes('t.co') && !videoUrl.includes('bit.ly')) {
+            showToast('❌ URL no válida. Debe ser de YouTube o URL acortada (t.co, bit.ly)');
+            return;
+        }
 
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Ordenando <span class="spinner"></span>';
-            btn.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Enviando <span class="spinner"></span>';
+        btn.disabled = true;
 
-            const resultado = await ordenarVistasYouTube(videoUrl, cantidad);
+        const resultado = await ordenarVistasYouTube(videoUrl, cantidad);
 
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+        btn.innerHTML = originalText;
+        btn.disabled = false;
 
-            if (resultado && resultado.success) {
-                urlInput.value = '';
-                cantidadInput.value = '';
-            }
+        if (resultado && resultado.success) {
+            urlInput.value = '';
+            cantidadInput.value = '';
         }
     });
 }
 
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', setupYouTubeIntegration);
 </script>
 </body>
